@@ -13,7 +13,7 @@
 					  	{!! $errors->first('employee_name', '<small class="help-block">:message</small>') !!}
 					</div>
 					<div class="form-group {!! $errors->has('manager_id') ? 'has-error' : '' !!}">
-					  	{!! Form::text('manager_id', null, ['class' => 'form-control', 'placeholder' => 'Manager ID']) !!}
+					  	{!! Form::select('manager_id', $manager_list, ['class' => 'form-control', 'placeholder' => 'Manager ID']) !!}
 					  	{!! $errors->first('name', '<small class="help-block">:message</small>') !!}
 					</div>
 					{!! Form::submit('Create', ['class' => 'btn btn-primary pull-right']) !!}

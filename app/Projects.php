@@ -9,9 +9,9 @@ class Projects extends Model {
 	protected $table = 'projects';
 	public $timestamps = true;
 
-	public function employee()
+	public function activities()
 	{
-		return $this->belongsTo('Employee');
+		return $this->hasMany('Activities');
 	}
 
 }

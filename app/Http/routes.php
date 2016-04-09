@@ -20,4 +20,5 @@ Route::get('/', function () {
 Route::get('/home', 'HomeController@index');
 
 Route::resource('employee', 'EmployeeController');
+Route::resource('activities', 'ActivitiesController');
 Route::resource('projects', 'ProjectsController');

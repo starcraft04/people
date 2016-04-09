@@ -7,6 +7,8 @@ use App\Http\Requests\EmployeeUpdateRequest;
 
 use App\Repositories\EmployeeRepository;
 
+use App\Employee;
+
 use Illuminate\Http\Request;
 
 class EmployeeController extends Controller {
@@ -27,9 +29,11 @@ class EmployeeController extends Controller {
 		return view('employees/index', compact('employees', 'links'));
 	}
 
-	public function create()
+	public function create(Employee $managers)
 	{
-		return view('employees/create');
+		$manager_list = $managers->allManagers();
+		\Debugbar::info($manager_list);
+		return view('employees/create')->with('manager_list',$manager_list);
 	}
 
 	public function store(EmployeeCreateRequest $request)
@@ -39,11 +43,14 @@ class EmployeeController extends Controller {
 		return redirect('employee')->withOk("The employee " . $employee->employee_name . " has been created.");
 	}
 
-	public function show($id)
+	public function show(Employee $managers, $id)
 	{
 		$employee = $this->employeeRepository->getById($id);
+		
+		$manager_name = $managers::find($employee->manager_id)->employee->employee_name;
+		//\Debugbar::info($manager);
 
-		return view('employees/show',  compact('employee'));
+		return view('employees/show',  compact('employee'))->with('manager_name',$manager_name);
 	}
 
 	public function edit($id)
