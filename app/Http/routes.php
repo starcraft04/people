@@ -13,6 +13,11 @@
 
 Route::auth();
 
-Route::get('/', 'HomeController@index');
+Route::get('/', function () {
+    return view('welcome');
+});
 
 Route::get('/home', 'HomeController@index');
+
+Route::resource('employee', 'EmployeeController');
+Route::resource('projects', 'ProjectsController');
