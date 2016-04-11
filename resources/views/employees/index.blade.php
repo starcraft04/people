@@ -18,7 +18,9 @@
                 			<table class="table">
                 				<thead>
                 					<tr>
-                						<th>Name</th>
+                						<th>Employee name</th>
+                                        <th>Manager name</th>
+                                        <th>Is manager</th>
                 						<th class="col-md-1"></th>
                 						<th class="col-md-1"></th>
                 						<th class="col-md-1">{!! link_to_route('employee.create', 'New', [], ['class' => 'btn btn-info pull-right']) !!}</th>
@@ -27,9 +29,11 @@
                 				<tbody>
 
                     					@foreach ($employees as $employee)
-                              <?php if ($employee->employee_name == 'NONE'){continue;}; ?>
+                                            <?php if ($employee->id == 1){continue;}; ?>
                     						<tr>
-                    							<td class="text-primary"><strong>{!! $employee->employee_name !!}</strong></td>
+                    							<td class="text-primary"><strong>{!! $employee->first_name." ".$employee->last_name !!}</strong></td>
+                                                <td class="text-primary">{!! $employee->manager_first_name." ".$employee->manager_last_name !!}</td>
+                                                <td class="text-primary">{!! $employee->is_manager !!}</td>
                     							<td>{!! link_to_route('employee.show', 'Info', [$employee->id], ['class' => 'btn btn-success btn-block btn-xs']) !!}</td>
                     							<td>{!! link_to_route('employee.edit', 'Modify', [$employee->id], ['class' => 'btn btn-warning btn-block btn-xs']) !!}</td>
                     							<td>

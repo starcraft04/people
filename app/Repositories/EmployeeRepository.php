@@ -16,15 +16,17 @@ class EmployeeRepository
 
 	private function save(Employee $employee, Array $inputs)
 	{
-		$employee->employee_name = $inputs['employee_name'];
-		$employee->manager_id = $inputs['manager_id'];	
-
+		$employee->first_name = $inputs['first_name'];
+        $employee->last_name = $inputs['last_name'];
+		$employee->manager_id = $inputs['manager_id'];
+        $employee->is_manager = isset($inputs['is_manager']);
 		$employee->save();
 	}
 
 	public function getPaginate($n)
 	{
-		return $this->employee->paginate($n);
+        $employee = new Employee;
+		return $employee->employeeTablePaginate($n);
 	}
 
 	public function store(Array $inputs)
@@ -50,5 +52,16 @@ class EmployeeRepository
 	{
 		$this->getById($id)->delete();
 	}
-
+    
+	public function getAllManagersList()
+	{
+        $employee = new Employee;
+        $managers = $employee->getAllManagers();
+		$result = Array();
+		foreach ($managers as $manager)
+		{
+			$result[$manager->id] = $manager->first_name . ' ' . $manager->last_name;
+		}
+        return $result;
+	}
 }

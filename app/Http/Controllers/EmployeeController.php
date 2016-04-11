@@ -7,8 +7,6 @@ use App\Http\Requests\EmployeeUpdateRequest;
 
 use App\Repositories\EmployeeRepository;
 
-use App\Employee;
-
 use Illuminate\Http\Request;
 
 class EmployeeController extends Controller {
@@ -25,14 +23,13 @@ class EmployeeController extends Controller {
 	{
 		$employees = $this->employeeRepository->getPaginate($this->nbrPerPage);
 		$links = $employees->setPath('')->render();
-
 		return view('employees/index', compact('employees', 'links'));
 	}
 
-	public function create(Employee $managers)
+	public function create(EmployeeRepository $employeeRepository)
 	{
-		$manager_list = $managers->allManagers();
-		\Debugbar::info($manager_list);
+		$manager_list = $employeeRepository->getAllManagersList();
+		//\Debugbar::info($manager_list);
 		return view('employees/create')->with('manager_list',$manager_list);
 	}
 
@@ -40,7 +37,7 @@ class EmployeeController extends Controller {
 	{
 		$employee = $this->employeeRepository->store($request->all());
 
-		return redirect('employee')->withOk("The employee " . $employee->employee_name . " has been created.");
+		return redirect('employee')->withOk("The employee " . $employee->first_name . " " . $employee->last_name . " has been created.");
 	}
 
 	public function show(Employee $managers, $id)
@@ -64,7 +61,7 @@ class EmployeeController extends Controller {
 	{
 		$this->employeeRepository->update($id, $request->all());
 		
-		return redirect('employee')->withOk("The employee " . $request->input('employee_name') . " has been modified.");
+		return redirect('employee')->withOk("The employee " . $request->input('first_name') . " " .  $request->input('last_name') . " has been modified.");
 	}
 
 	public function destroy($id)
