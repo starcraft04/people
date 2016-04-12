@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <div class="row">
-        <div class="col-md col-md-offset-1">
+        <div class="col-md">
             <div class="panel panel-default">
                 <div class="panel-heading">Employees list</div>
 
@@ -18,9 +18,9 @@
                 			<table class="table">
                 				<thead>
                 					<tr>
-                						<th>Employee name</th>
-                                        <th>Manager name</th>
-                                        <th>Is manager</th>
+                						<th class="col-md-3">Employee name</th>
+                                        <th class="col-md-3">Manager name</th>
+                                        <th class="col-md-1 col-md-offset-2">Is manager</th>
                 						<th class="col-md-1"></th>
                 						<th class="col-md-1"></th>
                 						<th class="col-md-1">{!! link_to_route('employee.create', 'New', [], ['class' => 'btn btn-info pull-right']) !!}</th>
@@ -31,9 +31,9 @@
                     					@foreach ($employees as $employee)
                                             <?php if ($employee->id == 1){continue;}; ?>
                     						<tr>
-                    							<td class="text-primary"><strong>{!! $employee->first_name." ".$employee->last_name !!}</strong></td>
-                                                <td class="text-primary">{!! $employee->manager_first_name." ".$employee->manager_last_name !!}</td>
-                                                <td class="text-primary">{!! $employee->is_manager !!}</td>
+                    							<td class="text-primary"><strong>{!! $employee->name !!}</strong></td>
+                                                <td class="text-primary">{!! $employee->manager_name !!}</td>
+                                                <td class="text-primary"><?php if($employee->is_manager == 1){echo 'yes';}else{echo 'no';} ?></td>
                     							<td>{!! link_to_route('employee.show', 'Info', [$employee->id], ['class' => 'btn btn-success btn-block btn-xs']) !!}</td>
                     							<td>{!! link_to_route('employee.edit', 'Modify', [$employee->id], ['class' => 'btn btn-warning btn-block btn-xs']) !!}</td>
                     							<td>

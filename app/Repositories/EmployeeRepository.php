@@ -16,8 +16,7 @@ class EmployeeRepository
 
 	private function save(Employee $employee, Array $inputs)
 	{
-		$employee->first_name = $inputs['first_name'];
-        $employee->last_name = $inputs['last_name'];
+		$employee->name = $inputs['name'];
 		$employee->manager_id = $inputs['manager_id'];
         $employee->is_manager = isset($inputs['is_manager']);
 		$employee->save();
@@ -60,7 +59,7 @@ class EmployeeRepository
 		$result = Array();
 		foreach ($managers as $manager)
 		{
-			$result[$manager->id] = $manager->first_name . ' ' . $manager->last_name;
+			$result[$manager->id] = $manager->name;
 		}
         return $result;
 	}

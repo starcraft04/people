@@ -26,7 +26,7 @@ class EmployeeUpdateRequest extends Request
 		$id = $this->id;
 		
         return [
-			'first_name' => 'required|max:255|unique:employees,first_name,' . $id,
+			'name' => 'required|max:255|unique:employees,name,' . $id,
 			'manager_id' => 'max:10'
         ];
     }

@@ -10,8 +10,7 @@ class CreateEmployeesTable extends Migration {
 		Schema::create('employees', function(Blueprint $table) {
 			$table->increments('id');
 			$table->timestamps();
-			$table->string('first_name', 60);
-			$table->string('last_name', 60);
+			$table->string('name', 60)->unique();
 			$table->integer('manager_id')->unsigned()->nullable();
 			$table->boolean('is_manager')->nullable();
 		});
