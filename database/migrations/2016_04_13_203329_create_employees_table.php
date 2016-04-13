@@ -13,6 +13,7 @@ class CreateEmployeesTable extends Migration {
 			$table->string('name', 60)->unique();
 			$table->integer('manager_id')->unsigned()->nullable();
 			$table->boolean('is_manager')->nullable();
+			$table->boolean('from_otl')->nullable();
 		});
 	}
 

@@ -3,8 +3,9 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
-class Projects extends Model {
+class Project extends Model {
 
 	protected $table = 'projects';
 	public $timestamps = true;
@@ -13,5 +14,10 @@ class Projects extends Model {
 	{
 		return $this->hasMany('Activities');
 	}
-
+	public function projectTablePaginate($n)
+    {
+        return DB::table('projects AS E')
+            ->select('*')
+            ->paginate($n);
+    }
 }

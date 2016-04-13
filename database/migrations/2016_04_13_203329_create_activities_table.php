@@ -15,6 +15,7 @@ class CreateActivitiesTable extends Migration {
 			$table->string('month', 10)->unique();
 			$table->integer('project_id')->unsigned();
 			$table->integer('task_hours');
+			$table->boolean('from_otl')->nullable();
 			$table->integer('employee_id')->unique()->unsigned();
 		});
 	}
