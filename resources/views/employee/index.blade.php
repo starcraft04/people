@@ -32,7 +32,7 @@
                                             <?php if ($oneemployee->id == 1){continue;}; ?>
                     						<tr>
                     							<td class="text-primary"><strong>{!! $oneemployee->name !!}</strong></td>
-                                                <td class="text-primary">{!! $oneemployee->manager_name !!}</td>
+                                                <td class="text-primary">{!! $oneemployee->manager->name !!}</td>
                                                 <td class="text-primary"><?php if($oneemployee->is_manager == 1){echo 'yes';}else{echo 'no';} ?></td>
                     							<td>{!! link_to_route('employee.show', 'Info', [$oneemployee->id], ['class' => 'btn btn-success btn-block btn-xs']) !!}</td>
                     							<td>{!! link_to_route('employee.edit', 'Modify', [$oneemployee->id], ['class' => 'btn btn-warning btn-block btn-xs']) !!}</td>

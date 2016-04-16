@@ -17,13 +17,6 @@ class Employee extends Model {
 	}
 	public function manager()
 	{
-		return $this->hasOne('App\Employee','id');
+		return $this->hasOne('App\Employee','id','manager_id');
 	}
-	public function employeeTablePaginate($n)
-    {
-        return DB::table('employee AS E')
-            ->select('E.id AS id','E.name AS name','E.manager_id AS manager_id','E.is_manager AS is_manager','M.name AS manager_name')
-            ->join('employee AS M', 'E.manager_id', '=', 'M.id')
-            ->paginate($n);
-    }
 }

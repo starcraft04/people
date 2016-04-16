@@ -24,7 +24,8 @@ class EmployeeRepository
 
 	public function getPaginate($n)
 	{
-		return $this->employee->employeeTablePaginate($n);
+        $employee_list = Employee::with('manager');
+		return $employee_list->paginate($n);
 	}
 
 	public function store(Array $inputs)
