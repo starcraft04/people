@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-md">
             <div class="panel panel-default">
-                <div class="panel-heading">Employees list</div>
+                <div class="panel-heading">Projects list</div>
 
                 <div class="panel-body">
                     <br>
@@ -18,26 +18,25 @@
                 			<table class="table">
                 				<thead>
                 					<tr>
-                						<th class="col-md-3">Employee name</th>
-                                        <th class="col-md-3">Manager name</th>
-                                        <th class="col-md-1 col-md-offset-2">Is manager</th>
+                						<th class="col-md-3">Customer name</th>
+                                        <th class="col-md-3">Project name</th>
+                                        <th class="col-md-3">Task name</th>
                 						<th class="col-md-1"></th>
                 						<th class="col-md-1"></th>
-                						<th class="col-md-1">{!! link_to_route('employee.create', 'New', [], ['class' => 'btn btn-info pull-right']) !!}</th>
+                						<th class="col-md-1">{!! link_to_route('project.create', 'New', [], ['class' => 'btn btn-info pull-right']) !!}</th>
                 					</tr>
                 				</thead>
                 				<tbody>
 
-                    					@foreach ($employees as $employee)
-                                            <?php if ($employee->id == 1){continue;}; ?>
+                    					@foreach ($project as $oneproject)
                     						<tr>
-                    							<td class="text-primary"><strong>{!! $employee->name !!}</strong></td>
-                                                <td class="text-primary">{!! $employee->manager_name !!}</td>
-                                                <td class="text-primary"><?php if($employee->is_manager == 1){echo 'yes';}else{echo 'no';} ?></td>
-                    							<td>{!! link_to_route('employee.show', 'Info', [$employee->id], ['class' => 'btn btn-success btn-block btn-xs']) !!}</td>
-                    							<td>{!! link_to_route('employee.edit', 'Modify', [$employee->id], ['class' => 'btn btn-warning btn-block btn-xs']) !!}</td>
+                    							<td class="text-primary"><strong>{!! $oneproject->customer_name !!}</strong></td>
+                                                <td class="text-primary">{!! $oneproject->project_name !!}</td>
+                                                <td class="text-primary">{!! $oneproject->task_name !!}</td>
+                    							<td>{!! link_to_route('project.show', 'Info', [$oneproject->id], ['class' => 'btn btn-success btn-block btn-xs']) !!}</td>
+                    							<td>{!! link_to_route('project.edit', 'Modify', [$oneproject->id], ['class' => 'btn btn-warning btn-block btn-xs']) !!}</td>
                     							<td>
-                    								{!! Form::open(['method' => 'DELETE', 'route' => ['employee.destroy', $employee->id]]) !!}
+                    								{!! Form::open(['method' => 'DELETE', 'route' => ['project.destroy', $oneproject->id]]) !!}
                     									{!! Form::submit('Delete', ['class' => 'btn btn-danger btn-block btn-xs', 'onclick' => 'return confirm(\'Are you sure you want to delete ?\')']) !!}
                     								{!! Form::close() !!}
                     							</td>

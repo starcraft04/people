@@ -3,11 +3,11 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateEmployeesTable extends Migration {
+class CreateEmployeeTable extends Migration {
 
 	public function up()
 	{
-		Schema::create('employees', function(Blueprint $table) {
+		Schema::create('employee', function(Blueprint $table) {
 			$table->increments('id');
 			$table->timestamps();
 			$table->string('name', 60)->unique();
@@ -19,6 +19,6 @@ class CreateEmployeesTable extends Migration {
 
 	public function down()
 	{
-		Schema::drop('employees');
+		Schema::drop('employee');
 	}
 }

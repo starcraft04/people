@@ -28,7 +28,7 @@ class ProjectCreateRequest extends Request
 		return [
 			'customer_name' => 'required|max:255',
             'project_name' => 'required|max:255',
-            'task_name' => 'required|max:255|unique:projects,task_name,NULL,id,customer_name,'.$customer_name.',project_name,'.$project_name
+            'task_name' => 'required|max:255|unique:project,task_name,NULL,id,customer_name,'.$customer_name.',project_name,'.$project_name
 		];
     }
 }

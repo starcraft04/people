@@ -24,7 +24,7 @@ class EmployeeCreateRequest extends Request
     public function rules()
     {
 		return [
-			'name' => 'required|max:255|unique:employees',
+			'name' => 'required|max:255|unique:employee',
 			'manager_id' => 'max:10'
 		];
     }

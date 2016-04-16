@@ -22,16 +22,16 @@ class EmployeeController extends Controller {
 	}
 	public function index()
 	{
-		$employees = $this->employeeRepository->getPaginate($this->nbrPerPage);
-		$links = $employees->setPath('')->render();
-		return view('employees/index', compact('employees', 'links'));
+		$employee = $this->employeeRepository->getPaginate($this->nbrPerPage);
+		$links = $employee->setPath('')->render();
+		return view('employee/index', compact('employee', 'links'));
 	}
 
 	public function create()
 	{
-		$manager_list = $this->employeeRepository->getAllManagersList();
+		$manager_list = Employee::where('is_manager', '=','1')->lists('name','id');
 		//\Debugbar::info($manager_list);
-		return view('employees/create')->with('manager_list',$manager_list);
+		return view('employee/create', compact('manager_list'));
 	}
 
 	public function store(EmployeeCreateRequest $request)
@@ -44,18 +44,18 @@ class EmployeeController extends Controller {
 	public function show(Employee $managers, $id)
 	{
 		$employee = $this->employeeRepository->getById($id);
-		$manager_name = $managers::find($employee->manager_id)->manager->name;
+		$manager_name = $managers::find(1)->manager->name;
 		//\Debugbar::info($manager);
 
-		return view('employees/show',  compact('employee'))->with('manager_name',$manager_name);
+		return view('employee/show',  compact('employee','manager_name'));
 	}
 
 	public function edit($id)
 	{
 		$employee = $this->employeeRepository->getById($id);
         //\Debugbar::info($employee->is_manager);
-        $manager_list = $this->employeeRepository->getAllManagersList();
-		return view('employees/edit',  compact('employee'))->with('manager_list',$manager_list);
+        $manager_list = Employee::where('is_manager', '=','1')->lists('name','id');
+		return view('employee/edit',  compact('employee','manager_list'));
 	}
 
 	public function update(EmployeeUpdateRequest $request, $id)

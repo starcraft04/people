@@ -20,3 +20,4 @@ Route::get('/', function () {
 Route::get('/home', 'HomeController@index');
 Route::resource('employee', 'EmployeeController');
 Route::resource('project', 'ProjectController');
+Route::resource('activity', 'ActivityController');

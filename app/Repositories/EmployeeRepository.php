@@ -24,8 +24,7 @@ class EmployeeRepository
 
 	public function getPaginate($n)
 	{
-        $employee = new Employee;
-		return $employee->employeeTablePaginate($n);
+		return $this->employee->employeeTablePaginate($n);
 	}
 
 	public function store(Array $inputs)
@@ -50,17 +49,5 @@ class EmployeeRepository
 	public function destroy($id)
 	{
 		$this->getById($id)->delete();
-	}
-    
-	public function getAllManagersList()
-	{
-        $employee = new Employee;
-        $managers = $employee->getAllManagers();
-		$result = Array();
-		foreach ($managers as $manager)
-		{
-			$result[$manager->id] = $manager->name;
-		}
-        return $result;
-	}
+	} 
 }

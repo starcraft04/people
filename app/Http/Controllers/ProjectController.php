@@ -22,14 +22,14 @@ class ProjectController extends Controller {
 	}
 	public function index()
 	{
-		$projects = $this->projectRepository->getPaginate($this->nbrPerPage);
-		$links = $projects->setPath('')->render();
-		return view('projects/index', compact('projects', 'links'));
+		$project = $this->projectRepository->getPaginate($this->nbrPerPage);
+		$links = $project->setPath('')->render();
+		return view('project/index', compact('project', 'links'));
 	}
 
 	public function create()
 	{
-		return view('projects/create');
+		return view('project/create');
 	}
 
 	public function store(ProjectCreateRequest $request)
@@ -44,13 +44,13 @@ class ProjectController extends Controller {
 	public function show($id)
 	{
 		$project = $this->projectRepository->getById($id);
-		return view('projects/show',  compact('project'));
+		return view('project/show',  compact('project'));
 	}
 
 	public function edit($id)
 	{
 		$project = $this->projectRepository->getById($id);
-		return view('projects/edit',  compact('project'));
+		return view('project/edit',  compact('project'));
 	}
 
 	public function update(ProjectUpdateRequest $request, $id)

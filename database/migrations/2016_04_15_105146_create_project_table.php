@@ -3,11 +3,11 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateProjectsTable extends Migration {
+class CreateProjectTable extends Migration {
 
 	public function up()
 	{
-		Schema::create('projects', function(Blueprint $table) {
+		Schema::create('project', function(Blueprint $table) {
 			$table->increments('id');
 			$table->timestamps();
 			$table->string('customer_name', 255);
@@ -15,12 +15,12 @@ class CreateProjectsTable extends Migration {
 			$table->string('task_name', 255);
 			$table->boolean('from_otl')->nullable();
             $table->unique(['customer_name', 'project_name', 'task_name']);
-		});
+        });
         //DB::statement('ALTER TABLE projects MODIFY guestid INTEGER NOT NULL AUTO_INCREMENT');
 	}
 
 	public function down()
 	{
-		Schema::drop('projects');
+		Schema::drop('project');
 	}
 }

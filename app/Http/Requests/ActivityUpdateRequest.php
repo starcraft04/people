@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use App\Http\Requests\Request;
 
-class EmployeeUpdateRequest extends Request
+class ActivityUpdateRequest extends Request
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,11 +23,13 @@ class EmployeeUpdateRequest extends Request
      */
     public function rules()
     {
-		$id = $this->id;
-		
         return [
-			'name' => 'required|max:255|unique:employee,name,' . $id,
-			'manager_id' => 'max:10'
+			'meta_activity' => 'required|max:255',
+            'year' => 'required|max:4',
+            'month' => 'required|max:255',
+            'project_id' => 'required|max:255',
+            'task_hour' => 'required|max:255',
+			'employee_id' => 'required|max:255'
         ];
     }
 }

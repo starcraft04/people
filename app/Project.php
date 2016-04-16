@@ -7,17 +7,22 @@ use DB;
 
 class Project extends Model {
 
-	protected $table = 'projects';
+	protected $table = 'project';
 	public $timestamps = true;
-
-	public function activities()
+    protected $fillable = array('customer_name', 'project_name', 'task_name', 'from_otl');
+    
+	public function activity()
 	{
-		return $this->hasMany('Activities');
+		return $this->hasMany('App\Activity');
 	}
 	public function projectTablePaginate($n)
     {
-        return DB::table('projects AS E')
+        return DB::table('project')
             ->select('*')
             ->paginate($n);
+    }
+    public function getFullNameAttribute()
+    {
+        return $this->customer_name . "-" . $this->project_name . "-" . $this->task_name;
     }
 }
