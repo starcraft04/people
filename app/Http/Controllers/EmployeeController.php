@@ -24,6 +24,7 @@ class EmployeeController extends Controller {
 	{
 		$employee = $this->employeeRepository->getPaginate($this->nbrPerPage);
 		$links = $employee->setPath('')->render();
+        
 		return view('employee/index', compact('employee', 'links'));
 	}
 

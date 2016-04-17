@@ -29,7 +29,6 @@
                 				<tbody>
 
                     					@foreach ($employee as $oneemployee)
-                                            <?php if ($oneemployee->id == 1){continue;}; ?>
                     						<tr>
                     							<td class="text-primary"><strong>{!! $oneemployee->name !!}</strong></td>
                                                 <td class="text-primary">{!! $oneemployee->manager->name !!}</td>
