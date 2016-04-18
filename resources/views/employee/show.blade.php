@@ -8,7 +8,7 @@
                 <div class="panel-heading">Employee info</div>
                 <div class="panel-body">
 				<p>Name : {{ $employee->name }}</p>
-				<p>Manager : {{ $manager_name }}</p>
+				<p>Manager : {{ $employee->manager->name }}</p>
                 </div>
             </div>
             <a href="javascript:history.back()" class="btn btn-primary">

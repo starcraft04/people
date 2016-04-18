@@ -24,13 +24,12 @@ class EmployeeController extends Controller {
 	{
 		$employee = $this->employeeRepository->getPaginate($this->nbrPerPage);
 		$links = $employee->setPath('')->render();
-        
 		return view('employee/index', compact('employee', 'links'));
 	}
 
 	public function create()
 	{
-		$manager_list = Employee::where('is_manager', '=','1')->lists('name','id');
+		$manager_list = $this->employeeRepository->getManagersList();
 		//\Debugbar::info($manager_list);
 		return view('employee/create', compact('manager_list'));
 	}
@@ -39,23 +38,20 @@ class EmployeeController extends Controller {
 	{
 		$employee = $this->employeeRepository->store($request->all());
 
-		return redirect('employee')->withOk("The employee " . $employee->name . " has been created.");
+		return redirect('employee')
+            ->withOk("The employee " . $employee->name . " has been created.");
 	}
 
-	public function show(Employee $managers, $id)
+	public function show($id)
 	{
 		$employee = $this->employeeRepository->getById($id);
-		$manager_name = $managers::find(1)->manager->name;
-		//\Debugbar::info($manager);
-
-		return view('employee/show',  compact('employee','manager_name'));
+		return view('employee/show',  compact('employee'));
 	}
 
 	public function edit($id)
 	{
 		$employee = $this->employeeRepository->getById($id);
-        //\Debugbar::info($employee->is_manager);
-        $manager_list = Employee::where('is_manager', '=','1')->lists('name','id');
+        $manager_list = $this->employeeRepository->getManagersList();
 		return view('employee/edit',  compact('employee','manager_list'));
 	}
 

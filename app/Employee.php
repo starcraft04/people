@@ -9,7 +9,7 @@ class Employee extends Model {
 
 	protected $table = 'employee';
 	public $timestamps = true;
-    protected $fillable = array('name', 'manager_id', 'is_manager', 'from_otl');
+    protected $guarded = array('id');
     protected $hidden = ['created_at','updated_at'];
 
 	public function activity()

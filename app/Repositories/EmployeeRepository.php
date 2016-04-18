@@ -24,10 +24,15 @@ class EmployeeRepository
 
 	public function getPaginate($n)
 	{
-        $employee_list = Employee::with('manager')->where('name', '!=', 'MANAGER');
+        $employee_list = $this->employee->with('manager')->where('name', '!=', 'MANAGER');
         return $employee_list->paginate($n);
 	}
-
+	public function getManagersList()
+	{
+        $manager_list = $this->employee->where('is_manager', '=','1')->lists('name','id');
+        return $manager_list;
+	}
+    
 	public function store(Array $inputs)
 	{
 		$employee = new $this->employee;		

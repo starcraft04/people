@@ -36,7 +36,7 @@ class ProjectController extends Controller {
 	{
         
 		$project = $this->projectRepository->store($request->all());
-        \Debugbar::info('test');
+
 		return redirect('project')
             ->withOk("The project " . $project->customer_name . "-" . $project->project_name . "-" . $project->task_name . " has been created.");
 	}
