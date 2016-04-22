@@ -158,6 +158,7 @@ return [
 		Collective\Html\HtmlServiceProvider::class,
 		Bestmomo\NiceArtisan\NiceArtisanServiceProvider::class,
 		Barryvdh\Debugbar\ServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
     ],
 
     /*
@@ -206,6 +207,7 @@ return [
 		'Form'  => Collective\Html\FormFacade::class,
 		'Html'  => Collective\Html\HtmlFacade::class,
 		'Debugbar' => Barryvdh\Debugbar\Facade::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
     ],
 
 ];
