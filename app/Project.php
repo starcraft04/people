@@ -3,26 +3,26 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use DB;
 
 class Project extends Model {
 
 	protected $table = 'project';
 	public $timestamps = true;
-    protected $fillable = array('customer_name', 'project_name', 'task_name', 'from_otl');
-    
+	protected $fillable = array('customer_name', 'project_name', 'task_name', 'from_otl', 'project_type', 'task_category', 'meta_activity', 'region', 'country');
+
 	public function activity()
 	{
-		return $this->hasMany('App\Activity');
+		return $this->hasMany('Activity');
 	}
-	public function projectTablePaginate($n)
-    {
-        return DB::table('project')
-            ->select('*')
-            ->paginate($n);
-    }
-    public function getFullNameAttribute()
-    {
-        return $this->customer_name . "-" . $this->project_name . "-" . $this->task_name;
-    }
+
+	public function goldOrder()
+	{
+		return $this->hasMany('GoldOrder');
+	}
+
+	public function teamTask()
+	{
+		return $this->hasMany('TeamTask');
+	}
+
 }

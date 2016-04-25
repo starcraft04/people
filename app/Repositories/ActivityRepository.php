@@ -16,10 +16,15 @@ class ActivityRepository
 
 	private function save(Activity $activity, Array $inputs)
 	{
-		$activity->name = $inputs['name'];
-		$activity->manager_id = $inputs['manager_id'];
-        $activity->is_manager = isset($inputs['is_manager']);
+		$activity->year = $inputs['year'];
+        $activity->month = $inputs['month'];
+        $activity->project_id = $inputs['project_id'];
+        $activity->employee_id = $inputs['employee_id'];
+        $activity->task_hour = $inputs['task_hour'];
+        // Boolean
+        $activity->from_otl = isset($inputs['from_otl']);
 		$activity->save();
+        return $activity;
 	}
 
 	public function getPaginate($n)
@@ -46,9 +51,43 @@ class ActivityRepository
 	{
 		$this->save($this->getById($id), $inputs);
 	}
-
+    
+    public function createIfNotFound(Array $inputs)
+	{
+        $activity = $this->activity
+            ->where('year', $inputs['year'])
+            ->where('month', $inputs['month'])
+            ->where('project_id', $inputs['project_id'])
+            ->where('employee_id', $inputs['employee_id'])
+            ->first();
+        
+        if (isset($activity)){
+            return $activity;
+        }
+        else{
+            return $this->store($inputs);
+        }
+	}
+    
+    public function createOrUpdate(Array $inputs)
+	{
+        $activity = $this->activity
+            ->where('year', $inputs['year'])
+            ->where('month', $inputs['month'])
+            ->where('project_id', $inputs['project_id'])
+            ->where('employee_id', $inputs['employee_id'])
+            ->first();
+        
+        if (isset($activity)){
+            return $this->save($activity, $inputs);
+        }
+        else{
+            return $this->store($inputs);
+        }
+	}
+    
 	public function destroy($id)
 	{
 		$this->getById($id)->delete();
 	}
-    }
+}

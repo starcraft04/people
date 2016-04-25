@@ -10,16 +10,15 @@ class CreateActivityTable extends Migration {
 		Schema::create('activity', function(Blueprint $table) {
 			$table->increments('id');
 			$table->timestamps();
-			$table->string('meta_activity', 255)->unique();
-			$table->integer('year')->unique();
-			$table->string('month', 10)->unique();
+			$table->integer('year');
+			$table->string('month', 10);
 			$table->integer('project_id')->unsigned();
 			$table->float('task_hour');
 			$table->boolean('from_otl')->nullable();
-			$table->integer('employee_id')->unique()->unsigned();
-            $table->unique(['employee_id', 'project_id', 'year', 'month', 'meta_activity']);
+			$table->integer('employee_id')->unsigned();
 		});
-	}
+        DB::statement("ALTER TABLE `activity` ADD UNIQUE( `year`, `month`, `project_id`, `employee_id`);");
+    }
 
 	public function down()
 	{

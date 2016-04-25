@@ -21,3 +21,4 @@ Route::get('home', 'HomeController@index');
 Route::resource('employee', 'EmployeeController');
 
 Route::controller('otlupload', 'OtlUploadController');
+Route::controller('stepupload', 'StepUploadController');
