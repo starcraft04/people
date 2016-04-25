@@ -13,12 +13,20 @@
 
 Route::auth();
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', ['as' => 'home', function () {
+    $position = ['main_title'=>'Home','second_title'=>'',
+                 'urls'=>
+                    [
+                        ['name'=>'home','url'=>'#']
+                    ]
+                ];
+    return view('home')->with('position',$position);
+}]);
 
-Route::get('home', 'HomeController@index');
-Route::resource('employee', 'EmployeeController');
+//OTL
+Route::get('otlupload', ['uses'=>'OtlUploadController@getForm','as'=>'otluploadform']);
+Route::post('otlupload', ['uses'=>'OtlUploadController@postForm','as'=>'otlupload']);
 
-Route::controller('otlupload', 'OtlUploadController');
-Route::controller('stepupload', 'StepUploadController');
+//STEP
+Route::get('stepupload', ['uses'=>'StepUploadController@getForm','as'=>'stepuploadform']);
+Route::post('stepupload', ['uses'=>'StepUploadController@postForm','as'=>'stepupload']);

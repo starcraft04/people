@@ -18,7 +18,15 @@ class StepUploadController extends Controller
 
     public function getForm()
 	{
-		return view('stepupload');
+        $position = ['main_title'=>'Upload STEP file','second_title'=>'to feed database',
+             'urls'=>
+                [
+                    ['name'=>'home','url'=>route('home')],
+                    ['name'=>'upload step','url'=>'#']
+                ]
+            ];
+
+		return view('stepupload')->with('position',$position);
 	}
 
 	public function postForm(StepUploadRequest $request)
@@ -83,10 +91,10 @@ class StepUploadController extends Controller
                 $skill = $this->skillRepository->createOrUpdate($skill);    
             };
 
-            return redirect('stepupload/form')->with('ok','File uploaded !')->with('results',$results);
+            return redirect('stepupload')->with('ok','File uploaded !')->with('results',$results);
 		}
 
-		return redirect('stepupload/form')
+		return redirect('stepupload')
 			->with('error','Sorry, your file cannot be uploaded !');
 	}
 
