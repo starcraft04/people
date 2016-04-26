@@ -90,4 +90,57 @@ class ActivityRepository
 	{
 		$this->getById($id)->delete();
 	}
+    
+    public function getActivityPerEmployeeLaravelWay()
+	{
+        $activity = $this->activity
+            ->groupBy('employee_id','month')
+            ->select(['employee_id','month',\DB::raw('SUM(task_hour) as sum_task_hour')])
+            ->with(['employee' => function($query)
+                {
+                    $query->addSelect(array('id', 'name'));
+                }])
+            ->get();
+            
+        return $activity;
+	}
+    public function getActivityPerEmployee($employee_id,$month)
+	{
+        $activity = \DB::table('activity')
+            ->groupBy('employee_id','month')
+            ->select(['employee_id','E.name AS employee_name','month',\DB::raw('SUM(task_hour) as sum_task_hour')])
+            ->havingRaw('SUM(task_hour) > 0')
+            ->join('employee AS E', 'employee_id', '=', 'E.id');
+        if ($employee_id != 'all')
+        {
+            $activity->where('employee_id',$employee_id);
+        }
+        if ($month != 'all')
+        {
+            $activity->where('month',$month);
+        }
+            
+        return $activity;
+	}
+    
+    public function getActivityPerProject($employee_id,$month)
+	{
+        $activity = \DB::table('activity')
+            ->groupBy('project_id','month')
+            ->select(['project_id','P.customer_name AS customer_name','P.project_name AS project_name','P.meta_activity AS meta_activity','employee_id','E.name AS employee_name','month',\DB::raw('SUM(task_hour) as sum_task_hour')])
+            ->havingRaw('SUM(task_hour) > 0')
+            ->join('employee AS E', 'employee_id', '=', 'E.id')
+            ->join('project AS P', 'project_id', '=', 'P.id');
+        
+        if ($employee_id != 'all')
+        {
+            $activity->where('employee_id',$employee_id);
+        }
+        if ($month != 'all')
+        {
+            $activity->where('month',$month);
+        }
+            
+        return $activity;
+	}
 }

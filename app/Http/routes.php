@@ -30,3 +30,11 @@ Route::post('otlupload', ['uses'=>'OtlUploadController@postForm','as'=>'otluploa
 //STEP
 Route::get('stepupload', ['uses'=>'StepUploadController@getForm','as'=>'stepuploadform']);
 Route::post('stepupload', ['uses'=>'StepUploadController@postForm','as'=>'stepupload']);
+
+//Employee activity
+Route::get('employeeactivity', ['uses'=>'EmployeeActivityController@getView','as'=>'employeeactivity']);
+
+//AJAX
+//Activity per employee
+Route::get('activityperemployee/employee_id/{employee_id}/month/{month}', ['uses'=>'Ajax\ActivityAjaxController@getActivityPerEmployee','as'=>'ajaxactivityperemployee']);
+Route::get('activityperproject/employee_id/{employee_id}/month/{month}', ['uses'=>'Ajax\ActivityAjaxController@getActivityPerProject','as'=>'ajaxactivityperproject']);

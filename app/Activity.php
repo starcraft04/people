@@ -12,12 +12,12 @@ class Activity extends Model {
 
 	public function employee()
 	{
-		return $this->belongsToMany('Employee');
+		return $this->belongsTo('App\Employee');
 	}
 
 	public function project()
 	{
-		return $this->belongsTo('Project');
+		return $this->belongsTo('App\Project');
 	}
 
 }

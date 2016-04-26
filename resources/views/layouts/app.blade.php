@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>AdminLTE 2 | Dashboard</title>
+    <title>People | Dashboard</title>
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
     <!-- Bootstrap 3.3.2 -->
     <link href="{{ asset('/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />    
@@ -19,8 +19,7 @@
     <link href="{{ asset('/plugins/iCheck/flat/blue.css') }}" rel="stylesheet" type="text/css" />
     <!-- Date Picker -->
     <link href="{{ asset('/plugins/datepicker/datepicker3.css') }}" rel="stylesheet" type="text/css" />
-    <!-- Select2 -->
-    <link href="{{ asset('/plugins/select2/select2.min.css') }}" rel="stylesheet" type="text/css" />
+    @yield('style')
 
     <title>People</title>
     
@@ -81,13 +80,7 @@
     <script src="{{ asset('/plugins/fastclick/fastclick.min.js') }}"></script>
     <!-- AdminLTE App -->
     <script src="{{ asset('/dist/js/app.min.js') }}" type="text/javascript"></script>
-    <!-- Select2 -->
-    <script src="{{ asset('/plugins/select2/select2.full.min.js') }}" type="text/javascript"></script>
-    <script>
-        $(function () {
-            //Initialize Select2 Elements
-            $(".select2").select2();
-        });
-    </script> 
+    @yield('script')
 </body>
 </html>
+
