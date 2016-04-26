@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Ajax;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\ActivityRepository;
+use Illuminate\Http\Request;
 use Datatables;
 
 class ActivityAjaxController extends Controller 
@@ -15,17 +16,36 @@ class ActivityAjaxController extends Controller
         $this->activityRepository = $activityRepository;
 	}
 
-	public function getActivityPerEmployee($employee_id,$month)
+/*	public function getActivityPerEmployee()
 	{
-        $return = $this->activityRepository->getActivityPerEmployee($employee_id,$month);
+        $return = $this->activityRepository->getActivityPerEmployee();
+        $data = Datatables::of($return)->make(true);
+		return $data;
+	}*/
+	public function getActivityPerEmployee()
+	{
+        $return = $this->activityRepository->getActivityPerEmployee();
         $data = Datatables::of($return)->make(true);
 		return $data;
 	}
-	public function getActivityPerProject($employee_id,$month)
+	public function getActivityPerProject()
 	{
-        $return = $this->activityRepository->getActivityPerProject($employee_id,$month);
+        $return = $this->activityRepository->getActivityPerProject();
         $data = Datatables::of($return)->make(true);
 		return $data;
 	}
-
+    public function postActivityPerEmployee(Request $request)
+	{
+        $input = $request->all();
+        $return = $this->activityRepository->getActivityPerEmployee($input);
+        $data = Datatables::of($return)->make(true);
+		return $data;
+	}
+    public function postActivityPerProject(Request $request)
+	{
+        $input = $request->all();
+        $return = $this->activityRepository->getActivityPerProject($input);
+        $data = Datatables::of($return)->make(true);
+		return $data;
+	}
 }

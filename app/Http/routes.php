@@ -36,5 +36,7 @@ Route::get('employeeactivity', ['uses'=>'EmployeeActivityController@getView','as
 
 //AJAX
 //Activity per employee
-Route::get('activityperemployee/employee_id/{employee_id}/month/{month}', ['uses'=>'Ajax\ActivityAjaxController@getActivityPerEmployee','as'=>'ajaxactivityperemployee']);
-Route::get('activityperproject/employee_id/{employee_id}/month/{month}', ['uses'=>'Ajax\ActivityAjaxController@getActivityPerProject','as'=>'ajaxactivityperproject']);
+Route::get('activityperemployee', ['uses'=>'Ajax\ActivityAjaxController@getActivityPerEmployee','as'=>'ajaxactivityperemployee']);
+Route::get('activityperproject', ['uses'=>'Ajax\ActivityAjaxController@getActivityPerProject','as'=>'ajaxactivityperproject']);
+Route::post('activityperemployee', ['uses'=>'Ajax\ActivityAjaxController@postActivityPerEmployee']);
+Route::post('activityperproject', ['uses'=>'Ajax\ActivityAjaxController@postActivityPerProject']);

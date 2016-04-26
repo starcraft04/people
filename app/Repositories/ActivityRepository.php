@@ -104,43 +104,112 @@ class ActivityRepository
             
         return $activity;
 	}
-    public function getActivityPerEmployee($employee_id,$month)
+    public function getActivityPerEmployee($where = null)
 	{
+        /*
+        $where should be an array of array in the form of
+        $where['employee_id'][0] ... [1] ...
+        */
         $activity = \DB::table('activity')
             ->groupBy('employee_id','month')
-            ->select(['employee_id','E.name AS employee_name','month',\DB::raw('SUM(task_hour) as sum_task_hour')])
+            ->select(['employee_id','E.name AS employee_name','month',\DB::raw('SUM(task_hour) as sum_task_hour'),'E.domain AS domain','E.subdomain AS subdomain','E.job_role AS job_role'])
             ->havingRaw('SUM(task_hour) > 0')
             ->join('employee AS E', 'employee_id', '=', 'E.id');
-        if ($employee_id != 'all')
+
+        if (!empty($where['domain']))
         {
-            $activity->where('employee_id',$employee_id);
+            $activity->where(function ($query) use ($where) {
+                foreach ($where['domain'] as $w)
+                {
+                    $query->orWhere('E.domain',$w);
+                }
+            });
         }
-        if ($month != 'all')
+        if (!empty($where['subdomain']))
         {
-            $activity->where('month',$month);
+            $activity->where(function ($query) use ($where) {
+                foreach ($where['subdomain'] as $w)
+                {
+                    $query->orWhere('E.subdomain',$w);
+                }
+            });
         }
-            
+        if (!empty($where['job_role']))
+        {
+            $activity->where(function ($query) use ($where) {
+                foreach ($where['job_role'] as $w)
+                {
+                    $query->orWhere('E.job_role',$w);
+                }
+            });
+        }
+        if (!empty($where['month']))
+        {
+            $activity->where(function ($query) use ($where) {
+                foreach ($where['month'] as $w)
+                {
+                    $query->orWhere('month',$w);
+                }
+            });
+        }
+        
         return $activity;
 	}
     
-    public function getActivityPerProject($employee_id,$month)
+    public function getActivityPerProject($where = null)
 	{
         $activity = \DB::table('activity')
             ->groupBy('project_id','month')
-            ->select(['project_id','P.customer_name AS customer_name','P.project_name AS project_name','P.meta_activity AS meta_activity','employee_id','E.name AS employee_name','month',\DB::raw('SUM(task_hour) as sum_task_hour')])
+            ->select(['project_id','P.customer_name AS customer_name','P.project_name AS project_name','P.meta_activity AS meta_activity','employee_id','E.name AS employee_name','month',\DB::raw('SUM(task_hour) as sum_task_hour'),'E.domain AS domain','E.subdomain AS subdomain','E.job_role AS job_role'])
             ->havingRaw('SUM(task_hour) > 0')
             ->join('employee AS E', 'employee_id', '=', 'E.id')
             ->join('project AS P', 'project_id', '=', 'P.id');
         
-        if ($employee_id != 'all')
+        if (!empty($where['domain']))
         {
-            $activity->where('employee_id',$employee_id);
+            $activity->where(function ($query) use ($where) {
+                foreach ($where['domain'] as $w)
+                {
+                    $query->orWhere('E.domain',$w);
+                }
+            });
         }
-        if ($month != 'all')
+        if (!empty($where['subdomain']))
         {
-            $activity->where('month',$month);
+            $activity->where(function ($query) use ($where) {
+                foreach ($where['subdomain'] as $w)
+                {
+                    $query->orWhere('E.subdomain',$w);
+                }
+            });
         }
-            
+        if (!empty($where['job_role']))
+        {
+            $activity->where(function ($query) use ($where) {
+                foreach ($where['job_role'] as $w)
+                {
+                    $query->orWhere('E.job_role',$w);
+                }
+            });
+        }
+        if (!empty($where['month']))
+        {
+            $activity->where(function ($query) use ($where) {
+                foreach ($where['month'] as $w)
+                {
+                    $query->orWhere('month',$w);
+                }
+            });
+        }
+        if (!empty($where['meta_activity']))
+        {
+            $activity->where(function ($query) use ($where) {
+                foreach ($where['meta_activity'] as $w)
+                {
+                    $query->orWhere('meta_activity',$w);
+                }
+            });
+        }        
         return $activity;
 	}
 }
