@@ -102,17 +102,18 @@
         };
 
         $(document).ready(function() {
+            
+            var domain = [];
+            var subdomain = [];
+            var job_role = ['pm','cs'];
+            var month = ['Jan'];
+            var meta_activity = ['ABS'];
+            
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-
-            var domain = [];
-            var subdomain = [];
-            var job_role = ['pm'];
-            var month = ['Jan'];
-            var meta_activity = ['BILLABLE'];
 
             $('#employeeActivityTable').DataTable({
                 ajax: {
@@ -148,20 +149,12 @@
                // Filter on the column (the index) of this element
                oTable0.fnFilterAll(this.value);
             });
-        } );
         
-        $(document).ready(function() {
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-            
-            var domain = [];
-            var subdomain = ['security'];
-            var job_role = ['pm'];
-            var month = ['Jan'];
-            var meta_activity = ['BILLABLE'];
             
             $('#projectActivityTable').DataTable( {
                 ajax: {

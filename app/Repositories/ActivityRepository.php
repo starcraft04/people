@@ -112,9 +112,10 @@ class ActivityRepository
         */
         $activity = \DB::table('activity')
             ->groupBy('employee_id','month')
-            ->select(['employee_id','E.name AS employee_name','month',\DB::raw('SUM(task_hour) as sum_task_hour'),'E.domain AS domain','E.subdomain AS subdomain','E.job_role AS job_role'])
+            ->select(['employee_id','E.name AS employee_name','month',\DB::raw('SUM(task_hour) as sum_task_hour'),'E.domain AS domain','E.subdomain AS subdomain','E.job_role AS job_role','P.meta_activity AS meta_activity'])
             ->havingRaw('SUM(task_hour) > 0')
-            ->join('employee AS E', 'employee_id', '=', 'E.id');
+            ->join('employee AS E', 'employee_id', '=', 'E.id')
+            ->join('project AS P', 'project_id', '=', 'P.id');
 
         if (!empty($where['domain']))
         {
@@ -152,6 +153,15 @@ class ActivityRepository
                 }
             });
         }
+        if (!empty($where['meta_activity']))
+        {
+            $activity->where(function ($query) use ($where) {
+                foreach ($where['meta_activity'] as $w)
+                {
+                    $query->orWhere('P.meta_activity',$w);
+                }
+            });
+        }        
         
         return $activity;
 	}
@@ -206,7 +216,7 @@ class ActivityRepository
             $activity->where(function ($query) use ($where) {
                 foreach ($where['meta_activity'] as $w)
                 {
-                    $query->orWhere('meta_activity',$w);
+                    $query->orWhere('P.meta_activity',$w);
                 }
             });
         }        
