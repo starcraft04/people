@@ -15,25 +15,7 @@ class ActivityAjaxController extends Controller
     {
         $this->activityRepository = $activityRepository;
 	}
-
-/*	public function getActivityPerEmployee()
-	{
-        $return = $this->activityRepository->getActivityPerEmployee();
-        $data = Datatables::of($return)->make(true);
-		return $data;
-	}*/
-	public function getActivityPerEmployee()
-	{
-        $return = $this->activityRepository->getActivityPerEmployee();
-        $data = Datatables::of($return)->make(true);
-		return $data;
-	}
-	public function getActivityPerProject()
-	{
-        $return = $this->activityRepository->getActivityPerProject();
-        $data = Datatables::of($return)->make(true);
-		return $data;
-	}
+    
     public function postActivityPerEmployee(Request $request)
 	{
         $input = $request->all();

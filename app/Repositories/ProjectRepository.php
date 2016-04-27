@@ -95,4 +95,8 @@ class ProjectRepository
 	{
 		$this->getById($id)->delete();
 	}
+    public function getMetaActivityList()
+	{
+        return $this->project->where('meta_activity','<>','null')->select('meta_activity AS text')->groupBy('meta_activity')->get();
+	}
 }

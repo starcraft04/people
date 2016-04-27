@@ -96,4 +96,16 @@ class EmployeeRepository
 	{
 		$this->getById($id)->delete();
 	} 
+    public function getDomainList()
+	{
+        return $this->employee->where('domain','<>','null')->select('domain AS text')->groupBy('domain')->get();
+	}
+    public function getSubDomainList()
+	{
+        return $this->employee->where('subdomain','<>','null')->select('subdomain AS text')->groupBy('subdomain')->get();
+	}
+    public function getJobRoleList()
+	{
+        return $this->employee->where('job_role','<>','null')->select('job_role AS text')->groupBy('job_role')->get();
+	}
 }

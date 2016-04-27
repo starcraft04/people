@@ -36,7 +36,10 @@ Route::get('employeeactivity', ['uses'=>'EmployeeActivityController@getView','as
 
 //AJAX
 //Activity per employee
-Route::get('activityperemployee', ['uses'=>'Ajax\ActivityAjaxController@getActivityPerEmployee','as'=>'ajaxactivityperemployee']);
-Route::get('activityperproject', ['uses'=>'Ajax\ActivityAjaxController@getActivityPerProject','as'=>'ajaxactivityperproject']);
-Route::post('activityperemployee', ['uses'=>'Ajax\ActivityAjaxController@postActivityPerEmployee']);
-Route::post('activityperproject', ['uses'=>'Ajax\ActivityAjaxController@postActivityPerProject']);
+Route::post('activityperemployee', ['uses'=>'Ajax\ActivityAjaxController@postActivityPerEmployee','as'=>'ajaxactivityperemployee']);
+Route::post('activityperproject', ['uses'=>'Ajax\ActivityAjaxController@postActivityPerProject','as'=>'ajaxactivityperproject']);
+//Lists
+Route::get('ajaxlistdomain', ['uses'=>'Ajax\AjaxListController@getAjaxListDomain','as'=>'ajaxlistdomain']);
+Route::get('ajaxlistsubdomain', ['uses'=>'Ajax\AjaxListController@getAjaxListSubDomain','as'=>'ajaxlistsubdomain']);
+Route::get('ajaxlistjobrole', ['uses'=>'Ajax\AjaxListController@getAjaxListJobRole','as'=>'ajaxlistjobrole']);
+Route::get('ajaxlistmetaactivity', ['uses'=>'Ajax\AjaxListController@getAjaxListMetaActivity','as'=>'ajaxlistmetaactivity']);
