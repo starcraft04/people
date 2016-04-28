@@ -33,6 +33,9 @@ Route::post('stepupload', ['uses'=>'StepUploadController@postForm','as'=>'stepup
 
 //Employee activity
 Route::get('employeeactivity', ['uses'=>'EmployeeActivityController@getView','as'=>'employeeactivity']);
+//Employee
+Route::get('employee', ['uses'=>'EmployeeController@index','as'=>'employee']);
+Route::get('employee/{n}', ['uses'=>'EmployeeController@show']);
 
 //AJAX
 //Activity per employee

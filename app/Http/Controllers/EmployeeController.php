@@ -22,9 +22,14 @@ class EmployeeController extends Controller {
 	}
 	public function index()
 	{
-		$employee = $this->employeeRepository->getPaginate($this->nbrPerPage);
-		$links = $employee->setPath('')->render();
-		return view('employee/index', compact('employee', 'links'));
+        $position = ['main_title'=>'Employee','second_title'=>'info',
+             'urls'=>
+                [
+                    ['name'=>'home','url'=>route('home')],
+                    ['name'=>'employee','url'=>'#']
+                ]
+            ];
+		return view('employee/index')->with('position',$position);
 	}
 
 	public function create()
@@ -44,8 +49,15 @@ class EmployeeController extends Controller {
 
 	public function show($id)
 	{
-		$employee = $this->employeeRepository->getById($id);
-		return view('employee/show',  compact('employee'));
+        $position = ['main_title'=>'Employee','second_title'=>'info',
+             'urls'=>
+                [
+                    ['name'=>'home','url'=>route('home')],
+                    ['name'=>'employee','url'=>'#']
+                ]
+            ];
+        $employee = $this->employeeRepository->getById($id);
+		return view('employee/show',  compact('employee'))->with('position',$position);
 	}
 
 	public function edit($id)

@@ -71,13 +71,17 @@
         </div>
 
         <div class="box-body">
-            <table id="employeeActivityTable" class="display" cellspacing="0" width="100%">
+            <table id="employeeActivityTable" class="display table-bordered table-hover" cellspacing="0" width="100%">
                 <thead>
                     <tr>
                         <th>Employee ID</th>
                         <th>Employee Name</th>
                         <th>Month</th>
                         <th>Hours</th>
+                        <th>Domain</th>
+                        <th>Subdomain</th>
+                        <th>Job Role</th>
+                        <th>Meta activity</th>
                     </tr>
                 </thead>
             </table>
@@ -96,7 +100,7 @@
         </div>
 
         <div class="box-body">
-            <table id="projectActivityTable" class="display" cellspacing="0" width="100%">
+            <table id="projectActivityTable" class="display table-bordered table-hover" cellspacing="0" width="100%">
                 <thead>
                     <tr>
                         <th>Project ID</th>
@@ -107,6 +111,9 @@
                         <th>Employee Name</th>
                         <th>Month</th>
                         <th>Hours</th>
+                        <th>Domain</th>
+                        <th>Subdomain</th>
+                        <th>Job Role</th>
                     </tr>
                 </thead>
             </table>
@@ -302,11 +309,15 @@
                     { data: 'employee_id', name: 'employee_id' },
                     { data: 'employee_name', name: 'employee_name' },
                     { data: 'month', name: 'month' },
-                    { data: 'sum_task_hour', name: 'sum_task_hour' }
+                    { data: 'sum_task_hour', name: 'sum_task_hour' },
+                    { data: 'domain', name: 'domain' },
+                    { data: 'subdomain', name: 'subdomain' },
+                    { data: 'job_role', name: 'job_role' },
+                    { data: 'meta_activity', name: 'meta_activity' }
                     ],
                 columnDefs: [
                     {
-                        "targets": [ 0 ],
+                        "targets": [ 0,4,5,6,7 ],
                         "visible": false,
                         "searchable": false
                     }
@@ -335,16 +346,14 @@
                     { data: 'employee_id', name: 'employee_id' },
                     { data: 'employee_name', name: 'employee_name' },
                     { data: 'month', name: 'month' },
-                    { data: 'sum_task_hour', name: 'sum_task_hour' }
+                    { data: 'sum_task_hour', name: 'sum_task_hour' },
+                    { data: 'domain', name: 'domain' },
+                    { data: 'subdomain', name: 'subdomain' },
+                    { data: 'job_role', name: 'job_role' }
                     ],
                 columnDefs: [
                     {
-                        "targets": [ 0 ],
-                        "visible": false,
-                        "searchable": false
-                    },
-                    {
-                        "targets": [ 4 ],
+                        "targets": [ 0,4,8,9,10 ],
                         "visible": false,
                         "searchable": false
                     }
@@ -357,6 +366,18 @@
                // Filter on the column (the index) of this element
                oTable1.fnFilterAll(this.value);
             });
+            
+            $('#employeeActivityTable').on( 'click', 'tr', function () {
+                var rowData = employeeActivityTable.row(this).data();
+                var employee_id = rowData.employee_id;
+                window.location.href = "{!! route('employee') !!}/"+employee_id;
+            } );
+            
+            $('#projectActivityTable').on( 'click', 'tr', function () {
+                var rowData = projectActivityTable.row(this).data();
+                var project_id = rowData.project_id;
+                console.log(project_id);
+            } );
             
         } );
     </script> 

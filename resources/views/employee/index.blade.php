@@ -1,56 +1,35 @@
 @extends('layouts.app')
 
+@section('style')
+    <!-- Select2 -->
+    <link href="{{ asset('/plugins/select2/select2.min.css') }}" rel="stylesheet" type="text/css" />
+@stop
+
 @section('content')
-<div class="container">
-    <div class="row">
-        <div class="col-md">
-            <div class="panel panel-default">
-                <div class="panel-heading">Employees list</div>
-
-                <div class="panel-body">
-                    <br>
-                    <div class="col-md">
-                      @if(session()->has('ok'))
-                      <div class="alert alert-success alert-dismissible">{!! session('ok') !!}</div>
-                      @endif
-                		<div class="panel panel-default">
-
-                			<table class="table">
-                				<thead>
-                					<tr>
-                						<th class="col-md-3">Employee name</th>
-                                        <th class="col-md-3">Manager name</th>
-                                        <th class="col-md-1 col-md-offset-2">Is manager</th>
-                						<th class="col-md-1"></th>
-                						<th class="col-md-1"></th>
-                						<th class="col-md-1">{!! link_to_route('employee.create', 'New', [], ['class' => 'btn btn-info pull-right']) !!}</th>
-                					</tr>
-                				</thead>
-                				<tbody>
-
-                    					@foreach ($employee as $oneemployee)
-                    						<tr>
-                    							<td class="text-primary"><strong>{!! $oneemployee->name !!}</strong></td>
-                                                <td class="text-primary">{!! $oneemployee->manager->name !!}</td>
-                                                <td class="text-primary"><?php if($oneemployee->is_manager == 1){echo 'yes';}else{echo 'no';} ?></td>
-                    							<td>{!! link_to_route('employee.show', 'Info', [$oneemployee->id], ['class' => 'btn btn-success btn-block btn-xs']) !!}</td>
-                    							<td>{!! link_to_route('employee.edit', 'Modify', [$oneemployee->id], ['class' => 'btn btn-warning btn-block btn-xs']) !!}</td>
-                    							<td>
-                    								{!! Form::open(['method' => 'DELETE', 'route' => ['employee.destroy', $oneemployee->id]]) !!}
-                    									{!! Form::submit('Delete', ['class' => 'btn btn-danger btn-block btn-xs', 'onclick' => 'return confirm(\'Are you sure you want to delete ?\')']) !!}
-                    								{!! Form::close() !!}
-                    							</td>
-                    						</tr>
-                    					@endforeach
-                    	  			</tbody>
-                    			</table>
-                    		</div>
-                    		{!! $links !!}
-                    	</div>
-
-                </div>
-            </div>
+    <!-- upload widget -->
+    <div class="box box-info">
+        <div class="box-header">
+            <i class="fa fa-user"></i>
+            <h3 class="box-title">Employee</h3>
+            <div class="box-tools pull-right">
+                <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            </div><!-- /.box-tools -->
+        </div>
+        <div class="box-body">
+            <p>Hello</p>
+        </div>
+        <div class="box-footer">
         </div>
     </div>
-</div>
+@stop
+
+@section('script')
+    <!-- Select2 -->
+    <script src="{{ asset('/plugins/select2/select2.full.min.js') }}" type="text/javascript"></script>
+    <script>
+        $(function () {
+            //Initialize Select2 Elements
+            $(".select2").select2();
+        });
+    </script> 
 @stop
