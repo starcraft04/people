@@ -50,7 +50,7 @@ class StepUploadController extends Controller
             foreach ($sheet as $row){
 
                 $employee = [];
-                $employee = $this->employeeRepository->getByName($row->last_name.','.$row->first_name;);
+                $employee = $this->employeeRepository->getByName($row->last_name.','.$row->first_name);
                 
                 if (!isset($employee))
                 {
@@ -61,7 +61,26 @@ class StepUploadController extends Controller
                     }
                     continue;
                 }
-
+                
+                $manager = [];
+                $manager = $this->employeeRepository->getByName($row->supervisor_name);
+             
+                if (!isset($manager))
+                {
+                    $manager = [];
+                    $manager['name'] = $row->supervisor_name;
+                    $manager['is_manager'] = true;
+                    $manager['manager_id'] = 1;
+                    $manager['from_step'] = 1;
+                    $manager = $this->employeeRepository->createIfNotFound($manager);
+                    
+                    $key = in_array($manager['name'], array_column($results, 'name'));
+                    if ($key == false)
+                    {
+                        array_push($results,['name'=>$employee['name'],'status'=>'not in database']);
+                    }
+                }
+                
                 $key = in_array($row->last_name.','.$row->first_name, array_column($results, 'name'));
                 if ($key == false)
                 {

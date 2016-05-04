@@ -37,7 +37,7 @@ class OtlUploadController extends Controller
 		if($file->isValid())
 		{
 			$chemin = config('upload.otlPath');
-
+            
 			$extension = $file->getClientOriginalExtension();
 
 			$nom = $request->input('year').$request->input('month'). '.' . $extension;

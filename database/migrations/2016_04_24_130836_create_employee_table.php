@@ -20,6 +20,7 @@ class CreateEmployeeTable extends Migration {
 			$table->string('subdomain', 100)->nullable();
 			$table->boolean('from_step')->nullable();
 			$table->string('management_code', 20)->nullable();
+            $table->string('job_role', 100)->nullable();
 		});
 	}
 
