@@ -49,35 +49,34 @@ class StepUploadController extends Controller
             
             foreach ($sheet as $row){
 
-                $manager = [];
-                $manager = $this->employeeRepository->getByName($row->supervisor_name);
+                $employee = [];
+                $employee = $this->employeeRepository->getByName($row->last_name.','.$row->first_name;);
                 
-                if (!isset($manager))
+                if (!isset($employee))
                 {
-                    $key = in_array($manager['name'], array_column($results, 'name'));
+                    $key = in_array($employee['name'], array_column($results, 'name'));
                     if ($key == false)
                     {
-                        array_push($results,['name'=>$manager['name'],'status'=>'manager not in database']);
+                        array_push($results,['name'=>$employee['name'],'status'=>'not in database']);
                     }
                     continue;
                 }
 
-                $employee = [];
-                $employee['name'] = $row->last_name.','.$row->first_name;
-                $employee['manager_id'] = $manager->id;
-                $employee['from_otl'] = 0;
-                $employee['country'] = $row->country_descr;
-                $employee['region'] = $row->business_region;
-                $employee['management_code'] = $row->management_code;
-                //$employee['job_role'] = $row->job_role;
-                $employee['from_step'] = 1;
-                $employee = $this->employeeRepository->createOrUpdate($employee);
-
-                $key = in_array($employee['name'], array_column($results, 'name'));
+                $key = in_array($row->last_name.','.$row->first_name, array_column($results, 'name'));
                 if ($key == false)
                 {
+                    $employee = [];
+                    $employee['name'] = $row->last_name.','.$row->first_name;
+                    $employee['manager_id'] = $manager->id;
+                    $employee['from_otl'] = 0;
+                    $employee['country'] = $row->country_descr;
+                    $employee['region'] = $row->business_region;
+                    $employee['management_code'] = $row->management_code;
+                    $employee['job_role'] = $row->job_role;
+                    $employee['from_step'] = 1;
+                    $employee = $this->employeeRepository->createOrUpdate($employee);
                     array_push($results,['name'=>$employee['name'],'status'=>'updated']);
-                }  
+                }
                 
                 $skill = [];
                 $skill['skill_type'] = $row->skill_type;

@@ -89,7 +89,48 @@ class SkillRepository
             return $this->store($inputs);
         }
 	}
-    
+    public function getSkillPerEmployee($where = null)
+	{
+        /*
+        $where should be an array of array in the form of
+        $where['employee_id'][0] ... [1] ...
+        */
+        $skill = \DB::table('skill AS S')
+            ->orderBy('S.skill_category_name','S.skill')
+            ->select(['S.id AS skill_id','S.skill_type','S.skill_category_name','S.skill','S.rank','S.target_rank','S.employee_id','E.name AS employee_name','E.domain','E.subdomain','E.job_role'])
+            ->join('employee AS E', 'employee_id', '=', 'E.id');
+
+        if (!empty($where['domain']))
+        {
+            $skill->where(function ($query) use ($where) {
+                foreach ($where['domain'] as $w)
+                {
+                    $query->orWhere('E.domain',$w);
+                }
+            });
+        }
+        if (!empty($where['subdomain']))
+        {
+            $skill->where(function ($query) use ($where) {
+                foreach ($where['subdomain'] as $w)
+                {
+                    $query->orWhere('E.subdomain',$w);
+                }
+            });
+        }
+        if (!empty($where['job_role']))
+        {
+            $skill->where(function ($query) use ($where) {
+                foreach ($where['job_role'] as $w)
+                {
+                    $query->orWhere('E.job_role',$w);
+                }
+            });
+        }       
+        
+        return $skill;
+	}
+        
     public function destroy($id)
 	{
 		$this->getById($id)->delete();

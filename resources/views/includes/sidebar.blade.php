@@ -21,6 +21,7 @@
                 <ul class="treeview-menu">
                     <li><a href="{!!route('employee')!!}"><i class="fa fa-circle-o"></i> Employee</a></li>
                     <li><a href="{!!route('employeeactivity')!!}"><i class="fa fa-circle-o"></i> Employee activity</a></li>
+                    <li><a href="{!!route('employeeskill')!!}"><i class="fa fa-circle-o"></i> Employee skill</a></li>
                 </ul>
             </li>
         </ul>

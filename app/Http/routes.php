@@ -33,6 +33,8 @@ Route::post('stepupload', ['uses'=>'StepUploadController@postForm','as'=>'stepup
 
 //Employee activity
 Route::get('employeeactivity', ['uses'=>'EmployeeActivityController@getView','as'=>'employeeactivity']);
+//Employee skill
+Route::get('employeeskill', ['uses'=>'EmployeeSkillController@getView','as'=>'employeeskill']);
 //Employee
 Route::get('employee', ['uses'=>'EmployeeController@index','as'=>'employee']);
 Route::get('employee/{n}', ['uses'=>'EmployeeController@show']);
@@ -41,6 +43,7 @@ Route::get('employee/{n}', ['uses'=>'EmployeeController@show']);
 //Activity per employee
 Route::post('activityperemployee', ['uses'=>'Ajax\ActivityAjaxController@postActivityPerEmployee','as'=>'ajaxactivityperemployee']);
 Route::post('activityperproject', ['uses'=>'Ajax\ActivityAjaxController@postActivityPerProject','as'=>'ajaxactivityperproject']);
+Route::post('skillperemployee', ['uses'=>'Ajax\SkillAjaxController@postSkillPerEmployee','as'=>'ajaxskillperemployee']);
 //Lists
 Route::get('ajaxlistdomain', ['uses'=>'Ajax\AjaxListController@getAjaxListDomain','as'=>'ajaxlistdomain']);
 Route::get('ajaxlistsubdomain', ['uses'=>'Ajax\AjaxListController@getAjaxListSubDomain','as'=>'ajaxlistsubdomain']);
