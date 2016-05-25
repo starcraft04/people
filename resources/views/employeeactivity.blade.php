@@ -103,7 +103,6 @@
             <table id="projectActivityTable" class="display table-bordered table-hover" cellspacing="0" width="100%">
                 <thead>
                     <tr>
-                        <th>Project ID</th>
                         <th>Customer name</th>
                         <th>Project name</th>
                         <th>Meta activity</th>
@@ -339,7 +338,6 @@
                         dataType: "JSON"
                 },
                 columns: [
-                    { data: 'project_id', name: 'project_id' },
                     { data: 'customer_name', name: 'customer_name' },
                     { data: 'project_name', name: 'project_name' },
                     { data: 'meta_activity', name: 'meta_activity' },
@@ -353,7 +351,7 @@
                     ],
                 columnDefs: [
                     {
-                        "targets": [ 0,4,8,9,10 ],
+                        "targets": [ 3,7,8,9 ],
                         "visible": false,
                         "searchable": false
                     }

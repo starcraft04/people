@@ -169,8 +169,8 @@ class ActivityRepository
     public function getActivityPerProject($where = null)
 	{
         $activity = \DB::table('activity')
-            ->groupBy('project_id','month')
-            ->select(['project_id','P.customer_name AS customer_name','P.project_name AS project_name','P.meta_activity AS meta_activity','employee_id','E.name AS employee_name','month',\DB::raw('SUM(task_hour) as sum_task_hour'),'E.domain AS domain','E.subdomain AS subdomain','E.job_role AS job_role'])
+            ->groupBy('P.customer_name','P.project_name','P.meta_activity','E.name','month')
+            ->select(['P.customer_name AS customer_name','P.project_name AS project_name','P.meta_activity AS meta_activity','employee_id','E.name AS employee_name','month',\DB::raw('SUM(task_hour) as sum_task_hour'),'E.domain AS domain','E.subdomain AS subdomain','E.job_role AS job_role'])
             ->havingRaw('SUM(task_hour) > 0')
             ->join('employee AS E', 'employee_id', '=', 'E.id')
             ->join('project AS P', 'project_id', '=', 'P.id');
