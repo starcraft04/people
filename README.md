@@ -14,9 +14,16 @@ For Linux Ubuntu
 4) Install Git
     sudo apt-get install git
 5) Install the application
-    git clone https://github.com/starcraft04/people/
+    git clone https://github.com/starcraft04/people/ .
 6) Install composer
     sudo apt-get install composer
 7) Execute composer to install necessary applications for Laravel 5
     sudo composer update
-
+8) Rename .env.example into .env with 
+    mv .env.example .env 
+9) Go in phpmyadmin and create a database people
+10) Edit .env
+    Enter information about MySQL database
+11) restart apache
+    sudo service apache2 start
+12) 
