@@ -9,8 +9,8 @@ For Linux Ubuntu
 2) Install PHPmyadmin
     sudo apt-get install phpmyadmin
 3) Changed owner and group of www with
-    sudo chgrp -R <user> /var/www/
-    sudo chown -R <user> /var/www/
+    sudo chgrp -R <user> /var/www/html/
+    sudo chown -R <user> /var/www/html/
     sudo chmod a+w -R /var/www/html/bootstrap/cache/
     sudo chmod a+w -R /var/www/html/storage/
 4) Install Git
@@ -41,10 +41,14 @@ For Linux Ubuntu
     to
     <Directory /var/www/>
             Options FollowSymLinks
-            AllowOverride None
+            AllowOverride All
+            Allow from all
             Require all granted
     </Directory>
+    Then run a2enmod rewrite
     then restart apache by:
     sudo service apache2 restart
-
-
+14) Go to .../public/niceartisan/
+    do migrate
+    do db seed
+    If reset is not working, do php composer dump-autoload
