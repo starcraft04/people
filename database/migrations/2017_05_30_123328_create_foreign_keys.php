@@ -23,26 +23,6 @@ class CreateForeignKeys extends Migration {
 						->onDelete('restrict')
 						->onUpdate('restrict');
 		});
-		Schema::table('gold_order', function(Blueprint $table) {
-			$table->foreign('project_id')->references('id')->on('project')
-						->onDelete('restrict')
-						->onUpdate('restrict');
-		});
-		Schema::table('gold_order', function(Blueprint $table) {
-			$table->foreign('gold_revenue_id')->references('id')->on('gold_revenue')
-						->onDelete('restrict')
-						->onUpdate('restrict');
-		});
-		Schema::table('team_task', function(Blueprint $table) {
-			$table->foreign('employee_id')->references('id')->on('employee')
-						->onDelete('restrict')
-						->onUpdate('restrict');
-		});
-		Schema::table('team_task', function(Blueprint $table) {
-			$table->foreign('project_id')->references('id')->on('project')
-						->onDelete('restrict')
-						->onUpdate('restrict');
-		});
 		Schema::table('skill', function(Blueprint $table) {
 			$table->foreign('employee_id')->references('id')->on('employee')
 						->onDelete('restrict')
@@ -65,18 +45,6 @@ class CreateForeignKeys extends Migration {
 		});
 		Schema::table('activity', function(Blueprint $table) {
 			$table->dropForeign('activity_employee_id_foreign');
-		});
-		Schema::table('gold_order', function(Blueprint $table) {
-			$table->dropForeign('gold_order_project_id_foreign');
-		});
-		Schema::table('gold_order', function(Blueprint $table) {
-			$table->dropForeign('gold_order_gold_revenue_id_foreign');
-		});
-		Schema::table('team_task', function(Blueprint $table) {
-			$table->dropForeign('team_task_employee_id_foreign');
-		});
-		Schema::table('team_task', function(Blueprint $table) {
-			$table->dropForeign('team_task_project_id_foreign');
 		});
 		Schema::table('skill', function(Blueprint $table) {
 			$table->dropForeign('skill_employee_id_foreign');

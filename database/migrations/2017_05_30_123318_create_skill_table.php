@@ -14,10 +14,11 @@ class CreateSkillTable extends Migration {
 			$table->string('skill_category_name', 255);
 			$table->string('skill', 255);
 			$table->string('rank', 10);
-            $table->string('target_rank', 10)->nullable();
+			$table->string('target_rank', 10)->nullable();
 			$table->date('employee_last_assessed')->nullable();
 			$table->boolean('from_step')->nullable();
-			$table->integer('employee_id')->unsigned();
+			$table->integer('employee_id')->unsigned()->nullable();
+			$table->date('target_rank_date')->nullable();
 		});
         DB::statement("ALTER TABLE `skill` ADD UNIQUE( `skill_type`, `skill_category_name`, `skill`, `employee_id`);");
 	}

@@ -19,9 +19,25 @@ class CreateProjectTable extends Migration {
 			$table->string('meta_activity', 100);
 			$table->string('region', 100)->nullable();
 			$table->string('country', 100)->nullable();
+			$table->string('customer_location', 100)->nullable();
+			$table->string('domain', 100)->nullable();
+			$table->string('description', 255)->nullable();
+			$table->date('estimated_end_date')->nullable();
+			$table->string('comments', 255)->nullable();
+			$table->float('LoE_onshore')->nullable();
+			$table->float('LoE_nearshore')->nullable();
+			$table->float('LoE_offshore')->nullable();
+			$table->float('LoE_contractor')->nullable();
+			$table->string('gold_order_number', 100)->nullable();
+			$table->string('product_code', 100)->nullable();
+			$table->string('revenue')->nullable();
+			$table->string('project_status', 100)->nullable();
+			$table->string('otl_project_code', 100)->nullable();
+			$table->integer('win_ratio')->nullable();
+			$table->string('estimated_start_date');
 		});
         DB::statement("ALTER TABLE `project` ADD UNIQUE( `customer_name`, `project_name`, `task_name`, `meta_activity`);");
-    }
+	}
 
 	public function down()
 	{

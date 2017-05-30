@@ -15,12 +15,13 @@ class CreateEmployeeTable extends Migration {
 			$table->boolean('is_manager')->nullable();
 			$table->boolean('from_otl')->nullable();
 			$table->string('region', 100)->nullable();
-			$table->string('domain', 100)->nullable();
 			$table->string('country', 100)->nullable();
 			$table->string('subdomain', 100)->nullable();
 			$table->boolean('from_step')->nullable();
+			$table->string('domain', 100)->nullable();
 			$table->string('management_code', 20)->nullable();
-            $table->string('job_role', 100)->nullable();
+			$table->string('job_role', 100)->nullable();
+			$table->string('employee_type', 100)->nullable();
 		});
 	}
 

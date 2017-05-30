@@ -25,6 +25,7 @@ class EmployeeRepository
         $employee->subdomain = isset($inputs['subdomain'])?$inputs['subdomain']:null;
         $employee->management_code = isset($inputs['management_code'])?$inputs['management_code']:null;
         $employee->job_role = isset($inputs['job_role'])?$inputs['job_role']:null;
+        $employee->employee_type = isset($inputs['employee_type'])?$inputs['employee_type']:null;
         // Boolean
         $employee->is_manager = isset($inputs['is_manager']);
         $employee->from_otl = isset($inputs['from_otl']);

@@ -32,11 +32,26 @@ class EmployeeController extends Controller {
 		return view('employee/index')->with('position',$position);
 	}
 
-	public function create()
+	public function getForm()
 	{
+        $position = ['main_title'=>'Employee','second_title'=>'create',
+             'urls'=>
+                [
+                    ['name'=>'home','url'=>route('home')],
+                    ['name'=>'employee create','url'=>'']
+                ]
+            ];
 		$manager_list = $this->employeeRepository->getManagersList();
+        $employee_type = ['onshore','nearshore','offshore','contractor'];
 		//\Debugbar::info($manager_list);
-		return view('employee/create', compact('manager_list'));
+		return view('employee/create', compact('manager_list','employee_type','job_role','region','country','domain','subdomain','management_code'))->with('position',$position);
+	}
+    
+	public function postForm(EmployeeCreateRequest $request)
+	{
+        $inputs = $request->all();
+        $employee = $this->employeeRepository->createIfNotFound($inputs);
+        return redirect('employeeForm')->withOk('Record \''.$inputs['name'].'\' created !');
 	}
 
 	public function store(EmployeeCreateRequest $request)

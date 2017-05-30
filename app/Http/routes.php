@@ -37,6 +37,8 @@ Route::get('employeeactivity', ['uses'=>'EmployeeActivityController@getView','as
 Route::get('employeeskill', ['uses'=>'EmployeeSkillController@getView','as'=>'employeeskill']);
 //Employee
 Route::get('employee', ['uses'=>'EmployeeController@index','as'=>'employee']);
+Route::get('employeeForm', ['uses'=>'EmployeeController@getForm','as'=>'employeeformget']);
+Route::post('employeeForm', ['uses'=>'EmployeeController@postForm','as'=>'employeeformpost']);
 Route::get('employee/{n}', ['uses'=>'EmployeeController@show']);
 
 //AJAX
