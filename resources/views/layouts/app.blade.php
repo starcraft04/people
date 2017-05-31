@@ -21,7 +21,32 @@
     <!-- Date Picker -->
     <link href="{{ asset('/plugins/datepicker/datepicker3.css') }}" rel="stylesheet" type="text/css" />
     @yield('style')
+    
+    <!-- jQuery 2.1.3 -->
+    <script src="{{ asset('/plugins/jQuery/jQuery-2.2.0.min.js') }}"></script>
+    <!-- jQuery UI 1.11.2 -->
+    <script src="http://code.jquery.com/ui/1.11.2/jquery-ui.min.js" type="text/javascript"></script>
+    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+    <script>
+       $.widget.bridge('uibutton', $.ui.button);
+    </script>
+    <!-- Bootstrap 3.3.2 JS -->
+    <script src="{{ asset('/bootstrap/js/bootstrap.min.js') }}" type="text/javascript"></script>    
+    <!-- Sparkline -->
+    <script src="{{ asset('/plugins/sparkline/jquery.sparkline.min.js') }}" type="text/javascript"></script>
+    <!-- datepicker -->
+    <script src="{{ asset('/plugins/datepicker/bootstrap-datepicker.js') }}" type="text/javascript"></script>
+    <!-- iCheck -->
+    <script src="{{ asset('/plugins/iCheck/icheck.min.js') }}" type="text/javascript"></script>
+    <!-- Slimscroll -->
+    <script src="{{ asset('/plugins/slimScroll/jquery.slimscroll.min.js') }}" type="text/javascript"></script>
+    <!-- FastClick -->
+    <script src="{{ asset('/plugins/fastclick/fastclick.min.js') }}"></script>
+    <!-- AdminLTE App -->
+    <script src="{{ asset('/dist/js/app.min.js') }}" type="text/javascript"></script>
 
+    @yield('scriptsrc')
+    
     <title>People</title>
     
 </head>
@@ -59,28 +84,6 @@
         </footer>
     </div><!-- ./wrapper -->
 
-    <!-- jQuery 2.1.3 -->
-    <script src="{{ asset('/plugins/jQuery/jQuery-2.2.0.min.js') }}"></script>
-    <!-- jQuery UI 1.11.2 -->
-    <script src="http://code.jquery.com/ui/1.11.2/jquery-ui.min.js" type="text/javascript"></script>
-    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
-    <script>
-       $.widget.bridge('uibutton', $.ui.button);
-    </script>
-    <!-- Bootstrap 3.3.2 JS -->
-    <script src="{{ asset('/bootstrap/js/bootstrap.min.js') }}" type="text/javascript"></script>    
-    <!-- Sparkline -->
-    <script src="{{ asset('/plugins/sparkline/jquery.sparkline.min.js') }}" type="text/javascript"></script>
-    <!-- datepicker -->
-    <script src="{{ asset('/plugins/datepicker/bootstrap-datepicker.js') }}" type="text/javascript"></script>
-    <!-- iCheck -->
-    <script src="{{ asset('/plugins/iCheck/icheck.min.js') }}" type="text/javascript"></script>
-    <!-- Slimscroll -->
-    <script src="{{ asset('/plugins/slimScroll/jquery.slimscroll.min.js') }}" type="text/javascript"></script>
-    <!-- FastClick -->
-    <script src="{{ asset('/plugins/fastclick/fastclick.min.js') }}"></script>
-    <!-- AdminLTE App -->
-    <script src="{{ asset('/dist/js/app.min.js') }}" type="text/javascript"></script>
     @yield('script')
     
 </body>

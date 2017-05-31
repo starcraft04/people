@@ -44,7 +44,7 @@ class AjaxListController extends Controller
 	{
         $employee = DB::table('employee')
             ->select('employee.id', 'employee.name', 'employee.manager_id','manager.name AS manager_name','employee.is_manager', 'employee.region', 'employee.country', 'employee.domain', 'employee.subdomain', 'employee.management_code', 'employee.job_role', 'employee.employee_type')
-            ->join('employee AS manager', 'employee.manager_id','=','manager.id');
+            ->join('employee AS manager', 'employee.manager_id','=','manager.id')->where('employee.name','<>','MANAGER');
         $data = Datatables::of($employee)->make(true);
 		return $data;
 	}
