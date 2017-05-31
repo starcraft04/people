@@ -19,49 +19,20 @@ class EmployeeController extends Controller {
     public function __construct(EmployeeRepository $employeeRepository)
     {
 		$this->employeeRepository = $employeeRepository;
+        $this->employee_type = ['onshore','nearshore','offshore','contractor'];
 	}
-	public function index()
+	public function getList()
 	{
-        $position = ['main_title'=>'Employee','second_title'=>'info',
+        $position = ['main_title'=>'Employee','second_title'=>'list',
              'urls'=>
                 [
                     ['name'=>'home','url'=>route('home')],
                     ['name'=>'employee','url'=>'#']
                 ]
             ];
-		return view('employee/index')->with('position',$position);
-	}
-
-	public function getForm()
-	{
-        $position = ['main_title'=>'Employee','second_title'=>'create',
-             'urls'=>
-                [
-                    ['name'=>'home','url'=>route('home')],
-                    ['name'=>'employee create','url'=>'']
-                ]
-            ];
-		$manager_list = $this->employeeRepository->getManagersList();
-        $employee_type = ['onshore','nearshore','offshore','contractor'];
-		//\Debugbar::info($manager_list);
-		return view('employee/create', compact('manager_list','employee_type','job_role','region','country','domain','subdomain','management_code'))->with('position',$position);
+		return view('employee/list')->with('position',$position);
 	}
     
-	public function postForm(EmployeeCreateRequest $request)
-	{
-        $inputs = $request->all();
-        $employee = $this->employeeRepository->createIfNotFound($inputs);
-        return redirect('employeeForm')->withOk('Record \''.$inputs['name'].'\' created !');
-	}
-
-	public function store(EmployeeCreateRequest $request)
-	{
-		$employee = $this->employeeRepository->store($request->all());
-
-		return redirect('employee')
-            ->withOk("The employee " . $employee->name . " has been created.");
-	}
-
 	public function show($id)
 	{
         $position = ['main_title'=>'Employee','second_title'=>'info',
@@ -74,21 +45,51 @@ class EmployeeController extends Controller {
         $employee = $this->employeeRepository->getById($id);
 		return view('employee/show',  compact('employee'))->with('position',$position);
 	}
-
-	public function edit($id)
+	public function getForm()
 	{
-		$employee = $this->employeeRepository->getById($id);
-        $manager_list = $this->employeeRepository->getManagersList();
-		return view('employee/edit',  compact('employee','manager_list'));
+        $position = ['main_title'=>'Employee','second_title'=>'create',
+             'urls'=>
+                [
+                    ['name'=>'home','url'=>route('home')],
+                    ['name'=>'employee create','url'=>'']
+                ]
+            ];
+		$manager_list = $this->employeeRepository->getManagersList();
+        $employee_type = $this->employee_type;
+		//\Debugbar::info($manager_list);
+		return view('employee/create', compact('manager_list','employee_type'))->with('position',$position);
 	}
-
-	public function update(EmployeeUpdateRequest $request, $id)
+    
+	public function postForm(EmployeeCreateRequest $request)
 	{
-		$this->employeeRepository->update($id, $request->all());
-		
-		return redirect('employee')->withOk("The employee " . $request->input('name') . " has been modified.");
+        $inputs = $request->all();
+        $employee = $this->employeeRepository->createIfNotFound($inputs);
+        return redirect('employeeForm')->withOk('Record \''.$inputs['name'].'\' created !');
 	}
+    
+	public function getFormUpdate($id)
+	{
+        $position = ['main_title'=>'Employee','second_title'=>'update',
+             'urls'=>
+                [
+                    ['name'=>'home','url'=>route('home')],
+                    ['name'=>'employee update','url'=>'']
+                ]
+            ];
+		$manager_list = $this->employeeRepository->getManagersList();
+        $employee_type = $this->employee_type;
+        $employee = $this->employeeRepository->getById($id);
+		//\Debugbar::info($manager_list);
+		return view('employee/update', compact('manager_list','employee_type','id','employee'))->with('position',$position);
+	}    
 
+	public function postFormUpdate(EmployeeUpdateRequest $request, $id)
+	{
+        $inputs = $request->all();
+        $employee = $this->employeeRepository->update($id, $inputs);
+        return redirect('employeeFormUpdate/'.$id)->withOk('Record \''.$inputs['name'].'\' updated !');
+	}
+    
 	public function destroy($id)
 	{
 		$this->employeeRepository->destroy($id);

@@ -81,18 +81,6 @@ class EmployeeRepository
         }
 	}
 
-    public function createOrUpdate(Array $inputs)
-	{
-        $employee = $this->employee->where('name', $inputs['name'])->first();
-        
-        if (isset($employee)){
-            return $this->save($employee, $inputs);
-        }
-        else{
-            return $this->store($inputs);
-        }
-	}
-
 	public function destroy($id)
 	{
 		$this->getById($id)->delete();
@@ -100,6 +88,10 @@ class EmployeeRepository
     public function getDomainList()
 	{
         return $this->employee->where('domain','<>','null')->select('domain AS text')->groupBy('domain')->get();
+	}
+    public function getManagerList()
+	{
+        return $this->employee->where('is_manager','=','1')->select('id','name AS text')->groupBy('name')->get();
 	}
     public function getSubDomainList()
 	{
