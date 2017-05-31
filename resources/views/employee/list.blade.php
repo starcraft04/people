@@ -26,7 +26,7 @@
                         <th>ID</th>
                         <th>Name</th>
                         <th>Manager ID</th>
-                        <th>Manager</th>
+                        <th>Manager name</th>
                         <th>Is Manager</th>
                         <th>Region</th>
                         <th>Country</th>
@@ -69,18 +69,18 @@
                         type: "POST"
                     },
                 columns: [
-                    { data: 'id', name: 'id'},
-                    { data: 'name', name: 'name'},
-                    { data: 'manager_id', name: 'manager_id'},
-                    { data: 'manager_name', name: 'manager_name'},
-                    { data: 'is_manager', name: 'is_manager'},
-                    { data: 'region', name: 'region'},
-                    { data: 'country', name: 'country'},
-                    { data: 'domain', name: 'domain'},
-                    { data: 'subdomain', name: 'subdomain'},
-                    { data: 'management_code', name: 'management_code'},
-                    { data: 'job_role', name: 'job_role'},
-                    { data: 'employee_type', name: 'employee_type'},
+                    { data: 'id', name: 'employee.id'},
+                    { data: 'name', name: 'employee.name'},
+                    { data: 'manager_id', name: 'employee.manager_id'},
+                    { data: 'manager_name', name: 'manager.name'},
+                    { data: 'is_manager', name: 'employee.is_manager'},
+                    { data: 'region', name: 'employee.region'},
+                    { data: 'country', name: 'employee.country'},
+                    { data: 'domain', name: 'employee.domain'},
+                    { data: 'subdomain', name: 'employee.subdomain'},
+                    { data: 'management_code', name: 'employee.management_code'},
+                    { data: 'job_role', name: 'employee.job_role'},
+                    { data: 'employee_type', name: 'employee.employee_type'},
                     ],
                 columnDefs: [
                     {
@@ -88,6 +88,13 @@
                     }
                     ]
             } );
+            
+            $('#employeeTable').on( 'click', 'tr', function () {
+                var rowData = employeeTable.row(this).data();
+                var id = rowData.id;
+                window.location.href = "{!! route('employee') !!}/"+id;
+            } );
+            
         } );
     </script> 
 @stop

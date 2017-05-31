@@ -8,6 +8,7 @@ use App\Repositories\ActivityRepository;
 use App\Repositories\ProjectRepository;
 use Illuminate\Http\Request;
 use Datatables;
+use DB;
 
 class AjaxListController extends Controller 
 {
@@ -41,7 +42,9 @@ class AjaxListController extends Controller
 	}
     public function getAjaxListEmployee()
 	{
-        $employee = \DB::table('employee AS E')->select('E.id','E.name','E.manager_id','M.name AS manager_name','E.is_manager','E.region','E.country','E.domain','E.subdomain','E.management_code','E.job_role','E.employee_type')->join('employee AS M', 'E.manager_id', '=', 'M.id');
+        $employee = DB::table('employee')
+            ->select('employee.id', 'employee.name', 'employee.manager_id','manager.name AS manager_name','employee.is_manager', 'employee.region', 'employee.country', 'employee.domain', 'employee.subdomain', 'employee.management_code', 'employee.job_role', 'employee.employee_type')
+            ->join('employee AS manager', 'employee.manager_id','=','manager.id');
         $data = Datatables::of($employee)->make(true);
 		return $data;
 	}
