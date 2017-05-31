@@ -36,7 +36,7 @@ Route::get('employee', ['uses'=>'EmployeeController@getList','as'=>'employee']);
 Route::get('employee/{n}', ['uses'=>'EmployeeController@show']);
 Route::get('employeeForm', ['uses'=>'EmployeeController@getForm']);
 Route::post('employeeForm', ['uses'=>'EmployeeController@postForm']);
-Route::get('employeeFormUpdate/{n}', ['uses'=>'EmployeeController@getFormUpdate']);
+Route::get('employeeFormUpdate/{n}', ['uses'=>'EmployeeController@getFormUpdate','as'=>'employeeFormUpdate']);
 Route::post('employeeFormUpdate/{n}', ['uses'=>'EmployeeController@postFormUpdate']);
 
 //Employee activity

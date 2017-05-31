@@ -19,7 +19,7 @@ class EmployeeController extends Controller {
     public function __construct(EmployeeRepository $employeeRepository)
     {
 		$this->employeeRepository = $employeeRepository;
-        $this->employee_type = ['onshore','nearshore','offshore','contractor'];
+        $this->employee_type = ['onshore' => 'onshore','nearshore' => 'nearshore','offshore' => 'offshore','contractor' => 'contractor'];
 	}
 	public function getList()
 	{

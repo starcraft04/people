@@ -57,6 +57,7 @@
                         <th>Management Code</th>
                         <th>Job role</th>
                         <th>Type</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tfoot>
@@ -74,6 +75,7 @@
                         <th>Management Code</th>
                         <th>Job role</th>
                         <th>Type</th>
+                        <th>Actions</th>
                     </tr>
                 </tfoot>
             </table>
@@ -163,6 +165,18 @@
                     { data: 'management_code', name: 'employee.management_code'},
                     { data: 'job_role', name: 'employee.job_role'},
                     { data: 'employee_type', name: 'employee.employee_type'},
+                    {
+                        name: 'actions',
+                        data: null,
+                        sortable: false,
+                        searchable: false,
+                        render: function (data) {
+                            var actions = '';
+                            actions += '<a href="{{ route('employeeFormUpdate', ':id') }}" class="btn btn-primary"><span class="glyphicon glyphicon-pencil"></span></a>';
+                            actions += '<a href="{{ route('employeeFormUpdate', ':id') }}" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></a>';
+                            return actions.replace(/:id/g, data.id);
+                        }
+                    }
                     ],
                 columnDefs: [
                     {
@@ -174,7 +188,7 @@
                     this.api().columns().every(function () {
                         var column = this;
                         // Now we need to skip the first column as it is used for the drawer...
-                        if(column[0][0] == '0'){return true;};
+                        if(column[0][0] == '0' || column[0][0] == '13'){return true;};
                         var input = document.createElement("input");
                         $(input).appendTo($(column.footer()).empty())
                         .on('keyup change', function () {
