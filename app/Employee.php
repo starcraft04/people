@@ -21,11 +21,6 @@ class Employee extends Model
         return $this->hasOne('Employee');
     }
 
-    public function skill()
-    {
-        return $this->hasMany('Skill');
-    }
-
     public function users()
     {
         return $this->belongsTo('Users');

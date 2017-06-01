@@ -36,7 +36,7 @@ class CreateProjectTable extends Migration {
 			$table->integer('win_ratio')->nullable();
 			$table->string('estimated_start_date');
 		});
-        DB::statement("ALTER TABLE `project` ADD UNIQUE( `customer_name`, `project_name`, `task_name`, `meta_activity`);");
+		DB::statement("ALTER TABLE `project` ADD UNIQUE( `customer_name`, `project_name`);");
 	}
 
 	public function down()

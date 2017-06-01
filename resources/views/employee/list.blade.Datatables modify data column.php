@@ -151,18 +151,7 @@
                 processing: true,
                 ajax: {
                         url: "{!! route('ajaxlistemployee') !!}",
-                        type: "POST",
-                        dataSrc: function ( json ) {
-                            for ( var i=0, ien=json.data.length ; i<ien ; i++ ) {
-                                if (json.data[i].is_manager == null){
-                                    json.data[i].is_manager = 'false';
-                                }
-                                else {
-                                    json.data[i].is_manager = 'true';
-                                }
-                            }
-                            return json.data;
-                        }
+                        type: "POST"
                     },
                 columns: [
                     {
@@ -176,7 +165,21 @@
                     { name: 'manager.name', data: 'manager_name' },
                     { name: 'employee.name', data: 'name' },
                     { name: 'employee.manager_id', data: 'manager_id' },
-                    { name: 'employee.is_manager', data: 'is_manager'},
+                    { 
+                        name: 'employee.is_manager', 
+                        data: 'is_manager',
+                        render: function ( data ) {
+                                    var return_value = '';
+                                    console.log(data);
+                                    if (data == null){
+                                        return_value = 'false';
+                                    }
+                                    else {
+                                        return_value = 'true';
+                                    };
+                                    return return_value;
+                                }
+                    },
                     { name: 'employee.region', data: 'region' },
                     { name: 'employee.country', data: 'country' },
                     { name: 'employee.domain', data: 'domain' },

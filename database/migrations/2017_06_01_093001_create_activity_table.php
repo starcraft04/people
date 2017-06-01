@@ -18,7 +18,7 @@ class CreateActivityTable extends Migration {
 			$table->boolean('from_otl')->nullable();
 			$table->integer('employee_id')->unsigned();
 		});
-        DB::statement("ALTER TABLE `activity` ADD UNIQUE( `year`, `month`, `project_id`, `employee_id`);");
+		DB::statement("ALTER TABLE `activity` ADD UNIQUE( `year`, `month`, `project_id`, `employee_id`);");
 	}
 
 	public function down()

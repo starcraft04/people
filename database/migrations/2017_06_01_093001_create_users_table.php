@@ -13,7 +13,6 @@ class CreateUsersTable extends Migration {
 			$table->string('username', 100)->unique();
 			$table->string('email', 255)->unique();
 			$table->string('password', 60);
-			$table->boolean('admin')->default(false);
 			$table->rememberToken('rememberToken');
 			$table->integer('employee_id')->unsigned();
 		});

@@ -9,7 +9,7 @@ class Users extends Model
 
     protected $table = 'users';
     public $timestamps = true;
-    protected $fillable = array('username', 'email', 'password', 'admin', 'employee_id');
+    protected $fillable = array('username', 'email', 'password', 'employee_id');
 
     public function employee()
     {
