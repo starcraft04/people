@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app',['main_title' => 'Upload','second_title'=>'otl','url'=>[['name'=>'home','url'=>route('home')],['name'=>'otl','url'=>'#']]])
 
 @section('style')
     <!-- Select2 -->
@@ -61,10 +61,10 @@
         <div class="box-footer">
         @if(session()->has('ok'))
             <div class="alert alert-success alert-dismissible">{!! session('ok') !!}</div>
-        @endif            
+        @endif
         @if(session()->has('results'))
             <div class="alert alert-success alert-dismissible">
-                <?php 
+                <?php
                     foreach(session('results') as $result)
                     {
                         echo '<b>'.$result['name'].'</b>: '.$result['status'].'</BR>';
@@ -84,5 +84,5 @@
             //Initialize Select2 Elements
             $(".select2").select2();
         });
-    </script> 
+    </script>
 @stop

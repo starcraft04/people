@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app',['main_title' => 'Employee','second_title'=>'form','url'=>[['name'=>'home','url'=>route('home')],['name'=>'form','url'=>'#']]])
 
 @section('content')
 <div class="container">

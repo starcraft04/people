@@ -11,34 +11,31 @@
 |
 */
 
-Route::auth();
-
-Route::get('/', ['as' => 'home', function () {
-    $position = ['main_title'=>'Home','second_title'=>'',
-                 'urls'=>
-                    [
-                        ['name'=>'home','url'=>'#']
-                    ]
-                ];
-    return view('home')->with('position',$position);
+Route::get('/', ['middleware' => 'auth','as' => 'home', function () {
+    return view('home');
 }]);
 
 //OTL
-Route::get('otlupload', ['uses'=>'OtlUploadController@getForm','as'=>'otluploadform']);
-Route::post('otlupload', ['uses'=>'OtlUploadController@postForm','as'=>'otlupload']);
+Route::get('otlupload', ['middleware' => 'auth','uses'=>'OtlUploadController@getForm','as'=>'otluploadform']);
+Route::post('otlupload', ['middleware' => 'auth','uses'=>'OtlUploadController@postForm','as'=>'otlupload']);
 
 //Employee
 //  Main employee list
-Route::get('employeeList', ['uses'=>'EmployeeController@getList','as'=>'employeeList']);
+Route::get('employeeList', ['middleware' => 'auth','uses'=>'EmployeeController@getList','as'=>'employeeList']);
 //  Create new employee
-Route::get('employeeFormCreate', ['uses'=>'EmployeeController@getFormCreate','as'=>'employeeFormCreate']);
-Route::post('employeeFormCreate', ['uses'=>'EmployeeController@postFormCreate']);
+Route::get('employeeFormCreate', ['middleware' => 'auth','uses'=>'EmployeeController@getFormCreate','as'=>'employeeFormCreate']);
+Route::post('employeeFormCreate', ['middleware' => 'auth','uses'=>'EmployeeController@postFormCreate']);
 //  Update employee
-Route::get('employeeFormUpdate/{n}', ['uses'=>'EmployeeController@getFormUpdate','as'=>'employeeFormUpdate']);
-Route::post('employeeFormUpdate/{n}', ['uses'=>'EmployeeController@postFormUpdate']);
+Route::get('employeeFormUpdate/{n}', ['middleware' => 'auth','uses'=>'EmployeeController@getFormUpdate','as'=>'employeeFormUpdate']);
+Route::post('employeeFormUpdate/{n}', ['middleware' => 'auth','uses'=>'EmployeeController@postFormUpdate']);
 //  Delete employee
-Route::get('employeeDelete/{n}', ['uses'=>'EmployeeController@delete','as'=>'employeeDelete']);
+Route::get('employeeDelete/{n}', ['middleware' => 'auth','uses'=>'EmployeeController@delete','as'=>'employeeDelete']);
 //  Employee information
-Route::get('employee/{n}', ['uses'=>'EmployeeController@show','as'=>'employee']);
+Route::get('employee/{n}', ['middleware' => 'auth','uses'=>'EmployeeController@show','as'=>'employee']);
 //  AJAX
-Route::get('listOfEmployeesAjax', ['uses'=>'EmployeeController@listOfEmployees','as'=>'listOfEmployeesAjax']);
+Route::get('listOfEmployeesAjax', ['middleware' => 'auth','uses'=>'EmployeeController@listOfEmployees','as'=>'listOfEmployeesAjax']);
+
+//Auth
+Route::auth();
+Route::get('/home', 'HomeController@index');
+Route::get('logout', ['as' => 'auth.logout', 'uses' => 'Auth\AuthController@logout']);

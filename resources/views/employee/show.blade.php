@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app',['main_title' => 'Employee','second_title'=>'show','url'=>[['name'=>'home','url'=>route('home')],['name'=>'show','url'=>'#']]])
 
 @section('style')
     <!-- Select2 -->
@@ -31,5 +31,5 @@
             //Initialize Select2 Elements
             $(".select2").select2();
         });
-    </script> 
+    </script>
 @stop
