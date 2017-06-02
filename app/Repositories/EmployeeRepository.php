@@ -79,4 +79,5 @@ class EmployeeRepository
 	{
     return $this->employee->where('is_manager', '=','1')->lists('name','id');
 	}
+
 }
