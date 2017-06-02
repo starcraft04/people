@@ -74,7 +74,7 @@
                         <th>Management Code</th>
                         <th>Job role</th>
                         <th>Type</th>
-                        <th><a href="{{ route('employeeForm') }}" class="btn btn-info btn-xs" align="right"><span class="glyphicon glyphicon-plus"> New</span></a></th>
+                        <th><a data-toggle="tooltip" title="Create new" href="{{ route('employeeForm') }}" class="btn btn-info btn-xs" align="right"><span class="glyphicon glyphicon-plus"> New</span></a></th>
                     </tr>
                 </thead>
                 <tfoot>
@@ -217,8 +217,8 @@
                         render: function (data) {
                             var actions = '';
                             actions += '<div class="btn-group btn-group-xs">';
-                            actions += '<button id="'+data.id+'" class="buttonUpdate btn btn-primary"><span class="glyphicon glyphicon-pencil"></span></button>';
-                            actions += '<button id="'+data.id+'" class="buttonDelete btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
+                            actions += '<button data-toggle="tooltip" title="edit" id="'+data.id+'" class="buttonUpdate btn btn-primary"><span class="glyphicon glyphicon-pencil"></span></button>';
+                            actions += '<button data-toggle="tooltip" title="delete" id="'+data.id+'" class="buttonDelete btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
                             actions += '</div>';
                             return actions;
                         }
