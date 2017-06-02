@@ -19,6 +19,9 @@
             padding-top: 5 px;
             padding-bottom: 5px;
         }
+        table .extra_info {
+            margin-bottom: 10px;
+        }
     </style>
 @stop
 
@@ -30,6 +33,8 @@
     <script src="{{ asset('/plugins/datatables/jquery.dataTables.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('/plugins/datatables/dataTables.bootstrap.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('/plugins/datatables/handlebars.js') }}"></script>
+    <!-- Bootbox -->
+    <script src="{{ asset('/plugins/bootbox/bootbox.min.js') }}"></script>
 @stop
 
 @section('content')
@@ -45,6 +50,14 @@
         </div>
 
         <div class="box-body">
+            @if(session()->has('ok'))
+            <div class="alert alert-success alert-dismissible">
+                <button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>
+                {!! session('ok') !!}
+            </div>
+            @endif
+            <div id="delete_message">
+            </div>
             <table id="employeeTable" class="display table-bordered table-hover table-responsive" cellspacing="0" width="100%">
                 <thead>
                     <tr>
@@ -84,47 +97,57 @@
                 </tfoot>
             </table>
             <script id="details-template" type="text/x-handlebars-template">
-            <table class="extra_info table-bordered" cellspacing="0" align="left">
+            <table class="extra_info table-bordered" cellspacing="0" width="100%" align="left">
                 <thead>
-                    <th width="10%"></th>
+                    <th width="20px"></th>
+                    <th width="100px"></th>
                     <th></th>
                 </thead>
                     
                 </tr>
                 <tr>
-                    <td>Manager name:</td>
+                    <td></td>
+                    <td><b>Manager name</b>:</td>
                     <td>@{{ manager_name }}</td>
                 </tr>
                 <tr>
-                    <td>Name:</td>
+                    <td></td>
+                    <td><b>Name</b>:</td>
                     <td>@{{ name }}</td>
                 </tr>
                 <tr>
-                    <td>Management code:</td>
+                    <td></td>
+                    <td><b>Management code</b>:</td>
                     <td>@{{ management_code }}</td>
                 </tr>
                 <tr>
-                    <td>Domain:</td>
+                    <td></td>
+                    <td><b>Domain</b>:</td>
                     <td>@{{ domain }}</td>
                 </tr>
                 <tr>
-                    <td>Subdomain:</td>
+                    <td></td>
+                    <td><b>Subdomain</b>:</td>
                     <td>@{{ subdomain }}</td>
                 </tr>
                 <tr>
-                    <td>Region:</td>
+                    <td></td>
+                    <td><b>Region</b>:</td>
                     <td>@{{ region }}</td>
                 </tr>
                 <tr>
-                    <td>Job role:</td>
+                    <td></td>
+                    <td><b>Job role</b>:</td>
                     <td>@{{ job_role }}</td>
                 </tr>
                 <tr>
-                    <td>Employee type:</td>
+                    <td></td>
+                    <td><b>Employee type</b>:</td>
                     <td>@{{ employee_type }}</td>
                 </tr>
                 <tr>
-                    <td>Is a Manager:</td>
+                    <td></td>
+                    <td><b>Is a Manager</b>:</td>
                     <td>@{{ is_manager }}</td>
                 </tr>
             </table>
@@ -136,8 +159,10 @@
 
 @section('script')
     <script>
+        var employeeTable;
+        var record_id;
+        
         $(document).ready(function() {
-            var employeeTable;
             var template = Handlebars.compile($("#details-template").html());
             
             $.ajaxSetup({
@@ -192,10 +217,10 @@
                         render: function (data) {
                             var actions = '';
                             actions += '<div class="btn-group btn-group-xs">';
-                            actions += '<a href="{{ route('employeeFormUpdate', ':id') }}" class="btn btn-primary"><span class="glyphicon glyphicon-pencil"></span></a>';
-                            actions += '<a href="{{ route('employeeFormUpdate', ':id') }}" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></a>';
+                            actions += '<button id="'+data.id+'" class="buttonUpdate btn btn-primary"><span class="glyphicon glyphicon-pencil"></span></button>';
+                            actions += '<button id="'+data.id+'" class="buttonDelete btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
                             actions += '</div>';
-                            return actions.replace(/:id/g, data.id);
+                            return actions;
                         }
                     }
                     ],
@@ -235,6 +260,36 @@
                     tr.addClass('shown');
                 }
             });
+            
+            $(document).on('click', '.buttonUpdate', function () {
+                window.location.href = "{!! route('employeeFormUpdate','') !!}/"+this.id;
+            } );
+            
+            $(document).on('click', '.buttonDelete', function () {
+                record_id = this.id;
+                bootbox.confirm("Are you sure want to delete this record?", function(result) {
+                    if (result){
+                        $.ajax({
+                            type: 'get',
+                            url: "{!! route('employeeDelete','') !!}/"+record_id,
+                            dataType: 'json',
+                            success: function(data) {
+                                //console.log(data);
+                                if (data.result){
+                                    box_type = 'success';
+                                } 
+                                else {
+                                    box_type = 'danger';
+                                }
+                                $('#delete_message').empty();
+                                var box = $('<div class="alert alert-'+box_type+' alert-dismissible"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+                                $('#delete_message').append(box);
+                                employeeTable.ajax.reload();
+                            }
+                        }); 
+                    }
+                });
+            } );
             
         } );
     </script> 

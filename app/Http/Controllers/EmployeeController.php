@@ -64,7 +64,7 @@ class EmployeeController extends Controller {
 	{
         $inputs = $request->all();
         $employee = $this->employeeRepository->createIfNotFound($inputs);
-        return redirect('employeeForm')->withOk('Record \''.$inputs['name'].'\' created !');
+        return redirect('employee')->withOk('Record <b>'.$inputs['name'].'</b> created !');
 	}
     
 	public function getFormUpdate($id)
@@ -87,8 +87,28 @@ class EmployeeController extends Controller {
 	{
         $inputs = $request->all();
         $employee = $this->employeeRepository->update($id, $inputs);
-        return redirect('employeeFormUpdate/'.$id)->withOk('Record \''.$inputs['name'].'\' updated !');
+        return redirect('employee')->withOk('Record <b>'.$inputs['name'].'</b> updated !');
 	}
+
+	public function delete($id)
+	{
+        $name = $this->employeeRepository->getById($id)->name;
+        // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
+        $result = new \stdClass();
+        $result->result = true;
+        $result->msg = '';
+        try {
+            $employee = $this->employeeRepository->destroy($id);
+        }
+        catch (\Illuminate\Database\QueryException $ex){
+            $result->result = false;
+            $result->msg = 'Message:</BR>'.$ex->getMessage();
+            return json_encode($result);
+        }
+		//\Debugbar::info($manager_list);
+        $result->msg = 'Record <b>'.$name.'</b> deleted successfully';
+		return json_encode($result);
+	}   
     
 	public function destroy($id)
 	{
@@ -96,5 +116,4 @@ class EmployeeController extends Controller {
 
 		return redirect()->back();
 	}
-
 }

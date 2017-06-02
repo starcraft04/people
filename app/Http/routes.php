@@ -31,18 +31,25 @@ Route::post('otlupload', ['uses'=>'OtlUploadController@postForm','as'=>'otluploa
 Route::get('stepupload', ['uses'=>'StepUploadController@getForm','as'=>'stepuploadform']);
 Route::post('stepupload', ['uses'=>'StepUploadController@postForm','as'=>'stepupload']);
 
-//Employee
-Route::get('employee', ['uses'=>'EmployeeController@getList','as'=>'employee']);
-Route::get('employee/{n}', ['uses'=>'EmployeeController@show']);
-Route::get('employeeForm', ['uses'=>'EmployeeController@getForm','as'=>'employeeForm']);
-Route::post('employeeForm', ['uses'=>'EmployeeController@postForm']);
-Route::get('employeeFormUpdate/{n}', ['uses'=>'EmployeeController@getFormUpdate','as'=>'employeeFormUpdate']);
-Route::post('employeeFormUpdate/{n}', ['uses'=>'EmployeeController@postFormUpdate']);
-
 //Employee activity
 Route::get('employeeactivity', ['uses'=>'EmployeeActivityController@getView','as'=>'employeeactivity']);
 //Employee skill
 Route::get('employeeskill', ['uses'=>'EmployeeSkillController@getView','as'=>'employeeskill']);
+
+//Employee
+//  Main employee list
+Route::get('employee', ['uses'=>'EmployeeController@getList','as'=>'employee']);
+//  Create new employee
+Route::get('employeeForm', ['uses'=>'EmployeeController@getForm','as'=>'employeeForm']);
+Route::post('employeeForm', ['uses'=>'EmployeeController@postForm']);
+//  Update employee
+Route::get('employeeFormUpdate/{n}', ['uses'=>'EmployeeController@getFormUpdate','as'=>'employeeFormUpdate']);
+Route::post('employeeFormUpdate/{n}', ['uses'=>'EmployeeController@postFormUpdate']);
+Route::get('employeeFormUpdate/{n}', ['uses'=>'EmployeeController@getFormUpdate','as'=>'employeeFormUpdate']);
+//  Delete employee
+Route::get('employeeDelete/{n}', ['uses'=>'EmployeeController@delete','as'=>'employeeDelete']);
+//  Employee information
+Route::get('employee/{n}', ['uses'=>'EmployeeController@show']);
 
 //AJAX
 //Activity per employee

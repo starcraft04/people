@@ -84,7 +84,8 @@ class EmployeeRepository
 	public function destroy($id)
 	{
 		$this->getById($id)->delete();
-	} 
+        return 'success';
+	}
     public function getDomainList()
 	{
         return $this->employee->where('domain','<>','null')->select('domain AS text')->groupBy('domain')->get();
