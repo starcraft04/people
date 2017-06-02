@@ -38,18 +38,17 @@ Route::get('employeeskill', ['uses'=>'EmployeeSkillController@getView','as'=>'em
 
 //Employee
 //  Main employee list
-Route::get('employee', ['uses'=>'EmployeeController@getList','as'=>'employee']);
+Route::get('employeeList', ['uses'=>'EmployeeController@getList','as'=>'employeeList']);
 //  Create new employee
-Route::get('employeeForm', ['uses'=>'EmployeeController@getForm','as'=>'employeeForm']);
-Route::post('employeeForm', ['uses'=>'EmployeeController@postForm']);
+Route::get('employeeFormCreate', ['uses'=>'EmployeeController@getFormCreate','as'=>'employeeFormCreate']);
+Route::post('employeeFormCreate', ['uses'=>'EmployeeController@postFormCreate']);
 //  Update employee
 Route::get('employeeFormUpdate/{n}', ['uses'=>'EmployeeController@getFormUpdate','as'=>'employeeFormUpdate']);
 Route::post('employeeFormUpdate/{n}', ['uses'=>'EmployeeController@postFormUpdate']);
-Route::get('employeeFormUpdate/{n}', ['uses'=>'EmployeeController@getFormUpdate','as'=>'employeeFormUpdate']);
 //  Delete employee
 Route::get('employeeDelete/{n}', ['uses'=>'EmployeeController@delete','as'=>'employeeDelete']);
 //  Employee information
-Route::get('employee/{n}', ['uses'=>'EmployeeController@show']);
+Route::get('employee/{n}', ['uses'=>'EmployeeController@show','as'=>'employee']);
 
 //AJAX
 //Activity per employee

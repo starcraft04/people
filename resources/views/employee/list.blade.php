@@ -74,7 +74,7 @@
                         <th>Management Code</th>
                         <th>Job role</th>
                         <th>Type</th>
-                        <th><a data-toggle="tooltip" title="Create new" href="{{ route('employeeForm') }}" class="btn btn-info btn-xs" align="right"><span class="glyphicon glyphicon-plus"> New</span></a></th>
+                        <th width="10px"><a data-toggle="tooltip" title="Create new" href="{{ route('employeeFormCreate') }}" class="btn btn-info btn-xs" align="right"><span class="glyphicon glyphicon-plus"> New</span></a></th>
                     </tr>
                 </thead>
                 <tfoot>
@@ -103,7 +103,7 @@
                     <th width="100px"></th>
                     <th></th>
                 </thead>
-                    
+
                 </tr>
                 <tr>
                     <td></td>
@@ -161,16 +161,16 @@
     <script>
         var employeeTable;
         var record_id;
-        
+
         $(document).ready(function() {
             var template = Handlebars.compile($("#details-template").html());
-            
+
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-            
+
             employeeTable = $('#employeeTable').DataTable({
                 serverSide: true,
                 processing: true,
@@ -179,11 +179,11 @@
                         type: "POST",
                         dataSrc: function ( json ) {
                             for ( var i=0, ien=json.data.length ; i<ien ; i++ ) {
-                                if (json.data[i].is_manager == null){
-                                    json.data[i].is_manager = 'false';
+                                if (json.data[i].is_manager == 1){
+                                    json.data[i].is_manager = 'true';
                                 }
                                 else {
-                                    json.data[i].is_manager = 'true';
+                                    json.data[i].is_manager = 'false';
                                 }
                             }
                             return json.data;
@@ -243,7 +243,7 @@
                     });
                 }
             } );
-            
+
             // Add event listener for opening and closing details
             $('#employeeTable tbody').on('click', 'td.details-control', function () {
                 var tr = $(this).closest('tr');
@@ -260,11 +260,11 @@
                     tr.addClass('shown');
                 }
             });
-            
+
             $(document).on('click', '.buttonUpdate', function () {
                 window.location.href = "{!! route('employeeFormUpdate','') !!}/"+this.id;
             } );
-            
+
             $(document).on('click', '.buttonDelete', function () {
                 record_id = this.id;
                 bootbox.confirm("Are you sure want to delete this record?", function(result) {
@@ -277,7 +277,7 @@
                                 //console.log(data);
                                 if (data.result){
                                     box_type = 'success';
-                                } 
+                                }
                                 else {
                                     box_type = 'danger';
                                 }
@@ -286,11 +286,11 @@
                                 $('#delete_message').append(box);
                                 employeeTable.ajax.reload();
                             }
-                        }); 
+                        });
                     }
                 });
             } );
-            
+
         } );
-    </script> 
+    </script>
 @stop

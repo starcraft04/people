@@ -6,22 +6,28 @@
         <div class="col-md-6 col-md-offset-3">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    Add employee
+                    Update employee
                 </div>
                 <div class="panel-body">
                     <div class="row">
                     @if(session()->has('ok'))
-                    <div class="alert alert-success alert-dismissible">{!! session('ok') !!}</div> 
+                    <div class="alert alert-success alert-dismissible">{!! session('ok') !!}</div>
                     @endif
                     </div>
-                        {!! Form::open(['url' => 'employeeForm', 'method' => 'post', 'class' => 'form-horizontal panel']) !!}	
+                        @if($action == 'create')
+                          {!! Form::open(['url' => 'employeeFormCreate', 'method' => 'post', 'class' => 'form-horizontal panel']) !!}
+                        @elseif($action == 'update')
+                          {!! Form::open(['url' => 'employeeFormUpdate/'.$employee->id, 'method' => 'post', 'class' => 'form-horizontal panel']) !!}
+                          {!! Form::hidden('id', $employee->id, ['class' => 'form-control', 'placeholder' => 'id']) !!}
+                        @endif
+
                         <div class="row">
                             <div class="form-group {!! $errors->has('name') ? 'has-error' : '' !!} col-md-10">
                                 <div class="col-md-3">
                                     {!! Form::label('name', 'Name', ['class' => 'control-label col-xs-2']) !!}
                                 </div>
                                 <div class="col-md-7">
-                                    {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => 'name']) !!}
+                                    {!! Form::text('name', (isset($employee)) ? $employee->name : '', ['class' => 'form-control', 'placeholder' => 'name']) !!}
                                     {!! $errors->first('name', '<small class="help-block">:message</small>') !!}
                                 </div>
                             </div>
@@ -32,7 +38,7 @@
                                     {!! Form::label('manager_id', 'Manager', ['class' => 'control-label']) !!}
                                 </div>
                                 <div class="col-md-7">
-                                    {!! Form::select('manager_id', $manager_list, '', ['class' => 'form-control']) !!}
+                                    {!! Form::select('manager_id', $manager_list, (isset($employee)) ? $employee->manager_id : '', ['class' => 'form-control']) !!}
                                     {!! $errors->first('manager_id', '<small class="help-block">:message</small>') !!}
                                 </div>
                             </div>
@@ -43,7 +49,7 @@
                                     {!! Form::label('employee_type', 'Type', ['class' => 'control-label']) !!}
                                 </div>
                                 <div class="col-md-7">
-                                    {!! Form::select('employee_type', $employee_type, '', ['class' => 'form-control']) !!}
+                                    {!! Form::select('employee_type', config('select.employee_type'), (isset($employee)) ? $employee->employee_type : '', ['class' => 'form-control']) !!}
                                     {!! $errors->first('employee_type', '<small class="help-block">:message</small>') !!}
                                 </div>
                             </div>
@@ -54,7 +60,7 @@
                                     {!! Form::label('job_role', 'Team', ['class' => 'control-label']) !!}
                                 </div>
                                 <div class="col-md-7">
-                                    {!! Form::text('job_role', null, ['class' => 'form-control', 'placeholder' => 'job role']) !!}
+                                    {!! Form::select('job_role', config('select.job_role'), (isset($employee)) ? $employee->job_role : '', ['class' => 'form-control']) !!}
                                     {!! $errors->first('job_role', '<small class="help-block">:message</small>') !!}
                                 </div>
                             </div>
@@ -65,7 +71,7 @@
                                     {!! Form::label('region', 'Region', ['class' => 'control-label']) !!}
                                 </div>
                                 <div class="col-md-7">
-                                    {!! Form::text('region', null, ['class' => 'form-control', 'placeholder' => 'region']) !!}
+                                    {!! Form::select('region', config('select.region'), (isset($employee)) ? $employee->region : '', ['class' => 'form-control']) !!}
                                     {!! $errors->first('region', '<small class="help-block">:message</small>') !!}
                                 </div>
                             </div>
@@ -76,7 +82,7 @@
                                     {!! Form::label('country', 'Country', ['class' => 'control-label']) !!}
                                 </div>
                                 <div class="col-md-7">
-                                    {!! Form::text('country', null, ['class' => 'form-control', 'placeholder' => 'country']) !!}
+                                    {!! Form::select('country', config('select.country'), (isset($employee)) ? $employee->country : '', ['class' => 'form-control']) !!}
                                     {!! $errors->first('country', '<small class="help-block">:message</small>') !!}
                                 </div>
                             </div>
@@ -87,7 +93,7 @@
                                     {!! Form::label('domain', 'Domain', ['class' => 'control-label']) !!}
                                 </div>
                                 <div class="col-md-7">
-                                    {!! Form::text('domain', null, ['class' => 'form-control', 'placeholder' => 'domain']) !!}
+                                    {!! Form::select('domain', config('select.domain'), (isset($employee)) ? $employee->domain : '', ['class' => 'form-control']) !!}
                                     {!! $errors->first('domain', '<small class="help-block">:message</small>') !!}
                                 </div>
                             </div>
@@ -98,7 +104,7 @@
                                     {!! Form::label('subdomain', 'Subdomain', ['class' => 'control-label']) !!}
                                 </div>
                                 <div class="col-md-7">
-                                    {!! Form::text('subdomain', null, ['class' => 'form-control', 'placeholder' => 'subdomain']) !!}
+                                    {!! Form::select('subdomain', config('select.subdomain'), (isset($employee)) ? $employee->subdomain : '', ['class' => 'form-control']) !!}
                                     {!! $errors->first('subdomain', '<small class="help-block">:message</small>') !!}
                                 </div>
                             </div>
@@ -109,7 +115,7 @@
                                     {!! Form::label('management_code', 'MC', ['class' => 'control-label']) !!}
                                 </div>
                                 <div class="col-md-7">
-                                    {!! Form::text('management_code', null, ['class' => 'form-control', 'placeholder' => 'management code']) !!}
+                                    {!! Form::text('management_code', (isset($employee)) ? $employee->management_code : '', ['class' => 'form-control', 'placeholder' => 'management code']) !!}
                                     {!! $errors->first('management_code', '<small class="help-block">:message</small>') !!}
                                 </div>
                             </div>
@@ -120,14 +126,19 @@
                                     {!! Form::label('is_manager', 'Is manager?', ['class' => 'control-label']) !!}
                                 </div>
                                 <div class="col-md-7">
-                                    {!! Form::checkbox('is_manager', 'yes', false, ['class' => 'checkbox']) !!}
+                                    {!! Form::checkbox('is_manager', 'yes', (isset($employee)) ? $employee->is_manager : '', ['class' => 'checkbox']) !!}
                                     {!! $errors->first('manager_id', '<small class="help-block">:message</small>') !!}
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-offset-7 col-md-1">
+                              @if($action == 'create')
                                 {!! Form::submit('Create', ['class' => 'btn btn-primary']) !!}
+                              @elseif($action == 'update')
+                                {!! Form::submit('Update', ['class' => 'btn btn-primary']) !!}
+                              @endif
+
                             </div>
                         </div>
                         {!! Form::close() !!}
