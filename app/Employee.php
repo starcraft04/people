@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Employee extends Model 
+class Employee extends Model
 {
 
     protected $table = 'employee';
@@ -16,9 +16,14 @@ class Employee extends Model
         return $this->hasMany('Activity');
     }
 
-    public function manager()
+    public function my_employees()
     {
-        return $this->hasOne('Employee');
+        return $this->hasMany('App\Employee', 'manager_id');
+    }
+
+    public function my_manager()
+    {
+        return $this->belongsTo('App\Employee', 'manager_id');
     }
 
     public function users()

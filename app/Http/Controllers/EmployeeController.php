@@ -106,4 +106,9 @@ class EmployeeController extends Controller {
         $result->msg = 'Record <b>'.$name.'</b> deleted successfully';
 		return json_encode($result);
 	}
+
+  public function ListOfEmployees()
+  {
+    return $this->employeeRepository->getListOfEmployees();
+  }
 }

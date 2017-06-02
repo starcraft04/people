@@ -175,9 +175,10 @@
                 serverSide: true,
                 processing: true,
                 ajax: {
-                        url: "{!! route('ajaxlistemployee') !!}",
-                        type: "POST",
+                        url: "{!! route('listOfEmployeesAjax') !!}",
+                        type: "GET",
                         dataSrc: function ( json ) {
+                          console.log(json);;
                             for ( var i=0, ien=json.data.length ; i<ien ; i++ ) {
                                 if (json.data[i].is_manager == 1){
                                     json.data[i].is_manager = 'true';

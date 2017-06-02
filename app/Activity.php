@@ -9,7 +9,7 @@ class Activity extends Model
 
     protected $table = 'activity';
     public $timestamps = true;
-    protected $fillable = array('year', 'month', 'project_id', 'task_hour', 'forecast', 'from_otl', 'employee_id');
+    protected $fillable = array('year', 'month', 'project_id', 'task_hour', 'forecast', 'from_otl', 'employee_id', 'created_at', 'updated_at');
 
     public function employee()
     {

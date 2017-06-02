@@ -3,13 +3,15 @@
 namespace App\Repositories;
 
 use App\Employee;
+use Datatables;
+use DB;
 
 class EmployeeRepository
 {
 
-    protected $employee;
+  protected $employee;
 
-    public function __construct(Employee $employee)
+  public function __construct(Employee $employee)
 	{
 		$this->employee = $employee;
 	}
@@ -21,15 +23,15 @@ class EmployeeRepository
 
   public function createIfNotFound(Array $inputs)
   {
-      $employee = $this->employee->where('name', $inputs['name'])->first();
+    $employee = $this->employee->where('name', $inputs['name'])->first();
 
-      if (!isset($employee)){
-          $employee = new $this->employee;
-          return $this->save($employee, $inputs);
-      }
-      else {
-        return $employee;
-      }
+    if (!isset($employee)){
+        $employee = new $this->employee;
+        return $this->save($employee, $inputs);
+    }
+    else {
+      return $employee;
+    }
   }
 
   public function update($id, Array $inputs)
@@ -60,11 +62,21 @@ class EmployeeRepository
 	public function destroy($id)
 	{
 		$this->getById($id)->delete();
-        return 'success';
+    return 'success';
 	}
+
+  public function getListOfEmployees()
+  {
+    //the with('my_manager') will include for each record, an array with all the data from this manager (coming from manager_id) and this was defined in the model Employee.php
+    $employeeList = DB::table('employee')
+        ->select('employee.id', 'employee.name', 'employee.manager_id','manager.name AS manager_name','employee.is_manager', 'employee.region', 'employee.country', 'employee.domain', 'employee.subdomain', 'employee.management_code', 'employee.job_role', 'employee.employee_type')
+        ->join('employee AS manager', 'employee.manager_id','=','manager.id')->where('employee.name','<>','MANAGER');
+    $data = Datatables::of($employeeList)->make(true);
+    return $data;
+  }
 
   public function getManagersList()
 	{
-        return $this->employee->where('is_manager', '=','1')->lists('name','id');
+    return $this->employee->where('is_manager', '=','1')->lists('name','id');
 	}
 }
