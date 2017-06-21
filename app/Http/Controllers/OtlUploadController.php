@@ -15,10 +15,17 @@ class OtlUploadController extends Controller
   }
   public function getForm()
   {
-    return view('dataFeed.otlupload');
+    return view('dataFeed/otlupload');
   }
   public function postForm(OtlUploadRequest $request)
   {
+    $color = [
+      'error' => 'text-danger',
+      'info' => 'text-info',
+      'update' => 'text-warning',
+      'add' => 'text-primary'
+    ];
+
     $result = new \stdClass();
     $result->result = 'success';
     $result->msg = '';
@@ -46,30 +53,23 @@ class OtlUploadController extends Controller
       foreach ($result as $row){
         array_push($messages,['status'=>'BEGIN LINE '.$i,'msg'=>'************************']);
         $missing = 0;
-        $managerInDB = $this->userRepository->getByName($row->manager_name);
         $userInDB = $this->userRepository->getByName($row->employee_name);
         $projectInDBnum = $this->projectRepository->getByOTLnum($row->project_name,$row->meta_activity);
 
-        if (empty($managerInDB)){
-          array_push($messages,['status'=>'error','msg'=>'Manager '.$row->manager_name.' not in DB']);
-          $missing = 1;
-        } else {
-          array_push($messages,['status'=>'pass','msg'=>'Manager '.$row->manager_name.' already in DB']);
-        }
         if (empty($userInDB)){
-          array_push($messages,['status'=>'error','msg'=>'User '.$row->employee_name.' not in DB']);
+          array_push($messages,['status'=>'error','msg'=>'LINE '.$i.': User '.$row->employee_name.' not in DB']);
           $missing = 1;
         }
         else {
-          array_push($messages,['status'=>'pass','msg'=>'User '.$row->employee_name.' already in DB']);
+          array_push($messages,['status'=>'info','msg'=>'LINE '.$i.': User '.$row->employee_name.' already in DB']);
         }
         if ($projectInDBnum > 1){
           array_push($messages,['status'=>'error',
-              'msg'=>'Found '.$projectInDBnum.' instance of '.$row->project_name.' with meta '.$row->meta_activity.' for user '.$row->employee_name]);
+              'msg'=>'LINE '.$i.': Found '.$projectInDBnum.' instance of </BR><div style="padding-left:5em;">Customer: '.$row->customer_name.' </BR> OTL code: '.$row->project_name.' </BR> META: '.$row->meta_activity.'</div>']);
         }
         elseif ($projectInDBnum == 1) {
           // Only if we can find 1 instance of a mix of otl_project_code and meta-activity then we enter the activity
-          array_push($messages,['status'=>'update','msg'=>'Found '.$projectInDBnum.' instance of '.$row->project_name.' with meta '.$row->meta_activity]);
+          array_push($messages,['status'=>'info','msg'=>'LINE '.$i.': Found '.$projectInDBnum.' instance of '.$row->project_name.' with meta '.$row->meta_activity]);
           $projectInDB = $this->projectRepository->getByOTL($row->project_name,$row->meta_activity);
           $project_input = [];
           $project_input['otl_validated'] = 1;
@@ -86,60 +86,22 @@ class OtlUploadController extends Controller
             $activityInDB = $this->activityRepository->checkIfExists($activity);
             if (!$activityInDB){
               $this->activityRepository->create($activity);
-              array_push($messages,['status'=>'add','msg'=>'Activity created in DB']);
+              array_push($messages,['status'=>'add','msg'=>'LINE '.$i.': Activity created in DB']);
             } else {
               $this->activityRepository->update($activityInDB->id,$activity);
-              array_push($messages,['status'=>'update','msg'=>'Activity updated in DB']);
+              array_push($messages,['status'=>'update','msg'=>'LINE '.$i.': Activity updated in DB']);
             }
           }
         }
         else {
           array_push($messages,['status'=>'error',
-            'msg'=>'Found '.$projectInDBnum.' instance of '.$row->project_name.' with meta '.$row->meta_activity.' for user '.$row->employee_name]);
+            'msg'=>'LINE '.$i.': Found '.$projectInDBnum.' instance of </BR><div style="padding-left:5em;">Customer: '.$row->customer_name.' </BR> OTL code: '.$row->project_name.' </BR> Meta: '.$row->meta_activity.'</div>']);
         }
         array_push($messages,['status'=>'END LINE '.$i,'msg'=>'************************']);
         $i += 1;
       }
     }
-    /*
 
-    foreach ($sheet as $row){
-    $manager = [];
-    $manager['name'] = $row->manager_name;
-    $manager['is_manager'] = true;
-    $manager['manager_id'] = 1;
-    $manager['from_otl'] = 1;
-    $manager = $this->userRepository->createIfNotFound($manager);
-    $user = [];
-    $user['name'] = $row->user_name;
-    $user['manager_id'] = $manager->id;
-    $user['from_otl'] = 1;
-    $user = $this->userRepository->createIfNotFound($user);
-    $project = [];
-    $project['customer_name'] = $row->customer_name;
-    $project['project_name'] = $row->project_name;
-    $project['task_name'] = $row->task_name;
-    $project['meta_activity'] = $row->meta_activity;
-    $project['project_type'] = $row->project_type;
-    $project['task_category'] = $row->task_category;
-    $project['from_otl'] = 1;
-    $project = $this->projectRepository->createIfNotFound($project);
-    $activity = [];
-    $activity['year'] = $request->input('year');
-    $activity['month'] = $request->input('month');
-    $activity['project_id'] = $project->id;
-    $activity['user_id'] = $user->id;
-    $activity['task_hour'] = $row->original_time;
-    $activity['from_otl'] = 1;
-    $activity = $this->activityRepository->createOrUpdate($activity);
-
-    $key = in_array($user['name'], array_column($results, 'name'));
-    if ($key == false)
-    {
-    array_push($results,['name'=>$user['name'],'status'=>'updated']);
-  }
-};
-*/
-return view('dataFeed.otlupload',  compact('messages'))->with('success','File processed');
+return view('dataFeed/otlupload',  compact('messages','color'))->with('success','File processed');
 }
 }

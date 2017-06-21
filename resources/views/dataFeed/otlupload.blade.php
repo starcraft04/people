@@ -99,7 +99,7 @@
       <!-- Window content -->
       <div class="x_content">
         <br />
-          <div class="text-danger">Errors</div>
+          <div class="text-danger"><H2>Errors</H2></div>
           </BR>
           @foreach($messages as $m)
           @if($m['status'] == 'error')
@@ -107,26 +107,22 @@
             <div class="col-md-1 text-danger">
               {!! $m['status'] !!}
             </div>
-            <div class="col-md-offset-1 col-md-10 text-danger">
-              {!! $m['msg'] !!}
+            <div class="col-md-offset-1 col-md-10 {!! isset($color[$m['status']]) ? $color[$m['status']] : '' !!}">
+              {!! isset($m['msg']) ? $m['msg'] : '' !!}
             </div>
           </div>
           @endif
           @endforeach
           </BR></BR></BR>
-          Full results</BR>
+          <div class="text-info"><H2>Full result</H2></div>
+          </BR>
           @foreach($messages as $m)
-          <?php
-          $color = "text-primary";
-          if ($m['status'] == 'add'){$color = "text-success";}
-          elseif ($m['status'] == 'error'){$color = "text-danger";}
-          ?>
           <div class="row">
-            <div class="col-md-1 {!! $color !!}">
+            <div class="col-md-1 {!! isset($color[$m['status']]) ? $color[$m['status']] : '' !!}">
               {!! $m['status'] !!}
             </div>
-            <div class="col-md-offset-1 col-md-10 {!! $color !!}">
-              {!! $m['msg'] !!}
+            <div class="col-md-offset-1 col-md-10 {!! isset($color[$m['status']]) ? $color[$m['status']] : '' !!}">
+              {!! isset($m['msg']) ? $m['msg'] : '' !!}
             </div>
           </div>
           @endforeach
