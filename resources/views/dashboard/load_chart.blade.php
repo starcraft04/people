@@ -353,7 +353,7 @@
          success: function(data) {
            useReturnData(data);
            barChart.data.datasets[0].data = ajaxdscvstotal();
-           barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
+           //barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
            barChart.data.datasets[2].data = ajaxdscpresales();
            barChart.data.datasets[3].data = ajaxiscpresales();
            barChart.data.datasets[4].data = ajaxdscstarted();
@@ -424,7 +424,7 @@
           success: function(data) {
             useReturnData(data);
             barChart.data.datasets[0].data = ajaxdscvstotal();
-            barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
+            //barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
             barChart.data.datasets[2].data = ajaxdscpresales();
             barChart.data.datasets[3].data = ajaxiscpresales();
             barChart.data.datasets[4].data = ajaxdscstarted();
@@ -448,7 +448,7 @@
           success: function(data) {
             useReturnData(data);
             barChart.data.datasets[0].data = ajaxdscvstotal();
-            barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
+            //barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
             barChart.data.datasets[2].data = ajaxdscpresales();
             barChart.data.datasets[3].data = ajaxiscpresales();
             barChart.data.datasets[4].data = ajaxdscstarted();
@@ -472,7 +472,7 @@
           success: function(data) {
             useReturnData(data);
             barChart.data.datasets[0].data = ajaxdscvstotal();
-            barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
+            //barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
             barChart.data.datasets[2].data = ajaxdscpresales();
             barChart.data.datasets[3].data = ajaxiscpresales();
             barChart.data.datasets[4].data = ajaxdscstarted();
