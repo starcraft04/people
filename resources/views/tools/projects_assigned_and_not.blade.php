@@ -102,7 +102,7 @@
                       <th>Meta-activity</th>
                       <th>Region</th>
                       <th>Country</th>
-                      <th>Domain</th>
+                      <th>Technology</th>
                       <th>Description</th>
                       <th>Estimated start date</th>
                       <th>Estimated end date</th>
@@ -129,7 +129,7 @@
                       <th>Meta-activity</th>
                       <th>Region</th>
                       <th>Country</th>
-                      <th>Domain</th>
+                      <th>Technology</th>
                       <th>Description</th>
                       <th>Estimated start date</th>
                       <th>Estimated end date</th>
@@ -186,7 +186,7 @@
                         <th>Meta-activity</th>
                         <th>Region</th>
                         <th>Country</th>
-                        <th>Domain</th>
+                        <th>Technology</th>
                         <th>Description</th>
                         <th>Estimated start date</th>
                         <th>Estimated end date</th>
@@ -213,7 +213,7 @@
                         <th>Meta-activity</th>
                         <th>Region</th>
                         <th>Country</th>
-                        <th>Domain</th>
+                        <th>Technology</th>
                         <th>Description</th>
                         <th>Estimated start date</th>
                         <th>Estimated end date</th>
@@ -288,7 +288,7 @@
                     { name: 'meta_activity', data: 'meta_activity', searchable: false , visible: false },
                     { name: 'region', data: 'region' , searchable: false , visible: false},
                     { name: 'country', data: 'country' , searchable: false , visible: false},
-                    { name: 'domain', data: 'domain' },
+                    { name: 'technology', data: 'technology' },
                     { name: 'description', data: 'description', searchable: false , visible: false },
                     { name: 'estimated_start_date', data: 'estimated_start_date' },
                     { name: 'estimated_end_date', data: 'estimated_end_date' },
@@ -381,7 +381,7 @@
                     { name: 'meta_activity', data: 'meta_activity', searchable: false , visible: false },
                     { name: 'region', data: 'region' , searchable: false , visible: false},
                     { name: 'country', data: 'country' , searchable: false , visible: false},
-                    { name: 'domain', data: 'domain' },
+                    { name: 'technology', data: 'technology' },
                     { name: 'description', data: 'description', searchable: false , visible: false },
                     { name: 'estimated_start_date', data: 'estimated_start_date' },
                     { name: 'estimated_end_date', data: 'estimated_end_date' },

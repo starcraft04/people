@@ -276,18 +276,13 @@
                   </div>
                 </div>
                 <div class="row">
-                  <div class="form-group {!! $errors->has('domain') ? 'has-error' : '' !!} col-md-12">
+                  <div class="form-group {!! $errors->has('technology') ? 'has-error' : '' !!} col-md-12">
                     <div class="col-md-3">
-                      {!! Form::label('domain', 'Domain', ['class' => 'control-label']) !!}
+                      {!! Form::label('technology', 'Technology', ['class' => 'control-label']) !!}
                     </div>
                     <div class="col-md-9">
-                      <select class="form-control select2" style="width: 100%;" id="domain" name="domain" data-placeholder="Select a domain">
-                        <option value="" ></option>
-                        @foreach(config('select.domain-projects') as $key => $value)
-                        <option value="{{ $key }}" <?php if (isset($project->domain) && $value == $project->domain) { echo 'selected'; }?>>{{ $value }}</option>
-                        @endforeach
-                      </select>
-                      {!! $errors->first('domain', '<small class="help-block">:message</small>') !!}
+                      {!! Form::text('technology', (isset($project)) ? $project->technology : '', ['class' => 'form-control', 'placeholder' => 'technology']) !!}
+                      {!! $errors->first('technology', '<small class="help-block">:message</small>') !!}
                     </div>
                   </div>
                 </div>
@@ -541,11 +536,6 @@ $(document).ready(function() {
   $("#country").select2({
     allowClear: true,
     disabled: {{ $country_select_disabled }}
-  });
-
-  $("#domain").select2({
-    allowClear: true,
-    disabled: {{ $domain_select_disabled }}
   });
 
   @if($action == 'update')

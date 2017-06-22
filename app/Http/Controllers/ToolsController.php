@@ -92,7 +92,6 @@ class ToolsController extends Controller {
     $project_status_select_disabled = 'false';
     $region_select_disabled = 'false';
     $country_select_disabled = 'false';
-    $domain_select_disabled = 'false';
 
     $created_by_user_id = Auth::user()->id;
 
@@ -113,7 +112,7 @@ class ToolsController extends Controller {
 		return view('tools/create_update', compact('year','edit_project_name','edit_otl_name',
       'user_list','user_selected','user_select_disabled','created_by_user_id',
       'meta_activity_select_disabled','project_type_select_disabled','activity_type_select_disabled','project_status_select_disabled',
-      'region_select_disabled','country_select_disabled','domain_select_disabled'))
+      'region_select_disabled','country_select_disabled'))
       ->with('action','create');
 	}
 
@@ -154,7 +153,6 @@ class ToolsController extends Controller {
     $project_status_select_disabled = 'true';
     $region_select_disabled = 'true';
     $country_select_disabled = 'true';
-    $domain_select_disabled = 'true';
     $user_select_disabled = 'true';
 
     $user_list = [];
@@ -219,7 +217,6 @@ class ToolsController extends Controller {
       $project_status_select_disabled = 'false';
       $region_select_disabled = 'false';
       $country_select_disabled = 'false';
-      $domain_select_disabled = 'false';
     }
 
     if ($project->otl_validated == 1) {
@@ -253,7 +250,7 @@ class ToolsController extends Controller {
 		return view('tools/create_update', compact('user_id','project','year','activities','from_otl',
       'edit_project_name','edit_otl_name',
       'meta_activity_select_disabled','project_type_select_disabled','activity_type_select_disabled','project_status_select_disabled',
-      'region_select_disabled','country_select_disabled','domain_select_disabled','user_list','user_selected','user_select_disabled','created_by_user_name'))
+      'region_select_disabled','country_select_disabled','user_list','user_selected','user_select_disabled','created_by_user_name'))
       ->with('action','update');
 	}
 

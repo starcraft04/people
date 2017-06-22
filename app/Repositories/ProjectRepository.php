@@ -57,7 +57,7 @@ class ProjectRepository
     if (isset($inputs['region'])) {$project->region = $inputs['region'];}
     if (isset($inputs['country'])) {$project->country = $inputs['country'];}
     if (isset($inputs['customer_location'])) {$project->customer_location = $inputs['customer_location'];}
-    if (isset($inputs['domain'])) {$project->domain = $inputs['domain'];}
+    if (isset($inputs['technology'])) {$project->technology = $inputs['technology'];}
     if (isset($inputs['estimated_start_date'])) {$project->estimated_start_date = $inputs['estimated_start_date'];}
     if (isset($inputs['estimated_end_date'])) {$project->estimated_end_date = $inputs['estimated_end_date'];}
     if (isset($inputs['LoE_onshore'])) {$project->LoE_onshore = $inputs['LoE_onshore'];}
@@ -97,7 +97,7 @@ class ProjectRepository
 
     $projectList = $this->project
       ->select( 'id','customer_name','project_name','otl_project_code','project_type','activity_type','project_status','meta_activity','region',
-                'country','domain','description','estimated_start_date','estimated_end_date','comments','LoE_onshore','LoE_nearshore',
+                'country','technology','description','estimated_start_date','estimated_end_date','comments','LoE_onshore','LoE_nearshore',
                 'LoE_offshore','LoE_contractor','gold_order_number','product_code','revenue','win_ratio');
 
     if (isset($where['unassigned']) && $where['unassigned'] == 'true') {

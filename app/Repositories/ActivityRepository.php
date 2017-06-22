@@ -548,7 +548,7 @@ class create_temp_table_mix_OTL_NONOTL{
                     p.region AS region,
                     p.country AS country,
                     p.customer_location AS customer_location,
-                    p.domain AS domain,
+                    p.technology AS technology,
                     p.description AS description,
                     p.comments AS comments,
                     p.LoE_onshore AS LoE_onshore,

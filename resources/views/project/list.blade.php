@@ -87,7 +87,7 @@
               <th>Meta-activity</th>
               <th>Region</th>
               <th>Country</th>
-              <th>Domain</th>
+              <th>Technology</th>
               <th>Description</th>
               <th>Estimated start date</th>
               <th>Estimated end date</th>
@@ -118,7 +118,7 @@
               <th>Meta-activity</th>
               <th>Region</th>
               <th>Country</th>
-              <th>Domain</th>
+              <th>Technology</th>
               <th>Description</th>
               <th>Estimated start date</th>
               <th>Estimated end date</th>
@@ -200,7 +200,7 @@ $(document).ready(function() {
       { name: 'meta_activity', data: 'meta_activity' },
       { name: 'region', data: 'region' },
       { name: 'country', data: 'country' },
-      { name: 'domain', data: 'domain' },
+      { name: 'technology', data: 'technology' },
       { name: 'description', data: 'description' , searchable: false , visible: false },
       { name: 'estimated_start_date', data: 'estimated_start_date', searchable: false , visible: false  },
       { name: 'estimated_end_date', data: 'estimated_end_date' , searchable: false , visible: false },

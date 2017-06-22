@@ -175,13 +175,13 @@
         </div>
 
         <div class="row">
-          <div class="form-group {!! $errors->has('domain') ? 'has-error' : '' !!} col-md-12">
+          <div class="form-group {!! $errors->has('technology') ? 'has-error' : '' !!} col-md-12">
             <div class="col-md-3">
-              {!! Form::label('domain', 'Domain', ['class' => 'control-label']) !!}
+              {!! Form::label('technology', 'Technology', ['class' => 'control-label']) !!}
             </div>
             <div class="col-md-9">
-              {!! Form::select('domain', config('select.domain-projects'), (isset($project)) ? $project->domain : '', ['class' => 'form-control']) !!}
-              {!! $errors->first('domain', '<small class="help-block">:message</small>') !!}
+              {!! Form::text('technology', (isset($project)) ? $project->technology : '', ['class' => 'form-control', 'placeholder' => 'technology']) !!}
+              {!! $errors->first('technology', '<small class="help-block">:message</small>') !!}
             </div>
           </div>
         </div>
