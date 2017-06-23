@@ -65,7 +65,7 @@ class OtlUploadController extends Controller
         }
         if ($projectInDBnum > 1){
           array_push($messages,['status'=>'error',
-              'msg'=>'LINE '.$i.': Found '.$projectInDBnum.' instance of </BR><div style="padding-left:5em;">Customer: '.$row->customer_name.' </BR> OTL code: '.$row->project_name.' </BR> META: '.$row->meta_activity.'</div>']);
+              'msg'=>'LINE '.$i.': Found '.$projectInDBnum.' instance for user '.$row->employee_name.' of </BR><div style="padding-left:5em;">Customer: '.$row->customer_name.' </BR> OTL code: '.$row->project_name.' </BR> META: '.$row->meta_activity.'</div>']);
         }
         elseif ($projectInDBnum == 1) {
           // Only if we can find 1 instance of a mix of otl_project_code and meta-activity then we enter the activity
@@ -95,7 +95,7 @@ class OtlUploadController extends Controller
         }
         else {
           array_push($messages,['status'=>'error',
-            'msg'=>'LINE '.$i.': Found '.$projectInDBnum.' instance of </BR><div style="padding-left:5em;">Customer: '.$row->customer_name.' </BR> OTL code: '.$row->project_name.' </BR> Meta: '.$row->meta_activity.'</div>']);
+            'msg'=>'LINE '.$i.': Found '.$projectInDBnum.' instance for user '.$row->employee_name.' of </BR><div style="padding-left:5em;">Customer: '.$row->customer_name.' </BR> OTL code: '.$row->project_name.' </BR> Meta: '.$row->meta_activity.'</div>']);
         }
         array_push($messages,['status'=>'END LINE '.$i,'msg'=>'************************']);
         $i += 1;
