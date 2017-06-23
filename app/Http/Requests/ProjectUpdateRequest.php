@@ -24,9 +24,8 @@ class ProjectUpdateRequest extends Request
   public function rules()
   {
     $id = $this->id;
-    $project_name = $this->project_name;
-
     $meta_activity = $this->meta_activity;
+    $customer_name = $this->customer_name;
 
 
     /**
@@ -44,9 +43,10 @@ class ProjectUpdateRequest extends Request
 
     return [
 
-      'project_name' => 'required|max:255|unique:projects,project_name,' . $id . ',id',
+      'project_name' => 'required|max:255|unique:projects,project_name,' . $id . ',id,customer_name,'.$customer_name,
       'customer_name' => 'required|max:255',
       'otl_project_code' => 'sometimes|max:255|unique:projects,otl_project_code,' . $id . ',id,meta_activity,'.$meta_activity,
+      'estimated_date' => 'date_format:"Y-m-d - Y-m-d"',
       'estimated_start_date' => 'date',
       'estimated_end_date' => 'date',
       'LoE_onshore' => 'numeric',
@@ -60,7 +60,8 @@ class ProjectUpdateRequest extends Request
   public function messages()
 {
   return [
-    'otl_project_code.unique' => 'This OTL project code and meta-activity already exists in the database.'
+    'otl_project_code.unique' => 'This OTL project code and meta-activity already exists in the database.',
+    'project_name.unique' => 'This project name and customer name already exists in the database.'
   ];
 }
 }

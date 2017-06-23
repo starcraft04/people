@@ -23,15 +23,15 @@ class ProjectCreateRequest extends Request
   */
   public function rules()
   {
-    $project_name = $this->project_name;
-
+    $customer_name = $this->customer_name;
     $meta_activity = $this->meta_activity;
 
     return [
 
-      'project_name' => 'required|max:255|unique:projects',
+      'project_name' => 'required|max:255|unique:projects,project_name,NULL,id,customer_name,'.$customer_name,
       'customer_name' => 'required|max:255',
       'otl_project_code' => 'sometimes|max:255|unique:projects,otl_project_code,NULL,id,meta_activity,'.$meta_activity,
+      'estimated_date' => 'date_format:"Y-m-d - Y-m-d"',
       'estimated_start_date' => 'date',
       'estimated_end_date' => 'date',
       'LoE_onshore' => 'numeric',
@@ -45,7 +45,8 @@ class ProjectCreateRequest extends Request
   public function messages()
   {
   return [
-    'otl_project_code.unique' => 'This OTL project code and meta-activity already exists in the database.'
+    'otl_project_code.unique' => 'This OTL project code and meta-activity already exists in the database.',
+    'project_name.unique' => 'This project name and customer name already exists in the database.'
   ];
   }
 }

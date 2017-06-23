@@ -217,7 +217,7 @@
               {!! Form::label('estimated_start_date', 'Estimated start date', ['class' => 'control-label']) !!}
             </div>
             <div class="col-md-9">
-              {!! Form::date('estimated_start_date', (isset($project)) ? $project->estimated_start_date : '', ['class' => 'form-control']) !!}
+              {!! Form::date('estimated_start_date', (isset($project)) ? $project->estimated_start_date : ((isset($today)) ? $today : ''), ['class' => 'form-control']) !!}
               {!! $errors->first('estimated_start_date', '<small class="help-block">:message</small>') !!}
             </div>
           </div>
@@ -229,7 +229,7 @@
               {!! Form::label('estimated_end_date', 'Estimated end date', ['class' => 'control-label']) !!}
             </div>
             <div class="col-md-9">
-              {!! Form::date('estimated_end_date', (isset($project)) ? $project->estimated_end_date : '', ['class' => 'form-control']) !!}
+              {!! Form::date('estimated_end_date', (isset($project)) ? $project->estimated_end_date : ((isset($today)) ? $today : ''), ['class' => 'form-control']) !!}
               {!! $errors->first('estimated_end_date', '<small class="help-block">:message</small>') !!}
             </div>
           </div>

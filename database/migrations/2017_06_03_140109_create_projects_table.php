@@ -10,10 +10,10 @@ class CreateProjectsTable extends Migration {
 		Schema::create('projects', function(Blueprint $table) {
 			$table->increments('id');
 			$table->string('customer_name', 100);
-			$table->string('project_name', 100)->unique();
+			$table->string('project_name', 100);
 			$table->string('project_type', 100)->nullable();
 			$table->string('activity_type', 100)->nullable();
-			$table->string('meta_activity', 100);
+			$table->string('meta_activity', 100)->nullable();
 			$table->string('region', 100)->nullable();
 			$table->string('country', 100)->nullable();
 			$table->string('customer_location', 100)->nullable();
@@ -37,6 +37,8 @@ class CreateProjectsTable extends Migration {
 			$table->timestamp('created_at')->nullable();
 			$table->timestamp('updated_at')->nullable();
 		});
+		DB::statement("ALTER TABLE `projects` ADD UNIQUE( `project_name`, `customer_name`);");
+		DB::statement("ALTER TABLE `projects` ADD UNIQUE( `otl_project_code`, `meta_activity`);");
 	}
 
 	public function down()

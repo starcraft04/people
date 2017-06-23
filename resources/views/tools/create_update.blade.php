@@ -72,6 +72,8 @@
             @elseif($action == 'update')
             {!! Form::open(['url' => 'toolsFormUpdate', 'method' => 'post']) !!}
             {!! Form::hidden('project_id', $project->id, ['class' => 'form-control']) !!}
+            // Now we need also to set up id so that it can be used for the ProjectUpdateRequest.php
+            {!! Form::hidden('id', $project->id, ['class' => 'form-control']) !!}
             @endif
 
 

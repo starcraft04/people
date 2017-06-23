@@ -36,7 +36,8 @@ class ProjectController extends Controller {
 
 	public function getFormCreate()
 	{
-		return view('project/create_update')->with('action','create');
+    $today = date("Y-m-d");
+		return view('project/create_update',  compact('today'))->with('action','create');
 	}
 
 	public function getFormUpdate($id)

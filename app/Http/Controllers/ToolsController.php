@@ -12,8 +12,8 @@ use Auth;
 use App\Repositories\UserRepository;
 use App\Repositories\ProjectRepository;
 use App\Repositories\ActivityRepository;
-use App\Http\Requests\ToolsCreateRequest;
-use App\Http\Requests\ToolsUpdateRequest;
+use App\Http\Requests\ProjectCreateRequest;
+use App\Http\Requests\ProjectUpdateRequest;
 
 class ToolsController extends Controller {
 
@@ -116,7 +116,7 @@ class ToolsController extends Controller {
       ->with('action','create');
 	}
 
-  public function postFormCreate(ToolsCreateRequest $request)
+  public function postFormCreate(ProjectCreateRequest $request)
 	{
     $inputs = $request->all();
     $start_end_date = explode(' - ',$inputs['estimated_date']);
@@ -254,7 +254,7 @@ class ToolsController extends Controller {
       ->with('action','update');
 	}
 
-	public function postFormUpdate(ToolsUpdateRequest $request)
+	public function postFormUpdate(ProjectUpdateRequest $request)
 	{
     $inputs = $request->all();
 
