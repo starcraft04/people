@@ -96,3 +96,8 @@ For Linux Ubuntu
     sudo apt-get install php7.0-zip
     sudo service apache2 restart
 ```
+17) In order to make sure that the git update button works, please enter the following
+```
+    sudo visudo
+```
+  > Add the line: git ALL=(www-data) /usr/bin/git pull
