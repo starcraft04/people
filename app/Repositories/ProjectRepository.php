@@ -49,8 +49,23 @@ class ProjectRepository
     if (isset($inputs['project_name'])) {$project->project_name = $inputs['project_name'];}
     if (isset($inputs['customer_name'])) {$project->customer_name = $inputs['customer_name'];}
 
-    if (isset($inputs['meta_activity'])) {$project->meta_activity = $inputs['meta_activity'];}
-    if (isset($inputs['otl_project_code'])) {$project->otl_project_code = $inputs['otl_project_code'];}
+    // OTL project code and meta activity can be empty and then it needs to be entered as null
+    if (isset($inputs['meta_activity'])) {
+      if (trim($inputs['meta_activity']) == '') {
+        $project->meta_activity = null;
+      } else {
+        $project->meta_activity = $inputs['meta_activity'];
+      }
+    }
+
+    if (isset($inputs['otl_project_code'])) {
+      if (trim($inputs['otl_project_code']) == '') {
+        $project->otl_project_code = null;
+      } else {
+        $project->otl_project_code = $inputs['otl_project_code'];
+      }
+    }
+
     // Nullable
     if (isset($inputs['project_type'])) {$project->project_type = $inputs['project_type'];}
     if (isset($inputs['activity_type'])) {$project->activity_type = $inputs['activity_type'];}

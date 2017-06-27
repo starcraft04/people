@@ -51,6 +51,8 @@ Route::group(['middleware' => ['auth']], function() {
       Route::get('userDelete/{n}', ['uses'=>'UserController@delete','as'=>'userDelete','middleware' => ['permission:user-delete']]);
       //  user profile
       Route::get('profile/{n}', ['uses'=>'UserController@profile','as'=>'profile']);
+      Route::get('ajax_git_pull', ['uses'=>'UserController@ajax_git_pull','as'=>'ajax_git_pull']);
+      Route::get('ajax_env_app_debug/{n}', ['uses'=>'UserController@ajax_env_app_debug','as'=>'ajax_env_app_debug']);
       Route::post('passwordUpdate/{n}', ['uses'=>'UserController@passwordUpdate','as'=>'passwordUpdate']);
       //  AJAX
       Route::get('listOfUsersAjax', ['uses'=>'UserController@listOfUsers','as'=>'listOfUsersAjax','middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);

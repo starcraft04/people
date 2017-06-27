@@ -72,11 +72,27 @@
             @elseif($action == 'update')
             {!! Form::open(['url' => 'toolsFormUpdate', 'method' => 'post']) !!}
             {!! Form::hidden('project_id', $project->id, ['class' => 'form-control']) !!}
-            // Now we need also to set up id so that it can be used for the ProjectUpdateRequest.php
+            <!-- Now we need also to set up id so that it can be used for the ProjectUpdateRequest.php -->
             {!! Form::hidden('id', $project->id, ['class' => 'form-control']) !!}
             @endif
 
 
+            <div class="row">
+              <div class="col-md-offset-1 col-md-1">
+                <a href="javascript:history.back()" class="btn btn-primary">
+                  <span class="glyphicon glyphicon-circle-arrow-left"></span> Back
+                </a>
+              </div>
+              <div class="col-md-offset-9 col-md-1">
+                @if($action == 'create')
+                {!! Form::submit('Create', ['class' => 'btn btn-success']) !!}
+                @elseif($action == 'update')
+                {!! Form::submit('Update', ['class' => 'btn btn-success']) !!}
+                @endif
+              </div>
+            </div>
+            <div class="ln_solid"></div>
+            
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group {!! $errors->has('user_id') ? 'has-error' : '' !!} col-md-12">
@@ -423,21 +439,7 @@
               <div class="row"></div>
               <div class="row"></div>
             </div>
-            <div class="ln_solid"></div>
-            <div class="row">
-              <div class="col-md-offset-1 col-md-1">
-                <a href="javascript:history.back()" class="btn btn-primary">
-                  <span class="glyphicon glyphicon-circle-arrow-left"></span> Back
-                </a>
-              </div>
-              <div class="col-md-offset-9 col-md-1">
-                @if($action == 'create')
-                {!! Form::submit('Create', ['class' => 'btn btn-success']) !!}
-                @elseif($action == 'update')
-                {!! Form::submit('Update', ['class' => 'btn btn-success']) !!}
-                @endif
-              </div>
-            </div>
+
 
             {!! Form::close() !!}
 

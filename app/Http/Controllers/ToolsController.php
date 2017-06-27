@@ -148,11 +148,11 @@ class ToolsController extends Controller {
     $edit_project_name = '';
     $edit_otl_name = '';
     $meta_activity_select_disabled = 'false';
-    $project_type_select_disabled = 'true';
-    $activity_type_select_disabled = 'true';
-    $project_status_select_disabled = 'true';
-    $region_select_disabled = 'true';
-    $country_select_disabled = 'true';
+    $project_type_select_disabled = 'false';
+    $activity_type_select_disabled = 'false';
+    $project_status_select_disabled = 'false';
+    $region_select_disabled = 'false';
+    $country_select_disabled = 'false';
     $user_select_disabled = 'true';
 
     $user_list = [];

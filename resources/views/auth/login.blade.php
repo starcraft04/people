@@ -81,3 +81,14 @@
 <!-- Window -->
 
 @endsection
+
+@section('script')
+<script>
+  $(document).ready(function() {
+
+    $(function() { $('[name="email"]').focus(); });
+
+  });
+
+</script>
+@stop
