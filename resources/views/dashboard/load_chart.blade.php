@@ -305,7 +305,6 @@
           type: 'line',
            label: 'Theoretical capacity',
            yAxisID: "y-axis-1",
-           stack: 'Stack 2',
            borderColor: window.chartColors.red,
            borderWidth: 3,
            fill: false,
@@ -317,7 +316,7 @@
            label: 'DSC Pre-Sales',
            yAxisID: "y-axis-1",
            stack: 'Stack 1',
-           backgroundColor: color(window.chartColors.green).alpha(0.5).rgbString(),
+           backgroundColor: color(window.chartColors.green).alpha(0.7).rgbString(),
            borderColor: window.chartColors.green,
            borderWidth: 1,
            data: []
@@ -327,7 +326,7 @@
            label: 'ISC Pre-Sales',
            yAxisID: "y-axis-1",
            stack: 'Stack 1',
-           backgroundColor: color(window.chartColors.green_light).alpha(0.5).rgbString(),
+           backgroundColor: color(window.chartColors.green_light).alpha(0.7).rgbString(),
            borderColor: window.chartColors.green_light,
            borderWidth: 1,
            data: []
@@ -337,7 +336,7 @@
            label: 'DSC Started',
            yAxisID: "y-axis-1",
            stack: 'Stack 1',
-           backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
+           backgroundColor: color(window.chartColors.blue).alpha(0.7).rgbString(),
            borderColor: window.chartColors.blue,
            borderWidth: 1,
            data: []
@@ -347,7 +346,7 @@
            label: 'ISC Started',
            yAxisID: "y-axis-1",
            stack: 'Stack 1',
-           backgroundColor: color(window.chartColors.blue_light).alpha(0.5).rgbString(),
+           backgroundColor: color(window.chartColors.blue_light).alpha(0.7).rgbString(),
            borderColor: window.chartColors.blue_light,
            borderWidth: 1,
            data: []
@@ -362,7 +361,7 @@
          success: function(data) {
            useReturnData(data);
            barChart.data.datasets[0].data = ajaxdscvstotal();
-           //barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
+           barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
            barChart.data.datasets[2].data = ajaxdscpresales();
            barChart.data.datasets[3].data = ajaxiscpresales();
            barChart.data.datasets[4].data = ajaxdscstarted();
@@ -433,7 +432,7 @@
           success: function(data) {
             useReturnData(data);
             barChart.data.datasets[0].data = ajaxdscvstotal();
-            //barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
+            barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
             barChart.data.datasets[2].data = ajaxdscpresales();
             barChart.data.datasets[3].data = ajaxiscpresales();
             barChart.data.datasets[4].data = ajaxdscstarted();
@@ -457,7 +456,7 @@
           success: function(data) {
             useReturnData(data);
             barChart.data.datasets[0].data = ajaxdscvstotal();
-            //barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
+            barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
             barChart.data.datasets[2].data = ajaxdscpresales();
             barChart.data.datasets[3].data = ajaxiscpresales();
             barChart.data.datasets[4].data = ajaxdscstarted();
@@ -481,7 +480,7 @@
           success: function(data) {
             useReturnData(data);
             barChart.data.datasets[0].data = ajaxdscvstotal();
-            //barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
+            barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
             barChart.data.datasets[2].data = ajaxdscpresales();
             barChart.data.datasets[3].data = ajaxiscpresales();
             barChart.data.datasets[4].data = ajaxdscstarted();
