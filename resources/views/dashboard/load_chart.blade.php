@@ -12,6 +12,8 @@
 <script src="{{ asset('/plugins/gentelella/vendors/select2/dist/js/select2.full.min.js') }}" type="text/javascript"></script>
 <!-- ChartJs -->
 <script src="{{ asset('/plugins/chartjs/Chart.bundle.min.js') }}"></script>
+<script src="{{ asset('/plugins/chartjs/FileSaver.js') }}"></script>
+<script src="{{ asset('/plugins/chartjs/canvas-to-blob.js') }}"></script>
 @stop
 
 @section('content')
@@ -95,6 +97,7 @@
       <!-- Window title -->
 
       <!-- Window content -->
+      <button id="save_chart" class="btn btn-success btn-xs"><span class="glyphicon glyphicon-camera"></span> Save chart</button>
       <div class="x_content">
           <canvas id="barChart"></canvas>
       </div>
@@ -236,6 +239,12 @@
    grey: 'rgb(201, 203, 207)'
   };
   $(document).ready(function() {
+    // Init of save as button
+    $("#save_chart").click(function(){
+      $("#barChart").get(0).toBlob(function(blob){
+        saveAs(blob, "chart.png")
+      });
+    });
     //Init select2 boxes
     $("#year").select2({
       allowClear: false
