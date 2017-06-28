@@ -71,9 +71,15 @@ class ProjectController extends Controller {
 		return json_encode($result);
 	}
 
-  public function ListOfprojects(Request $request)
+  public function listOfprojects(Request $request)
   {
     $inputs = $request->all();
     return $this->projectRepository->getListOfProjects($inputs);
+  }
+
+  public function listOfProjectsMissingInfo(Request $request)
+  {
+    $inputs = $request->all();
+    return $this->projectRepository->getListOfProjectsMissingInfo($inputs);
   }
 }

@@ -81,6 +81,13 @@ class ToolsController extends Controller {
     return view('tools/projects_assigned_and_not', compact('manager_list','year'));
   }
 
+  public function projectsMissingInfo()
+  {
+    $year = date("Y");
+    $manager_list = [];
+    return view('tools/projects_missing_info', compact('manager_list','year'));
+  }
+
 	public function getFormCreate($year)
 	{
     $edit_project_name = '';

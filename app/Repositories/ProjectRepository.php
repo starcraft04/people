@@ -130,4 +130,31 @@ class ProjectRepository
   {
     return $this->project->lists('project_name','id');
   }
+
+  public function getListOfProjectsMissingInfo($where = null)
+  {
+    /** We create here a SQL statement and the Datatables function will add the information it got from the AJAX request to have things like search or limit or show.
+    *   So we need to have a proper SQL search that the ajax can use via get with parameters given to it.
+    *   In the ajax datatables (view), there will be a parameter name that is going to be used here for the extra parameters so if we use a join,
+    *   Then we will need to use in the view page the name of the table.column. This is so that it knows how to do proper sorting or search.
+    **/
+
+    $projectList = $this->project
+      ->select( 'u2.name AS manager_name','users.name','projects.id','projects.customer_name','projects.project_name','projects.otl_project_code','projects.project_type',
+                'projects.activity_type','projects.project_status','projects.meta_activity','projects.region',
+                'projects.country','projects.technology','projects.description','projects.estimated_start_date','projects.estimated_end_date',
+                'projects.comments','projects.LoE_onshore','projects.LoE_nearshore',
+                'projects.LoE_offshore','projects.LoE_contractor','projects.gold_order_number','projects.product_code','projects.revenue','projects.win_ratio');
+    $projectList->leftjoin('activities','project_id','=','projects.id');
+    $projectList->leftjoin('users','user_id','=','users.id');
+    $projectList->leftjoin('users_users', 'users.id', '=', 'users_users.user_id');
+    $projectList->leftjoin('users AS u2', 'u2.id', '=', 'users_users.manager_id');
+    $projectList->whereRaw("(project_type = '' or activity_type = '' or project_status = '')");
+    $projectList->groupBy('users.name','projects.id');
+
+
+    $data = Datatables::of($projectList)->make(true);
+    return $data;
+  }
+
 }

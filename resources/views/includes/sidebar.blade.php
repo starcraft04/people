@@ -61,6 +61,9 @@
             @permission(['tools-activity-new'])
             <li><a href="{!!route('projectsAssignedAndNot')!!}">Project assignment</a></li>
             @endpermission
+            @permission(['tools-activity-view'])
+            <li><a href="{!!route('projectsMissingInfo')!!}">Project missing info</a></li>
+            @endpermission
           </ul>
         </li>
       </ul>
