@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use DB;
 use Entrust;
 use Auth;
+use Session;
 use App\Repositories\UserRepository;
 use App\Repositories\ProjectRepository;
 use App\Repositories\ActivityRepository;
@@ -71,6 +72,7 @@ class ToolsController extends Controller {
       $user_select_disabled = 'true';
     }
 
+    Session::put('url','toolsActivities');
 		return view('tools/list', compact('manager_list','today','years','manager_select_disabled','manager_selected','user_select_disabled','user_selected','user_list','perms'));
 	}
 
@@ -78,6 +80,8 @@ class ToolsController extends Controller {
   {
     $year = date("Y");
     $manager_list = [];
+    Session::put('url','toolsProjectsAssignedAndNot');
+    //dd(Session::get('url'));
     return view('tools/projects_assigned_and_not', compact('manager_list','year'));
   }
 
@@ -85,6 +89,7 @@ class ToolsController extends Controller {
   {
     $year = date("Y");
     $manager_list = [];
+    Session::put('url','toolsProjectsMissingInfo');
     return view('tools/projects_missing_info', compact('manager_list','year'));
   }
 
@@ -146,7 +151,14 @@ class ToolsController extends Controller {
         $activity = $this->activityRepository->create($inputsActivities);
       }
     }
-    return redirect('toolsActivities')->with('success','New project created successfully');
+
+    if (!empty(Session::get('url'))){
+      $redirect = Session::get('url');
+    } else {
+      $redirect = 'toolsActivities';
+    }
+
+    return redirect($redirect)->with('success','New project created successfully');
 	}
 
   public function getFormUpdate($user_id,$project_id,$year)
@@ -280,7 +292,14 @@ class ToolsController extends Controller {
         $activity = $this->activityRepository->createOrUpdate($inputs_new);
       }
     }
-    return redirect('toolsActivities')->with('success','Project updated successfully');
+
+    if (!empty(Session::get('url'))){
+      $redirect = Session::get('url');
+    } else {
+      $redirect = 'toolsActivities';
+    }
+
+    return redirect($redirect)->with('success','Project updated successfully');
 	}
 
 }
