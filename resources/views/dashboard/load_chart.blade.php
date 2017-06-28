@@ -11,7 +11,7 @@
 <!-- Select2 -->
 <script src="{{ asset('/plugins/gentelella/vendors/select2/dist/js/select2.full.min.js') }}" type="text/javascript"></script>
 <!-- ChartJs -->
-<script src="{{ asset('/plugins/gentelella/vendors/Chart.js/dist/Chart.min.js') }}"></script>
+<script src="{{ asset('/plugins/chartjs/Chart.bundle.min.js') }}"></script>
 @stop
 
 @section('content')
