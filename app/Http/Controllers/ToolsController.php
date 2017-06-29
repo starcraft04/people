@@ -105,7 +105,7 @@ class ToolsController extends Controller {
       $user_id_for_update = '0';
     }
     else {
-      $user_id_for_update = Auth::user()->id;
+      $user_id_for_update = '0';
     }
     Session::put('url','toolsProjectsMissingInfo');
     return view('tools/projects_missing_info', compact('manager_list','year','user_id_for_update'));
