@@ -463,7 +463,7 @@
               //console.log('the user id is '+row.data().user_id);
               //console.log('the project id is '+row.data().project_id);
               // If we click on the name, then we create a new project
-              window.location.href = "{!! route('toolsFormUpdate',[0,'','']) !!}/"+row.data().id+"/"+{{ $year }};
+              window.location.href = "{!! route('toolsFormUpdate',[$user_id_for_update,'','']) !!}/"+row.data().id+"/"+{{ $year }};
             });
 
             $('#projectTable_assigned').on('click', 'tbody td', function() {
@@ -478,7 +478,7 @@
               //console.log('the user id is '+row.data().user_id);
               //console.log('the project id is '+row.data().project_id);
               // If we click on the name, then we create a new project
-              window.location.href = "{!! route('toolsFormUpdate',[0,'','']) !!}/"+row.data().id+"/"+{{ $year }};
+              window.location.href = "{!! route('toolsFormUpdate',[$user_id_for_update,'','']) !!}/"+row.data().id+"/"+{{ $year }};
             });
 
             $('#new_project').on('click', function() {

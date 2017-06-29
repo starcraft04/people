@@ -80,17 +80,35 @@ class ToolsController extends Controller {
   {
     $year = date("Y");
     $manager_list = [];
+    if (Entrust::can('tools-activity-all-view')){
+      $user_id_for_update = '0';
+    }
+    elseif (Auth::user()->is_manager == 1) {
+      $user_id_for_update = '0';
+    }
+    else {
+      $user_id_for_update = Auth::user()->id;
+    }
     Session::put('url','toolsProjectsAssignedAndNot');
     //dd(Session::get('url'));
-    return view('tools/projects_assigned_and_not', compact('manager_list','year'));
+    return view('tools/projects_assigned_and_not', compact('manager_list','year','user_id_for_update'));
   }
 
   public function projectsMissingInfo()
   {
     $year = date("Y");
     $manager_list = [];
+    if (Entrust::can('tools-activity-all-view')){
+      $user_id_for_update = '0';
+    }
+    elseif (Auth::user()->is_manager == 1) {
+      $user_id_for_update = '0';
+    }
+    else {
+      $user_id_for_update = Auth::user()->id;
+    }
     Session::put('url','toolsProjectsMissingInfo');
-    return view('tools/projects_missing_info', compact('manager_list','year'));
+    return view('tools/projects_missing_info', compact('manager_list','year','user_id_for_update'));
   }
 
 	public function getFormCreate($year)
