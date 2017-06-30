@@ -4,9 +4,10 @@
 <!-- CSS -->
 <!-- Select2 -->
 <link href="{{ asset('/plugins/select2/select2.min.css') }}" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" href="{{ asset('/css/forms.css') }}">
+<link href="{{ asset('/css/forms.css') }}" rel="stylesheet" />
 <!-- bootstrap-daterangepicker -->
-<link href="{{ asset('/plugins/gentelella/vendors/bootstrap-daterangepicker/daterangepicker.css') }}" rel="stylesheet">
+<link href="{{ asset('/plugins/gentelella/vendors/bootstrap-daterangepicker/daterangepicker.css') }}" rel="stylesheet" />
+<link href="{{ asset('/plugins/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" />
 @stop
 
 @section('scriptsrc')
@@ -16,7 +17,7 @@
 <!-- bootstrap-daterangepicker -->
 <script src="{{ asset('/plugins/gentelella/vendors/moment/min/moment.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('/plugins/gentelella/vendors/bootstrap-daterangepicker/daterangepicker.js') }}" type="text/javascript"></script>
-
+<script src="{{ asset('/plugins/sweetalert2/sweetalert2.min.js') }}" type="text/javascript"></script>
 @stop
 
 @section('content')
@@ -92,7 +93,7 @@
               </div>
             </div>
             <div class="ln_solid"></div>
-            
+
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group {!! $errors->has('user_id') ? 'has-error' : '' !!} col-md-12">
@@ -179,6 +180,7 @@
                   <div class="form-group {!! $errors->has('otl_project_code') ? 'has-error' : '' !!} col-md-12">
                     <div class="col-md-3">
                       {!! Form::label('otl_project_code', 'OTL project code', ['class' => 'control-label']) !!}
+                      <a id="help_otl" href="#">(?)</a>
                     </div>
                     <div class="col-md-9">
                       {!! Form::text('otl_project_code', (isset($project->otl_project_code)) ? $project->otl_project_code : '', ['class' => 'form-control', 'placeholder' => 'OTL project code',$edit_otl_name]) !!}
@@ -461,6 +463,17 @@
 var year;
 
 $(document).ready(function() {
+  $(document).on('click', '#help_otl', function () {
+    swal({
+      title: 'How to enter the correct OTL code',
+      width: '80%',
+      animation: false,
+      html:
+        'You can fin the <b>OTL code</b> and the <b>Meta-activity</b> by login into OTL and find the below fields</BR></BR></BR>' +
+        '<img src="{{ asset("/img/help/OTL_help.jpg") }}">'
+    });
+  } );
+
   // Now this is important so that we send the value of all disabled fields
   // What it does is when you try to submit, it will remove the disabled property on all fields with disabled
   jQuery(function ($) {
