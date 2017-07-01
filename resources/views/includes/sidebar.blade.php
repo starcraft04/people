@@ -58,10 +58,13 @@
             @permission(['tools-activity-view'])
             <li><a href="{!!route('toolsActivities')!!}">Activity list per project</a></li>
             @endpermission
-            @permission(['tools-activity-new'])
-            <li><a href="{!!route('projectsAssignedAndNot')!!}">Project assignment</a></li>
+            @permission(['tools-all_projects-view'])
+            <li><a href="{!!route('projectsAll')!!}">All projects</a></li>
             @endpermission
-            @permission(['tools-activity-view'])
+            @permission(['tools-unassigned-view'])
+            <li><a href="{!!route('projectsAssignedAndNot')!!}">Unassigned projects</a></li>
+            @endpermission
+            @permission(['tools-missing_info-view'])
             <li><a href="{!!route('projectsMissingInfo')!!}">Project missing info</a></li>
             @endpermission
           </ul>

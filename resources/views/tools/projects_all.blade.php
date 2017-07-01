@@ -44,7 +44,7 @@
 <!-- Page title -->
 <div class="page-title">
   <div class="title_left">
-    <h3>Project assignment</h3>
+    <h3>All Projects</h3>
   </div>
 </div>
 <div class="clearfix"></div>
@@ -57,7 +57,7 @@
 
       <!-- Window title -->
       <div class="x_title">
-        <h2>Unassigned projects</h2>
+        <h2>List</h2>
         <ul class="nav navbar-right panel_toolbox">
           <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
         </ul>
@@ -80,20 +80,26 @@
                 {{ $message }}
             </div>
             @endif
-
-            <div id="delete_message">
+            <div class="row button_in_row">
+              <div class="col-md-12">
+                @permission('tools-activity-new')
+                <button id="new_project" class="btn btn-info btn-xs" align="right"><span class="glyphicon glyphicon-plus"> New Project</span></button>
+                @endpermission
+              </div>
             </div>
-            <table id="projectTable_unassigned" class="table table-striped table-hover table-bordered" width="100%">
+            <table id="projectTable" class="table table-striped table-hover table-bordered" width="100%">
                 <thead>
                     <tr>
                       <th>ID</th>
+                      <th>Manager name</th>
+                      <th>Employee name</th>
                       <th>Customer name</th>
                       <th>Project name</th>
                       <th>OTL project code</th>
+                      <th>Meta-activity</th>
                       <th>Project type</th>
                       <th>Activity type</th>
                       <th>Project status</th>
-                      <th>Meta-activity</th>
                       <th>Region</th>
                       <th>Country</th>
                       <th>Technology</th>
@@ -114,13 +120,15 @@
                 <tfoot>
                     <tr>
                       <th>ID</th>
+                      <th>Manager name</th>
+                      <th>Employee name</th>
                       <th>Customer name</th>
                       <th>Project name</th>
                       <th>OTL project code</th>
+                      <th>Meta-activity</th>
                       <th>Project type</th>
                       <th>Activity type</th>
                       <th>Project status</th>
-                      <th>Meta-activity</th>
                       <th>Region</th>
                       <th>Country</th>
                       <th>Technology</th>
@@ -150,15 +158,7 @@
 
 @section('script')
     <script>
-        var projectTable_unassigned;
-        var projectTable_assigned;
-
-        function ajaxData_unassigned(){
-          var obj = {
-            'unassigned': 'true'
-          };
-          return obj;
-        }
+        var projectTable;
 
         $(document).ready(function() {
 
@@ -168,47 +168,45 @@
                 }
             });
 
-            projectTable_unassigned = $('#projectTable_unassigned').DataTable({
+            projectTable = $('#projectTable').DataTable({
                 scrollX: true,
                 serverSide: true,
                 processing: true,
                 ajax: {
-                        url: "{!! route('listOfProjectsAjax') !!}",
-                        type: "POST",
-                        data: function ( d ) {
-                          $.extend(d,ajaxData_unassigned());
-                        },
-                        dataType: "JSON"
+                        url: "{!! route('listOfProjectsAllAjax') !!}",
+                        type: "GET"
                     },
                 columns: [
-                    { name: 'id', data: 'id', searchable: false , visible: false },
-                    { name: 'customer_name', data: 'customer_name' },
-                    { name: 'project_name', data: 'project_name' },
-                    { name: 'otl_project_code', data: 'otl_project_code', searchable: false , visible: false },
-                    { name: 'project_type', data: 'project_type'},
-                    { name: 'activity_type', data: 'activity_type'},
-                    { name: 'project_status', data: 'project_status'},
-                    { name: 'meta_activity', data: 'meta_activity', searchable: false , visible: false },
-                    { name: 'region', data: 'region' , searchable: false , visible: false},
-                    { name: 'country', data: 'country' , searchable: false , visible: false},
-                    { name: 'technology', data: 'technology' },
-                    { name: 'description', data: 'description', searchable: false , visible: false },
-                    { name: 'estimated_start_date', data: 'estimated_start_date' },
-                    { name: 'estimated_end_date', data: 'estimated_end_date' },
-                    { name: 'comments', data: 'comments', searchable: false , visible: false },
-                    { name: 'LoE_onshore', data: 'LoE_onshore', searchable: false , visible: false },
-                    { name: 'LoE_nearshore', data: 'LoE_nearshore' , searchable: false , visible: false},
-                    { name: 'LoE_offshore', data: 'LoE_offshore', searchable: false , visible: false },
-                    { name: 'LoE_contractor', data: 'LoE_contractor', searchable: false , visible: false },
-                    { name: 'gold_order_number', data: 'gold_order_number', searchable: false , visible: false },
-                    { name: 'product_code', data: 'product_code', searchable: false , visible: false },
-                    { name: 'revenue', data: 'revenue' , searchable: false , visible: false},
-                    { name: 'win_ratio', data: 'win_ratio', searchable: false , visible: false }
+                    { name: 'projects.id', data: 'id', searchable: false , visible: false },
+                    { name: 'u2.name', data: 'manager_name' },
+                    { name: 'users.name', data: 'name' },
+                    { name: 'projects.customer_name', data: 'customer_name' },
+                    { name: 'projects.project_name', data: 'project_name' },
+                    { name: 'projects.otl_project_code', data: 'otl_project_code' },
+                    { name: 'projects.meta_activity', data: 'meta_activity'},
+                    { name: 'projects.project_type', data: 'project_type'},
+                    { name: 'projects.activity_type', data: 'activity_type'},
+                    { name: 'projects.project_status', data: 'project_status'},
+                    { name: 'projects.region', data: 'region' , searchable: false , visible: false},
+                    { name: 'projects.country', data: 'country' , searchable: false , visible: false},
+                    { name: 'projects.technology', data: 'technology' },
+                    { name: 'projects.description', data: 'description', searchable: false , visible: false },
+                    { name: 'projects.estimated_start_date', data: 'estimated_start_date', searchable: false , visible: false },
+                    { name: 'projects.estimated_end_date', data: 'estimated_end_date', searchable: false , visible: false },
+                    { name: 'projects.comments', data: 'comments', searchable: false , visible: false },
+                    { name: 'projects.LoE_onshore', data: 'LoE_onshore', searchable: false , visible: false },
+                    { name: 'projects.LoE_nearshore', data: 'LoE_nearshore' , searchable: false , visible: false},
+                    { name: 'projects.LoE_offshore', data: 'LoE_offshore', searchable: false , visible: false },
+                    { name: 'projects.LoE_contractor', data: 'LoE_contractor', searchable: false , visible: false },
+                    { name: 'projects.gold_order_number', data: 'gold_order_number', searchable: false , visible: false },
+                    { name: 'projects.product_code', data: 'product_code', searchable: false , visible: false },
+                    { name: 'projects.revenue', data: 'revenue' , searchable: false , visible: false},
+                    { name: 'projects.win_ratio', data: 'win_ratio', searchable: false , visible: false }
                     ],
                 order: [[2, 'asc']],
                 lengthMenu: [
-                    [ 5, 10, 25, 50, -1 ],
-                    [ '5 rows', '10 rows', '25 rows', '50 rows', 'Show all' ]
+                    [ 10, 25, 50, -1 ],
+                    [ '10 rows', '25 rows', '50 rows', 'Show all' ]
                 ],
                 dom: 'Bfrtip',
                 buttons: [
@@ -261,8 +259,8 @@
                 }
             });
 
-            $('#projectTable_unassigned').on('click', 'tbody td', function() {
-              var table = projectTable_unassigned;
+            $('#projectTable').on('click', 'tbody td', function() {
+              var table = projectTable;
               var tr = $(this).closest('tr');
               var row = table.row(tr);
               //get the initialization options
@@ -274,6 +272,10 @@
               //console.log('the project id is '+row.data().project_id);
               // If we click on the name, then we create a new project
               window.location.href = "{!! route('toolsFormUpdate',[$user_id_for_update,'','']) !!}/"+row.data().id+"/"+{{ $year }};
+            });
+
+            $('#new_project').on('click', function() {
+              window.location.href = "{!! route('toolsFormCreate',$year) !!}";
             });
 
         } );

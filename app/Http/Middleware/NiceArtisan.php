@@ -18,10 +18,9 @@ class NiceArtisan {
     public function handle($request, Closure $next)
     {
         //$user = $request->user();
-
         if (Auth::user()->id == 1)
         {
-            return $next($request);
+          return $next($request);
         }
         return new RedirectResponse(url('/'));
     }
