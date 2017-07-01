@@ -131,13 +131,7 @@
             {{ $message }}
           </div>
           @endif
-          <div class="row button_in_row">
-            <div class="col-md-12">
-              @permission('tools-activity-new')
-              <button id="new_project" class="btn btn-info btn-xs" align="right"><span class="glyphicon glyphicon-plus"> New Project</span></button>
-              @endpermission
-            </div>
-          </div>
+
           <table id="activitiesTable" class="table table-striped table-hover table-bordered" width="100%">
               <thead>
                 <tr>
@@ -555,15 +549,6 @@
       window.location.href = "{!! route('toolsFormUpdate',['','','']) !!}/"+row.data().user_id+"/"+row.data().project_id+"/"+year[0];
     });
 
-    $('#new_project').on('click', function() {
-      year = [];
-      $("#year option:selected").each(function()
-      {
-        // log the value and text of each option
-        year.push($(this).val());
-      });
-      window.location.href = "{!! route('toolsFormCreate',$today) !!}";
-    });
   } );
   </script>
   @stop
