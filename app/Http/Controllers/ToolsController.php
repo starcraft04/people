@@ -122,7 +122,7 @@ class ToolsController extends Controller {
       $user_id_for_update = '0';
     }
     else {
-      $user_id_for_update = '0';
+      $user_id_for_update = Auth::user()->id;
     }
     Session::put('url','toolsProjectsAll');
     return view('tools/projects_all', compact('manager_list','year','user_id_for_update'));
