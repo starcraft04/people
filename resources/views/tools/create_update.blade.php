@@ -189,7 +189,7 @@
                   </div>
                 </div>
                 <div class="row">
-                  <div class="form-group {!! $errors->has('otl_project_code') ? 'has-error' : '' !!} col-md-12">
+                  <div class="form-group {!! $errors->has('meta_activity') ? 'has-error' : '' !!} col-md-12">
                     <div class="col-md-3">
                       {!! Form::label('meta_activity', 'Meta-activity', ['class' => 'control-label']) !!}
                     </div>
@@ -200,7 +200,7 @@
                         <option value="{{ $key }}" <?php if (isset($project->meta_activity) && $value == $project->meta_activity) { echo 'selected'; }?>>{{ $value }}</option>
                         @endforeach
                       </select>
-                      {!! $errors->first('otl_project_code', '<small class="help-block">:message</small>') !!}
+                      {!! $errors->first('meta_activity', '<small class="help-block">:message</small>') !!}
                     </div>
                   </div>
                 </div>

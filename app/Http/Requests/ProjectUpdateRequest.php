@@ -45,7 +45,8 @@ class ProjectUpdateRequest extends Request
 
       'project_name' => 'required|max:255|unique:projects,project_name,' . $id . ',id,customer_name,'.$customer_name,
       'customer_name' => 'required|max:255',
-      'otl_project_code' => 'sometimes|max:255|unique:projects,otl_project_code,' . $id . ',id,meta_activity,'.$meta_activity,
+      'otl_project_code' => 'sometimes|required_with:meta_activity|max:255|unique:projects,otl_project_code,' . $id . ',id,meta_activity,'.$meta_activity,
+      'meta_activity' => 'sometimes|required_with:otl_project_code|max:255',
       'estimated_date' => 'date_format:"Y-m-d - Y-m-d"',
       'estimated_start_date' => 'date',
       'estimated_end_date' => 'date',
