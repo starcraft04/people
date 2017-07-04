@@ -42,9 +42,7 @@
           Create project
           @elseif($action == 'update')
           Update project {{ isset($created_by_user_name) ? '(created by user '.$created_by_user_name.')' : '' }}
-          @if($user_id != 0)
           <button id="project_info" class="btn btn-success btn-sm">info</button>
-          @endif
           @endif
         </h2>
         <ul class="nav navbar-right panel_toolbox">
@@ -485,13 +483,14 @@ $(document).ready(function() {
     });
   } );
 
-  @if(isset($user_id) && $user_id != 0)
+  @if($action == 'update')
   $(document).on('click', '#project_info', function () {
     swal({
       title: 'Project info',
       width: '80%',
       animation: false,
       html:
+        @if(isset($user_id) && $user_id != 0)
         '<div class="row">'+
         '<div style="text-align: left;"><h3>OTL forecast comparison ({{$year}})</h3></div>'+
         '<table class="table">'+
@@ -506,10 +505,11 @@ $(document).ready(function() {
         '</tbody>'+
         '</table>'+
         '</div>'+
+        @endif
+
         '<div class="row">'+
         '<div style="text-align: left;"><h3>LoE</h3></div>'+
         '</div>'+
-
         //onshore
         '<div class="row">'+
         '<div class="row">'+
