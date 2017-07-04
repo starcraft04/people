@@ -72,6 +72,8 @@ class ProjectRepository
     if (isset($inputs['region'])) {$project->region = $inputs['region'];}
     if (isset($inputs['country'])) {$project->country = $inputs['country'];}
     if (isset($inputs['customer_location'])) {$project->customer_location = $inputs['customer_location'];}
+    if (isset($inputs['comments'])) {$project->comments = $inputs['comments'];}
+    if (isset($inputs['description'])) {$project->description = $inputs['description'];}
     if (isset($inputs['technology'])) {$project->technology = $inputs['technology'];}
     if (isset($inputs['estimated_start_date'])) {$project->estimated_start_date = $inputs['estimated_start_date'];}
     if (isset($inputs['estimated_end_date'])) {$project->estimated_end_date = $inputs['estimated_end_date'];}

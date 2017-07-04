@@ -91,7 +91,6 @@ class DashboardController extends Controller {
     $manager_selected = '';
     $user_selected = '';
 
-
     $options = array(
         'validate_all' => true,
         'return_type' => 'both'

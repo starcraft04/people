@@ -24,7 +24,7 @@
 <!-- Page title -->
 <div class="page-title">
   <div class="title_left">
-    <h3>Project</h3>
+    <h3>Project </h3>
   </div>
 </div>
 <div class="clearfix"></div>
@@ -42,6 +42,9 @@
           Create project
           @elseif($action == 'update')
           Update project {{ isset($created_by_user_name) ? '(created by user '.$created_by_user_name.')' : '' }}
+          @if($user_id != 0)
+          <button id="project_info" class="btn btn-success btn-sm">info</button>
+          @endif
           @endif
         </h2>
         <ul class="nav navbar-right panel_toolbox">
@@ -53,7 +56,6 @@
 
       <!-- Window content -->
       <div class="x_content">
-        <br />
             @if ($message = Session::get('success'))
             <div class="alert alert-success alert-dismissible">
               <button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>
@@ -80,15 +82,15 @@
 
             <div class="row">
               <div class="col-md-offset-1 col-md-1">
-                <a href="javascript:history.back()" class="btn btn-primary">
+                <a href="javascript:history.back()" class="btn btn-primary btn-sm">
                   <span class="glyphicon glyphicon-circle-arrow-left"></span> Back
                 </a>
               </div>
               <div class="col-md-offset-9 col-md-1">
                 @if($action == 'create')
-                {!! Form::submit('Create', ['class' => 'btn btn-success']) !!}
+                {!! Form::submit('Create', ['class' => 'btn btn-success btn-sm']) !!}
                 @elseif($action == 'update')
-                {!! Form::submit('Update', ['class' => 'btn btn-success']) !!}
+                {!! Form::submit('Update', ['class' => 'btn btn-success btn-sm']) !!}
                 @endif
               </div>
             </div>
@@ -418,7 +420,7 @@
                 <div class="row">
                   <div class="form-group {!! $errors->has('revenue') ? 'has-error' : '' !!} col-md-12">
                     <div class="col-md-3">
-                      {!! Form::label('revenue', 'Revenue (€)', ['class' => 'control-label']) !!}
+                      {!! Form::label('revenue', 'Revenue (k€)', ['class' => 'control-label', 'id' => 'revenue_text']) !!}
                     </div>
                     <div class="col-md-9">
                       {!! Form::text('revenue', (isset($project)) ? $project->revenue : '', ['class' => 'form-control', 'placeholder' => 'Revenue (€)']) !!}
@@ -463,6 +465,15 @@
 var year;
 
 $(document).ready(function() {
+
+  if($( "#project_type option:selected" ).text() == "Baseline"){
+    $('#revenue_text').text("MRC (k€)");
+    $("#revenue").attr("placeholder", "MRC (k€)");
+  } else {
+    $('#revenue_text').text("Revenue (k€)");
+    $("#revenue").attr("placeholder", "Revenue (k€)");
+  }
+
   $(document).on('click', '#help_otl', function () {
     swal({
       title: 'How to enter the correct OTL code',
@@ -473,6 +484,88 @@ $(document).ready(function() {
         '<img src="{{ asset("/img/help/OTL_help.jpg") }}">'
     });
   } );
+
+  @if(isset($user_id) && $user_id != 0)
+  $(document).on('click', '#project_info', function () {
+    swal({
+      title: 'Project info',
+      width: '80%',
+      animation: false,
+      html:
+        '<div class="row">'+
+        '<div style="text-align: left;"><h3>OTL forecast comparison ({{$year}})</h3></div>'+
+        '<table class="table">'+
+        '<thead><th></th><th>Jan</th><th>Feb</th><th>Mar</th><th>Apr</th><th>May</th><th>Jun</th><th>Jul</th><th>Aug</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dec</th><thead>'+
+        '<tbody>'+
+        '<tr>'+
+        '<td><b>OTL</b></td><td>{{$otl[1]}}</td><td>{{$otl[2]}}</td><td>{{$otl[3]}}</td><td>{{$otl[4]}}</td><td>{{$otl[5]}}</td><td>{{$otl[6]}}</td><td>{{$otl[7]}}</td><td>{{$otl[8]}}</td><td>{{$otl[9]}}</td><td>{{$otl[10]}}</td><td>{{$otl[11]}}</td><td>{{$otl[12]}}</td>'+
+        '</tr>'+
+        '<tr>'+
+        '<td><b>Forecast</b></td><td>{{$forecast[1]}}</td><td>{{$forecast[2]}}</td><td>{{$forecast[3]}}</td><td>{{$forecast[4]}}</td><td>{{$forecast[5]}}</td><td>{{$forecast[6]}}</td><td>{{$forecast[7]}}</td><td>{{$forecast[8]}}</td><td>{{$forecast[9]}}</td><td>{{$forecast[10]}}</td><td>{{$forecast[11]}}</td><td>{{$forecast[12]}}</td>'+
+        '</tr>'+
+        '</tbody>'+
+        '</table>'+
+        '</div>'+
+        '<div class="row">'+
+        '<div style="text-align: left;"><h3>LoE</h3></div>'+
+        '</div>'+
+
+        //onshore
+        '<div class="row">'+
+        '<div class="row">'+
+        '<div class="col-sm-12 text-left" style="padding-bottom: 10px;">LoE onshore ({!! $project->LoE_onshore !!} days)</div>'+
+        '</div>'+
+        @foreach($loe_list as $loe)
+        @if($loe->user_employee_type == 'onshore')
+        '<div class="row">'+
+        '<div class="col-sm-3 text-right">{{ $loe->user_name }} ({{ $loe->year }}):</div><div class="col-sm-9 text-left">{{ $loe->LoE }} days</div>'+
+        '</div>'+
+        @endif
+        @endforeach
+        '</div>'+
+        //nearshore
+        '<div class="row">'+
+        '<div class="row">'+
+        '<div class="col-sm-12 text-left" style="padding-top: 10px;padding-bottom: 10px;">LoE nearshore ({!! $project->LoE_nearshore !!} days)</div>'+
+        '</div>'+
+        @foreach($loe_list as $loe)
+        @if($loe->user_employee_type == 'nearshore')
+        '<div class="row">'+
+        '<div class="col-sm-3 text-right">{{ $loe->user_name }} ({{ $loe->year }}):</div><div class="col-sm-9 text-left">{{ $loe->LoE }} days</div>'+
+        '</div>'+
+        @endif
+        @endforeach
+        '</div>'+
+        //offshore
+        '<div class="row">'+
+        '<div class="row">'+
+        '<div class="col-sm-12 text-left" style="padding-top: 10px;padding-bottom: 10px;">LoE offshore ({!! $project->LoE_offshore !!} days)</div>'+
+        '</div>'+
+        @foreach($loe_list as $loe)
+        @if($loe->user_employee_type == 'offshore')
+        '<div class="row">'+
+        '<div class="col-sm-3 text-right">{{ $loe->user_name }} ({{ $loe->year }}):</div><div class="col-sm-9 text-left">{{ $loe->LoE }} days</div>'+
+        '</div>'+
+        @endif
+        @endforeach
+        '</div>'+
+        //contractor
+        '<div class="row">'+
+        '<div class="row">'+
+        '<div class="col-sm-12 text-left" style="padding-top: 10px;">LoE contractor ({!! $project->LoE_contractor !!} days)</div>'+
+        '</div>'+
+        @foreach($loe_list as $loe)
+        @if($loe->user_employee_type == 'contractor')
+        '<div class="row">'+
+        '<div class="col-sm-3 text-right">{{ $loe->user_name }} ({{ $loe->year }}):</div><div class="col-sm-9 text-left">{{ $loe->LoE }} days</div>'+
+        '</div>'+
+        @endif
+        @endforeach
+        '</div>'
+
+    });
+  } );
+  @endif
 
   // Now this is important so that we send the value of all disabled fields
   // What it does is when you try to submit, it will remove the disabled property on all fields with disabled
@@ -499,6 +592,17 @@ $(document).ready(function() {
     else {
       console.log('not empty');
       $('.user_selected').show();
+    }
+  });
+
+  $('#project_type').change(function() {
+    if($(this).val()==="Baseline"){
+      $('#revenue_text').text("MRC (k€)");
+      $("#revenue").attr("placeholder", "MRC (k€)");
+    }
+    else {
+      $('#revenue_text').text("Revenue (k€)");
+      $("#revenue").attr("placeholder", "Revenue (k€)");
     }
   });
 

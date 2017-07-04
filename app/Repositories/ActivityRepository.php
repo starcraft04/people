@@ -427,6 +427,43 @@ class ActivityRepository
     return $data;
   }
 
+  public function getListOfActivitiesPerUserForProject($where = null)
+  {
+    /** We create here a SQL statement and the Datatables function will add the information it got from the AJAX request to have things like search or limit or show.
+    *   So we need to have a proper SQL search that the ajax can use via get with parameters given to it.
+    *   In the ajax datatables (view), there will be a parameter name that is going to be used here for the extra parameters so if we use a join,
+    *   Then we will need to use in the view page the name of the table.column. This is so that it knows how to do proper sorting or search.
+    **/
+
+    $temp_table = new create_temp_table_mix_OTL_NONOTL('table_temp_a','table_temp_b');
+
+    $activityList = DB::table('table_temp_b');
+
+    $activityList->select('manager_id','manager_name','user_id','user_name','user_employee_type','project_id','project_name','customer_name','year',
+                          DB::Raw('(jan_com+feb_com+mar_com+apr_com+may_com+jun_com+
+                          jul_com+aug_com+sep_com+oct_com+nov_com+dec_com) AS LoE')
+
+    );
+
+    if (!empty($where['project_id']))
+        {
+          $activityList->where('project_id','=',$where['project_id']);
+        };
+
+    if (!empty($where['employee_type']))
+        {
+          $activityList->where('user_employee_type','=',$where['employee_type']);
+        };
+
+
+    $activityList->groupBy('manager_id','user_id','project_id','year');
+    $data = $activityList->get();
+    // Destroying the object so it will remove the 2 temp tables created
+    unset($temp_table);
+
+    return $data;
+  }
+
   public function test()
   {
 
@@ -535,6 +572,7 @@ class create_temp_table_mix_OTL_NONOTL{
             SELECT
                     temp_a.user_id AS user_id,
                     u.name AS user_name,
+                    u.employee_type AS user_employee_type,
                     uu.manager_id AS manager_id,
                     m.name AS manager_name,
                     temp_a.project_id AS project_id,

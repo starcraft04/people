@@ -294,14 +294,29 @@ class ToolsController extends Controller {
       } elseif (isset($activity_forecast[$i])){
         $activities[$i] = $activity_forecast[$i];
         $from_otl[$i] = '';
-
       } else {
         $activities[$i] = '0';
         $from_otl[$i] = '';
       }
     }
 
-		return view('tools/create_update', compact('user_id','project','year','activities','from_otl',
+    for ($i = 1; $i <= 12; $i++) {
+      if (isset($activity_OTL[$i])){
+        $otl[$i] = $activity_OTL[$i];
+      } else {
+        $otl[$i] = 0;
+      }
+      if (isset($activity_forecast[$i])){
+        $forecast[$i] = $activity_forecast[$i];
+      } else {
+        $forecast[$i] = 0;
+      }
+    }
+
+    $loe_list = $this->activityRepository->getListOfActivitiesPerUserForProject(['project_id'=>$project_id]);
+    //dd($loe_list);
+
+		return view('tools/create_update', compact('user_id','project','year','activities','from_otl','forecast','otl','loe_list',
       'edit_project_name','edit_otl_name',
       'meta_activity_select_disabled','project_type_select_disabled','activity_type_select_disabled','project_status_select_disabled',
       'region_select_disabled','country_select_disabled','user_list','user_selected','user_select_disabled','created_by_user_name'))

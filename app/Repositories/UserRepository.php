@@ -167,14 +167,14 @@ class UserRepository
     $data = 0;
 
     if (!empty($where['user'])){
-      $data = count($where['user'])*22;
+      $data = count($where['user'])*config('options.dashboard_load_chart_theoretical');
     }
     elseif (!empty($where['manager'])){
       foreach ($where['manager'] as $w)
       {
           $data = $data+$this->getById($w)->employees()->count();
       }
-      $data = $data * 22;
+      $data = $data * config('options.dashboard_load_chart_theoretical');
     }
     else {
       $managers = $this->getManagersList();
@@ -182,7 +182,7 @@ class UserRepository
       {
           $data = $data+$this->getById($key)->employees()->count();
       }
-      $data = $data * 22;
+      $data = $data * config('options.dashboard_load_chart_theoretical');
     }
     $theoretical = [$data,$data,$data,$data,$data,$data,$data,$data,$data,$data,$data,$data];
     return $theoretical;
