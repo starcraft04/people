@@ -51,9 +51,9 @@
       </ul>
       @endpermission
 
-      @permission(['tools-activity-view','tools-activity-new'])
+      @permission(['tools-activity-view','tools-activity-new','tools-all_projects-view'])
       <ul class="nav side-menu">
-        <li><a><i class="fa fa-desktop"></i>Tools<span class="fa fa-chevron-down"></span></a>
+        <li><a><i class="fa fa-wrench"></i>Tools<span class="fa fa-chevron-down"></span></a>
           <ul class="nav child_menu">
             @permission(['tools-activity-view'])
             <li><a href="{!!route('toolsActivities')!!}">Activity list per project</a></li>
@@ -61,11 +61,26 @@
             @permission(['tools-all_projects-view'])
             <li><a href="{!!route('projectsAll')!!}">Project assignment</a></li>
             @endpermission
+            @permission(['tools-all_projects-view'])
+            <li><a href="{!!route('projectsLost')!!}">Projects lost</a></li>
+            @endpermission
+          </ul>
+        </li>
+      </ul>
+      @endpermission
+
+      @permission(['tools-unassigned-view','tools-missing_info-view'])
+      <ul class="nav side-menu">
+        <li><a><i class="fa fa-server"></i>Maintenance<span class="fa fa-chevron-down"></span></a>
+          <ul class="nav child_menu">
             @permission(['tools-unassigned-view'])
             <li><a href="{!!route('projectsAssignedAndNot')!!}">Unassigned projects</a></li>
             @endpermission
             @permission(['tools-missing_info-view'])
             <li><a href="{!!route('projectsMissingInfo')!!}">Project missing info</a></li>
+            @endpermission
+            @permission(['tools-missing_info-view'])
+            <li><a href="{!!route('projectsMissingOTL')!!}">Project missing OTL</a></li>
             @endpermission
           </ul>
         </li>

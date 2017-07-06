@@ -44,7 +44,7 @@
 <!-- Page title -->
 <div class="page-title">
   <div class="title_left">
-    <h3>Project Missing Info</h3>
+    <h3>Project Missing OTL</h3>
   </div>
 </div>
 <div class="clearfix"></div>
@@ -57,7 +57,7 @@
 
       <!-- Window title -->
       <div class="x_title">
-        <h2>Projects missing project type, activity type or project status</h2>
+        <h2>Projects missing OTL code and meta activity</h2>
         <ul class="nav navbar-right panel_toolbox">
           <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
         </ul>
@@ -91,10 +91,10 @@
                       <th>Customer name</th>
                       <th>Project name</th>
                       <th>OTL project code</th>
+                      <th>Meta-activity</th>
                       <th>Project type</th>
                       <th>Activity type</th>
                       <th>Project status</th>
-                      <th>Meta-activity</th>
                       <th>Region</th>
                       <th>Country</th>
                       <th>Technology</th>
@@ -121,10 +121,10 @@
                       <th>Customer name</th>
                       <th>Project name</th>
                       <th>OTL project code</th>
+                      <th>Meta-activity</th>
                       <th>Project type</th>
                       <th>Activity type</th>
                       <th>Project status</th>
-                      <th>Meta-activity</th>
                       <th>Region</th>
                       <th>Country</th>
                       <th>Technology</th>
@@ -169,7 +169,7 @@
                 serverSide: true,
                 processing: true,
                 ajax: {
-                        url: "{!! route('listOfProjectsMissingInfoAjax') !!}",
+                        url: "{!! route('listOfProjectsMissingOTLAjax') !!}",
                         type: "GET"
                     },
                 columns: [
@@ -179,17 +179,17 @@
                     { name: 'users.name', data: 'name' },
                     { name: 'projects.customer_name', data: 'customer_name' },
                     { name: 'projects.project_name', data: 'project_name' },
-                    { name: 'projects.otl_project_code', data: 'otl_project_code', searchable: false , visible: false },
+                    { name: 'projects.otl_project_code', data: 'otl_project_code'},
+                    { name: 'projects.meta_activity', data: 'meta_activity'},
                     { name: 'projects.project_type', data: 'project_type'},
                     { name: 'projects.activity_type', data: 'activity_type'},
                     { name: 'projects.project_status', data: 'project_status'},
-                    { name: 'projects.meta_activity', data: 'meta_activity', searchable: false , visible: false },
                     { name: 'projects.region', data: 'region' , searchable: false , visible: false},
                     { name: 'projects.country', data: 'country' , searchable: false , visible: false},
                     { name: 'projects.technology', data: 'technology' },
                     { name: 'projects.description', data: 'description', searchable: false , visible: false },
-                    { name: 'projects.estimated_start_date', data: 'estimated_start_date' },
-                    { name: 'projects.estimated_end_date', data: 'estimated_end_date' },
+                    { name: 'projects.estimated_start_date', data: 'estimated_start_date', searchable: false , visible: false },
+                    { name: 'projects.estimated_end_date', data: 'estimated_end_date', searchable: false , visible: false },
                     { name: 'projects.comments', data: 'comments', searchable: false , visible: false },
                     { name: 'projects.LoE_onshore', data: 'LoE_onshore', searchable: false , visible: false },
                     { name: 'projects.LoE_nearshore', data: 'LoE_nearshore' , searchable: false , visible: false},

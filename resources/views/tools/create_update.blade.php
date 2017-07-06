@@ -21,6 +21,8 @@
 <script src="{{ asset('/plugins/gentelella/vendors/bootstrap-daterangepicker/daterangepicker.js') }}" type="text/javascript"></script>
 <script src="{{ asset('/plugins/sweetalert2/sweetalert2.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('/plugins/gentelella/vendors/switchery/dist/switchery.min.js') }}" type="text/javascript"></script>
+<!-- Bootbox -->
+<script src="{{ asset('/plugins/bootbox/bootbox.min.js') }}"></script>
 @stop
 
 @section('content')
@@ -71,10 +73,10 @@
             @endif
 
             @if($action == 'create')
-            {!! Form::open(['url' => 'toolsFormCreate', 'method' => 'post']) !!}
+            {!! Form::open(['url' => 'toolsFormCreate', 'method' => 'post', 'id' => 'myForm']) !!}
             {!! Form::hidden('created_by_user_id', $created_by_user_id, ['class' => 'form-control']) !!}
             @elseif($action == 'update')
-            {!! Form::open(['url' => 'toolsFormUpdate', 'method' => 'post']) !!}
+            {!! Form::open(['url' => 'toolsFormUpdate', 'method' => 'post', 'id' => 'myForm']) !!}
             {!! Form::hidden('project_id', $project->id, ['class' => 'form-control']) !!}
             <!-- Now we need also to set up id so that it can be used for the ProjectUpdateRequest.php -->
             {!! Form::hidden('id', $project->id, ['class' => 'form-control']) !!}
@@ -83,39 +85,36 @@
 
 
             <div class="row">
-              <div class="col-md-offset-1 col-md-1">
+              <div class="col-md-1">
                 <a href="javascript:history.back()" class="btn btn-primary btn-sm">
                   <span class="glyphicon glyphicon-circle-arrow-left"></span> Back
                 </a>
               </div>
-              <div class="col-md-offset-9 col-md-1">
+              <div class="col-md-offset-9 col-md-1" style="text-align: right;">
+                @if($action == 'update')
+                @if(Entrust::can('tools-user_assigned-remove') && $user_id != 0)
+                <button type="button" id="remove_user" class="btn btn-danger btn-sm">Remove user</button>
+                @endif
+                @endif
+              </div>
+              <div class="col-md-1" style="text-align: right;">
                 @if($action == 'create')
-                {!! Form::submit('Create', ['class' => 'btn btn-success btn-sm']) !!}
+                <input class="btn btn-success btn-sm" type="submit" name="action" value="Create" />
                 @elseif($action == 'update')
-                {!! Form::submit('Update', ['class' => 'btn btn-success btn-sm']) !!}
+                <input class="btn btn-success btn-sm" type="submit" name="action" value="Update" />
                 @endif
               </div>
             </div>
             <div class="ln_solid"></div>
-            @if(Entrust::can('tools-user_assigned-remove'))
-            <div class="row">
-              <div class="form-group {!! $errors->has('remove_user') ? 'has-error' : '' !!} col-md-12">
-                <div class="col-md-1">
-                  {!! Form::label('remove_user', 'Remove user', ['class' => 'control-label']) !!}
-                </div>
-                <div class="col-md-11">
-                  <input type="checkbox" class="js-switch" id="remove_user" name="remove_user" />
-                </div>
-              </div>
-            </div>
-            @endif
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group {!! $errors->has('user_id') ? 'has-error' : '' !!} col-md-12">
                   <div class="col-md-1">
                     {!! Form::label('user_id', 'User', ['class' => 'control-label']) !!}
+                    @if($action == 'update')
                     @if($show_change_button)
                     <span class="glyphicon glyphicon-refresh" id="change_user"></span>
+                    @endif
                     @endif
                   </div>
                   <div class="col-md-11">
@@ -593,10 +592,12 @@ $(document).ready(function() {
     });
   });
 
+  @if($action == 'update')
   @if($show_change_button)
   $(document).on('click', '#change_user', function () {
     $('#user_id').prop('disabled', false);
   });
+  @endif
   @endif
 
   if($('#user_id').val()===""){
@@ -690,16 +691,16 @@ $(document).ready(function() {
     });
   @endif
 
-  $(document).on('change', '#remove_user', function () {
-    if ($('#remove_user').is(':checked')){
-      swal({
-        title: 'Remove user assigned to project',
-        width: '80%',
-        animation: false,
-        html:
-          'You are about to remove the selected user from the project, if this is not what you intended to do, please slide back to off the remove user button'
+  $('#remove_user').on('click', function () {
+      bootbox.confirm("Are you sure want to remove the user from this project?", function(result) {
+          if (result){
+            $('<input />').attr('type', 'hidden')
+              .attr('name', 'action')
+              .attr('value', 'Remove')
+              .appendTo('#myForm');
+            $('#myForm').submit();
+          }
       });
-    }
   });
 
 });
