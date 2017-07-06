@@ -97,6 +97,16 @@ class ActivityRepository
     return $this->save($activity, $inputs);
   }
 
+  public function removeUserFromProject($user_id,$project_id)
+  {
+    $activity = $this->activity
+            ->where('project_id', $project_id)
+            ->where('user_id', $user_id)
+            ->delete();
+
+    return $activity;
+  }
+
   private function save(Activity $activity, Array $inputs)
   {
     // Required fields

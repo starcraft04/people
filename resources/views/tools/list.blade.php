@@ -360,7 +360,7 @@
         { name: 'dec_com', data: 'dec_com', width: '30px', searchable: false },
         { name: 'dec_otl', data: 'dec_otl', width: '10px', searchable: false , visible: false}
       ],
-      order: [[2, 'asc']],
+      order: [[1, 'asc'],[3, 'asc'],[4, 'asc'],[6, 'asc']],
 
       lengthMenu: [
           [ 10, 25, 50, -1 ],

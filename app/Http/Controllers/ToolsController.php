@@ -339,6 +339,12 @@ class ToolsController extends Controller {
 
     $inputs = $request->all();
     //dd($inputs);
+
+    // Now we need to check if the user has been flagged for remove from project
+    if (isset($inputs['remove_user'])) {
+      $activity = $this->activityRepository->removeUserFromProject($inputs['user_id'],$inputs['project_id']);
+      return redirect($redirect)->with('success','User removed from project successfully');
+    }
     $start_end_date = explode(' - ',$inputs['estimated_date']);
     $inputs['estimated_start_date'] = trim($start_end_date[0]);
     $inputs['estimated_end_date'] = trim($start_end_date[1]);

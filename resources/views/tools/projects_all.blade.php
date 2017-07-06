@@ -203,7 +203,7 @@
                     { name: 'projects.revenue', data: 'revenue' , searchable: false , visible: false},
                     { name: 'projects.win_ratio', data: 'win_ratio', searchable: false , visible: false }
                     ],
-                order: [[2, 'asc']],
+                order: [[1, 'asc'],[3, 'asc'],[4, 'asc'],[6, 'asc']],
                 lengthMenu: [
                     [ 10, 25, 50, -1 ],
                     [ '10 rows', '25 rows', '50 rows', 'Show all' ]

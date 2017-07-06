@@ -205,7 +205,7 @@
                     { name: 'revenue', data: 'revenue' , searchable: false , visible: false},
                     { name: 'win_ratio', data: 'win_ratio', searchable: false , visible: false }
                     ],
-                order: [[2, 'asc']],
+                order: [[1, 'asc'],[2, 'asc']],
                 lengthMenu: [
                     [ 5, 10, 25, 50, -1 ],
                     [ '5 rows', '10 rows', '25 rows', '50 rows', 'Show all' ]
