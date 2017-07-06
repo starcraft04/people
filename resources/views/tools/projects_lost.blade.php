@@ -44,7 +44,7 @@
 <!-- Page title -->
 <div class="page-title">
   <div class="title_left">
-    <h3>Project Missing Info</h3>
+    <h3>Projects Lost</h3>
   </div>
 </div>
 <div class="clearfix"></div>
@@ -57,7 +57,7 @@
 
       <!-- Window title -->
       <div class="x_title">
-        <h2>Projects missing project type, activity type or project status</h2>
+        <h2>Projects lost</h2>
         <ul class="nav navbar-right panel_toolbox">
           <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
         </ul>
@@ -91,10 +91,10 @@
                       <th>Customer name</th>
                       <th>Project name</th>
                       <th>OTL project code</th>
+                      <th>Meta-activity</th>
                       <th>Project type</th>
                       <th>Activity type</th>
                       <th>Project status</th>
-                      <th>Meta-activity</th>
                       <th>Region</th>
                       <th>Country</th>
                       <th>Technology</th>
@@ -121,10 +121,10 @@
                       <th>Customer name</th>
                       <th>Project name</th>
                       <th>OTL project code</th>
+                      <th>Meta-activity</th>
                       <th>Project type</th>
                       <th>Activity type</th>
                       <th>Project status</th>
-                      <th>Meta-activity</th>
                       <th>Region</th>
                       <th>Country</th>
                       <th>Technology</th>
@@ -169,21 +169,21 @@
                 serverSide: true,
                 processing: true,
                 ajax: {
-                        url: "{!! route('listOfProjectsMissingInfoAjax') !!}",
+                        url: "{!! route('listOfProjectsLostAjax') !!}",
                         type: "GET"
                     },
                 columns: [
                     { name: 'projects.id', data: 'id', searchable: false , visible: false },
                     { name: 'u2.name', data: 'manager_name' },
-                    { name: 'users.id', data: 'user_id', searchable: false , visible: false },
+                    { name: 'users.id', data: 'user_id' , searchable: false , visible: false},
                     { name: 'users.name', data: 'name' },
                     { name: 'projects.customer_name', data: 'customer_name' },
                     { name: 'projects.project_name', data: 'project_name' },
-                    { name: 'projects.otl_project_code', data: 'otl_project_code', searchable: false , visible: false },
+                    { name: 'projects.otl_project_code', data: 'otl_project_code', searchable: false , visible: false},
+                    { name: 'projects.meta_activity', data: 'meta_activity', searchable: false , visible: false},
                     { name: 'projects.project_type', data: 'project_type'},
                     { name: 'projects.activity_type', data: 'activity_type'},
                     { name: 'projects.project_status', data: 'project_status'},
-                    { name: 'projects.meta_activity', data: 'meta_activity', searchable: false , visible: false },
                     { name: 'projects.region', data: 'region' , searchable: false , visible: false},
                     { name: 'projects.country', data: 'country' , searchable: false , visible: false},
                     { name: 'projects.technology', data: 'technology' },

@@ -83,6 +83,18 @@ class ProjectController extends Controller {
     return $this->projectRepository->getListOfProjectsMissingInfo($inputs);
   }
 
+  public function listOfProjectsMissingOTL(Request $request)
+  {
+    $inputs = $request->all();
+    return $this->projectRepository->getListOfProjectsMissingOTL($inputs);
+  }
+
+  public function listOfProjectsLost(Request $request)
+  {
+    $inputs = $request->all();
+    return $this->projectRepository->getListOfProjectsLost($inputs);
+  }
+
   public function listOfProjectsAll(Request $request)
   {
     $inputs = $request->all();

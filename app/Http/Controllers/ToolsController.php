@@ -111,6 +111,23 @@ class ToolsController extends Controller {
     return view('tools/projects_missing_info', compact('manager_list','year','user_id_for_update'));
   }
 
+  public function projectsMissingOTL()
+  {
+    $year = date("Y");
+    $manager_list = [];
+    if (Entrust::can('tools-activity-all-edit')){
+      $user_id_for_update = '0';
+    }
+    elseif (Auth::user()->is_manager == 1) {
+      $user_id_for_update = '0';
+    }
+    else {
+      $user_id_for_update = '0';
+    }
+    Session::put('url','toolsProjectsMissingOTL');
+    return view('tools/projects_missing_otl', compact('manager_list','year','user_id_for_update'));
+  }
+
   public function projectsAll()
   {
     $year = date("Y");
@@ -126,6 +143,23 @@ class ToolsController extends Controller {
     }
     Session::put('url','toolsProjectsAll');
     return view('tools/projects_all', compact('manager_list','year','user_id_for_update'));
+  }
+
+  public function projectsLost()
+  {
+    $year = date("Y");
+    $manager_list = [];
+    if (Entrust::can('tools-activity-all-edit')){
+      $user_id_for_update = '0';
+    }
+    elseif (Auth::user()->is_manager == 1) {
+      $user_id_for_update = '0';
+    }
+    else {
+      $user_id_for_update = '0';
+    }
+    Session::put('url','toolsProjectsLost');
+    return view('tools/projects_lost', compact('manager_list','year','user_id_for_update'));
   }
 
 	public function getFormCreate($year)
@@ -166,6 +200,8 @@ class ToolsController extends Controller {
   public function postFormCreate(ProjectCreateRequest $request)
 	{
     $inputs = $request->all();
+
+    //dd($inputs);
     $start_end_date = explode(' - ',$inputs['estimated_date']);
     $inputs['estimated_start_date'] = trim($start_end_date[0]);
     $inputs['estimated_end_date'] = trim($start_end_date[1]);
@@ -341,10 +377,11 @@ class ToolsController extends Controller {
     //dd($inputs);
 
     // Now we need to check if the user has been flagged for remove from project
-    if (isset($inputs['remove_user'])) {
+    if ($inputs['action'] == 'Remove') {
       $activity = $this->activityRepository->removeUserFromProject($inputs['user_id'],$inputs['project_id']);
       return redirect($redirect)->with('success','User removed from project successfully');
     }
+
     $start_end_date = explode(' - ',$inputs['estimated_date']);
     $inputs['estimated_start_date'] = trim($start_end_date[0]);
     $inputs['estimated_end_date'] = trim($start_end_date[1]);
@@ -352,7 +389,7 @@ class ToolsController extends Controller {
     $project = $this->projectRepository->update($inputs['project_id'],$inputs);
 
     // if user_id_url = 0 then it is only project update and we don't need to add or update tasks
-    if ($inputs['user_id_url'] != 0) {
+    if ($inputs['user_id_url'] != 0 && Entrust::can('tools-user_assigned-remove')) {
       // Let's check first if we changed the user
       if ($inputs['user_id_url'] != $inputs['user_id']){
         // Let's check if the user we changed to has already some activities on this project
@@ -369,15 +406,18 @@ class ToolsController extends Controller {
             $inputs_new['from_otl'] = 0;
             $activity = $this->activityRepository->assignNewUser($inputs_new['user_id_url'],$inputs_new);
           }
+          return redirect($redirect)->with('success','New user assigned successfully');
         }
-      } else {
-        foreach ($inputs['month'] as $key => $value){
-          $inputs_new = $inputs;
-          $inputs_new['month'] = $key;
-          $inputs_new['task_hour'] = $value;
-          $inputs_new['from_otl'] = 0;
-          $activity = $this->activityRepository->createOrUpdate($inputs_new);
-        }
+      }
+    }
+
+    if (!empty($inputs['user_id'])){
+      foreach ($inputs['month'] as $key => $value){
+        $inputs_new = $inputs;
+        $inputs_new['month'] = $key;
+        $inputs_new['task_hour'] = $value;
+        $inputs_new['from_otl'] = 0;
+        $activity = $this->activityRepository->createOrUpdate($inputs_new);
       }
     }
 
