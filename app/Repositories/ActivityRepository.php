@@ -84,6 +84,19 @@ class ActivityRepository
     }
   }
 
+  public function assignNewUser($old_user,$inputs)
+  {
+    $activity = $this->activity
+            ->where('year', $inputs['year'])
+            ->where('month',   $inputs['month'])
+            ->where('project_id', $inputs['project_id'])
+            ->where('user_id', $old_user)
+            ->where('from_otl', '0')
+            ->first();
+
+    return $this->save($activity, $inputs);
+  }
+
   private function save(Activity $activity, Array $inputs)
   {
     // Required fields
@@ -462,6 +475,14 @@ class ActivityRepository
     unset($temp_table);
 
     return $data;
+  }
+
+  public function getNumberOfOTLPerUserAndProject($user_id,$project_id){
+    return $this->activity->where('user_id', $user_id)->where('project_id', $project_id)->where('from_otl',1)->count();
+  }
+
+  public function getNumberPerUserAndProject($user_id,$project_id){
+    return $this->activity->where('user_id', $user_id)->where('project_id', $project_id)->count();
   }
 
   public function test()

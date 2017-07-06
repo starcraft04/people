@@ -208,7 +208,7 @@ class ToolsController extends Controller {
     $region_select_disabled = 'false';
     $country_select_disabled = 'false';
     $user_select_disabled = 'true';
-
+    $show_change_button = false;
     $user_list = [];
 
     // Here we will define if we can select a user for this project and activity or not
@@ -316,7 +316,13 @@ class ToolsController extends Controller {
     $loe_list = $this->activityRepository->getListOfActivitiesPerUserForProject(['project_id'=>$project_id]);
     //dd($loe_list);
 
-		return view('tools/create_update', compact('user_id','project','year','activities','from_otl','forecast','otl','loe_list',
+    //here is the check to see if we need the change user button
+    $has_otl_activities = $this->activityRepository->getNumberOfOTLPerUserAndProject($user_id,$project_id);
+    if (Entrust::can('tools-user_assigned-change') && $user_id != 0 && $has_otl_activities == 0){
+      $show_change_button = true;
+    }
+
+		return view('tools/create_update', compact('user_id','project','year','activities','from_otl','forecast','otl','loe_list','show_change_button',
       'edit_project_name','edit_otl_name',
       'meta_activity_select_disabled','project_type_select_disabled','activity_type_select_disabled','project_status_select_disabled',
       'region_select_disabled','country_select_disabled','user_list','user_selected','user_select_disabled','created_by_user_name'))
@@ -325,31 +331,50 @@ class ToolsController extends Controller {
 
 	public function postFormUpdate(ProjectUpdateRequest $request)
 	{
-    $inputs = $request->all();
-
-    $start_end_date = explode(' - ',$inputs['estimated_date']);
-    $inputs['estimated_start_date'] = trim($start_end_date[0]);
-    $inputs['estimated_end_date'] = trim($start_end_date[1]);
-
-    $project = $this->projectRepository->update($inputs['project_id'],$inputs);
-
-    if ($inputs['user_id'] != 0) {
-      foreach ($inputs['month'] as $key => $value){
-        $inputs_new = $inputs;
-        $inputs_new['month'] = $key;
-        $inputs_new['task_hour'] = $value;
-        $inputs_new['from_otl'] = 0;
-        $activity = $this->activityRepository->createOrUpdate($inputs_new);
-      }
-    }
-
     if (!empty(Session::get('url'))){
       $redirect = Session::get('url');
     } else {
       $redirect = 'toolsActivities';
     }
 
+    $inputs = $request->all();
+    //dd($inputs);
+    $start_end_date = explode(' - ',$inputs['estimated_date']);
+    $inputs['estimated_start_date'] = trim($start_end_date[0]);
+    $inputs['estimated_end_date'] = trim($start_end_date[1]);
+
+    $project = $this->projectRepository->update($inputs['project_id'],$inputs);
+
+    // if user_id_url = 0 then it is only project update and we don't need to add or update tasks
+    if ($inputs['user_id_url'] != 0) {
+      // Let's check first if we changed the user
+      if ($inputs['user_id_url'] != $inputs['user_id']){
+        // Let's check if the user we changed to has already some activities on this project
+        $has_activities = $this->activityRepository->getNumberPerUserAndProject($inputs['user_id'],$inputs['project_id']);
+        if ($inputs['user_id'] == ''){
+          return redirect($redirect)->with('error','You must select at least a new user');
+        } elseif ($has_activities > 0) {
+          return redirect($redirect)->with('error','The user you have selected already has activities for this project');
+        } else {
+          foreach ($inputs['month'] as $key => $value){
+            $inputs_new = $inputs;
+            $inputs_new['month'] = $key;
+            $inputs_new['task_hour'] = $value;
+            $inputs_new['from_otl'] = 0;
+            $activity = $this->activityRepository->assignNewUser($inputs_new['user_id_url'],$inputs_new);
+          }
+        }
+      } else {
+        foreach ($inputs['month'] as $key => $value){
+          $inputs_new = $inputs;
+          $inputs_new['month'] = $key;
+          $inputs_new['task_hour'] = $value;
+          $inputs_new['from_otl'] = 0;
+          $activity = $this->activityRepository->createOrUpdate($inputs_new);
+        }
+      }
+    }
+
     return redirect($redirect)->with('success','Project updated successfully');
 	}
-
 }

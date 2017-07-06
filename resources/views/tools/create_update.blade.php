@@ -75,6 +75,7 @@
             {!! Form::hidden('project_id', $project->id, ['class' => 'form-control']) !!}
             <!-- Now we need also to set up id so that it can be used for the ProjectUpdateRequest.php -->
             {!! Form::hidden('id', $project->id, ['class' => 'form-control']) !!}
+            {!! Form::hidden('user_id_url', $user_id, ['class' => 'form-control']) !!}
             @endif
 
 
@@ -99,6 +100,9 @@
                 <div class="form-group {!! $errors->has('user_id') ? 'has-error' : '' !!} col-md-12">
                   <div class="col-md-1">
                     {!! Form::label('user_id', 'User', ['class' => 'control-label']) !!}
+                    @if($show_change_button)
+                    <span class="glyphicon glyphicon-refresh" id="change_user"></span>
+                    @endif
                   </div>
                   <div class="col-md-11">
                     <select class="form-control select2" style="width: 100%;" id="user_id" name="user_id" data-placeholder="Select a user to be assigned">
@@ -574,6 +578,12 @@ $(document).ready(function() {
       $(this).find(':input').prop('disabled', false);
     });
   });
+
+  @if($show_change_button)
+  $(document).on('click', '#change_user', function () {
+    $('#user_id').prop('disabled', false);
+  });
+  @endif
 
   if($('#user_id').val()===""){
     console.log('empty');
