@@ -101,6 +101,8 @@ class ActivityController extends Controller {
     $iscpipeline = $this->activityRepository->getListOfLoadPerUserChart($inputs,'ISC','Pipeline');
     $dscstarted = $this->activityRepository->getListOfLoadPerUserChart($inputs,'DSC','Started');
     $iscstarted = $this->activityRepository->getListOfLoadPerUserChart($inputs,'ISC','Started');
+    $orange = $this->activityRepository->getListOfLoadPerUserChart($inputs,null,'Orange absence or other');
+    $presales = $this->activityRepository->getListOfLoadPerUserChart($inputs,null,'Pre-sales');
     $data = [];
 
     $data ["dscvstotal"] = [];
@@ -140,6 +142,8 @@ class ActivityController extends Controller {
     $data ["iscpipeline"] = $iscpipeline;
     $data ["dscstarted"] = $dscstarted;
     $data ["iscstarted"] = $iscstarted;
+    $data ["orange"] = $orange;
+    $data ["presales"] = $presales;
 
     return json_encode($data);
   }

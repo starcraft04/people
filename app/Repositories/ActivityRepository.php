@@ -422,8 +422,13 @@ class ActivityRepository
       $activityList->where('user_id','=',Auth::user()->id);
     }
 
-    $activityList->where('activity_type','=',$activity_type);
-    $activityList->where('project_status','=',$project_status);
+    if (!empty($activity_type)) {
+      $activityList->where('activity_type','=',$activity_type);
+    }
+    if (!empty($project_status)) {
+      $activityList->where('project_status','=',$project_status);
+    }
+
 
     $data = $activityList->get();
 

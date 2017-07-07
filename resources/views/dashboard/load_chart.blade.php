@@ -227,6 +227,40 @@
     ];
     return myarray;
   };
+  function ajaxorange(){
+    var myarray = [
+      myvar.orange[0].jan_com,
+      myvar.orange[0].feb_com,
+      myvar.orange[0].mar_com,
+      myvar.orange[0].apr_com,
+      myvar.orange[0].may_com,
+      myvar.orange[0].jun_com,
+      myvar.orange[0].jul_com,
+      myvar.orange[0].aug_com,
+      myvar.orange[0].sep_com,
+      myvar.orange[0].oct_com,
+      myvar.orange[0].nov_com,
+      myvar.orange[0].dec_com
+    ];
+    return myarray;
+  };
+  function ajaxpresales(){
+    var myarray = [
+      myvar.presales[0].jan_com,
+      myvar.presales[0].feb_com,
+      myvar.presales[0].mar_com,
+      myvar.presales[0].apr_com,
+      myvar.presales[0].may_com,
+      myvar.presales[0].jun_com,
+      myvar.presales[0].jul_com,
+      myvar.presales[0].aug_com,
+      myvar.presales[0].sep_com,
+      myvar.presales[0].oct_com,
+      myvar.presales[0].nov_com,
+      myvar.presales[0].dec_com
+    ];
+    return myarray;
+  };
   window.chartColors = {
    red: 'rgb(255, 99, 132)',
    orange: 'rgb(255, 159, 64)',
@@ -350,6 +384,26 @@
            borderColor: window.chartColors.blue_light,
            borderWidth: 1,
            data: []
+          },
+          {
+          type: 'bar',
+           label: 'Pre-sales',
+           yAxisID: "y-axis-1",
+           stack: 'Stack 1',
+           backgroundColor: color(window.chartColors.yellow).alpha(0.7).rgbString(),
+           borderColor: window.chartColors.yellow,
+           borderWidth: 1,
+           data: []
+          },
+          {
+          type: 'bar',
+           label: 'Orange ABS or other',
+           yAxisID: "y-axis-1",
+           stack: 'Stack 1',
+           backgroundColor: color(window.chartColors.grey).alpha(0.7).rgbString(),
+           borderColor: window.chartColors.grey,
+           borderWidth: 1,
+           data: []
           }
         ]
      };
@@ -366,6 +420,8 @@
            barChart.data.datasets[3].data = ajaxiscpipeline();
            barChart.data.datasets[4].data = ajaxdscstarted();
            barChart.data.datasets[5].data = ajaxiscstarted();
+           barChart.data.datasets[6].data = ajaxorange();
+           barChart.data.datasets[7].data = ajaxpresales();
            console.log(barChart.data);
            barChart.update();
          }
@@ -437,6 +493,9 @@
             barChart.data.datasets[3].data = ajaxiscpipeline();
             barChart.data.datasets[4].data = ajaxdscstarted();
             barChart.data.datasets[5].data = ajaxiscstarted();
+            barChart.data.datasets[6].data = ajaxorange();
+            barChart.data.datasets[7].data = ajaxpresales();
+            console.log(barChart.data);
             barChart.update();
           }
         });
@@ -461,6 +520,9 @@
             barChart.data.datasets[3].data = ajaxiscpipeline();
             barChart.data.datasets[4].data = ajaxdscstarted();
             barChart.data.datasets[5].data = ajaxiscstarted();
+            barChart.data.datasets[6].data = ajaxorange();
+            barChart.data.datasets[7].data = ajaxpresales();
+            console.log(barChart.data);
             barChart.update();
           }
         });
@@ -485,6 +547,9 @@
             barChart.data.datasets[3].data = ajaxiscpipeline();
             barChart.data.datasets[4].data = ajaxdscstarted();
             barChart.data.datasets[5].data = ajaxiscstarted();
+            barChart.data.datasets[6].data = ajaxorange();
+            barChart.data.datasets[7].data = ajaxpresales();
+            console.log(barChart.data);
             barChart.update();
           }
         });
