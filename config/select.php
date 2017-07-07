@@ -43,15 +43,15 @@ return [
         'CF' => 'CF'
     ],
     'project_status' => [
-        'Started' => 'Started',
+        'Pre-sales' => 'Pre-sales',
         'Pipeline' => 'Pipeline',
+        'Started' => 'Started',
         'Closed' => 'Closed',
         'Orange absence or other' => 'Orange absence or other'
     ],
     'project_type' => [
         'Baseline' => 'Baseline',
         'Project' => 'Project',
-        'Pre-sales' => 'Pre-sales',
         'POC' => 'POC',
         'Orange absence or other' => 'Orange absence or other'
     ],
