@@ -188,7 +188,11 @@
                       {!! Form::label('customer_name', 'Customer name', ['class' => 'control-label']) !!}
                     </div>
                     <div class="col-md-9">
-                      {!! Form::text('customer_name', (isset($project->customer_name)) ? $project->customer_name : '', ['class' => 'form-control', 'placeholder' => 'customer name',$edit_project_name]) !!}
+                      <select class="form-control select2" style="width: 100%;" id="customer_name" name="customer_name" data-placeholder="Select a customer name">
+                        @foreach($customers_list as $key => $value)
+                        <option value="{{ $key }}" <?php if (isset($project->customer_name) && $value == $project->customer_name) { echo 'selected'; }?>>{{ $value }}</option>
+                        @endforeach
+                      </select>
                       {!! $errors->first('customer_name', '<small class="help-block">:message</small>') !!}
                     </div>
                   </div>
@@ -652,6 +656,10 @@ $(document).ready(function() {
 
   $("#year").select2({
     allowClear: false
+  });
+
+  $("#customer_name").select2({
+    allowClear: true
   });
 
   $("#meta_activity").select2({

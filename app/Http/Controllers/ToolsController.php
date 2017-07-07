@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Role;
+use App\Customers;
 use App\Http\Controllers\Controller;
 use DB;
 use Entrust;
@@ -190,7 +191,10 @@ class ToolsController extends Controller {
       $user_select_disabled = 'true';
     }
 
-		return view('tools/create_update', compact('year','edit_project_name','edit_otl_name',
+    $customers_list = Customers::orderBy('customer_name')->lists('customer_name','customer_name');
+    //dd($customers_list);
+
+		return view('tools/create_update', compact('year','edit_project_name','edit_otl_name','customers_list',
       'user_list','user_selected','user_select_disabled','created_by_user_id',
       'meta_activity_select_disabled','project_type_select_disabled','activity_type_select_disabled','project_status_select_disabled',
       'region_select_disabled','country_select_disabled'))
@@ -246,6 +250,8 @@ class ToolsController extends Controller {
     $user_select_disabled = 'true';
     $show_change_button = false;
     $user_list = [];
+
+    $customers_list = Customers::orderBy('customer_name')->lists('customer_name','customer_name');
 
     // Here we will define if we can select a user for this project and activity or not
     // Attention, we need to prevent in the user_list to have ids when already assigned to a project
@@ -358,7 +364,7 @@ class ToolsController extends Controller {
       $show_change_button = true;
     }
 
-		return view('tools/create_update', compact('user_id','project','year','activities','from_otl','forecast','otl','loe_list','show_change_button',
+		return view('tools/create_update', compact('user_id','project','year','activities','from_otl','forecast','otl','loe_list','show_change_button','customers_list',
       'edit_project_name','edit_otl_name',
       'meta_activity_select_disabled','project_type_select_disabled','activity_type_select_disabled','project_status_select_disabled',
       'region_select_disabled','country_select_disabled','user_list','user_selected','user_select_disabled','created_by_user_name'))
