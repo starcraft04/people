@@ -44,13 +44,14 @@ return [
     ],
     'project_status' => [
         'Started' => 'Started',
-        'Pre-Sales' => 'Pre-Sales',
+        'Pipeline' => 'Pipeline',
         'Closed' => 'Closed',
         'Orange absence or other' => 'Orange absence or other'
     ],
     'project_type' => [
         'Baseline' => 'Baseline',
         'Project' => 'Project',
+        'Pre-sales' => 'Pre-sales',
         'POC' => 'POC',
         'Orange absence or other' => 'Orange absence or other'
     ],
