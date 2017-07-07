@@ -107,7 +107,8 @@
     <script src="{{ asset('/plugins/gentelella/vendors/nprogress/nprogress.js') }}" type="text/javascript"></script>
     <!-- Custom Theme Scripts -->
     <script src="{{ asset('/plugins/gentelella/build/js/custom.min.js') }}" type="text/javascript"></script>
-
+    <!-- JS cookie -->
+    <script src="{{ asset('/plugins/jscookie/js.cookie.js') }}" type="text/javascript"></script>
     @yield('scriptsrc')
     @yield('script')
 

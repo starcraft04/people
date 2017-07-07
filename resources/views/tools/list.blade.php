@@ -221,6 +221,10 @@
   var year = [];
   var manager = [];
   var user = [];
+  var year_selected = [];
+  var manager_selected = [];
+  var user_selected = [];
+
 
   //alert($.fn.dataTable.version);
   $("#year option:selected").each(function()
@@ -259,6 +263,59 @@
   //console.log(permissions);
 
   $(document).ready(function() {
+
+    $('#year').on('change', function() {
+      Cookies.set('year', $('#year').val());
+    })
+    $('#manager').on('change', function() {
+      Cookies.set('manager', $('#manager').val());
+    })
+    $('#user').on('change', function() {
+      Cookies.set('user', $('#user').val());
+    })
+
+    year_selected = Cookies.get('year');
+    if (year_selected != null) {
+      year_selected = year_selected.replace(/\"/g,'').replace('[','').replace(']','');
+      year_selected = year_selected.split(',');
+      $('#year').val(year_selected);
+      year = [];
+      $("#year option:selected").each(function()
+      {
+        // log the value and text of each option
+        year.push($(this).val());
+
+      });
+    }
+
+    manager_selected = Cookies.get('manager');
+    if (manager_selected != null) {
+      manager_selected = manager_selected.replace(/\"/g,'').replace('[','').replace(']','');
+      manager_selected = manager_selected.split(',');
+      $('#manager').val(manager_selected);
+      manager = [];
+      $("#manager option:selected").each(function()
+      {
+        // log the value and text of each option
+        manager.push($(this).val());
+
+      });
+    }
+
+    user_selected = Cookies.get('user');
+    console.log(user_selected);
+    if (user_selected != null) {
+      user_selected = user_selected.replace(/\"/g,'').replace('[','').replace(']','');
+      user_selected = user_selected.split(',');
+      $('#user').val(user_selected);
+      user = [];
+      $("#user option:selected").each(function()
+      {
+        // log the value and text of each option
+        user.push($(this).val());
+
+      });
+    }
 
     $.ajaxSetup({
       headers: {
