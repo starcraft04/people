@@ -192,6 +192,7 @@ class ToolsController extends Controller {
     }
 
     $customers_list = Customers::orderBy('customer_name')->lists('customer_name','customer_name');
+    $customers_list->prepend('', '');
     //dd($customers_list);
 
 		return view('tools/create_update', compact('year','edit_project_name','edit_otl_name','customers_list',
@@ -252,6 +253,7 @@ class ToolsController extends Controller {
     $user_list = [];
 
     $customers_list = Customers::orderBy('customer_name')->lists('customer_name','customer_name');
+    $customers_list->prepend('', '');
 
     // Here we will define if we can select a user for this project and activity or not
     // Attention, we need to prevent in the user_list to have ids when already assigned to a project
