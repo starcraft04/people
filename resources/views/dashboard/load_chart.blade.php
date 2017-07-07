@@ -159,37 +159,37 @@
     ];
     return myarray;
   };
-  function ajaxdscpresales(){
+  function ajaxdscpipeline(){
     var myarray = [
-      myvar.dscpresales[0].jan_com,
-      myvar.dscpresales[0].feb_com,
-      myvar.dscpresales[0].mar_com,
-      myvar.dscpresales[0].apr_com,
-      myvar.dscpresales[0].may_com,
-      myvar.dscpresales[0].jun_com,
-      myvar.dscpresales[0].jul_com,
-      myvar.dscpresales[0].aug_com,
-      myvar.dscpresales[0].sep_com,
-      myvar.dscpresales[0].oct_com,
-      myvar.dscpresales[0].nov_com,
-      myvar.dscpresales[0].dec_com
+      myvar.dscpipeline[0].jan_com,
+      myvar.dscpipeline[0].feb_com,
+      myvar.dscpipeline[0].mar_com,
+      myvar.dscpipeline[0].apr_com,
+      myvar.dscpipeline[0].may_com,
+      myvar.dscpipeline[0].jun_com,
+      myvar.dscpipeline[0].jul_com,
+      myvar.dscpipeline[0].aug_com,
+      myvar.dscpipeline[0].sep_com,
+      myvar.dscpipeline[0].oct_com,
+      myvar.dscpipeline[0].nov_com,
+      myvar.dscpipeline[0].dec_com
     ];
     return myarray;
   };
-  function ajaxiscpresales(){
+  function ajaxiscpipeline(){
     var myarray = [
-      myvar.iscpresales[0].jan_com,
-      myvar.iscpresales[0].feb_com,
-      myvar.iscpresales[0].mar_com,
-      myvar.iscpresales[0].apr_com,
-      myvar.iscpresales[0].may_com,
-      myvar.iscpresales[0].jun_com,
-      myvar.iscpresales[0].jul_com,
-      myvar.iscpresales[0].aug_com,
-      myvar.iscpresales[0].sep_com,
-      myvar.iscpresales[0].oct_com,
-      myvar.iscpresales[0].nov_com,
-      myvar.iscpresales[0].dec_com
+      myvar.iscpipeline[0].jan_com,
+      myvar.iscpipeline[0].feb_com,
+      myvar.iscpipeline[0].mar_com,
+      myvar.iscpipeline[0].apr_com,
+      myvar.iscpipeline[0].may_com,
+      myvar.iscpipeline[0].jun_com,
+      myvar.iscpipeline[0].jul_com,
+      myvar.iscpipeline[0].aug_com,
+      myvar.iscpipeline[0].sep_com,
+      myvar.iscpipeline[0].oct_com,
+      myvar.iscpipeline[0].nov_com,
+      myvar.iscpipeline[0].dec_com
     ];
     return myarray;
   };
@@ -313,7 +313,7 @@
          },
           {
           type: 'bar',
-           label: 'DSC Pre-Sales',
+           label: 'DSC Pipeline',
            yAxisID: "y-axis-1",
            stack: 'Stack 1',
            backgroundColor: color(window.chartColors.green).alpha(0.7).rgbString(),
@@ -323,7 +323,7 @@
           },
           {
           type: 'bar',
-           label: 'ISC Pre-Sales',
+           label: 'ISC Pipeline',
            yAxisID: "y-axis-1",
            stack: 'Stack 1',
            backgroundColor: color(window.chartColors.green_light).alpha(0.7).rgbString(),
@@ -362,11 +362,11 @@
            useReturnData(data);
            barChart.data.datasets[0].data = ajaxdscvstotal();
            barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
-           barChart.data.datasets[2].data = ajaxdscpresales();
-           barChart.data.datasets[3].data = ajaxiscpresales();
+           barChart.data.datasets[2].data = ajaxdscpipeline();
+           barChart.data.datasets[3].data = ajaxiscpipeline();
            barChart.data.datasets[4].data = ajaxdscstarted();
            barChart.data.datasets[5].data = ajaxiscstarted();
-           //console.log(barChart.data);
+           console.log(barChart.data);
            barChart.update();
          }
        });
@@ -433,8 +433,8 @@
             useReturnData(data);
             barChart.data.datasets[0].data = ajaxdscvstotal();
             barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
-            barChart.data.datasets[2].data = ajaxdscpresales();
-            barChart.data.datasets[3].data = ajaxiscpresales();
+            barChart.data.datasets[2].data = ajaxdscpipeline();
+            barChart.data.datasets[3].data = ajaxiscpipeline();
             barChart.data.datasets[4].data = ajaxdscstarted();
             barChart.data.datasets[5].data = ajaxiscstarted();
             barChart.update();
@@ -457,8 +457,8 @@
             useReturnData(data);
             barChart.data.datasets[0].data = ajaxdscvstotal();
             barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
-            barChart.data.datasets[2].data = ajaxdscpresales();
-            barChart.data.datasets[3].data = ajaxiscpresales();
+            barChart.data.datasets[2].data = ajaxdscpipeline();
+            barChart.data.datasets[3].data = ajaxiscpipeline();
             barChart.data.datasets[4].data = ajaxdscstarted();
             barChart.data.datasets[5].data = ajaxiscstarted();
             barChart.update();
@@ -481,8 +481,8 @@
             useReturnData(data);
             barChart.data.datasets[0].data = ajaxdscvstotal();
             barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
-            barChart.data.datasets[2].data = ajaxdscpresales();
-            barChart.data.datasets[3].data = ajaxiscpresales();
+            barChart.data.datasets[2].data = ajaxdscpipeline();
+            barChart.data.datasets[3].data = ajaxiscpipeline();
             barChart.data.datasets[4].data = ajaxdscstarted();
             barChart.data.datasets[5].data = ajaxiscstarted();
             barChart.update();
