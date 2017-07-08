@@ -22,6 +22,7 @@
     <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/dataTables.buttons.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/buttons.colVis.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/buttons.flash.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/buttons.html5.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/buttons.print.min.js') }}" type="text/javascript"></script>
@@ -173,16 +174,16 @@
               </thead>
               <tfoot>
                 <tr>
-                  <th>Manager ID</th>
-                  <th>Manager name</th>
-                  <th>User ID</th>
-                  <th>User name</th>
-                  <th>Customer name</th>
-                  <th>Project ID</th>
-                  <th>Project name</th>
-                  <th>Activity type</th>
-                  <th>Project status</th>
-                  <th>Year</th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
                   <th></th>
                   <th></th>
                   <th></th>
@@ -355,6 +356,7 @@
       scrollX: true,
       serverSide: true,
       processing: true,
+      stateSave: true,
       ajax: {
         url: "{!! route('listOfActivitiesPerUserAjax') !!}",
         type: "POST",
@@ -371,8 +373,8 @@
         { name: 'customer_name', data: 'customer_name' , width: '200px'},
         { name: 'project_id', data: 'project_id' , searchable: false , visible: false},
         { name: 'project_name', data: 'project_name', width: '200px'},
-        { name: 'activity_type', data: 'activity_type' , searchable: false , visible: false},
-        { name: 'project_status', data: 'project_status' , searchable: false , visible: false},
+        { name: 'activity_type', data: 'activity_type', visible: false},
+        { name: 'project_status', data: 'project_status' , visible: false},
         { name: 'year', data: 'year' , searchable: false , visible: false},
         { name: 'jan_com', data: 'jan_com', width: '30px', searchable: false },
         { name: 'jan_otl', data: 'jan_otl', width: '10px', searchable: false , visible: false},
@@ -407,6 +409,11 @@
       ],
       dom: 'Bfrtip',
       buttons: [
+        {
+          extend: "colvis",
+          className: "btn-sm",
+          columns: [ 1, 3, 4, 6, 7, 8, 9, 10, 12, 14, 16,18,20,22,24,26,28,30,32 ]
+        },
         {
           extend: "pageLength",
           className: "btn-sm"
@@ -451,8 +458,21 @@
             .on('keyup change', function () {
               column.search($(this).val(), false, false, true).draw();
             });
-          }
+          };
         });
+        // Restore state
+        var state = activitiesTable.state.loaded();
+        if (state) {
+            activitiesTable.columns().eq(0).each(function (colIdx) {
+                var colSearch = state.columns[colIdx].search;
+
+                if (colSearch.search) {
+                    $('input', activitiesTable.column(colIdx).footer()).val(colSearch.search);
+                }
+            });
+
+            activitiesTable.draw();
+        }
       },
       rowCallback: function(row, data, index){
         if(data.jan_com<= 0){

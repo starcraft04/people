@@ -22,6 +22,7 @@
     <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/dataTables.buttons.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/buttons.colVis.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/buttons.flash.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/buttons.html5.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/buttons.print.min.js') }}" type="text/javascript"></script>
@@ -179,23 +180,23 @@
               </thead>
               <tfoot>
                 <tr>
-                  <th>Manager ID</th>
-                  <th>Manager name</th>
-                  <th>User ID</th>
-                  <th>User name</th>
-                  <th>Year</th>
-                  <th>Jan</th>
-                  <th>Feb</th>
-                  <th>Mar</th>
-                  <th>Apr</th>
-                  <th>May</th>
-                  <th>Jun</th>
-                  <th>Jul</th>
-                  <th>Aug</th>
-                  <th>Sep</th>
-                  <th>Oct</th>
-                  <th>Nov</th>
-                  <th>Dec</th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
                 </tr>
               </tfoot>
             </table>
@@ -421,6 +422,7 @@
       scrollX: true,
       serverSide: true,
       processing: true,
+      stateSave: true,
       ajax: {
         url: "{!! route('listOfLoadPerUserAjax') !!}",
         type: "POST",
@@ -437,7 +439,7 @@
         { name: 'manager_name', data: 'manager_name', width: '150px' },
         { name: 'user_id', data: 'user_id' , searchable: false , visible: false},
         { name: 'user_name', data: 'user_name' , width: '150px'},
-        { name: 'year', data: 'year' , searchable: false , visible: false},
+        { name: 'year', data: 'year'  , visible: false},
         { name: 'jan_com', data: 'jan_com', width: '30px', searchable: false },
         { name: 'feb_com', data: 'feb_com', width: '30px', searchable: false },
         { name: 'mar_com', data: 'mar_com', width: '30px', searchable: false },
@@ -458,6 +460,11 @@
       ],
       dom: 'Bfrtip',
       buttons: [
+        {
+          extend: "colvis",
+          className: "btn-sm",
+          columns: [1,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+        },
         {
           extend: "pageLength",
           className: "btn-sm"
@@ -504,6 +511,19 @@
             });
           }
         });
+        // Restore state
+        var state = activitiesTable.state.loaded();
+        if (state) {
+            activitiesTable.columns().eq(0).each(function (colIdx) {
+                var colSearch = state.columns[colIdx].search;
+
+                if (colSearch.search) {
+                    $('input', activitiesTable.column(colIdx).footer()).val(colSearch.search);
+                }
+            });
+
+            activitiesTable.draw();
+        }
       },
       rowCallback: function(row, data, index){
         if(data.jan_com<= 0){

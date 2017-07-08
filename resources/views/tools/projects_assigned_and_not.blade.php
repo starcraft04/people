@@ -22,6 +22,7 @@
     <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/dataTables.buttons.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/buttons.colVis.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/buttons.flash.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/buttons.html5.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/buttons.print.min.js') }}" type="text/javascript"></script>
@@ -90,10 +91,10 @@
                       <th>Customer name</th>
                       <th>Project name</th>
                       <th>OTL project code</th>
+                      <th>Meta-activity</th>
                       <th>Project type</th>
                       <th>Activity type</th>
                       <th>Project status</th>
-                      <th>Meta-activity</th>
                       <th>Region</th>
                       <th>Country</th>
                       <th>Technology</th>
@@ -113,29 +114,29 @@
                 </thead>
                 <tfoot>
                     <tr>
-                      <th>ID</th>
-                      <th>Customer name</th>
-                      <th>Project name</th>
-                      <th>OTL project code</th>
-                      <th>Project type</th>
-                      <th>Activity type</th>
-                      <th>Project status</th>
-                      <th>Meta-activity</th>
-                      <th>Region</th>
-                      <th>Country</th>
-                      <th>Technology</th>
-                      <th>Description</th>
-                      <th>Estimated start date</th>
-                      <th>Estimated end date</th>
-                      <th>Comments</th>
-                      <th>LoE onshore</th>
-                      <th>LoE nearshore</th>
-                      <th>LoE offshore</th>
-                      <th>LoE contractor</th>
-                      <th>Gold order</th>
-                      <th>FPC</th>
-                      <th>Revenue (€)</th>
-                      <th>Win ratio (%)</th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
                     </tr>
                 </tfoot>
             </table>
@@ -172,6 +173,7 @@
                 scrollX: true,
                 serverSide: true,
                 processing: true,
+                stateSave: true,
                 ajax: {
                         url: "{!! route('listOfProjectsAjax') !!}",
                         type: "POST",
@@ -184,26 +186,26 @@
                     { name: 'id', data: 'id', searchable: false , visible: false },
                     { name: 'customer_name', data: 'customer_name' },
                     { name: 'project_name', data: 'project_name' },
-                    { name: 'otl_project_code', data: 'otl_project_code', searchable: false , visible: false },
+                    { name: 'otl_project_code', data: 'otl_project_code' , visible: false },
+                    { name: 'meta_activity', data: 'meta_activity' , visible: false },
                     { name: 'project_type', data: 'project_type'},
                     { name: 'activity_type', data: 'activity_type'},
                     { name: 'project_status', data: 'project_status'},
-                    { name: 'meta_activity', data: 'meta_activity', searchable: false , visible: false },
-                    { name: 'region', data: 'region' , searchable: false , visible: false},
-                    { name: 'country', data: 'country' , searchable: false , visible: false},
+                    { name: 'region', data: 'region' , visible: false},
+                    { name: 'country', data: 'country'  , visible: false},
                     { name: 'technology', data: 'technology' },
-                    { name: 'description', data: 'description', searchable: false , visible: false },
+                    { name: 'description', data: 'description' , visible: false },
                     { name: 'estimated_start_date', data: 'estimated_start_date' },
                     { name: 'estimated_end_date', data: 'estimated_end_date' },
-                    { name: 'comments', data: 'comments', searchable: false , visible: false },
-                    { name: 'LoE_onshore', data: 'LoE_onshore', searchable: false , visible: false },
-                    { name: 'LoE_nearshore', data: 'LoE_nearshore' , searchable: false , visible: false},
-                    { name: 'LoE_offshore', data: 'LoE_offshore', searchable: false , visible: false },
-                    { name: 'LoE_contractor', data: 'LoE_contractor', searchable: false , visible: false },
-                    { name: 'gold_order_number', data: 'gold_order_number', searchable: false , visible: false },
-                    { name: 'product_code', data: 'product_code', searchable: false , visible: false },
-                    { name: 'revenue', data: 'revenue' , searchable: false , visible: false},
-                    { name: 'win_ratio', data: 'win_ratio', searchable: false , visible: false }
+                    { name: 'comments', data: 'comments' , visible: false },
+                    { name: 'LoE_onshore', data: 'LoE_onshore' , visible: false },
+                    { name: 'LoE_nearshore', data: 'LoE_nearshore', visible: false},
+                    { name: 'LoE_offshore', data: 'LoE_offshore', visible: false },
+                    { name: 'LoE_contractor', data: 'LoE_contractor' , visible: false },
+                    { name: 'gold_order_number', data: 'gold_order_number' , visible: false },
+                    { name: 'product_code', data: 'product_code' , visible: false },
+                    { name: 'revenue', data: 'revenue', visible: false},
+                    { name: 'win_ratio', data: 'win_ratio' , visible: false }
                     ],
                 order: [[1, 'asc'],[2, 'asc']],
                 lengthMenu: [
@@ -212,6 +214,11 @@
                 ],
                 dom: 'Bfrtip',
                 buttons: [
+                  {
+                    extend: "colvis",
+                    className: "btn-sm",
+                    columns: ':gt(0)'
+                  },
                   {
                     extend: "pageLength",
                     className: "btn-sm"
@@ -258,6 +265,19 @@
                           });
                         }
                     });
+                    // Restore state
+                    var state = projectTable_unassigned.state.loaded();
+                    if (state) {
+                        projectTable_unassigned.columns().eq(0).each(function (colIdx) {
+                            var colSearch = state.columns[colIdx].search;
+
+                            if (colSearch.search) {
+                                $('input', projectTable_unassigned.column(colIdx).footer()).val(colSearch.search);
+                            }
+                        });
+
+                        projectTable_unassigned.draw();
+                    }
                 }
             });
 
