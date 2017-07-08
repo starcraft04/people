@@ -405,21 +405,21 @@
           },
           {
           type: 'bar',
-           label: 'Orange ABS or other',
-           yAxisID: "y-axis-1",
-           stack: 'Stack 1',
-           backgroundColor: color(window.chartColors.grey).alpha(0.7).rgbString(),
-           borderColor: window.chartColors.grey,
-           borderWidth: 1,
-           data: []
-          },
-          {
-          type: 'bar',
            label: 'Pre-sales',
            yAxisID: "y-axis-1",
            stack: 'Stack 1',
            backgroundColor: color(window.chartColors.yellow).alpha(0.7).rgbString(),
            borderColor: window.chartColors.yellow,
+           borderWidth: 1,
+           data: []
+          },
+          {
+          type: 'bar',
+           label: 'Orange ABS or other',
+           yAxisID: "y-axis-1",
+           stack: 'Stack 1',
+           backgroundColor: color(window.chartColors.grey).alpha(0.7).rgbString(),
+           borderColor: window.chartColors.grey,
            borderWidth: 1,
            data: []
           }
@@ -441,8 +441,8 @@
            barChart.data.datasets[3].data = ajaxiscpipeline();
            barChart.data.datasets[4].data = ajaxdscstarted();
            barChart.data.datasets[5].data = ajaxiscstarted();
-           barChart.data.datasets[6].data = ajaxorange();
-           barChart.data.datasets[7].data = ajaxpresales();
+           barChart.data.datasets[6].data = ajaxpresales();
+           barChart.data.datasets[7].data = ajaxorange();
            console.log(barChart.data);
            barChart.update();
          }
@@ -515,8 +515,8 @@
             barChart.data.datasets[3].data = ajaxiscpipeline();
             barChart.data.datasets[4].data = ajaxdscstarted();
             barChart.data.datasets[5].data = ajaxiscstarted();
-            barChart.data.datasets[6].data = ajaxorange();
-            barChart.data.datasets[7].data = ajaxpresales();
+            barChart.data.datasets[6].data = ajaxpresales();
+            barChart.data.datasets[7].data = ajaxorange();
             console.log(barChart.data);
             barChart.update();
           }
@@ -543,8 +543,8 @@
             barChart.data.datasets[3].data = ajaxiscpipeline();
             barChart.data.datasets[4].data = ajaxdscstarted();
             barChart.data.datasets[5].data = ajaxiscstarted();
-            barChart.data.datasets[6].data = ajaxorange();
-            barChart.data.datasets[7].data = ajaxpresales();
+            barChart.data.datasets[6].data = ajaxpresales();
+            barChart.data.datasets[7].data = ajaxorange();
             console.log(barChart.data);
             barChart.update();
           }
@@ -571,8 +571,8 @@
             barChart.data.datasets[3].data = ajaxiscpipeline();
             barChart.data.datasets[4].data = ajaxdscstarted();
             barChart.data.datasets[5].data = ajaxiscstarted();
-            barChart.data.datasets[6].data = ajaxorange();
-            barChart.data.datasets[7].data = ajaxpresales();
+            barChart.data.datasets[6].data = ajaxpresales();
+            barChart.data.datasets[7].data = ajaxorange();
             console.log(barChart.data);
             barChart.update();
           }
