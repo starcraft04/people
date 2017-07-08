@@ -96,13 +96,17 @@ class ActivityController extends Controller {
   public function listOfLoadPerUserChartAjax (Request $request)
   {
     $inputs = $request->all();
+
+    //$inputs['year'] = ['2017'];
+    //$inputs['user'] = [4];
+
     $theoreticalCapacity = $this->userRepository->getTheoreticalCapacity($inputs);
     $dscpipeline = $this->activityRepository->getListOfLoadPerUserChart($inputs,'DSC','Pipeline');
     $iscpipeline = $this->activityRepository->getListOfLoadPerUserChart($inputs,'ISC','Pipeline');
     $dscstarted = $this->activityRepository->getListOfLoadPerUserChart($inputs,'DSC','Started');
     $iscstarted = $this->activityRepository->getListOfLoadPerUserChart($inputs,'ISC','Started');
-    $orange = $this->activityRepository->getListOfLoadPerUserChart($inputs,null,'Orange absence or other');
-    $presales = $this->activityRepository->getListOfLoadPerUserChart($inputs,null,'Pre-sales');
+    $orange = $this->activityRepository->getListOfLoadPerUserChart($inputs,'','Orange absence or other');
+    $presales = $this->activityRepository->getListOfLoadPerUserChart($inputs,'','Pre-sales');
     $data = [];
 
     $data ["dscvstotal"] = [];
@@ -144,6 +148,8 @@ class ActivityController extends Controller {
     $data ["iscstarted"] = $iscstarted;
     $data ["orange"] = $orange;
     $data ["presales"] = $presales;
+
+    //dd($data);
 
     return json_encode($data);
   }

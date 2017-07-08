@@ -117,6 +117,7 @@
   var manager = [];
   var user = [];
   var myvar='';
+
   function ajaxDataPOST(){
     var obj = {
       'year[]': year,
@@ -272,6 +273,37 @@
    purple: 'rgb(153, 102, 255)',
    grey: 'rgb(201, 203, 207)'
   };
+
+  function fill_select(select_id){
+    array_to_use = [];
+    values = Cookies.get(select_id);
+    if (values != null) {
+      values = values.replace(/\"/g,'').replace('[','').replace(']','');
+      values = values.split(',');
+      $('#'+select_id).val(values);
+      array_to_use = [];
+      $("#"+select_id+" option:selected").each(function()
+      {
+        // log the value and text of each option
+        array_to_use.push($(this).val());
+
+      });
+    }
+    return array_to_use;
+  }
+
+  year = fill_select('year');
+  if (jQuery.isEmptyObject(year)) {
+    $("#year option:selected").each(function()
+    {
+      // log the value and text of each option
+      year.push($(this).val());
+    });
+  }
+  manager = fill_select('manager');
+  user = fill_select('user');
+
+
   $(document).ready(function() {
     // Init of save as button
     $("#save_chart").click(function(){
@@ -292,21 +324,7 @@
       allowClear: false,
       disabled: {{ $user_select_disabled }}
     });
-    $("#year option:selected").each(function()
-    {
-      // log the value and text of each option
-      year.push($(this).val());
-    });
-    $("#manager option:selected").each(function()
-    {
-      // log the value and text of each option
-      manager.push($(this).val());
-    });
-    $("#user option:selected").each(function()
-    {
-      // log the value and text of each option
-      user.push($(this).val());
-    });
+
     $.ajaxSetup({
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -387,21 +405,21 @@
           },
           {
           type: 'bar',
-           label: 'Pre-sales',
-           yAxisID: "y-axis-1",
-           stack: 'Stack 1',
-           backgroundColor: color(window.chartColors.yellow).alpha(0.7).rgbString(),
-           borderColor: window.chartColors.yellow,
-           borderWidth: 1,
-           data: []
-          },
-          {
-          type: 'bar',
            label: 'Orange ABS or other',
            yAxisID: "y-axis-1",
            stack: 'Stack 1',
            backgroundColor: color(window.chartColors.grey).alpha(0.7).rgbString(),
            borderColor: window.chartColors.grey,
+           borderWidth: 1,
+           data: []
+          },
+          {
+          type: 'bar',
+           label: 'Pre-sales',
+           yAxisID: "y-axis-1",
+           stack: 'Stack 1',
+           backgroundColor: color(window.chartColors.yellow).alpha(0.7).rgbString(),
+           borderColor: window.chartColors.yellow,
            borderWidth: 1,
            data: []
           }
@@ -412,6 +430,9 @@
          type:'POST',
          data: ajaxDataPOST(),
          dataType:"JSON",
+         beforeSend: function() {
+           console.log(ajaxDataPOST());
+         },
          success: function(data) {
            useReturnData(data);
            barChart.data.datasets[0].data = ajaxdscvstotal();
@@ -474,6 +495,7 @@
                 options: barChartOptions
             });
     $('#year').on('change', function() {
+      Cookies.set('year', $('#year').val());
       year = [];
       $("#year option:selected").each(function()
       {
@@ -501,6 +523,7 @@
         });
     });
     $('#manager').on('change', function() {
+      Cookies.set('manager', $('#manager').val());
       manager = [];
       $("#manager option:selected").each(function()
       {
@@ -528,6 +551,7 @@
         });
     });
     $('#user').on('change', function() {
+      Cookies.set('user', $('#user').val());
       user = [];
       $("#user option:selected").each(function()
       {

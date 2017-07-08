@@ -142,6 +142,8 @@
                   <th>Customer name</th>
                   <th>Project ID</th>
                   <th>Project name</th>
+                  <th>Activity type</th>
+                  <th>Project status</th>
                   <th>Year</th>
                   <th>Jan</th>
                   <th>OTL</th>
@@ -178,6 +180,8 @@
                   <th>Customer name</th>
                   <th>Project ID</th>
                   <th>Project name</th>
+                  <th>Activity type</th>
+                  <th>Project status</th>
                   <th>Year</th>
                   <th></th>
                   <th></th>
@@ -221,9 +225,6 @@
   var year = [];
   var manager = [];
   var user = [];
-  var year_selected = [];
-  var manager_selected = [];
-  var user_selected = [];
 
 
   //alert($.fn.dataTable.version);
@@ -262,60 +263,36 @@
 
   //console.log(permissions);
 
+  function fill_select(select_id){
+    array_to_use = [];
+    values = Cookies.get(select_id);
+    if (values != null) {
+      values = values.replace(/\"/g,'').replace('[','').replace(']','');
+      values = values.split(',');
+      $('#'+select_id).val(values);
+      array_to_use = [];
+      $("#"+select_id+" option:selected").each(function()
+      {
+        // log the value and text of each option
+        array_to_use.push($(this).val());
+
+      });
+    }
+    return array_to_use;
+  }
+
+  year = fill_select('year');
+  if (jQuery.isEmptyObject(year)) {
+    $("#year option:selected").each(function()
+    {
+      // log the value and text of each option
+      year.push($(this).val());
+    });
+  }
+  manager = fill_select('manager');
+  user = fill_select('user');
+
   $(document).ready(function() {
-
-    $('#year').on('change', function() {
-      Cookies.set('year', $('#year').val());
-    })
-    $('#manager').on('change', function() {
-      Cookies.set('manager', $('#manager').val());
-    })
-    $('#user').on('change', function() {
-      Cookies.set('user', $('#user').val());
-    })
-
-    year_selected = Cookies.get('year');
-    if (year_selected != null) {
-      year_selected = year_selected.replace(/\"/g,'').replace('[','').replace(']','');
-      year_selected = year_selected.split(',');
-      $('#year').val(year_selected);
-      year = [];
-      $("#year option:selected").each(function()
-      {
-        // log the value and text of each option
-        year.push($(this).val());
-
-      });
-    }
-
-    manager_selected = Cookies.get('manager');
-    if (manager_selected != null) {
-      manager_selected = manager_selected.replace(/\"/g,'').replace('[','').replace(']','');
-      manager_selected = manager_selected.split(',');
-      $('#manager').val(manager_selected);
-      manager = [];
-      $("#manager option:selected").each(function()
-      {
-        // log the value and text of each option
-        manager.push($(this).val());
-
-      });
-    }
-
-    user_selected = Cookies.get('user');
-    console.log(user_selected);
-    if (user_selected != null) {
-      user_selected = user_selected.replace(/\"/g,'').replace('[','').replace(']','');
-      user_selected = user_selected.split(',');
-      $('#user').val(user_selected);
-      user = [];
-      $("#user option:selected").each(function()
-      {
-        // log the value and text of each option
-        user.push($(this).val());
-
-      });
-    }
 
     $.ajaxSetup({
       headers: {
@@ -339,6 +316,7 @@
     });
 
     $('#year').on('change', function() {
+      Cookies.set('year', $('#year').val());
       year = [];
       $("#year option:selected").each(function()
       {
@@ -350,6 +328,7 @@
     });
 
     $('#manager').on('change', function() {
+      Cookies.set('manager', $('#manager').val());
       manager = [];
       $("#manager option:selected").each(function()
       {
@@ -361,6 +340,7 @@
     });
 
     $('#user').on('change', function() {
+      Cookies.set('user', $('#user').val());
       user = [];
       $("#user option:selected").each(function()
       {
@@ -391,6 +371,8 @@
         { name: 'customer_name', data: 'customer_name' , width: '200px'},
         { name: 'project_id', data: 'project_id' , searchable: false , visible: false},
         { name: 'project_name', data: 'project_name', width: '200px'},
+        { name: 'activity_type', data: 'activity_type' , searchable: false , visible: false},
+        { name: 'project_status', data: 'project_status' , searchable: false , visible: false},
         { name: 'year', data: 'year' , searchable: false , visible: false},
         { name: 'jan_com', data: 'jan_com', width: '30px', searchable: false },
         { name: 'jan_otl', data: 'jan_otl', width: '10px', searchable: false , visible: false},
@@ -433,21 +415,21 @@
           extend: "csv",
           className: "btn-sm",
           exportOptions: {
-              columns: [ 1, 3, 4, 6, 7, 8, 10, 12, 14, 16,18,20,22,24,26,28,30 ]
+              columns: [ 1, 3, 4, 6, 7, 8, 9, 10, 12, 14, 16,18,20,22,24,26,28,30,32 ]
           }
         },
         {
           extend: "excel",
           className: "btn-sm",
           exportOptions: {
-              columns: [ 1, 3, 4, 6, 7, 8, 10, 12, 14, 16,18,20,22,24,26,28,30 ]
+              columns: [ 1, 3, 4, 6, 7, 8, 9, 10, 12, 14, 16,18,20,22,24,26,28,30,32 ]
           }
         },
         {
           extend: "print",
           className: "btn-sm",
           exportOptions: {
-              columns: [ 1, 3, 4, 6, 7, 8, 10, 12, 14, 16,18,20,22,24,26,28,30 ]
+              columns: [ 1, 3, 4, 6, 7, 8, 9, 10, 12, 14, 16,18,20,22,24,26,28,30,32 ]
           }
         },
       ],

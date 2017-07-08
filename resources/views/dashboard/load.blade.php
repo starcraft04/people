@@ -274,6 +274,42 @@
 
   //console.log(permissions);
 
+  function fill_select(select_id){
+    array_to_use = [];
+    values = Cookies.get(select_id);
+    if (values != null) {
+      values = values.replace(/\"/g,'').replace('[','').replace(']','');
+      values = values.split(',');
+      $('#'+select_id).val(values);
+      array_to_use = [];
+      $("#"+select_id+" option:selected").each(function()
+      {
+        // log the value and text of each option
+        array_to_use.push($(this).val());
+
+      });
+    }
+    return array_to_use;
+  }
+
+  //Persistence of selection in cookies
+
+  year = fill_select('year');
+  if (jQuery.isEmptyObject(year)) {
+    $("#year option:selected").each(function()
+    {
+      // log the value and text of each option
+      year.push($(this).val());
+    });
+  }
+  manager = fill_select('manager');
+  user = fill_select('user');
+  meta_activity = fill_select('meta_activity');
+  project_type = fill_select('project_type');
+  project_status = fill_select('project_status');
+
+  //END Persistence of selection in cookies
+
   $(document).ready(function() {
 
     $.ajaxSetup({
@@ -310,6 +346,7 @@
     });
 
     $('#year').on('change', function() {
+      Cookies.set('year', $('#year').val());
       year = [];
       $("#year option:selected").each(function()
       {
@@ -321,6 +358,7 @@
     });
 
     $('#manager').on('change', function() {
+      Cookies.set('manager', $('#manager').val());
       manager = [];
       $("#manager option:selected").each(function()
       {
@@ -332,6 +370,7 @@
     });
 
     $('#user').on('change', function() {
+      Cookies.set('user', $('#user').val());
       user = [];
       $("#user option:selected").each(function()
       {
@@ -343,6 +382,7 @@
     });
 
     $('#meta_activity').on('change', function() {
+      Cookies.set('meta_activity', $('#meta_activity').val());
       meta_activity = [];
       $("#meta_activity option:selected").each(function()
       {
@@ -354,6 +394,7 @@
     });
 
     $('#project_status').on('change', function() {
+      Cookies.set('project_status', $('#project_status').val());
       project_status = [];
       $("#project_status option:selected").each(function()
       {
@@ -365,6 +406,7 @@
     });
 
     $('#project_type').on('change', function() {
+      Cookies.set('project_type', $('#project_type').val());
       project_type = [];
       $("#project_type option:selected").each(function()
       {
@@ -385,7 +427,10 @@
         data: function ( d ) {
           $.extend(d,ajaxData());
         },
-        dataType: "JSON"
+        dataType: "JSON",
+        beforeSend: function() {
+          console.log(ajaxData());
+        }
       },
       columns: [
         { name: 'manager_id', data: 'manager_id' , searchable: false , visible: false},

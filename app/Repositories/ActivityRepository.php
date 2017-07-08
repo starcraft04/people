@@ -160,7 +160,7 @@ class ActivityRepository
 
     $activityList = DB::table('table_temp_b');
 
-    $activityList->select('manager_id','manager_name','user_id','user_name','project_id','project_name','customer_name','year',
+    $activityList->select('manager_id','manager_name','user_id','user_name','project_id','project_name','customer_name','year','activity_type','project_status',
                           'jan_com','jan_otl','feb_com','feb_otl','mar_com','mar_otl','apr_com','apr_otl','may_com','may_otl','jun_com','jun_otl',
                           'jul_com','jul_otl','aug_com','aug_otl','sep_com','sep_otl','oct_com','oct_otl','nov_com','nov_otl','dec_com','dec_otl'
 
@@ -351,7 +351,6 @@ class ActivityRepository
     *   In the ajax datatables (view), there will be a parameter name that is going to be used here for the extra parameters so if we use a join,
     *   Then we will need to use in the view page the name of the table.column. This is so that it knows how to do proper sorting or search.
     **/
-
 
     $data = 0;
 
