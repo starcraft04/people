@@ -65,9 +65,14 @@ class ToolsController extends Controller {
       $user_select_disabled = 'false';
     }
     else {
-      $manager_list = [Auth::user()->managers()->first()->id => Auth::user()->managers()->first()->name];
+      $my_manager = Auth::user()->managers()->first();
+      if ($my_manager) {
+        $manager_list = [$my_manager->id => $my_manager->name];
+        $manager_selected = $my_manager->id;
+      } else {
+        $manager_list = [0 => 'none'];
+      }
       $user_list = [Auth::user()->id => Auth::user()->name];
-      $manager_selected = Auth::user()->managers()->first()->id;
       $user_selected = Auth::user()->id;
       $manager_select_disabled = 'true';
       $user_select_disabled = 'true';
@@ -240,16 +245,65 @@ class ToolsController extends Controller {
   public function getFormUpdate($user_id,$project_id,$year)
 	{
     // Here we setup all the disabled fields to be disabled
-    $edit_project_name = '';
-    $edit_otl_name = '';
-    $meta_activity_select_disabled = 'false';
-    $project_type_select_disabled = 'false';
-    $activity_type_select_disabled = 'false';
-    $project_status_select_disabled = 'false';
-    $region_select_disabled = 'false';
-    $country_select_disabled = 'false';
+    $project_name_disabled = 'disabled';
+    $customer_name_select_disabled = 'true';
+    $otl_name_disabled = 'disabled';
+    $meta_activity_select_disabled = 'true';
+    $project_type_select_disabled = 'true';
+    $activity_type_select_disabled = 'true';
+    $project_status_select_disabled = 'true';
+    $region_select_disabled = 'true';
+    $country_select_disabled = 'true';
     $user_select_disabled = 'true';
+    $customer_location_disabled = 'disabled';
+    $technology_disabled = 'disabled';
+    $description_disabled = 'disabled';
+    $comments_disabled = 'disabled';
+    $estimated_date_disabled = 'disabled';
+    $LoE_onshore_disabled = 'disabled';
+    $LoE_nearshore_disabled = 'disabled';
+    $LoE_offshore_disabled = 'disabled';
+    $LoE_contractor_disabled = 'disabled';
+    $gold_order_disabled = 'disabled';
+    $product_code_disabled = 'disabled';
+    $revenue_disabled = 'disabled';
+    $win_ratio_disabled = 'disabled';
     $show_change_button = false;
+
+    // Here we find the information about the project
+    $project = $this->projectRepository->getById($project_id);
+
+    if (Entrust::can('tools-all_projects-edit') || (isset($project->created_by_user_id) && (Auth::user()->id == $project->created_by_user_id))) {
+      $project_name_disabled = '';
+      $customer_name_select_disabled = 'false';
+      $otl_name_disabled = '';
+      $meta_activity_select_disabled = 'false';
+      $project_type_select_disabled = 'false';
+      $activity_type_select_disabled = 'false';
+      $project_status_select_disabled = 'false';
+      $region_select_disabled = 'false';
+      $country_select_disabled = 'false';
+      $user_select_disabled = 'false';
+      $customer_location_disabled = '';
+      $technology_disabled = '';
+      $description_disabled = '';
+      $comments_disabled = '';
+      $estimated_date_disabled = '';
+      $LoE_onshore_disabled = '';
+      $LoE_nearshore_disabled = '';
+      $LoE_offshore_disabled = '';
+      $LoE_contractor_disabled = '';
+      $gold_order_disabled = '';
+      $product_code_disabled = '';
+      $revenue_disabled = '';
+      $win_ratio_disabled = '';
+    }
+
+    if ($project->otl_validated == 1) {
+      $otl_name_disabled = 'disabled';
+      $meta_activity_select_disabled = 'true';
+    }
+
     $user_list = [];
 
     $customers_list = Customers::orderBy('customer_name')->lists('customer_name','customer_name');
@@ -257,7 +311,7 @@ class ToolsController extends Controller {
 
     // Here we will define if we can select a user for this project and activity or not
     // Attention, we need to prevent in the user_list to have ids when already assigned to a project
-    if (Entrust::can('tools-activity-all-view')){
+    if (Entrust::can('tools-activity-all-edit')){
       $user_list_temp = $this->userRepository->getAllUsersListNoManagers();
 
       if ($user_id == '0') {
@@ -302,25 +356,7 @@ class ToolsController extends Controller {
       }
     }
 
-    // Here we find the information about the project
-    $project = $this->projectRepository->getById($project_id);
-
     $created_by_user_name = isset($project->created_by_user_id) ? $this->userRepository->getById($project->created_by_user_id)->name : 'Admin';
-
-    // Here we can check what can be edited for this project
-    if ((isset($project->created_by_user_id) && (Auth::user()->id == $project->created_by_user_id)) || Entrust::can('tools-activity-all-edit')){
-      $edit_project_name = '';
-      $project_type_select_disabled = 'false';
-      $activity_type_select_disabled = 'false';
-      $project_status_select_disabled = 'false';
-      $region_select_disabled = 'false';
-      $country_select_disabled = 'false';
-    }
-
-    if ($project->otl_validated == 1) {
-      $edit_otl_name = 'disabled';
-      $meta_activity_select_disabled = true;
-    }
 
     $activities = [];
     $from_otl = [];
@@ -367,9 +403,31 @@ class ToolsController extends Controller {
     }
 
 		return view('tools/create_update', compact('user_id','project','year','activities','from_otl','forecast','otl','loe_list','show_change_button','customers_list',
-      'edit_project_name','edit_otl_name',
-      'meta_activity_select_disabled','project_type_select_disabled','activity_type_select_disabled','project_status_select_disabled',
-      'region_select_disabled','country_select_disabled','user_list','user_selected','user_select_disabled','created_by_user_name'))
+    'project_name_disabled',
+    'customer_name_select_disabled',
+    'otl_name_disabled',
+    'meta_activity_select_disabled',
+    'project_type_select_disabled',
+    'activity_type_select_disabled',
+    'project_status_select_disabled',
+    'region_select_disabled',
+    'country_select_disabled',
+    'user_select_disabled',
+    'customer_location_disabled',
+    'technology_disabled',
+    'description_disabled',
+    'comments_disabled',
+    'estimated_date_disabled',
+    'LoE_onshore_disabled',
+    'LoE_nearshore_disabled',
+    'LoE_offshore_disabled',
+    'LoE_contractor_disabled',
+    'gold_order_disabled',
+    'product_code_disabled',
+    'revenue_disabled',
+    'win_ratio_disabled',
+    'show_change_button',
+      'user_list','user_selected','user_select_disabled','created_by_user_name'))
       ->with('action','update');
 	}
 

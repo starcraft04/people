@@ -281,6 +281,7 @@
                 }
             });
 
+            @permission('tools-activity-edit')
             $('#projectTable_unassigned').on('click', 'tbody td', function() {
               var table = projectTable_unassigned;
               var tr = $(this).closest('tr');
@@ -295,7 +296,8 @@
               // If we click on the name, then we create a new project
               window.location.href = "{!! route('toolsFormUpdate',[$user_id_for_update,'','']) !!}/"+row.data().id+"/"+{{ $year }};
             });
-
+            @endpermission
+            
         } );
     </script>
 @stop

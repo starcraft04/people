@@ -275,6 +275,7 @@
                 }
             });
 
+            @permission('tools-activity-edit')
             $('#projectTable').on('click', 'tbody td', function() {
               var table = projectTable;
               var tr = $(this).closest('tr');
@@ -296,7 +297,8 @@
 
               window.location.href = "{!! route('toolsFormUpdate',['','','']) !!}/"+user_id+"/"+row.data().id+"/"+{{ $year }};
             });
-
+            @endpermission
+            
         } );
     </script>
 @stop

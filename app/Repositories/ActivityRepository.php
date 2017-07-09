@@ -178,7 +178,7 @@ class ActivityRepository
         }
 
     // Checking the roles to see if allowed to see all users
-    if (Entrust::can('dashboard-all-view')){
+    if (Entrust::can('tools-activity-all-view')){
       // Format of $manager_list is [ 1=> 'manager1', 2=>'manager2',...]
       // Checking which users to show from the manager list
       if (!empty($where['user']))

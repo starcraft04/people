@@ -111,6 +111,14 @@
     <script src="{{ asset('/plugins/jscookie/js.cookie.js') }}" type="text/javascript"></script>
     @yield('scriptsrc')
     @yield('script')
+    <script>
+    $('#logout').on('click', function () {
+        Cookies.remove('year');
+        Cookies.remove('manager');
+        Cookies.remove('user');
+        window.location.href = "{{ route('auth.logout') }}";
+    });
+    </script>
 
 </body>
 </html>

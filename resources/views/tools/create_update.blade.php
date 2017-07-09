@@ -182,7 +182,7 @@
                       {!! Form::label('project_name', 'Project name', ['class' => 'control-label']) !!}
                     </div>
                     <div class="col-md-9">
-                      {!! Form::text('project_name', (isset($project->project_name)) ? $project->project_name : '', ['class' => 'form-control', 'placeholder' => 'project name',$edit_project_name]) !!}
+                      {!! Form::text('project_name', (isset($project->project_name)) ? $project->project_name : '', ['class' => 'form-control', 'placeholder' => 'project name',$project_name_disabled]) !!}
                       {!! $errors->first('project_name', '<small class="help-block">:message</small>') !!}
                     </div>
                   </div>
@@ -214,7 +214,7 @@
                       <a id="help_otl" href="#">(?)</a>
                     </div>
                     <div class="col-md-9">
-                      {!! Form::text('otl_project_code', (isset($project->otl_project_code)) ? $project->otl_project_code : '', ['class' => 'form-control', 'placeholder' => 'OTL project code',$edit_otl_name]) !!}
+                      {!! Form::text('otl_project_code', (isset($project->otl_project_code)) ? $project->otl_project_code : '', ['class' => 'form-control', 'placeholder' => 'OTL project code',$otl_name_disabled]) !!}
                       {!! $errors->first('otl_project_code', '<small class="help-block">:message</small>') !!}
                     </div>
                   </div>
@@ -351,7 +351,7 @@
                       {!! Form::label('customer_location', 'Customer location', ['class' => 'control-label']) !!}
                     </div>
                     <div class="col-md-9">
-                      {!! Form::text('customer_location', (isset($project)) ? $project->customer_location : '', ['class' => 'form-control', 'placeholder' => 'customer location']) !!}
+                      {!! Form::text('customer_location', (isset($project)) ? $project->customer_location : '', ['class' => 'form-control', 'placeholder' => 'customer location',$customer_location_disabled]) !!}
                       {!! $errors->first('customer_location', '<small class="help-block">:message</small>') !!}
                     </div>
                   </div>
@@ -362,7 +362,7 @@
                       {!! Form::label('technology', 'Technology', ['class' => 'control-label']) !!}
                     </div>
                     <div class="col-md-9">
-                      {!! Form::text('technology', (isset($project)) ? $project->technology : '', ['class' => 'form-control', 'placeholder' => 'technology']) !!}
+                      {!! Form::text('technology', (isset($project)) ? $project->technology : '', ['class' => 'form-control', 'placeholder' => 'technology',$technology_disabled]) !!}
                       {!! $errors->first('technology', '<small class="help-block">:message</small>') !!}
                     </div>
                   </div>
@@ -373,7 +373,7 @@
                       {!! Form::label('description', 'description', ['class' => 'control-label']) !!}
                     </div>
                     <div class="col-md-9">
-                      {!! Form::text('description', (isset($project)) ? $project->description : '', ['class' => 'form-control', 'placeholder' => 'description']) !!}
+                      {!! Form::text('description', (isset($project)) ? $project->description : '', ['class' => 'form-control', 'placeholder' => 'description',$description_disabled]) !!}
                       {!! $errors->first('description', '<small class="help-block">:message</small>') !!}
                     </div>
                   </div>
@@ -384,7 +384,7 @@
                       {!! Form::label('comments', 'Comments', ['class' => 'control-label']) !!}
                     </div>
                     <div class="col-md-9">
-                      {!! Form::text('comments', (isset($project)) ? $project->comments : '', ['class' => 'form-control', 'placeholder' => 'Comments']) !!}
+                      {!! Form::text('comments', (isset($project)) ? $project->comments : '', ['class' => 'form-control', 'placeholder' => 'Comments',$comments_disabled]) !!}
                       {!! $errors->first('comments', '<small class="help-block">:message</small>') !!}
                     </div>
                   </div>
@@ -401,8 +401,7 @@
                         <div class="controls">
                           <div class="input-prepend input-group">
                             <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i></span>
-                            <input type="text" style="width: 200px" name="estimated_date" id="estimated_date" class="form-control" />
-
+                            <input type="text" style="width: 200px" name="estimated_date" id="estimated_date" class="form-control" {{$estimated_date_disabled}} />
                           </div>
                           {!! $errors->first('estimated_date', '<small class="help-block">:message</small>') !!}
                         </div>
@@ -416,7 +415,7 @@
                       {!! Form::label('LoE_onshore', 'LoE onshore (days)', ['class' => 'control-label']) !!}
                     </div>
                     <div class="col-md-9">
-                      {!! Form::text('LoE_onshore', (isset($project)) ? $project->LoE_onshore : '', ['class' => 'form-control', 'placeholder' => 'LoE onshore (days)']) !!}
+                      {!! Form::text('LoE_onshore', (isset($project)) ? $project->LoE_onshore : '', ['class' => 'form-control', 'placeholder' => 'LoE onshore (days)',$LoE_onshore_disabled]) !!}
                       {!! $errors->first('LoE_onshore', '<small class="help-block">:message</small>') !!}
                     </div>
                   </div>
@@ -427,7 +426,7 @@
                       {!! Form::label('LoE_nearshore', 'LoE nearshore (days)', ['class' => 'control-label']) !!}
                     </div>
                     <div class="col-md-9">
-                      {!! Form::text('LoE_nearshore', (isset($project)) ? $project->LoE_nearshore : '', ['class' => 'form-control', 'placeholder' => 'LoE nearshore (days)']) !!}
+                      {!! Form::text('LoE_nearshore', (isset($project)) ? $project->LoE_nearshore : '', ['class' => 'form-control', 'placeholder' => 'LoE nearshore (days)',$LoE_nearshore_disabled]) !!}
                       {!! $errors->first('LoE_nearshore', '<small class="help-block">:message</small>') !!}
                     </div>
                   </div>
@@ -438,7 +437,7 @@
                       {!! Form::label('LoE_offshore', 'LoE offshore (days)', ['class' => 'control-label']) !!}
                     </div>
                     <div class="col-md-9">
-                      {!! Form::text('LoE_offshore', (isset($project)) ? $project->LoE_offshore : '', ['class' => 'form-control', 'placeholder' => 'LoE offshore (days)']) !!}
+                      {!! Form::text('LoE_offshore', (isset($project)) ? $project->LoE_offshore : '', ['class' => 'form-control', 'placeholder' => 'LoE offshore (days)',$LoE_offshore_disabled]) !!}
                       {!! $errors->first('LoE_offshore', '<small class="help-block">:message</small>') !!}
                     </div>
                   </div>
@@ -449,7 +448,7 @@
                       {!! Form::label('LoE_contractor', 'LoE contractor (days)', ['class' => 'control-label']) !!}
                     </div>
                     <div class="col-md-9">
-                      {!! Form::text('LoE_contractor', (isset($project)) ? $project->LoE_contractor : '', ['class' => 'form-control', 'placeholder' => 'LoE contractor (days)']) !!}
+                      {!! Form::text('LoE_contractor', (isset($project)) ? $project->LoE_contractor : '', ['class' => 'form-control', 'placeholder' => 'LoE contractor (days)',$LoE_contractor_disabled]) !!}
                       {!! $errors->first('LoE_contractor', '<small class="help-block">:message</small>') !!}
                     </div>
                   </div>
@@ -460,7 +459,7 @@
                       {!! Form::label('gold_order_number', 'Gold order', ['class' => 'control-label']) !!}
                     </div>
                     <div class="col-md-9">
-                      {!! Form::text('gold_order_number', (isset($project)) ? $project->gold_order_number : '', ['class' => 'form-control', 'placeholder' => 'Gold order']) !!}
+                      {!! Form::text('gold_order_number', (isset($project)) ? $project->gold_order_number : '', ['class' => 'form-control', 'placeholder' => 'Gold order',$gold_order_disabled]) !!}
                       {!! $errors->first('gold_order_number', '<small class="help-block">:message</small>') !!}
                     </div>
                   </div>
@@ -471,7 +470,7 @@
                       {!! Form::label('product_code', 'Product code', ['class' => 'control-label']) !!}
                     </div>
                     <div class="col-md-9">
-                      {!! Form::text('product_code', (isset($project)) ? $project->product_code : '', ['class' => 'form-control', 'placeholder' => 'Product code']) !!}
+                      {!! Form::text('product_code', (isset($project)) ? $project->product_code : '', ['class' => 'form-control', 'placeholder' => 'Product code',$product_code_disabled]) !!}
                       {!! $errors->first('product_code', '<small class="help-block">:message</small>') !!}
                     </div>
                   </div>
@@ -482,7 +481,7 @@
                       {!! Form::label('revenue', 'Revenue (k€)', ['class' => 'control-label', 'id' => 'revenue_text']) !!}
                     </div>
                     <div class="col-md-9">
-                      {!! Form::text('revenue', (isset($project)) ? $project->revenue : '', ['class' => 'form-control', 'placeholder' => 'Revenue (€)']) !!}
+                      {!! Form::text('revenue', (isset($project)) ? $project->revenue : '', ['class' => 'form-control', 'placeholder' => 'Revenue (€)',$revenue_disabled]) !!}
                       {!! $errors->first('revenue', '<small class="help-block">:message</small>') !!}
                     </div>
                   </div>
@@ -493,7 +492,7 @@
                       {!! Form::label('win_ratio', 'Win ratio (%)', ['class' => 'control-label']) !!}
                     </div>
                     <div class="col-md-9">
-                      {!! Form::text('win_ratio', (isset($project)) ? $project->win_ratio : '', ['class' => 'form-control', 'placeholder' => 'Win ratio (%)']) !!}
+                      {!! Form::text('win_ratio', (isset($project)) ? $project->win_ratio : '', ['class' => 'form-control', 'placeholder' => 'Win ratio (%)',$win_ratio_disabled]) !!}
                       {!! $errors->first('win_ratio', '<small class="help-block">:message</small>') !!}
                     </div>
                   </div>
@@ -683,6 +682,7 @@ $(document).ready(function() {
     showISOWeekNumbers: true,
     showDropdowns: true,
     autoApply: true,
+    disabled: true,
     @if(!empty(old('estimated_date')))
     startDate: '{{ explode(" - ",old("estimated_date"))[0] }}',
     endDate: '{{ explode(" - ",old("estimated_date"))[1] }}'
@@ -703,7 +703,8 @@ $(document).ready(function() {
   });
 
   $("#customer_name").select2({
-    allowClear: true
+    allowClear: true,
+    disabled: {{ $customer_name_select_disabled }}
   });
 
   $("#meta_activity").select2({

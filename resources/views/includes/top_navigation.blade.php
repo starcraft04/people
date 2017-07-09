@@ -11,7 +11,7 @@
       </a>
       <ul class="dropdown-menu dropdown-usermenu pull-right">
         <li><a href="{{ route('profile',Auth::user()->id) }}"> Profile</a></li>
-        <li><a href="{{ route('auth.logout') }}"><i class="fa fa-sign-out pull-right"></i>Log Out</a></li>
+        <li><a id="logout"><i class="fa fa-sign-out pull-right"></i>Log Out</a></li>
       </ul>
     </li>
   </ul>

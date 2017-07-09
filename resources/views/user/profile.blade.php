@@ -98,13 +98,13 @@
 
       <!-- Window content -->
       <div class="x_content">
-        <div class="col-md-1">
+        <div class="col-md-2">
           <button id="git_pull" class="btn btn-success"><span class="glyphicon glyphicon-pencil"></span> Git PULL</button>
         </div>
-        <div class="col-md-1">
+        <div class="col-md-2">
           <button id="debug_true" class="btn btn-success"><span class="glyphicon glyphicon-pencil"></span> DEBUG true</button>
         </div>
-        <div class="col-md-1">
+        <div class="col-md-2">
           <button id="debug_false" class="btn btn-success"><span class="glyphicon glyphicon-pencil"></span> DEBUG false</button>
         </div>
       </div>
