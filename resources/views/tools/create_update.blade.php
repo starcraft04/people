@@ -121,7 +121,12 @@
                     <select class="form-control select2" style="width: 100%;" id="user_id" name="user_id" data-placeholder="Select a user to be assigned">
                       <option value="" ></option>
                       @foreach($user_list as $key => $value)
-                      <option value="{{ $key }}" <?php if ($key == $user_selected) { echo 'selected'; }?>>{{ $value }}</option>
+                      <option value="{{ $key }}"
+                        @if (old('user_id') == $key) selected
+                        @elseif ($key == $user_selected) selected
+                        @endif>
+                        {{ $value }}
+                      </option>
                       @endforeach
                     </select>
                     {!! $errors->first('user_id', '<small class="help-block">:message</small>') !!}
@@ -190,7 +195,12 @@
                     <div class="col-md-9">
                       <select class="form-control select2" style="width: 100%;" id="customer_name" name="customer_name" data-placeholder="Select a customer name">
                         @foreach($customers_list as $key => $value)
-                        <option value="{{ $key }}" <?php if (isset($project->customer_name) && $value == $project->customer_name) { echo 'selected'; }?>>{{ $value }}</option>
+                        <option value="{{ $key }}"
+                          @if (old('customer_name') == $key) selected
+                          @elseif (isset($project->customer_name) && $value == $project->customer_name) selected
+                          @endif>
+                          {{ $value }}
+                        </option>
                         @endforeach
                       </select>
                       {!! $errors->first('customer_name', '<small class="help-block">:message</small>') !!}
@@ -218,7 +228,12 @@
                       <select class="form-control select2" style="width: 100%;" id="meta_activity" name="meta_activity" data-placeholder="Select a meta-activity">
                         <option value="" ></option>
                         @foreach(config('select.meta_activity') as $key => $value)
-                        <option value="{{ $key }}" <?php if (isset($project->meta_activity) && $value == $project->meta_activity) { echo 'selected'; }?>>{{ $value }}</option>
+                        <option value="{{ $key }}"
+                          @if (old('meta_activity') == $key) selected
+                          @elseif (isset($project->meta_activity) && $value == $project->meta_activity) selected
+                          @endif>
+                          {{ $value }}
+                        </option>
                         @endforeach
                       </select>
                       {!! $errors->first('meta_activity', '<small class="help-block">:message</small>') !!}
@@ -234,7 +249,12 @@
                       <select class="form-control select2" style="width: 100%;" id="project_type" name="project_type" data-placeholder="Select a project type">
                         <option value="" ></option>
                         @foreach(config('select.project_type') as $key => $value)
-                        <option value="{{ $key }}" <?php if (isset($project->project_type) && $value == $project->project_type) { echo 'selected'; }?>>{{ $value }}</option>
+                        <option value="{{ $key }}"
+                          @if (old('project_type') == $key) selected
+                          @elseif (isset($project->project_type) && $value == $project->project_type) selected
+                          @endif>
+                          {{ $value }}
+                        </option>
                         @endforeach
                       </select>
                       {!! $errors->first('project_type', '<small class="help-block">:message</small>') !!}
@@ -250,7 +270,12 @@
                       <select class="form-control select2" style="width: 100%;" id="activity_type" name="activity_type" data-placeholder="Select an activity type">
                         <option value="" ></option>
                         @foreach(config('select.activity_type') as $key => $value)
-                        <option value="{{ $key }}" <?php if (isset($project->activity_type) && $value == $project->activity_type) { echo 'selected'; }?>>{{ $value }}</option>
+                        <option value="{{ $key }}"
+                          @if (old('activity_type') == $key) selected
+                          @elseif (isset($project->activity_type) && $value == $project->activity_type) selected
+                          @endif>
+                          {{ $value }}
+                        </option>
                         @endforeach
                       </select>
                       {!! $errors->first('activity_type', '<small class="help-block">:message</small>') !!}
@@ -266,7 +291,12 @@
                       <select class="form-control select2" style="width: 100%;" id="project_status" name="project_status" data-placeholder="Select a project status">
                         <option value="" ></option>
                         @foreach(config('select.project_status') as $key => $value)
-                        <option value="{{ $key }}" <?php if (isset($project->project_status) && $value == $project->project_status) { echo 'selected'; }?>>{{ $value }}</option>
+                        <option value="{{ $key }}"
+                          @if (old('project_status') == $key) selected
+                          @elseif (isset($project->project_status) && $value == $project->project_status) selected
+                          @endif>
+                          {{ $value }}
+                        </option>
                         @endforeach
                       </select>
                       {!! $errors->first('project_status', '<small class="help-block">:message</small>') !!}
@@ -282,7 +312,12 @@
                       <select class="form-control select2" style="width: 100%;" id="region" name="region" data-placeholder="Select a region">
                         <option value="" ></option>
                         @foreach(config('select.region') as $key => $value)
-                        <option value="{{ $key }}" <?php if (isset($project->region) && $value == $project->region) { echo 'selected'; }?>>{{ $value }}</option>
+                        <option value="{{ $key }}"
+                          @if (old('region') == $key) selected
+                          @elseif (isset($project->region) && $value == $project->region) selected
+                          @endif>
+                          {{ $value }}
+                        </option>
                         @endforeach
                       </select>
                       {!! $errors->first('region', '<small class="help-block">:message</small>') !!}
@@ -298,7 +333,12 @@
                       <select class="form-control select2" style="width: 100%;" id="country" name="country" data-placeholder="Select a country">
                         <option value="" ></option>
                         @foreach(config('select.country') as $key => $value)
-                        <option value="{{ $key }}" <?php if (isset($project->country) && $value == $project->country) { echo 'selected'; }?>>{{ $value }}</option>
+                        <option value="{{ $key }}"
+                          @if (old('country') == $key) selected
+                          @elseif (isset($project->country) && $value == $project->country) selected
+                          @endif>
+                          {{ $value }}
+                        </option>
                         @endforeach
                       </select>
                       {!! $errors->first('country', '<small class="help-block">:message</small>') !!}
@@ -641,13 +681,17 @@ $(document).ready(function() {
     format: 'YYYY-MM-DD'
     },
     showISOWeekNumbers: true,
-    showDropdowns: true
-    @if(isset($project->estimated_start_date))
-    ,
+    showDropdowns: true,
+    autoApply: true,
+    @if(!empty(old('estimated_date')))
+    startDate: '{{ explode(" - ",old("estimated_date"))[0] }}',
+    endDate: '{{ explode(" - ",old("estimated_date"))[1] }}'
+    @elseif(isset($project->estimated_start_date))
     startDate: '{{ $project->estimated_start_date }}',
     endDate: '{{ $project->estimated_end_date }}'
     @endif
   });
+
   //Init select2 boxes
   $("#user_id").select2({
     allowClear: true,

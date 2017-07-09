@@ -293,6 +293,19 @@
   manager = fill_select('manager');
   user = fill_select('user');
 
+  //Assign color
+  function assign_color(row,value,otl,month){
+    if(value <= 0){
+      $(row).find('td.'+month).addClass('zero');
+    }
+    else if(otl > 0){
+      $(row).find('td.'+month).addClass('otl');
+    }
+    else {
+      $(row).find('td.'+month).addClass('forecast');
+    }
+  }
+
   $(document).ready(function() {
 
     $.ajaxSetup({
@@ -376,29 +389,29 @@
         { name: 'activity_type', data: 'activity_type', visible: false},
         { name: 'project_status', data: 'project_status' , visible: false},
         { name: 'year', data: 'year' , searchable: false , visible: false},
-        { name: 'jan_com', data: 'jan_com', width: '30px', searchable: false },
+        { name: 'jan_com', data: 'jan_com', width: '30px', searchable: false , className: "jan_com"},
         { name: 'jan_otl', data: 'jan_otl', width: '10px', searchable: false , visible: false},
-        { name: 'feb_com', data: 'feb_com', width: '30px', searchable: false },
+        { name: 'feb_com', data: 'feb_com', width: '30px', searchable: false , className: "feb_com"},
         { name: 'feb_otl', data: 'feb_otl', width: '10px', searchable: false , visible: false},
-        { name: 'mar_com', data: 'mar_com', width: '30px', searchable: false },
+        { name: 'mar_com', data: 'mar_com', width: '30px', searchable: false , className: "mar_com"},
         { name: 'mar_otl', data: 'mar_otl', width: '10px', searchable: false , visible: false},
-        { name: 'apr_com', data: 'apr_com', width: '30px', searchable: false },
+        { name: 'apr_com', data: 'apr_com', width: '30px', searchable: false , className: "apr_com"},
         { name: 'apr_otl', data: 'apr_otl', width: '10px', searchable: false , visible: false},
-        { name: 'may_com', data: 'may_com', width: '30px', searchable: false },
+        { name: 'may_com', data: 'may_com', width: '30px', searchable: false , className: "may_com"},
         { name: 'may_otl', data: 'may_otl', width: '10px', searchable: false , visible: false},
-        { name: 'jun_com', data: 'jun_com', width: '30px', searchable: false },
+        { name: 'jun_com', data: 'jun_com', width: '30px', searchable: false , className: "jun_com"},
         { name: 'jun_otl', data: 'jun_otl', width: '10px', searchable: false , visible: false},
-        { name: 'jul_com', data: 'jul_com', width: '30px', searchable: false },
+        { name: 'jul_com', data: 'jul_com', width: '30px', searchable: false , className: "jul_com"},
         { name: 'jul_otl', data: 'jul_otl', width: '10px', searchable: false , visible: false},
-        { name: 'aug_com', data: 'aug_com', width: '30px', searchable: false },
+        { name: 'aug_com', data: 'aug_com', width: '30px', searchable: false , className: "aug_com"},
         { name: 'aug_otl', data: 'aug_otl', width: '10px', searchable: false , visible: false},
-        { name: 'sep_com', data: 'sep_com', width: '30px', searchable: false },
+        { name: 'sep_com', data: 'sep_com', width: '30px', searchable: false , className: "sep_com"},
         { name: 'sep_otl', data: 'sep_otl', width: '10px', searchable: false , visible: false},
-        { name: 'oct_com', data: 'oct_com', width: '30px', searchable: false },
+        { name: 'oct_com', data: 'oct_com', width: '30px', searchable: false , className: "oct_com"},
         { name: 'oct_otl', data: 'oct_otl', width: '10px', searchable: false , visible: false},
-        { name: 'nov_com', data: 'nov_com', width: '30px', searchable: false },
+        { name: 'nov_com', data: 'nov_com', width: '30px', searchable: false , className: "nov_com"},
         { name: 'nov_otl', data: 'nov_otl', width: '10px', searchable: false , visible: false},
-        { name: 'dec_com', data: 'dec_com', width: '30px', searchable: false },
+        { name: 'dec_com', data: 'dec_com', width: '30px', searchable: false , className: "dec_com"},
         { name: 'dec_otl', data: 'dec_otl', width: '10px', searchable: false , visible: false}
       ],
       order: [[1, 'asc'],[3, 'asc'],[4, 'asc'],[6, 'asc']],
@@ -475,114 +488,18 @@
         }
       },
       rowCallback: function(row, data, index){
-        if(data.jan_com<= 0){
-          $(row).find('td:eq(4)').addClass('zero');
-        }
-        else if(data.jan_otl> 0){
-          $(row).find('td:eq(4)').addClass('otl');
-        }
-        else {
-          $(row).find('td:eq(4)').addClass('forecast');
-        }
-        if(data.feb_com<= 0){
-          $(row).find('td:eq(5)').addClass('zero');
-        }
-        else if(data.feb_otl> 0){
-          $(row).find('td:eq(5)').addClass('otl');
-        }
-        else {
-          $(row).find('td:eq(5)').addClass('forecast');
-        }
-        if(data.mar_com<= 0){
-          $(row).find('td:eq(6)').addClass('zero');
-        }
-        else if(data.mar_otl> 0){
-          $(row).find('td:eq(6)').addClass('otl');
-        }
-        else {
-          $(row).find('td:eq(6)').addClass('forecast');
-        }
-        if(data.apr_com<= 0){
-          $(row).find('td:eq(7)').addClass('zero');
-        }
-        else if(data.apr_otl> 0){
-          $(row).find('td:eq(7)').addClass('otl');
-        }
-        else {
-          $(row).find('td:eq(7)').addClass('forecast');
-        }
-        if(data.may_com<= 0){
-          $(row).find('td:eq(8)').addClass('zero');
-        }
-        else if(data.may_otl> 0){
-          $(row).find('td:eq(8)').addClass('otl');
-        }
-        else {
-          $(row).find('td:eq(8)').addClass('forecast');
-        }
-        if(data.jun_com<= 0){
-          $(row).find('td:eq(9)').addClass('zero');
-        }
-        else if(data.jun_otl> 0){
-          $(row).find('td:eq(9)').addClass('otl');
-        }
-        else {
-          $(row).find('td:eq(9)').addClass('forecast');
-        }
-        if(data.jul_com<= 0){
-          $(row).find('td:eq(10)').addClass('zero');
-        }
-        else if(data.jul_otl> 0){
-          $(row).find('td:eq(10)').addClass('otl');
-        }
-        else {
-          $(row).find('td:eq(10)').addClass('forecast');
-        }
-        if(data.aug_com<= 0){
-          $(row).find('td:eq(11)').addClass('zero');
-        }
-        else if(data.aug_otl> 0){
-          $(row).find('td:eq(11)').addClass('otl');
-        }
-        else {
-          $(row).find('td:eq(11)').addClass('forecast');
-        }
-        if(data.sep_com<= 0){
-          $(row).find('td:eq(12)').addClass('zero');
-        }
-        else if(data.sep_otl> 0){
-          $(row).find('td:eq(12)').addClass('otl');
-        }
-        else {
-          $(row).find('td:eq(12)').addClass('forecast');
-        }
-        if(data.oct_com<= 0){
-          $(row).find('td:eq(13)').addClass('zero');
-        }
-        else if(data.oct_otl> 0){
-          $(row).find('td:eq(13)').addClass('otl');
-        }
-        else {
-          $(row).find('td:eq(13)').addClass('forecast');
-        }
-        if(data.nov_com<= 0){
-          $(row).find('td:eq(14)').addClass('zero');
-        }
-        else if(data.nov_otl> 0){
-          $(row).find('td:eq(14)').addClass('otl');
-        }
-        else {
-          $(row).find('td:eq(14)').addClass('forecast');
-        }
-        if(data.dec_com<= 0){
-          $(row).find('td:eq(15)').addClass('zero');
-        }
-        else if(data.dec_otl> 0){
-          $(row).find('td:eq(15)').addClass('otl');
-        }
-        else {
-          $(row).find('td:eq(15)').addClass('forecast');
-        }
+        assign_color(row,data.jan_com,data.jan_otl,'jan_com');
+        assign_color(row,data.feb_com,data.feb_otl,'feb_com');
+        assign_color(row,data.mar_com,data.mar_otl,'mar_com');
+        assign_color(row,data.apr_com,data.apr_otl,'apr_com');
+        assign_color(row,data.may_com,data.may_otl,'may_com');
+        assign_color(row,data.jun_com,data.jun_otl,'jun_com');
+        assign_color(row,data.jul_com,data.jul_otl,'jul_com');
+        assign_color(row,data.aug_com,data.aug_otl,'aug_com');
+        assign_color(row,data.sep_com,data.sep_otl,'sep_com');
+        assign_color(row,data.oct_com,data.oct_otl,'oct_com');
+        assign_color(row,data.nov_com,data.nov_otl,'nov_com');
+        assign_color(row,data.dec_com,data.dec_otl,'dec_com');
       }
     });
 
