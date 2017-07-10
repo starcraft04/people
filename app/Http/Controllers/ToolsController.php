@@ -170,15 +170,32 @@ class ToolsController extends Controller {
 
 	public function getFormCreate($year)
 	{
-    $edit_project_name = '';
-    $edit_otl_name = '';
-    $user_selected = '';
+    $project_name_disabled = '';
+    $customer_name_select_disabled = 'false';
+    $otl_name_disabled = '';
     $meta_activity_select_disabled = 'false';
     $project_type_select_disabled = 'false';
     $activity_type_select_disabled = 'false';
     $project_status_select_disabled = 'false';
     $region_select_disabled = 'false';
     $country_select_disabled = 'false';
+    $user_select_disabled = 'false';
+    $customer_location_disabled = '';
+    $technology_disabled = '';
+    $description_disabled = '';
+    $comments_disabled = '';
+    $estimated_date_disabled = '';
+    $LoE_onshore_disabled = '';
+    $LoE_nearshore_disabled = '';
+    $LoE_offshore_disabled = '';
+    $LoE_contractor_disabled = '';
+    $gold_order_disabled = '';
+    $product_code_disabled = '';
+    $revenue_disabled = '';
+    $win_ratio_disabled = '';
+    $show_change_button = false;
+
+    $user_selected = '';
 
     $created_by_user_id = Auth::user()->id;
 
@@ -200,10 +217,33 @@ class ToolsController extends Controller {
     $customers_list->prepend('', '');
     //dd($customers_list);
 
-		return view('tools/create_update', compact('year','edit_project_name','edit_otl_name','customers_list',
-      'user_list','user_selected','user_select_disabled','created_by_user_id',
-      'meta_activity_select_disabled','project_type_select_disabled','activity_type_select_disabled','project_status_select_disabled',
-      'region_select_disabled','country_select_disabled'))
+		return view('tools/create_update', compact('year','customers_list',
+      'user_list','user_selected','created_by_user_id',
+      'project_name_disabled',
+      'customer_name_select_disabled',
+      'otl_name_disabled',
+      'meta_activity_select_disabled',
+      'project_type_select_disabled',
+      'activity_type_select_disabled',
+      'project_status_select_disabled',
+      'region_select_disabled',
+      'country_select_disabled',
+      'user_select_disabled',
+      'customer_location_disabled',
+      'technology_disabled',
+      'description_disabled',
+      'comments_disabled',
+      'estimated_date_disabled',
+      'LoE_onshore_disabled',
+      'LoE_nearshore_disabled',
+      'LoE_offshore_disabled',
+      'LoE_contractor_disabled',
+      'gold_order_disabled',
+      'product_code_disabled',
+      'revenue_disabled',
+      'win_ratio_disabled',
+      'show_change_button'
+      ))
       ->with('action','create');
 	}
 
