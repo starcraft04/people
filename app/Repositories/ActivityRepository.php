@@ -160,7 +160,7 @@ class ActivityRepository
 
     $activityList = DB::table('table_temp_b');
 
-    $activityList->select('manager_id','manager_name','user_id','user_name','project_id','project_name','customer_name','year','activity_type','project_status',
+    $activityList->select('manager_id','manager_name','user_id','user_name','project_id','project_name','customer_name','year','activity_type','project_status','project_type',
                           'jan_com','jan_otl','feb_com','feb_otl','mar_com','mar_otl','apr_com','apr_otl','may_com','may_otl','jun_com','jun_otl',
                           'jul_com','jul_otl','aug_com','aug_otl','sep_com','sep_otl','oct_com','oct_otl','nov_com','nov_otl','dec_com','dec_otl'
 

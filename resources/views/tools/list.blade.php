@@ -150,6 +150,7 @@
                   <th>Customer name</th>
                   <th>Project ID</th>
                   <th>Project name</th>
+                  <th>Project type</th>
                   <th>Activity type</th>
                   <th>Project status</th>
                   <th>Year</th>
@@ -181,6 +182,7 @@
               </thead>
               <tfoot>
                 <tr>
+                  <th></th>
                   <th></th>
                   <th></th>
                   <th></th>
@@ -393,6 +395,7 @@
         { name: 'customer_name', data: 'customer_name' , width: '200px'},
         { name: 'project_id', data: 'project_id' , searchable: false , visible: false},
         { name: 'project_name', data: 'project_name', width: '200px'},
+        { name: 'project_type', data: 'project_type', visible: false},
         { name: 'activity_type', data: 'activity_type', visible: false},
         { name: 'project_status', data: 'project_status' , visible: false},
         { name: 'year', data: 'year' , searchable: false , visible: false},
@@ -432,7 +435,7 @@
         {
           extend: "colvis",
           className: "btn-sm",
-          columns: [ 1, 3, 4, 6, 7, 8, 9, 10, 12, 14, 16,18,20,22,24,26,28,30,32 ]
+          columns: [ 1, 3, 4, 6, 7, 8, 9, 10, 11, 13, 15,17,19,21,23,25,27,29,31,33 ]
         },
         {
           extend: "pageLength",
