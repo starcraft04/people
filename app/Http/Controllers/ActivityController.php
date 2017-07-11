@@ -101,12 +101,12 @@ class ActivityController extends Controller {
     //$inputs['user'] = [4];
 
     $theoreticalCapacity = $this->userRepository->getTheoreticalCapacity($inputs);
-    $dscpipeline = $this->activityRepository->getListOfLoadPerUserChart($inputs,'DSC','Pipeline');
-    $iscpipeline = $this->activityRepository->getListOfLoadPerUserChart($inputs,'ISC','Pipeline');
-    $dscstarted = $this->activityRepository->getListOfLoadPerUserChart($inputs,'DSC','Started');
-    $iscstarted = $this->activityRepository->getListOfLoadPerUserChart($inputs,'ISC','Started');
-    $orange = $this->activityRepository->getListOfLoadPerUserChart($inputs,'','Orange absence or other');
-    $presales = $this->activityRepository->getListOfLoadPerUserChart($inputs,'','Pre-sales');
+    $dscpipeline = $this->activityRepository->getListOfLoadPerUserChart($inputs,'project_type != "Pre-sales" and activity_type = "DSC" and project_status = "Pipeline"');
+    $iscpipeline = $this->activityRepository->getListOfLoadPerUserChart($inputs,'project_type != "Pre-sales" and activity_type = "ISC" and project_status = "Pipeline"');
+    $dscstarted = $this->activityRepository->getListOfLoadPerUserChart($inputs,'project_type != "Pre-sales" and activity_type = "DSC" and project_status = "Started"');
+    $iscstarted = $this->activityRepository->getListOfLoadPerUserChart($inputs,'project_type != "Pre-sales" and activity_type = "ISC" and project_status = "Started"');
+    $orange = $this->activityRepository->getListOfLoadPerUserChart($inputs,'project_type = "Orange absence or other"');
+    $presales = $this->activityRepository->getListOfLoadPerUserChart($inputs,'project_type = "Pre-sales"');
     $data = [];
 
     $data ["dscvstotal"] = [];

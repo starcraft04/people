@@ -344,7 +344,7 @@ class ActivityRepository
     return $data;
   }
 
-  public function getListOfLoadPerUserChart($where = null,$activity_type,$project_status)
+  public function getListOfLoadPerUserChart($where = null,$where_raw)
   {
     /** We create here a SQL statement and the Datatables function will add the information it got from the AJAX request to have things like search or limit or show.
     *   So we need to have a proper SQL search that the ajax can use via get with parameters given to it.
@@ -421,13 +421,11 @@ class ActivityRepository
       $activityList->where('user_id','=',Auth::user()->id);
     }
 
-    if (!empty($activity_type)) {
-      $activityList->where('activity_type','=',$activity_type);
-    }
-    if (!empty($project_status)) {
-      $activityList->where('project_status','=',$project_status);
+    if (!empty($where_raw)) {
+      $activityList->whereRaw($where_raw);
     }
 
+    //dd($activityList->toSql());
 
     $data = $activityList->get();
 

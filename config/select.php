@@ -43,7 +43,6 @@ return [
         'CF' => 'CF'
     ],
     'project_status' => [
-        'Pre-sales' => 'Pre-sales',
         'Pipeline' => 'Pipeline',
         'Started' => 'Started',
         'Closed' => 'Closed',
@@ -52,6 +51,7 @@ return [
     'project_type' => [
         'Baseline' => 'Baseline',
         'Project' => 'Project',
+        'Pre-sales' => 'Pre-sales',
         'POC' => 'POC',
         'Orange absence or other' => 'Orange absence or other'
     ],
