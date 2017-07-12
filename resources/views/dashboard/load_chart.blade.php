@@ -293,13 +293,6 @@
   }
 
   year = fill_select('year');
-  if (jQuery.isEmptyObject(year)) {
-    $("#year option:selected").each(function()
-    {
-      // log the value and text of each option
-      year.push($(this).val());
-    });
-  }
   manager = fill_select('manager');
   user = fill_select('user');
 
@@ -323,6 +316,24 @@
     $("#user").select2({
       allowClear: false,
       disabled: {{ $user_select_disabled }}
+    });
+    
+    $("#year option:selected").each(function()
+    {
+      // log the value and text of each option
+      year.push($(this).val());
+    });
+
+    $("#user option:selected").each(function()
+    {
+      // log the value and text of each option
+      user.push($(this).val());
+    });
+
+    $("#manager option:selected").each(function()
+    {
+      // log the value and text of each option
+      manager.push($(this).val());
     });
 
     $.ajaxSetup({

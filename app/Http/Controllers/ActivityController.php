@@ -107,6 +107,7 @@ class ActivityController extends Controller {
     $iscstarted = $this->activityRepository->getListOfLoadPerUserChart($inputs,'project_type != "Pre-sales" and activity_type = "ISC" and project_status = "Started"');
     $orange = $this->activityRepository->getListOfLoadPerUserChart($inputs,'project_type = "Orange absence or other"');
     $presales = $this->activityRepository->getListOfLoadPerUserChart($inputs,'project_type = "Pre-sales"');
+
     $data = [];
 
     $data ["dscvstotal"] = [];
