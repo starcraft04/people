@@ -72,24 +72,36 @@
             <div class="form-group col-xs-2">
               <label for="month" class="control-label">Year</label>
               <select class="form-control select2" style="width: 100%;" id="year" name="year" data-placeholder="Select a year">
-                @foreach($years as $year)
-                <option value="{{ $year['id'] }}" {{ $year['selected'] }}>{{ $year['value'] }}</option>
+                @foreach($authUsersForDataView->year_list as $key => $value)
+                <option value="{{ $key }}"
+                  @if(isset($authUsersForDataView->year_selected) && $key == $authUsersForDataView->year_selected) selected
+                  @endif>
+                  {{ $value }}
+                </option>
                 @endforeach
               </select>
             </div>
             <div class="form-group col-xs-2">
               <label for="manager" class="control-label">Manager</label>
               <select class="form-control select2" style="width: 100%;" id="manager" name="manager" data-placeholder="Select a manager" multiple="multiple">
-                @foreach($manager_list as $key => $value)
-                <option value="{{ $key }}" <?php if ($key == $manager_selected) { echo 'selected'; }?>>{{ $value }}</option>
+                @foreach($authUsersForDataView->manager_list as $key => $value)
+                <option value="{{ $key }}"
+                  @if(isset($authUsersForDataView->manager_selected) && $key == $authUsersForDataView->manager_selected) selected
+                  @endif>
+                  {{ $value }}
+                </option>
                 @endforeach
               </select>
             </div>
             <div class="form-group col-xs-2">
               <label for="user" class="control-label">User</label>
               <select class="form-control select2" style="width: 100%;" id="user" name="user" data-placeholder="Select a user" multiple="multiple">
-                @foreach($user_list as $key => $value)
-                <option value="{{ $key }}" <?php if ($key == $user_selected) { echo 'selected'; }?>>{{ $value }}</option>
+                @foreach($authUsersForDataView->user_list as $key => $value)
+                <option value="{{ $key }}"
+                  @if(isset($authUsersForDataView->user_selected) && $key == $authUsersForDataView->user_selected) selected
+                  @endif>
+                  {{ $value }}
+                </option>
                 @endforeach
               </select>
             </div>
@@ -236,27 +248,6 @@
   var manager = [];
   var user = [];
 
-
-  //alert($.fn.dataTable.version);
-  $("#year option:selected").each(function()
-  {
-    // log the value and text of each option
-    year.push($(this).val());
-  });
-
-  $("#manager option:selected").each(function()
-  {
-    // log the value and text of each option
-    manager.push($(this).val());
-  });
-
-  $("#user option:selected").each(function()
-  {
-    // log the value and text of each option
-    user.push($(this).val());
-  });
-
-
   function ajaxData(){
     var obj = {
       'year[]': year,
@@ -265,21 +256,16 @@
     };
     return obj;
   }
-  // Here we are going to get from PHP the list of roles and their value for the logged in activities
 
-  var permissions = jQuery.parseJSON('{!! $perms !!}');
-
-  // Roles check finished.
-
-  //console.log(permissions);
-
+  // This is the function that will set the values in the select2 boxes with info from Cookies
   function fill_select(select_id){
     array_to_use = [];
     values = Cookies.get(select_id);
+
     if (values != null) {
       values = values.replace(/\"/g,'').replace('[','').replace(']','');
       values = values.split(',');
-      $('#'+select_id).val(values);
+      $('#'+select_id).val(values).trigger('change');
       array_to_use = [];
       $("#"+select_id+" option:selected").each(function()
       {
@@ -288,19 +274,15 @@
 
       });
     }
+    else {
+      $("#"+select_id+" option:selected").each(function()
+      {
+        // log the value and text of each option
+        array_to_use.push($(this).val());
+      });
+    }
     return array_to_use;
   }
-
-  year = fill_select('year');
-  if (jQuery.isEmptyObject(year)) {
-    $("#year option:selected").each(function()
-    {
-      // log the value and text of each option
-      year.push($(this).val());
-    });
-  }
-  manager = fill_select('manager');
-  user = fill_select('user');
 
   //Assign color
   function assign_color(row,value,otl,month){
@@ -323,20 +305,35 @@
       }
     });
 
+    // SELECTIONS START
+    // ________________
+    // First we define the select2 boxes
+
     //Init select2 boxes
     $("#year").select2({
-      allowClear: false
+      allowClear: false,
+      disabled: {{ $authUsersForDataView->year_select_disabled }}
     });
     //Init select2 boxes
     $("#manager").select2({
       allowClear: false,
-      disabled: {{ $manager_select_disabled }}
+      disabled: {{ $authUsersForDataView->manager_select_disabled }}
     });
     //Init select2 boxes
     $("#user").select2({
       allowClear: false,
-      disabled: {{ $user_select_disabled }}
+      disabled: {{ $authUsersForDataView->user_select_disabled }}
     });
+
+    // Then we need to get back the information from the cookie
+
+    year = fill_select('year');
+    manager = fill_select('manager');
+    user = fill_select('user');
+
+    //alert($.fn.dataTable.version);
+
+    // Then we define what happens when the selection changes
 
     $('#year').on('change', function() {
       Cookies.set('year', $('#year').val());
@@ -373,6 +370,8 @@
       });
       activitiesTable.ajax.reload();
     });
+
+    // SELECTIONS END
 
     activitiesTable = $('#activitiesTable').DataTable({
       scrollX: true,
@@ -538,7 +537,7 @@
 
     @permission('tools-activity-new')
     $('#new_project').on('click', function() {
-      window.location.href = "{!! route('toolsFormCreate',$today) !!}";
+      window.location.href = "{!! route('toolsFormCreate',['']) !!}/"+year[0];
     });
     @endpermission
 

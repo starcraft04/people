@@ -46,28 +46,38 @@
         <br />
           <div class="row">
             <div class="form-group col-xs-2">
-              <label for="year" class="control-label">Year</label>
+              <label for="month" class="control-label">Year</label>
               <select class="form-control select2" style="width: 100%;" id="year" name="year" data-placeholder="Select a year">
-                @foreach($years as $year)
-                <option value="{{ $year['id'] }}" {{ $year['selected'] }}>{{ $year['value'] }}</option>
+                @foreach($authUsersForDataView->year_list as $key => $value)
+                <option value="{{ $key }}"
+                  @if(isset($authUsersForDataView->year_selected) && $key == $authUsersForDataView->year_selected) selected
+                  @endif>
+                  {{ $value }}
+                </option>
                 @endforeach
               </select>
             </div>
             <div class="form-group col-xs-2">
               <label for="manager" class="control-label">Manager</label>
               <select class="form-control select2" style="width: 100%;" id="manager" name="manager" data-placeholder="Select a manager" multiple="multiple">
-                @foreach($manager_list as $key => $value)
-
-                <option value="{{ $key }}" <?php if ($key == $manager_selected) { echo 'selected'; }?>>{{ $value }}</option>
+                @foreach($authUsersForDataView->manager_list as $key => $value)
+                <option value="{{ $key }}"
+                  @if(isset($authUsersForDataView->manager_selected) && $key == $authUsersForDataView->manager_selected) selected
+                  @endif>
+                  {{ $value }}
+                </option>
                 @endforeach
               </select>
             </div>
             <div class="form-group col-xs-2">
               <label for="user" class="control-label">User</label>
               <select class="form-control select2" style="width: 100%;" id="user" name="user" data-placeholder="Select a user" multiple="multiple">
-                @foreach($user_list as $key => $value)
-
-                <option value="{{ $key }}" <?php if ($key == $user_selected) { echo 'selected'; }?>>{{ $value }}</option>
+                @foreach($authUsersForDataView->user_list as $key => $value)
+                <option value="{{ $key }}"
+                  @if(isset($authUsersForDataView->user_selected) && $key == $authUsersForDataView->user_selected) selected
+                  @endif>
+                  {{ $value }}
+                </option>
                 @endforeach
               </select>
             </div>
@@ -274,13 +284,15 @@
    grey: 'rgb(201, 203, 207)'
   };
 
+  // This is the function that will set the values in the select2 boxes with info from Cookies
   function fill_select(select_id){
     array_to_use = [];
     values = Cookies.get(select_id);
+
     if (values != null) {
       values = values.replace(/\"/g,'').replace('[','').replace(']','');
       values = values.split(',');
-      $('#'+select_id).val(values);
+      $('#'+select_id).val(values).trigger('change');
       array_to_use = [];
       $("#"+select_id+" option:selected").each(function()
       {
@@ -289,13 +301,15 @@
 
       });
     }
+    else {
+      $("#"+select_id+" option:selected").each(function()
+      {
+        // log the value and text of each option
+        array_to_use.push($(this).val());
+      });
+    }
     return array_to_use;
   }
-
-  year = fill_select('year');
-  manager = fill_select('manager');
-  user = fill_select('user');
-
 
   $(document).ready(function() {
     // Init of save as button
@@ -304,37 +318,123 @@
         saveAs(blob, "chart.png")
       });
     });
+
+    // SELECTIONS START
+    // ________________
+    // First we define the select2 boxes
+
     //Init select2 boxes
     $("#year").select2({
-      allowClear: false
+      allowClear: false,
+      disabled: {{ $authUsersForDataView->year_select_disabled }}
     });
     //Init select2 boxes
     $("#manager").select2({
       allowClear: false,
-      disabled: {{ $manager_select_disabled }}
+      disabled: {{ $authUsersForDataView->manager_select_disabled }}
     });
+    //Init select2 boxes
     $("#user").select2({
       allowClear: false,
-      disabled: {{ $user_select_disabled }}
-    });
-    
-    $("#year option:selected").each(function()
-    {
-      // log the value and text of each option
-      year.push($(this).val());
+      disabled: {{ $authUsersForDataView->user_select_disabled }}
     });
 
-    $("#user option:selected").each(function()
-    {
-      // log the value and text of each option
-      user.push($(this).val());
+    // Then we need to get back the information from the cookie
+
+    year = fill_select('year');
+    manager = fill_select('manager');
+    user = fill_select('user');
+
+    //alert($.fn.dataTable.version);
+
+    // Then we define what happens when the selection changes
+
+    $('#year').on('change', function() {
+      Cookies.set('year', $('#year').val());
+      year = [];
+      $("#year option:selected").each(function()
+      {
+        // log the value and text of each option
+        year.push($(this).val());
+      });
+      $.ajax({
+          url:"{!! route('listOfLoadPerUserChartAjax') !!}",
+          type:'POST',
+          data: ajaxDataPOST(),
+          dataType:"JSON",
+          success: function(data) {
+            useReturnData(data);
+            barChart.data.datasets[0].data = ajaxdscvstotal();
+            barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
+            barChart.data.datasets[2].data = ajaxdscpipeline();
+            barChart.data.datasets[3].data = ajaxiscpipeline();
+            barChart.data.datasets[4].data = ajaxdscstarted();
+            barChart.data.datasets[5].data = ajaxiscstarted();
+            barChart.data.datasets[6].data = ajaxpresales();
+            barChart.data.datasets[7].data = ajaxorange();
+            console.log(barChart.data);
+            barChart.update();
+          }
+        });
+    });
+    $('#manager').on('change', function() {
+      Cookies.set('manager', $('#manager').val());
+      manager = [];
+      $("#manager option:selected").each(function()
+      {
+        // log the value and text of each option
+        manager.push($(this).val());
+      });
+      $.ajax({
+          url:"{!! route('listOfLoadPerUserChartAjax') !!}",
+          type:'POST',
+          data: ajaxDataPOST(),
+          dataType:"JSON",
+          success: function(data) {
+            useReturnData(data);
+            barChart.data.datasets[0].data = ajaxdscvstotal();
+            barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
+            barChart.data.datasets[2].data = ajaxdscpipeline();
+            barChart.data.datasets[3].data = ajaxiscpipeline();
+            barChart.data.datasets[4].data = ajaxdscstarted();
+            barChart.data.datasets[5].data = ajaxiscstarted();
+            barChart.data.datasets[6].data = ajaxpresales();
+            barChart.data.datasets[7].data = ajaxorange();
+            console.log(barChart.data);
+            barChart.update();
+          }
+        });
+    });
+    $('#user').on('change', function() {
+      Cookies.set('user', $('#user').val());
+      user = [];
+      $("#user option:selected").each(function()
+      {
+        // log the value and text of each option
+        user.push($(this).val());
+      });
+      $.ajax({
+          url:"{!! route('listOfLoadPerUserChartAjax') !!}",
+          type:'POST',
+          data: ajaxDataPOST(),
+          dataType:"JSON",
+          success: function(data) {
+            useReturnData(data);
+            barChart.data.datasets[0].data = ajaxdscvstotal();
+            barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
+            barChart.data.datasets[2].data = ajaxdscpipeline();
+            barChart.data.datasets[3].data = ajaxiscpipeline();
+            barChart.data.datasets[4].data = ajaxdscstarted();
+            barChart.data.datasets[5].data = ajaxiscstarted();
+            barChart.data.datasets[6].data = ajaxpresales();
+            barChart.data.datasets[7].data = ajaxorange();
+            console.log(barChart.data);
+            barChart.update();
+          }
+        });
     });
 
-    $("#manager option:selected").each(function()
-    {
-      // log the value and text of each option
-      manager.push($(this).val());
-    });
+    // SELECTIONS END
 
     $.ajaxSetup({
       headers: {
@@ -505,90 +605,6 @@
                 data: barChartData,
                 options: barChartOptions
             });
-    $('#year').on('change', function() {
-      Cookies.set('year', $('#year').val());
-      year = [];
-      $("#year option:selected").each(function()
-      {
-        // log the value and text of each option
-        year.push($(this).val());
-      });
-      $.ajax({
-          url:"{!! route('listOfLoadPerUserChartAjax') !!}",
-          type:'POST',
-          data: ajaxDataPOST(),
-          dataType:"JSON",
-          success: function(data) {
-            useReturnData(data);
-            barChart.data.datasets[0].data = ajaxdscvstotal();
-            barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
-            barChart.data.datasets[2].data = ajaxdscpipeline();
-            barChart.data.datasets[3].data = ajaxiscpipeline();
-            barChart.data.datasets[4].data = ajaxdscstarted();
-            barChart.data.datasets[5].data = ajaxiscstarted();
-            barChart.data.datasets[6].data = ajaxpresales();
-            barChart.data.datasets[7].data = ajaxorange();
-            console.log(barChart.data);
-            barChart.update();
-          }
-        });
-    });
-    $('#manager').on('change', function() {
-      Cookies.set('manager', $('#manager').val());
-      manager = [];
-      $("#manager option:selected").each(function()
-      {
-        // log the value and text of each option
-        manager.push($(this).val());
-      });
-      $.ajax({
-          url:"{!! route('listOfLoadPerUserChartAjax') !!}",
-          type:'POST',
-          data: ajaxDataPOST(),
-          dataType:"JSON",
-          success: function(data) {
-            useReturnData(data);
-            barChart.data.datasets[0].data = ajaxdscvstotal();
-            barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
-            barChart.data.datasets[2].data = ajaxdscpipeline();
-            barChart.data.datasets[3].data = ajaxiscpipeline();
-            barChart.data.datasets[4].data = ajaxdscstarted();
-            barChart.data.datasets[5].data = ajaxiscstarted();
-            barChart.data.datasets[6].data = ajaxpresales();
-            barChart.data.datasets[7].data = ajaxorange();
-            console.log(barChart.data);
-            barChart.update();
-          }
-        });
-    });
-    $('#user').on('change', function() {
-      Cookies.set('user', $('#user').val());
-      user = [];
-      $("#user option:selected").each(function()
-      {
-        // log the value and text of each option
-        user.push($(this).val());
-      });
-      $.ajax({
-          url:"{!! route('listOfLoadPerUserChartAjax') !!}",
-          type:'POST',
-          data: ajaxDataPOST(),
-          dataType:"JSON",
-          success: function(data) {
-            useReturnData(data);
-            barChart.data.datasets[0].data = ajaxdscvstotal();
-            barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
-            barChart.data.datasets[2].data = ajaxdscpipeline();
-            barChart.data.datasets[3].data = ajaxiscpipeline();
-            barChart.data.datasets[4].data = ajaxdscstarted();
-            barChart.data.datasets[5].data = ajaxiscstarted();
-            barChart.data.datasets[6].data = ajaxpresales();
-            barChart.data.datasets[7].data = ajaxorange();
-            console.log(barChart.data);
-            barChart.update();
-          }
-        });
-    });
   } );
   </script>
   @stop

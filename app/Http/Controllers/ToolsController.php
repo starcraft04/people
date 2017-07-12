@@ -16,6 +16,7 @@ use App\Repositories\ProjectRepository;
 use App\Repositories\ActivityRepository;
 use App\Http\Requests\ProjectCreateRequest;
 use App\Http\Requests\ProjectUpdateRequest;
+use App\Http\Controllers\Auth\AuthUsersForDataView;
 
 class ToolsController extends Controller {
 
@@ -30,56 +31,12 @@ class ToolsController extends Controller {
     $this->projectRepository = $projectRepository;
 	}
 
-	public function activities()
+	public function activities(AuthUsersForDataView $authUsersForDataView)
 	{
-    $today = date("Y");
-    $years = [];
-    $manager_selected = '';
-    $user_selected = '';
-
-    $options = array(
-        'validate_all' => true,
-        'return_type' => 'both'
-    );
-    list($validate, $allValidations) = Entrust::ability(null,array('activities-view','activities-edit','activities-delete','activities-create'),$options);
-    $perms = json_encode($allValidations['permissions']);
-
-
-    foreach(config('select.year')  as $key => $value){
-      if ($value == date("Y")) {$selected = 'selected';} else {$selected = '';}
-      array_push($years,['id'=>$value,'value'=>$value,'selected'=>$selected]);
-    }
-
-    if (Entrust::can('tools-activity-all-view')){
-      // Format of $manager_list is [ 1=> 'manager1', 2=>'manager2',...]
-      $manager_list = $this->userRepository->getManagersList();
-      $user_list = $this->userRepository->getAllUsersListNoManagers();
-      $manager_select_disabled = 'false';
-      $user_select_disabled = 'false';
-    }
-    elseif (Auth::user()->is_manager == 1) {
-      $manager_list = [Auth::user()->id => Auth::user()->name];
-      $user_list = Auth::user()->employees()->lists('name','user_id');
-      $manager_selected = Auth::user()->id;
-      $manager_select_disabled = 'true';
-      $user_select_disabled = 'false';
-    }
-    else {
-      $my_manager = Auth::user()->managers()->first();
-      if ($my_manager) {
-        $manager_list = [$my_manager->id => $my_manager->name];
-        $manager_selected = $my_manager->id;
-      } else {
-        $manager_list = [0 => 'none'];
-      }
-      $user_list = [Auth::user()->id => Auth::user()->name];
-      $user_selected = Auth::user()->id;
-      $manager_select_disabled = 'true';
-      $user_select_disabled = 'true';
-    }
-
+    $authUsersForDataView->userCanView('tools-activity-all-view');
     Session::put('url','toolsActivities');
-		return view('tools/list', compact('manager_list','today','years','manager_select_disabled','manager_selected','user_select_disabled','user_selected','user_list','perms'));
+
+		return view('tools/list', compact('authUsersForDataView'));
 	}
 
   public function projectsAssignedAndNot()
