@@ -183,8 +183,8 @@
                         dataType: "JSON"
                     },
                 columns: [
-                    { name: 'id', data: 'id', searchable: false , visible: false },
-                    { name: 'customer_name', data: 'customer_name' },
+                    { name: 'projects.id', data: 'id', searchable: false , visible: false },
+                    { name: 'customers.name', data: 'customer_name' },
                     { name: 'project_name', data: 'project_name' },
                     { name: 'otl_project_code', data: 'otl_project_code' , visible: false },
                     { name: 'meta_activity', data: 'meta_activity' , visible: false },
@@ -297,7 +297,7 @@
               window.location.href = "{!! route('toolsFormUpdate',[$user_id_for_update,'','']) !!}/"+row.data().id+"/"+{{ $year }};
             });
             @endpermission
-            
+
         } );
     </script>
 @stop

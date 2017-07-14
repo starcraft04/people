@@ -610,7 +610,7 @@ class create_temp_table_mix_OTL_NONOTL{
                     m.name AS manager_name,
                     temp_a.project_id AS project_id,
                     p.project_name AS project_name,
-                    p.customer_name AS customer_name,
+                    c.name AS customer_name,
                     p.otl_project_code AS otl_project_code,
                     p.meta_activity AS meta_activity,
                     p.project_type AS project_type,
@@ -662,6 +662,7 @@ class create_temp_table_mix_OTL_NONOTL{
             LEFT JOIN users AS u ON temp_a.user_id = u.id
             LEFT JOIN users_users AS uu ON u.id = uu.user_id
             LEFT JOIN users AS m ON m.id = uu.manager_id
+            LEFT JOIN customers AS c ON c.id = p.customer_id
             GROUP BY year,user_id,p.project_name,p.project_type,p.activity_type,p.project_status
 
           )

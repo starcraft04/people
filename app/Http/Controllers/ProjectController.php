@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Project;
+use App\Customers;
 use App\Role;
 use App\Repositories\ProjectRepository;
 use App\Http\Controllers\Controller;
@@ -37,14 +38,17 @@ class ProjectController extends Controller {
 	public function getFormCreate()
 	{
     $today = date("Y-m-d");
-		return view('project/create_update',  compact('today'))->with('action','create');
+    $customers_list = Customers::orderBy('name')->lists('name','id');
+    $customers_list->prepend('', '');
+		return view('project/create_update',  compact('today','customers_list'))->with('action','create');
 	}
 
 	public function getFormUpdate($id)
 	{
     $project = $this->projectRepository->getById($id);
-
-		return view('project/create_update', compact('project'))->with('action','update');
+    $customers_list = Customers::orderBy('name')->lists('name','id');
+    $customers_list->prepend('', '');
+		return view('project/create_update', compact('project','customers_list'))->with('action','update');
 	}
 
   public function postFormCreate(ProjectCreateRequest $request)

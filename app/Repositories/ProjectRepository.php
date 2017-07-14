@@ -47,7 +47,7 @@ class ProjectRepository
 	{
     // Required fields
     if (isset($inputs['project_name'])) {$project->project_name = $inputs['project_name'];}
-    if (isset($inputs['customer_name'])) {$project->customer_name = $inputs['customer_name'];}
+    if (isset($inputs['customer_id'])) {$project->customer_id = $inputs['customer_id'];}
 
     // OTL project code and meta activity can be empty and then it needs to be entered as null
     if (isset($inputs['meta_activity'])) {
@@ -113,9 +113,10 @@ class ProjectRepository
     **/
 
     $projectList = $this->project
-      ->select( 'id','customer_name','project_name','otl_project_code','project_type','activity_type','project_status','meta_activity','region',
+      ->select( 'projects.id','customers.name AS customer_name','project_name','otl_project_code','project_type','activity_type','project_status','meta_activity','region',
                 'country','technology','description','estimated_start_date','estimated_end_date','comments','LoE_onshore','LoE_nearshore',
-                'LoE_offshore','LoE_contractor','gold_order_number','product_code','revenue','win_ratio');
+                'LoE_offshore','LoE_contractor','gold_order_number','product_code','revenue','win_ratio')
+      ->leftjoin('customers','projects.customer_id','=','customers.id');
 
     if (isset($where['unassigned']) && $where['unassigned'] == 'true') {
       $projectList->doesntHave('activities');
@@ -142,7 +143,7 @@ class ProjectRepository
     **/
 
     $projectList = $this->project
-      ->select( 'u2.name AS manager_name','users.id AS user_id','users.name','projects.id','projects.customer_name','projects.project_name','projects.otl_project_code','projects.project_type',
+      ->select( 'u2.name AS manager_name','users.id AS user_id','users.name','projects.id','customers.name AS customer_name','projects.project_name','projects.otl_project_code','projects.project_type',
                 'projects.activity_type','projects.project_status','projects.meta_activity','projects.region',
                 'projects.country','projects.technology','projects.description','projects.estimated_start_date','projects.estimated_end_date',
                 'projects.comments','projects.LoE_onshore','projects.LoE_nearshore',
@@ -151,6 +152,7 @@ class ProjectRepository
     $projectList->leftjoin('users','user_id','=','users.id');
     $projectList->leftjoin('users_users', 'users.id', '=', 'users_users.user_id');
     $projectList->leftjoin('users AS u2', 'u2.id', '=', 'users_users.manager_id');
+    $projectList->leftjoin('customers','projects.customer_id','=','customers.id');
     $projectList->whereRaw("(project_type = '' or activity_type = '' or project_status = '')");
     $projectList->groupBy('users.name','projects.id');
 
@@ -168,7 +170,7 @@ class ProjectRepository
     **/
 
     $projectList = $this->project
-      ->select( 'u2.name AS manager_name','users.id AS user_id','users.name','projects.id','projects.customer_name','projects.project_name','projects.otl_project_code','projects.project_type',
+      ->select( 'u2.name AS manager_name','users.id AS user_id','users.name','projects.id','customers.name AS customer_name','projects.project_name','projects.otl_project_code','projects.project_type',
                 'projects.activity_type','projects.project_status','projects.meta_activity','projects.region',
                 'projects.country','projects.technology','projects.description','projects.estimated_start_date','projects.estimated_end_date',
                 'projects.comments','projects.LoE_onshore','projects.LoE_nearshore',
@@ -177,6 +179,7 @@ class ProjectRepository
     $projectList->leftjoin('users','user_id','=','users.id');
     $projectList->leftjoin('users_users', 'users.id', '=', 'users_users.user_id');
     $projectList->leftjoin('users AS u2', 'u2.id', '=', 'users_users.manager_id');
+    $projectList->leftjoin('customers','projects.customer_id','=','customers.id');
     $projectList->whereRaw("(otl_project_code = '' or meta_activity = '' or otl_project_code IS NULL or meta_activity IS NULL)");
     $projectList->groupBy('users.name','projects.id');
 
@@ -194,7 +197,7 @@ class ProjectRepository
     **/
 
     $projectList = $this->project
-      ->select( 'u2.name AS manager_name','users.id AS user_id','users.name','projects.id','projects.customer_name','projects.project_name','projects.otl_project_code','projects.project_type',
+      ->select( 'u2.name AS manager_name','users.id AS user_id','users.name','projects.id','customers.name AS customer_name','projects.project_name','projects.otl_project_code','projects.project_type',
                 'projects.activity_type','projects.project_status','projects.meta_activity','projects.region',
                 'projects.country','projects.technology','projects.description','projects.estimated_start_date','projects.estimated_end_date',
                 'projects.comments','projects.LoE_onshore','projects.LoE_nearshore',
@@ -203,6 +206,7 @@ class ProjectRepository
     $projectList->leftjoin('users','user_id','=','users.id');
     $projectList->leftjoin('users_users', 'users.id', '=', 'users_users.user_id');
     $projectList->leftjoin('users AS u2', 'u2.id', '=', 'users_users.manager_id');
+    $projectList->leftjoin('customers','projects.customer_id','=','customers.id');
     $projectList->whereRaw("(win_ratio = 0)");
     $projectList->groupBy('users.name','projects.id');
 
@@ -220,7 +224,7 @@ class ProjectRepository
     **/
 
     $projectList = $this->project
-      ->select( 'u2.name AS manager_name','users.name','projects.id','projects.customer_name','projects.project_name','projects.otl_project_code','projects.project_type',
+      ->select( 'u2.name AS manager_name','users.name','projects.id','customers.name AS customer_name','projects.project_name','projects.otl_project_code','projects.project_type',
                 'projects.activity_type','projects.project_status','projects.meta_activity','projects.region',
                 'projects.country','projects.technology','projects.description','projects.estimated_start_date','projects.estimated_end_date',
                 'projects.comments','projects.LoE_onshore','projects.LoE_nearshore',
@@ -229,6 +233,7 @@ class ProjectRepository
     $projectList->leftjoin('users','user_id','=','users.id');
     $projectList->leftjoin('users_users', 'users.id', '=', 'users_users.user_id');
     $projectList->leftjoin('users AS u2', 'u2.id', '=', 'users_users.manager_id');
+    $projectList->leftjoin('customers','projects.customer_id','=','customers.id');
     $projectList->groupBy('users.name','projects.id');
 
     $data = Datatables::of($projectList)->make(true);

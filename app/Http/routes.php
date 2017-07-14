@@ -82,6 +82,23 @@ Route::group(['middleware' => ['auth']], function() {
       //  AJAX
       Route::post('listOfProjectsAjax', ['uses'=>'ProjectController@listOfProjects','as'=>'listOfProjectsAjax','middleware' => ['permission:tools-all_projects-view|tools-unassigned-view|tools-activity-edit|project-view|project-create|project-edit|project-delete']]);
 
+      //Customer
+      //  Main customer list
+      Route::get('customerList', ['uses'=>'CustomerController@getList','as'=>'customerList','middleware' => ['permission:project-view|project-create|project-edit|project-delete']]);
+      //  customer information
+      Route::get('customer/{n}', ['uses'=>'CustomerController@show','as'=>'customer','middleware' => ['permission:project-view']]);
+      //  Create new customer
+      Route::get('customerFormCreate', ['uses'=>'CustomerController@getFormCreate','as'=>'customerFormCreate','middleware' => ['permission:project-create']]);
+      Route::post('customerFormCreate', ['uses'=>'CustomerController@postFormCreate','middleware' => ['permission:project-create']]);
+      //  Update customer
+      Route::get('customerFormUpdate/{n}', ['uses'=>'CustomerController@getFormUpdate','as'=>'customerFormUpdate','middleware' => ['permission:project-edit']]);
+      Route::post('customerFormUpdate/{n}', ['uses'=>'CustomerController@postFormUpdate','middleware' => ['permission:project-edit']]);
+      //  Delete customer
+      Route::get('customerDelete/{n}', ['uses'=>'CustomerController@delete','as'=>'customerDelete','middleware' => ['permission:project-delete']]);
+      //  AJAX
+      Route::post('listOfCustomersAjax', ['uses'=>'CustomerController@listOfCustomers','as'=>'listOfCustomersAjax','middleware' => ['permission:project-view|project-create|project-edit|project-delete']]);
+
+
       //Activity
       //  Main activity list
       Route::get('activityList', ['uses'=>'ActivityController@getList','as'=>'activityList','middleware' => ['permission:activity-view|activity-create|activity-edit|activity-delete']]);

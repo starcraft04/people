@@ -182,7 +182,7 @@
                     { name: 'projects.id', data: 'id', searchable: false , visible: false },
                     { name: 'u2.name', data: 'manager_name' },
                     { name: 'users.name', data: 'name' },
-                    { name: 'projects.customer_name', data: 'customer_name' },
+                    { name: 'customers.name', data: 'customer_name' },
                     { name: 'projects.project_name', data: 'project_name' },
                     { name: 'projects.otl_project_code', data: 'otl_project_code' },
                     { name: 'projects.meta_activity', data: 'meta_activity'},

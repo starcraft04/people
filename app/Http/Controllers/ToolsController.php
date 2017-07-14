@@ -128,7 +128,7 @@ class ToolsController extends Controller {
 	public function getFormCreate($year)
 	{
     $project_name_disabled = '';
-    $customer_name_select_disabled = 'false';
+    $customer_id_select_disabled = 'false';
     $otl_name_disabled = '';
     $meta_activity_select_disabled = 'false';
     $project_type_select_disabled = 'false';
@@ -170,14 +170,14 @@ class ToolsController extends Controller {
       $user_select_disabled = 'true';
     }
 
-    $customers_list = Customers::orderBy('customer_name')->lists('customer_name','customer_name');
+    $customers_list = Customers::orderBy('name')->lists('name','id');
     $customers_list->prepend('', '');
     //dd($customers_list);
 
 		return view('tools/create_update', compact('year','customers_list',
       'user_list','user_selected','created_by_user_id',
       'project_name_disabled',
-      'customer_name_select_disabled',
+      'customer_id_select_disabled',
       'otl_name_disabled',
       'meta_activity_select_disabled',
       'project_type_select_disabled',
@@ -243,7 +243,7 @@ class ToolsController extends Controller {
 	{
     // Here we setup all the disabled fields to be disabled
     $project_name_disabled = 'disabled';
-    $customer_name_select_disabled = 'true';
+    $customer_id_select_disabled = 'true';
     $otl_name_disabled = 'disabled';
     $meta_activity_select_disabled = 'true';
     $project_type_select_disabled = 'true';
@@ -272,7 +272,7 @@ class ToolsController extends Controller {
 
     if (Entrust::can('tools-all_projects-edit') || (isset($project->created_by_user_id) && (Auth::user()->id == $project->created_by_user_id))) {
       $project_name_disabled = '';
-      $customer_name_select_disabled = 'false';
+      $customer_id_select_disabled = 'false';
       $otl_name_disabled = '';
       $meta_activity_select_disabled = 'false';
       $project_type_select_disabled = 'false';
@@ -303,7 +303,7 @@ class ToolsController extends Controller {
 
     $user_list = [];
 
-    $customers_list = Customers::orderBy('customer_name')->lists('customer_name','customer_name');
+    $customers_list = Customers::orderBy('name')->lists('name','id');
     $customers_list->prepend('', '');
 
     // Here we will define if we can select a user for this project and activity or not
@@ -401,7 +401,7 @@ class ToolsController extends Controller {
 
 		return view('tools/create_update', compact('user_id','project','year','activities','from_otl','forecast','otl','loe_list','show_change_button','customers_list',
     'project_name_disabled',
-    'customer_name_select_disabled',
+    'customer_id_select_disabled',
     'otl_name_disabled',
     'meta_activity_select_disabled',
     'project_type_select_disabled',

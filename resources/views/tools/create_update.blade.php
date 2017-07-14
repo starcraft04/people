@@ -188,22 +188,22 @@
                   </div>
                 </div>
                 <div class="row">
-                  <div class="form-group {!! $errors->has('customer_name') ? 'has-error' : '' !!} col-md-12">
+                  <div class="form-group {!! $errors->has('customer_id') ? 'has-error' : '' !!} col-md-12">
                     <div class="col-md-3">
-                      {!! Form::label('customer_name', 'Customer name', ['class' => 'control-label']) !!}
+                      {!! Form::label('customer_id', 'Customer name', ['class' => 'control-label']) !!}
                     </div>
                     <div class="col-md-9">
-                      <select class="form-control select2" style="width: 100%;" id="customer_name" name="customer_name" data-placeholder="Select a customer name">
+                      <select class="form-control select2" style="width: 100%;" id="customer_id" name="customer_id" data-placeholder="Select a customer name">
                         @foreach($customers_list as $key => $value)
                         <option value="{{ $key }}"
-                          @if (old('customer_name') == $key) selected
-                          @elseif (isset($project->customer_name) && $value == $project->customer_name) selected
+                          @if (old('customer_id') == $key) selected
+                          @elseif (isset($project->customer_id) && $key == $project->customer_id) selected
                           @endif>
                           {{ $value }}
                         </option>
                         @endforeach
                       </select>
-                      {!! $errors->first('customer_name', '<small class="help-block">:message</small>') !!}
+                      {!! $errors->first('customer_id', '<small class="help-block">:message</small>') !!}
                     </div>
                   </div>
                 </div>
@@ -702,9 +702,9 @@ $(document).ready(function() {
     allowClear: false
   });
 
-  $("#customer_name").select2({
+  $("#customer_id").select2({
     allowClear: true,
-    disabled: {{ $customer_name_select_disabled }}
+    disabled: {{ $customer_id_select_disabled }}
   });
 
   $("#meta_activity").select2({

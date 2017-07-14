@@ -23,13 +23,13 @@ class ProjectCreateRequest extends Request
   */
   public function rules()
   {
-    $customer_name = $this->customer_name;
+    $customer_id = $this->customer_id;
     $meta_activity = $this->meta_activity;
 
     return [
 
-      'project_name' => 'required|max:255|unique:projects,project_name,NULL,id,customer_name,'.$customer_name,
-      'customer_name' => 'required|max:255',
+      'project_name' => 'required|max:255|unique:projects,project_name,NULL,id,customer_id,'.$customer_id,
+      'customer_id' => 'required|max:255',
       'otl_project_code' => 'sometimes|required_with:meta_activity|max:255|unique:projects,otl_project_code,NULL,id,meta_activity,'.$meta_activity,
       'meta_activity' => 'sometimes|required_with:otl_project_code|max:255',
       'estimated_date' => 'date_format:"Y-m-d - Y-m-d"',

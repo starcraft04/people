@@ -178,7 +178,7 @@
                     { name: 'u2.name', data: 'manager_name' },
                     { name: 'users.id', data: 'user_id' , searchable: false , visible: false},
                     { name: 'users.name', data: 'name' },
-                    { name: 'projects.customer_name', data: 'customer_name' },
+                    { name: 'customers.name', data: 'customer_name' },
                     { name: 'projects.project_name', data: 'project_name' },
                     { name: 'projects.otl_project_code', data: 'otl_project_code' , visible: false},
                     { name: 'projects.meta_activity', data: 'meta_activity' , visible: false},
@@ -298,7 +298,7 @@
               window.location.href = "{!! route('toolsFormUpdate',['','','']) !!}/"+user_id+"/"+row.data().id+"/"+{{ $year }};
             });
             @endpermission
-            
+
         } );
     </script>
 @stop

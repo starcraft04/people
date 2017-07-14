@@ -33,6 +33,9 @@
           @permission(['activity-view','activity-edit','activity-create','activity-delete'])
           <li><a href="{!!route('activityList')!!}">Activity list</a></li>
           @endpermission
+          @permission(['project-view','project-edit','project-create','project-delete'])
+          <li><a href="{!!route('customerList')!!}">Customers list</a></li>
+          @endpermission
         </ul>
       </li>
     </ul>
