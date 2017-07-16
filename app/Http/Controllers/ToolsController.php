@@ -170,7 +170,7 @@ class ToolsController extends Controller {
       $user_select_disabled = 'true';
     }
 
-    $customers_list = Customers::orderBy('name')->lists('name','id');
+    $customers_list = Customer::orderBy('name')->lists('name','id');
     $customers_list->prepend('', '');
     //dd($customers_list);
 
