@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Customer;
 use App\Role;
-use App\Repositories\CustomerRepository;
+use Datatables;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CustomerCreateRequest;
 use App\Http\Requests\CustomerUpdateRequest;
@@ -16,11 +16,11 @@ use Auth;
 
 class CustomerController extends Controller {
 
-  protected $customerRepository;
+  
 
-  public function __construct(CustomerRepository $customerRepository)
+  public function __construct()
   {
-    $this->customerRepository = $customerRepository;
+    
 	}
 	public function getList()
 	{
@@ -29,7 +29,7 @@ class CustomerController extends Controller {
 
 	public function show($id)
 	{
-    $customer = $this->customerRepository->getById($id);
+    $customer = Customer::find($id);
 		return view('customer/show',  compact('customer'));
 	}
 
@@ -40,21 +40,23 @@ class CustomerController extends Controller {
 
 	public function getFormUpdate($id)
 	{
-    $customer = $this->customerRepository->getById($id);
+    $customer = Customer::find($id);
 		return view('customer/create_update', compact('customer'))->with('action','update');
 	}
 
   public function postFormCreate(customerCreateRequest $request)
 	{
-    $inputs = $request->all();
-    $customer = $this->customerRepository->create($inputs);
+    $inputs = $request->only('name','cluster_owner');
+    $customer = Customer::create($inputs);
     return redirect('customerList')->with('success','Record created successfully');
 	}
 
 	public function postFormUpdate(customerUpdateRequest $request, $id)
 	{
-    $inputs = $request->all();
-    $customer = $this->customerRepository->update($id, $inputs);
+    $inputs = $request->only('name','cluster_owner');
+    $customer = Customer::find($id);
+		$customer->update($inputs);
+
     return redirect('customerList')->with('success','Record updated successfully');
 	}
 
@@ -64,12 +66,14 @@ class CustomerController extends Controller {
     $result = new \stdClass();
     $result->result = 'success';
     $result->msg = 'Record deleted successfully';
-    $customer = $this->customerRepository->destroy($id);
+    $customer = Customer::destroy($id);
 		return json_encode($result);
 	}
 
   public function listOfCustomers()
   {
-    return $this->customerRepository->getListOfCustomers();
+    $customerList = Customer::select( 'id', 'name','cluster_owner');
+    $data = Datatables::of($customerList)->make(true);
+    return $data;
   }
 }

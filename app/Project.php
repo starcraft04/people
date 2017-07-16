@@ -16,7 +16,7 @@ class Project extends Model
         return $this->hasMany('App\Activity', 'project_id');
     }
 
-    public function user()
+    public function created_by_user()
     {
         return $this->belongsTo('App\User', 'created_by_user_id');
     }

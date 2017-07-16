@@ -353,7 +353,7 @@ class ToolsController extends Controller {
       }
     }
 
-    $created_by_user_name = isset($project->created_by_user_id) ? $this->userRepository->getById($project->created_by_user_id)->name : 'Admin';
+    $created_by_user_name = isset($project->created_by_user_id) ? $project->created_by_user->name : 'Admin';
 
     $activities = [];
     $from_otl = [];

@@ -50,7 +50,6 @@
 
           @if($action == 'create')
           {!! Form::open(['url' => 'customerFormCreate', 'method' => 'post', 'class' => 'form-horizontal']) !!}
-          {!! Form::hidden('from_otl', 0, ['class' => 'form-control']) !!}
 
           @elseif($action == 'update')
           {!! Form::open(['url' => 'customerFormUpdate/'.$customer->id, 'method' => 'post', 'class' => 'form-horizontal']) !!}
