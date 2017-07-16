@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Project;
-use App\Customers;
+use App\Customer;
 use App\Role;
 use App\Repositories\ProjectRepository;
 use App\Http\Controllers\Controller;
@@ -38,7 +38,7 @@ class ProjectController extends Controller {
 	public function getFormCreate()
 	{
     $today = date("Y-m-d");
-    $customers_list = Customers::orderBy('name')->lists('name','id');
+    $customers_list = Customer::orderBy('name')->lists('name','id');
     $customers_list->prepend('', '');
 		return view('project/create_update',  compact('today','customers_list'))->with('action','create');
 	}
@@ -46,7 +46,7 @@ class ProjectController extends Controller {
 	public function getFormUpdate($id)
 	{
     $project = $this->projectRepository->getById($id);
-    $customers_list = Customers::orderBy('name')->lists('name','id');
+    $customers_list = Customer::orderBy('name')->lists('name','id');
     $customers_list->prepend('', '');
 		return view('project/create_update', compact('project','customers_list'))->with('action','update');
 	}
@@ -69,10 +69,16 @@ class ProjectController extends Controller {
 	{
     // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
     $result = new \stdClass();
-    $result->result = 'success';
+    if(count(Project::find($id)->activities) > 0){
+			$result->result = 'error';
+			$result->msg = 'Record cannot be deleted because some activities are associated to it.';
+			return json_encode($result);
+		} else {
+    $customer = Project::destroy($id);
+		$result->result = 'success';
     $result->msg = 'Record deleted successfully';
-    $project = $this->projectRepository->destroy($id);
 		return json_encode($result);
+		}
 	}
 
   public function listOfprojects(Request $request)

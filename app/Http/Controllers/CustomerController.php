@@ -64,10 +64,16 @@ class CustomerController extends Controller {
 	{
     // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
     $result = new \stdClass();
-    $result->result = 'success';
-    $result->msg = 'Record deleted successfully';
+    if(count(Customer::find($id)->projects) > 0){
+			$result->result = 'error';
+			$result->msg = 'Record cannot be deleted because some projects are associated to it.';
+			return json_encode($result);
+		} else {
     $customer = Customer::destroy($id);
+		$result->result = 'success';
+    $result->msg = 'Record deleted successfully';
 		return json_encode($result);
+		}
 	}
 
   public function listOfCustomers()

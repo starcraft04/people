@@ -18,6 +18,8 @@
   <link href="{{ asset('/plugins/gentelella/vendors/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
   <!-- Custom Theme Style -->
   <link href="{{ asset('/plugins/gentelella/build/css/custom.min.css') }}" rel="stylesheet">
+  <link href="{{ asset('/css/animate.css') }}" rel="stylesheet">
+  <link href="{{ asset('/css/alert.css') }}" rel="stylesheet">
   @yield('style')
   <!-- END All styles -->
 
@@ -77,6 +79,24 @@
         <!-- page content -->
         <div class="right_col" role="main">
           <div class="">
+
+            <!-- Here we print the success or error message if it exists  -->
+            <div id="flash-message">
+            @if ($message = Session::get('success'))
+            <div id="flash-success" class="alert alert-success alert-dismissible flash-success" role="alert">
+                <button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>
+                {{ $message }}
+            </div>
+            @endif
+            @if ($message = Session::get('error'))
+            <div id="flash-error" class="alert alert-danger alert-dismissible flash-error" role="alert">
+                <button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>
+                {{ $message }}
+            </div>
+            @endif
+            </div>
+            <!-- END print success or error  -->
+
             @yield('content')
           </div>
         </div>
@@ -115,11 +135,26 @@
     <!-- All scripts -->
     @yield('script')
     <script>
-    $('#logout').on('click', function () {
-        Cookies.remove('year');
-        Cookies.remove('manager');
-        Cookies.remove('user');
-        window.location.href = "{{ route('auth.logout') }}";
+
+    $(document).ready(function() {
+
+      @if ($message = Session::get('success'))
+      $('#flash-success').delay(2000).queue(function () {
+          $(this).addClass('animated flipOutX')
+      });
+      @endif
+      @if ($message = Session::get('error'))
+      $('#flash-error').delay(2000).queue(function () {
+          $(this).addClass('animated flipOutX')
+      });
+      @endif
+
+      $('#logout').on('click', function () {
+          Cookies.remove('year');
+          Cookies.remove('manager');
+          Cookies.remove('user');
+          window.location.href = "{{ route('auth.logout') }}";
+      });
     });
     </script>
     <!-- END All scripts -->

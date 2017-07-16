@@ -68,22 +68,6 @@
 
       <!-- Window content -->
       <div class="x_content">
-        <br />
-            @if ($message = Session::get('success'))
-            <div class="alert alert-success alert-dismissible">
-                <button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>
-                {{ $message }}
-            </div>
-            @endif
-            @if ($message = Session::get('error'))
-            <div class="alert alert-danger alert-dismissible">
-                <button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>
-                {{ $message }}
-            </div>
-            @endif
-
-            <div id="delete_message">
-            </div>
             <table id="projectTable_unassigned" class="table table-striped table-hover table-bordered" width="100%">
                 <thead>
                     <tr>

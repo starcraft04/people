@@ -34,19 +34,6 @@
 
       <!-- Window content -->
       <div class="x_content">
-        <br />
-          @if ($message = Session::get('success'))
-          <div class="alert alert-success alert-dismissible">
-            <button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>
-            {{ $message }}
-          </div>
-          @endif
-          @if ($message = Session::get('error'))
-          <div class="alert alert-danger alert-dismissible">
-            <button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>
-            {{ $message }}
-          </div>
-          @endif
 
           @if($action == 'create')
           {!! Form::open(['url' => 'customerFormCreate', 'method' => 'post', 'class' => 'form-horizontal']) !!}

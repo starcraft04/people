@@ -1,0 +1,13 @@
+.flash-success {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+}
+
+.flash-error {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+}

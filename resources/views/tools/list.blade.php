@@ -131,19 +131,6 @@
 
       <!-- Window content -->
       <div class="x_content">
-        <br />
-          @if ($message = Session::get('success'))
-          <div class="alert alert-success alert-dismissible">
-            <button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>
-            {{ $message }}
-          </div>
-          @endif
-          @if ($message = Session::get('error'))
-          <div class="alert alert-danger alert-dismissible">
-            <button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>
-            {{ $message }}
-          </div>
-          @endif
           @permission('tools-activity-new')
           <div class="row button_in_row">
             <div class="col-md-12">

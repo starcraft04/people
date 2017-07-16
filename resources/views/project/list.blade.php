@@ -61,21 +61,6 @@
 
       <!-- Window content -->
       <div class="x_content">
-        <br />
-        @if ($message = Session::get('success'))
-        <div class="alert alert-success alert-dismissible">
-          <button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>
-          {{ $message }}
-        </div>
-        @endif
-        @if ($message = Session::get('error'))
-        <div class="alert alert-danger alert-dismissible">
-          <button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>
-          {{ $message }}
-        </div>
-        @endif
-        <div id="delete_message">
-        </div>
         <table id="projectTable" class="table table-striped table-hover table-bordered" width="100%">
           <thead>
             <tr>
@@ -192,9 +177,9 @@ $(document).ready(function() {
       dataType: "JSON"
     },
     columns: [
-      { name: 'id', data: 'id' , searchable: false , visible: false },
+      { name: 'projects.id', data: 'id' , searchable: false , visible: false },
       { name: 'project_name', data: 'project_name' },
-      { name: 'customer_name', data: 'customer_name' },
+      { name: 'customers.name', data: 'customer_name' },
       { name: 'otl_project_code', data: 'otl_project_code' },
       { name: 'project_type', data: 'project_type'},
       { name: 'meta_activity', data: 'meta_activity' },
@@ -311,16 +296,22 @@ $(document).ready(function() {
           url: "{!! route('projectDelete','') !!}/"+record_id,
           dataType: 'json',
           success: function(data) {
-            //console.log(data);
+            console.log(data);
             if (data.result == 'success'){
-              box_type = 'success';
+                box_type = 'success';
+                message_type = 'success';
             }
             else {
-              box_type = 'danger';
+                box_type = 'danger';
+                message_type = 'error';
             }
-            $('#delete_message').empty();
-            var box = $('<div class="alert alert-'+box_type+' alert-dismissible"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
-            $('#delete_message').append(box);
+
+            $('#flash-message').empty();
+            var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+            $('#flash-message').append(box);
+            $('#delete-message').delay(2000).queue(function () {
+                $(this).addClass('animated flipOutX')
+            });
             projectTable.ajax.reload();
           }
         });
