@@ -21,4 +21,9 @@ class Activity extends Model
         return $this->belongsTo('App\User', 'user_id');
     }
 
+    public function scopeFromOtl($query){
+        return $query->where('from_otl','=',1);
+    }
+
 }
+
