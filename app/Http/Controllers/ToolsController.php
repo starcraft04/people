@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Role;
-use App\Customers;
+use App\Customer;
 use App\Http\Controllers\Controller;
 use DB;
 use Entrust;
@@ -303,7 +303,7 @@ class ToolsController extends Controller {
 
     $user_list = [];
 
-    $customers_list = Customers::orderBy('name')->lists('name','id');
+    $customers_list = Customer::orderBy('name')->lists('name','id');
     $customers_list->prepend('', '');
 
     // Here we will define if we can select a user for this project and activity or not

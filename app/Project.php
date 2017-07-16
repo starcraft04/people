@@ -21,4 +21,9 @@ class Project extends Model
         return $this->belongsTo('App\User', 'created_by_user_id');
     }
 
+    public function customer()
+    {
+        return $this->belongsTo('App\Customer', 'customer_id');
+    }
+
 }
