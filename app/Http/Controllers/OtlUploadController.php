@@ -80,11 +80,20 @@ class OtlUploadController extends Controller
         }
         // END check user
         
-
+        
+        // First we need to check that we do not have a line with only 0
+        $num_of_month_positive = 0;
+        foreach ($months_in_excel as $month) {
+          if ($row[$month['excel']] > 0) {
+            $num_of_month_positive++;
+          }
+        }
         // Checking if the project is in DB
         if ($projectInDBnum != 1){
-          array_push($messages,['status'=>'error',
+          if ($num_of_month_positive > 0) {
+            array_push($messages,['status'=>'error',
               'msg'=>'LINE '.$i.': Found '.$projectInDBnum.' instance for user '.$row['employee_name'].' of </BR><div style="padding-left:5em;">Customer: '.$row['customer_name'].' </BR> OTL code: '.$row['project_name'].' </BR> META: '.$row['meta_activity'].'</div>']);
+          }
           $missing = 1;
         }
         else {
@@ -97,23 +106,25 @@ class OtlUploadController extends Controller
         // END check project
 
         // If User AND Project is found in DB then we can update the activities
-        if ($missing == 0) {
+        if ($missing == 0 && $num_of_month_positive > 0) {
           foreach ($months_in_excel as $month) {
-            $activity = [];
-            // Now we need to check if we need to update or create an activity
-            $activity['year'] = $month['year'];
-            $activity['month'] = $month['db'];
-            $activity['user_id'] = $userInDB->id;
-            $activity['project_id'] = $projectInDB->id;
-            $activity['task_hour'] = $row[$month['excel']] / config('options.time_trak')['hours_in_day'];
-            $activity['from_otl'] = 1;
-            $activityInDB = $this->activityRepository->checkIfExists($activity);
-            if (!$activityInDB){
-              $this->activityRepository->create($activity);
-              array_push($messages,['status'=>'add','msg'=>'LINE '.$i.': Activity '.$month['excel'].' created in DB']);
-            } else {
-              $this->activityRepository->update($activityInDB->id,$activity);
-              array_push($messages,['status'=>'update','msg'=>'LINE '.$i.': Activity '.$month['excel'].' updated in DB']);
+            if ($row[$month['excel']] > 0) {
+              $activity = [];
+              // Now we need to check if we need to update or create an activity
+              $activity['year'] = $month['year'];
+              $activity['month'] = $month['db'];
+              $activity['user_id'] = $userInDB->id;
+              $activity['project_id'] = $projectInDB->id;
+              $activity['task_hour'] = $row[$month['excel']] / config('options.time_trak')['hours_in_day'];
+              $activity['from_otl'] = 1;
+              $activityInDB = $this->activityRepository->checkIfExists($activity);
+              if (!$activityInDB){
+                $this->activityRepository->create($activity);
+                array_push($messages,['status'=>'add','msg'=>'LINE '.$i.': Activity '.$month['excel'].' created in DB']);
+              } else {
+                $this->activityRepository->update($activityInDB->id,$activity);
+                array_push($messages,['status'=>'update','msg'=>'LINE '.$i.': Activity '.$month['excel'].' updated in DB']);
+              }
             }
           }
         }
