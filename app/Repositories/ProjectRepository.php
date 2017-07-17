@@ -46,8 +46,8 @@ class ProjectRepository
 	private function save(Project $project, Array $inputs)
 	{
     // Required fields
-    if (isset($inputs['project_name'])) {$project->project_name = $inputs['project_name'];}
-    if (isset($inputs['customer_id'])) {$project->customer_id = $inputs['customer_id'];}
+    $project->project_name = $inputs['project_name'];
+    $project->customer_id = $inputs['customer_id'];
 
     // OTL project code and meta activity can be empty and then it needs to be entered as null
     if (isset($inputs['meta_activity'])) {
@@ -85,7 +85,7 @@ class ProjectRepository
     if (isset($inputs['product_code'])) {$project->product_code = $inputs['product_code'];}
     if (isset($inputs['revenue']) && $inputs['revenue'] != '') {$project->revenue = $inputs['revenue'];}
     if (isset($inputs['project_status'])) {$project->project_status = $inputs['project_status'];}
-    if (isset($inputs['win_ratio']) && $inputs['win_ratio'] != '') {$project->win_ratio = $inputs['win_ratio'];}
+    $project->win_ratio = $inputs['win_ratio'];
     if (isset($inputs['created_by_user_id'])) {$project->created_by_user_id = $inputs['created_by_user_id'];}
 
     // Boolean

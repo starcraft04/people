@@ -210,7 +210,14 @@
                 <select class="form-control select2" style="width: 100%;" id="roles" name="roles[]" data-placeholder="Select a role"  multiple="multiple">
                   <option value="" ></option>
                   @foreach($roles as $key => $value)
-                  <option value="{{ $key }}" <?php echo isset($userRole[$key]) ? 'selected' : '';?>>{{ $value }}</option>
+                  <option value="{{ $key }}" 
+                  @if(isset($defaultRole) && $value == $defaultRole)
+                  selected
+                  @elseif(in_array($key,$userRole))
+                  selected
+                  @endif>
+                  {{ $value }}
+                  </option>
                   @endforeach
                 </select>
                 {!! $errors->first('roles', '<small class="help-block">:message</small>') !!}

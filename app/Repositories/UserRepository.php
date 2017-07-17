@@ -39,16 +39,6 @@ class UserRepository
     return $this->save($this->getById($id), $inputs);
   }
 
-  public function update_password($id, Array $inputs)
-  {
-    $user = $this->getById($id);
-    if (isset($inputs['password']) && trim($inputs['password']) != ''){
-      $user->password = bcrypt($inputs['password']);
-      $user->save();
-    }
-    return $user;
-  }
-
   private function save(User $user, Array $inputs)
   {
     // Required fields
@@ -73,7 +63,7 @@ class UserRepository
     $user->save();
 
     // Now we have to treat the manager
-    if ($inputs['manager_id'] != -1){
+    if (isset($inputs['manager_id'])){
       /** We need first to check that there is not already a manager defined in which case we have to delete it
       *   Because we want to remove all traces of previous managers, we do a detach without giving
       *   the manager_id as parameter.
@@ -96,6 +86,9 @@ class UserRepository
       foreach ($inputs['roles'] as $key => $value) {
         $user->attachRole($value);
       }
+    }
+    else {
+      DB::table('role_user')->where('user_id',$user->id)->delete();
     }
 
     return $user;

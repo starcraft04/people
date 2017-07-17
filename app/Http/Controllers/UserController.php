@@ -30,92 +30,34 @@ class UserController extends Controller {
 
 	public function show($id)
 	{
-    $user = $this->userRepository->getById($id);
+    $user = User::find($id);
 		return view('user/show',  compact('user'));
 	}
 
   public function profile($id)
 	{
-    $user = $this->userRepository->getById($id);
+    $user = User::find($id);
     if (Auth::user()->id != $id){
       return redirect('userList')->with('error','You are not user '.  $user->name.'!!!');
     }
 		return view('user/profile',  compact('user'));
 	}
 
-  public function ajax_git_pull()
-	{
-    if (Auth::user()->name == 'admin'){
-      $output = shell_exec('git -C /var/www/html pull');
-      echo $output;
-    }
-	}
-
-  protected function setEnvironmentValue($key, $newValue, $delim='')
-  {
-
-      $path = base_path('.env');
-      // get old value from current env
-      // but we need to treat the special case for APP_DEBUG returning 1 for true and nothing for false
-      if ($key == 'APP_DEBUG') {
-        if (env($key) == 1) {
-          $oldValue = 'true';
-        } else{
-          $oldValue = 'false';
-        }
-      } else {
-        $oldValue = env($key);
-      }
-
-      // was there any change?
-      if ($oldValue === $newValue) {
-          return;
-      }
-
-      // rewrite file content with changed data
-      if (file_exists($path)) {
-          // replace current value with new value
-          file_put_contents(
-              $path, str_replace(
-                  $key.'='.$delim.$oldValue.$delim,
-                  $key.'='.$delim.$newValue.$delim,
-                  file_get_contents($path)
-              )
-          );
-      }
-
-      // Reload the cached config
-      if (file_exists(\App::getCachedConfigPath())) {
-          Artisan::call("config:cache");
-      }
-  }
-
-  public function ajax_env_app_debug($bool)
-  {
-    if (Auth::user()->name == 'admin'){
-      if ($bool == 'true') {
-        $this->setEnvironmentValue('APP_DEBUG', 'true');
-      } elseif ($bool == 'false') {
-        $this->setEnvironmentValue('APP_DEBUG', 'false');
-      }
-    }
-  }
-
   public function passwordUpdate(PasswordUpdateRequest $request, $id)
   {
+    $user = User::find($id);
     if (Auth::user()->id != $id){
-      $user = $this->userRepository->getById($id);
       return redirect('userList')->with('error','You are not user '.  $user->name.'!!!');
     }
-    $inputs = $request->all();
-    $password = $this->userRepository->update_password($id, $inputs);
+    $inputs = $request->only('password');
+    $password = $user->update_password($inputs['password'],true);
     return redirect('profile/'.$id)->with('success','Password updated successfully');
   }
 
 	public function getFormCreate()
 	{
-    $role_select_disabled = 'true';
-    $userRole = ['4' => '4'];
+    $defaultRole = config('select.defaultRole');
+
     if(Entrust::hasRole('Admin')){
       $roles = Role::lists('display_name','id');
     } else {
@@ -125,23 +67,20 @@ class UserController extends Controller {
     if (Entrust::can('role-assign')){
       $role_select_disabled = 'false';
     }
+    else {
+      $role_select_disabled = 'true';
+    }
 
-		$manager_list = $this->userRepository->getManagersList();
-    //\Debugbar::info($manager_list);
-    // Now we need to add 1 record so that we can chose without a manager
-    $manager_list[-1] = null;
-    // We will use the function asort that is sorting an array but for that, we need to convert the object to an associative array
-    $manager_list = json_decode(json_encode($manager_list),TRUE);
-    ksort($manager_list);
+    $manager_list = User::orderBy('name')->where('is_manager','1')->lists('name','id');
+    $manager_list->prepend('', '');
 
-		//\Debugbar::info($manager_list);
-		return view('user/create_update', compact('manager_list','roles','role_select_disabled','userRole'))->with('action','create');
+		return view('user/create_update', compact('manager_list','roles','role_select_disabled','defaultRole'))->with('action','create');
 	}
 
 	public function getFormUpdate($id)
 	{
     $user = User::find($id);
-    $role_select_disabled = 'true';
+
     if(Entrust::hasRole('Admin')){
       $roles = Role::lists('display_name','id');
     } else {
@@ -151,16 +90,15 @@ class UserController extends Controller {
     if (Entrust::can('role-assign')){
       $role_select_disabled = 'false';
     }
+    else {
+      $role_select_disabled = 'true';
+    }
 
-    $userRole = $user->roles->lists('id','id')->toArray();
+    $userRole = $user->roles->lists('id')->toArray();
 
-    $manager_list = $this->userRepository->getManagersList();
-    //\Debugbar::info($manager_list);
-    // Now we need to add 1 record so that we can chose without a manager
-    $manager_list[-1] = null;
-    // We will use the function asort that is sorting an array but for that, we need to convert the object to an associative array
-    $manager_list = json_decode(json_encode($manager_list),TRUE);
-    ksort($manager_list);
+    $manager_list = User::orderBy('name')->where('is_manager','1')->lists('name','id');
+    $manager_list->prepend('', '');
+
     $user = $this->userRepository->getById($id);
     $manager = $this->userRepository->getMyManagersList($id);
 

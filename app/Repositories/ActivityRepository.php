@@ -355,7 +355,7 @@ class ActivityRepository
     $data = 0;
 
     $temp_table = new create_temp_table_mix_OTL_NONOTL('table_temp_a','table_temp_b');
-
+    
     $activityList = DB::table('table_temp_b');
 
     $activityList->select('year',

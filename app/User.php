@@ -39,4 +39,14 @@ class User extends Authenticatable
         return $this->hasMany('App\Project', 'project' , 'created_by_user_id', 'id');
     }
 
+    public function update_password($password,$toDB = false)
+    {
+        $this->password = bcrypt($password);
+        if ($toDB) {
+            $this->save();
+        }
+        
+        return $this;
+    }
+
 }

@@ -51,12 +51,13 @@ Route::group(['middleware' => ['auth']], function() {
       Route::get('userDelete/{n}', ['uses'=>'UserController@delete','as'=>'userDelete','middleware' => ['permission:user-delete']]);
       //  user profile
       Route::get('profile/{n}', ['uses'=>'UserController@profile','as'=>'profile']);
-      Route::get('ajax_git_pull', ['uses'=>'UserController@ajax_git_pull','as'=>'ajax_git_pull']);
-      Route::get('ajax_dump_autoload', ['uses'=>'UserController@ajax_dump_autoload','as'=>'ajax_dump_autoload']);
-      Route::get('ajax_env_app_debug/{n}', ['uses'=>'UserController@ajax_env_app_debug','as'=>'ajax_env_app_debug']);
       Route::post('passwordUpdate/{n}', ['uses'=>'UserController@passwordUpdate','as'=>'passwordUpdate']);
       //  AJAX
       Route::get('listOfUsersAjax', ['uses'=>'UserController@listOfUsers','as'=>'listOfUsersAjax','middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
+
+      //ProfileToolsController
+      Route::get('ajax_git_pull', ['uses'=>'ProfileToolsController@ajax_git_pull','as'=>'ajax_git_pull']);
+      Route::get('ajax_env_app_debug/{n}', ['uses'=>'ProfileToolsController@ajax_env_app_debug','as'=>'ajax_env_app_debug']);
 
       // Roles
       Route::get('roles',['as'=>'roles.index','uses'=>'RoleController@index','middleware' => ['permission:role-view|role-create|role-edit|role-delete']]);
