@@ -66,14 +66,13 @@ class OtlUploadController extends Controller
       $i = 2;
       foreach ($result as $row){
         array_push($messages,['status'=>'info','msg'=>'BEGIN LINE '.$i]);
-        $missing = 0;
         $userInDB = $this->userRepository->getByName($row['employee_name']);
         $projectInDBnum = $this->projectRepository->getByOTLnum($row['project_name'],$row['meta_activity']);
 
         // Checking if the user is in DB
         if (empty($userInDB)){
           array_push($messages,['status'=>'error','msg'=>'LINE '.$i.': User '.$row['employee_name'].' not in DB']);
-          $missing = 1;
+          continue;
         }
         else {
           array_push($messages,['status'=>'info','msg'=>'LINE '.$i.': User '.$row['employee_name'].' already in DB']);
@@ -92,9 +91,10 @@ class OtlUploadController extends Controller
         if ($projectInDBnum != 1){
           if ($num_of_month_positive > 0) {
             array_push($messages,['status'=>'error',
-              'msg'=>'LINE '.$i.': Found '.$projectInDBnum.' instance for user '.$row['employee_name'].' of </BR><div style="padding-left:5em;">Customer: '.$row['customer_name'].' </BR> OTL code: '.$row['project_name'].' </BR> META: '.$row['meta_activity'].'</div>']);
+              'msg'=>'LINE '.$i.': '.$userInDB->managers->first()->name.' - '.$row['employee_name'].
+              ' -> <b>Customer</b>: <u>'.$row['customer_name'].'</u> / <b>OTL code</b>: <u>'.$row['project_name'].'</u> / <b>META</b>: <u>'.$row['meta_activity'].'</u>']);
           }
-          $missing = 1;
+          continue;
         }
         else {
           // Only if we can find 1 instance of a mix of otl_project_code and meta-activity then we enter the activity
@@ -106,7 +106,7 @@ class OtlUploadController extends Controller
         // END check project
 
         // If User AND Project is found in DB then we can update the activities
-        if ($missing == 0 && $num_of_month_positive > 0) {
+        if ($num_of_month_positive > 0) {
           foreach ($months_in_excel as $month) {
             if ($row[$month['excel']] > 0) {
               $activity = [];
