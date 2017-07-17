@@ -36,7 +36,7 @@
               </div>
               <div class="col-md-10">
                 Download this
-                <a href="{{ asset('/Samples/otl_upload_sample.xls') }}">this file</a> to get the structure needed. The file needs to be named with the following convention:<year>-<month>.xls so for example for january 2017, you need the file 2017-1.xls
+                <a href="{{ asset('/Samples/otl_upload_sample.xls') }}">this file</a> to get the structure needed. The file needs to be named with the following convention:year.xls so for example for 2017, you need the file 2017.xls
               </div>
             </div>
           </div>
