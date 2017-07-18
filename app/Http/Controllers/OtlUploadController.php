@@ -71,11 +71,11 @@ class OtlUploadController extends Controller
 
         // Checking if the user is in DB
         if (empty($userInDB)){
-          array_push($messages,['status'=>'error','msg'=>'LINE '.$i.': User '.$row['employee_name'].' not in DB']);
+          array_push($messages,['status'=>'error','mgr'=>'','msg'=>'LINE '.$i.': User '.$row['employee_name'].' not in DB']);
           continue;
         }
         else {
-          array_push($messages,['status'=>'info','msg'=>'LINE '.$i.': User '.$row['employee_name'].' already in DB']);
+          array_push($messages,['status'=>'info','mgr'=>'','msg'=>'LINE '.$i.': User '.$row['employee_name'].' already in DB']);
         }
         // END check user
         
@@ -90,7 +90,7 @@ class OtlUploadController extends Controller
         // Checking if the project is in DB
         if ($projectInDBnum != 1){
           if ($num_of_month_positive > 0) {
-            array_push($messages,['status'=>'error',
+            array_push($messages,['status'=>'error','mgr'=>$userInDB->managers->first()->name,
               'msg'=>'LINE '.$i.': '.$userInDB->managers->first()->name.' - '.$row['employee_name'].
               ' -> <b>Customer</b>: <u>'.$row['customer_name'].'</u> / <b>OTL code</b>: <u>'.$row['project_name'].'</u> / <b>META</b>: <u>'.$row['meta_activity'].'</u>']);
           }
@@ -98,7 +98,7 @@ class OtlUploadController extends Controller
         }
         else {
           // Only if we can find 1 instance of a mix of otl_project_code and meta-activity then we enter the activity
-          array_push($messages,['status'=>'info','msg'=>'LINE '.$i.': Found '.$projectInDBnum.' instance of '.$row['project_name'].' with meta '.$row['meta_activity']]);
+          array_push($messages,['status'=>'info','mgr'=>'','msg'=>'LINE '.$i.': Found '.$projectInDBnum.' instance of '.$row['project_name'].' with meta '.$row['meta_activity']]);
           $projectInDB = $this->projectRepository->getByOTL($row['project_name'],$row['meta_activity']);
           $projectInDB->otl_validated = 1;
           $projectInDB->save();
@@ -120,20 +120,28 @@ class OtlUploadController extends Controller
               $activityInDB = $this->activityRepository->checkIfExists($activity);
               if (!$activityInDB){
                 $this->activityRepository->create($activity);
-                array_push($messages,['status'=>'add','msg'=>'LINE '.$i.': Activity '.$month['excel'].' created in DB']);
+                array_push($messages,['status'=>'add','mgr'=>'','msg'=>'LINE '.$i.': Activity '.$month['excel'].' created in DB']);
               } else {
                 $this->activityRepository->update($activityInDB->id,$activity);
-                array_push($messages,['status'=>'update','msg'=>'LINE '.$i.': Activity '.$month['excel'].' updated in DB']);
+                array_push($messages,['status'=>'update','mgr'=>'','msg'=>'LINE '.$i.': Activity '.$month['excel'].' updated in DB']);
               }
             }
           }
         }
         // END assign activities
 
-        array_push($messages,['status'=>'info','msg'=>'END LINE '.$i]);
+        array_push($messages,['status'=>'info','mgr'=>'','msg'=>'END LINE '.$i]);
         $i += 1;
       }
     }
-  return view('dataFeed/otlupload',  compact('messages','color'))->with('success','File processed');
+    $messages_only_errors = [];
+    foreach ($messages as $message){
+      if ($message['status'] == 'error') {
+        array_push($messages_only_errors,$message);
+      }
+    }
+    array_multisort(array_column($messages_only_errors, 'mgr'), SORT_ASC, $messages_only_errors);
+
+  return view('dataFeed/otlupload',  compact('messages_only_errors','messages','color'))->with('success','File processed');
   }
 }

@@ -663,7 +663,7 @@ class create_temp_table_mix_OTL_NONOTL{
             LEFT JOIN users_users AS uu ON u.id = uu.user_id
             LEFT JOIN users AS m ON m.id = uu.manager_id
             LEFT JOIN customers AS c ON c.id = p.customer_id
-            GROUP BY year,user_id,p.project_name,p.project_type,p.activity_type,p.project_status
+            GROUP BY year,user_id,c.name,p.project_name,p.project_type,p.activity_type,p.project_status
 
           )
       "));

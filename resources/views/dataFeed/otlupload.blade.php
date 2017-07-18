@@ -88,8 +88,7 @@
         <br />
           <div class="text-danger"><H2>Errors</H2></div>
           </BR>
-          @foreach($messages as $m)
-          @if($m['status'] == 'error')
+          @foreach($messages_only_errors as $m)
           <div class="row">
             <div class="col-md-1 text-danger">
               {!! $m['status'] !!}
@@ -98,7 +97,6 @@
               {!! isset($m['msg']) ? $m['msg'] : '' !!}
             </div>
           </div>
-          @endif
           @endforeach
           </BR></BR></BR>
           <div class="text-info"><H2>Full result</H2></div>
