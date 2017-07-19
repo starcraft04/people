@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ActivityCreateRequest;
 use App\Http\Requests\ActivityUpdateRequest;
 use App\Http\Requests\PasswordUpdateRequest;
+use App\Repositories\ProjectTableRepository;
 use DB;
 use Entrust;
 use Auth;
@@ -101,12 +102,17 @@ class ActivityController extends Controller {
     //$inputs['user'] = [4];
 
     $theoreticalCapacity = $this->userRepository->getTheoreticalCapacity($inputs);
+
+    $temp_table = new ProjectTableRepository('table_temp_a','table_temp_b');
+
     $dscpipeline = $this->activityRepository->getListOfLoadPerUserChart($inputs,'project_type != "Pre-sales" and activity_type = "DSC" and project_status = "Pipeline"');
     $iscpipeline = $this->activityRepository->getListOfLoadPerUserChart($inputs,'project_type != "Pre-sales" and activity_type = "ISC" and project_status = "Pipeline"');
     $dscstarted = $this->activityRepository->getListOfLoadPerUserChart($inputs,'project_type != "Pre-sales" and activity_type = "DSC" and project_status = "Started"');
     $iscstarted = $this->activityRepository->getListOfLoadPerUserChart($inputs,'project_type != "Pre-sales" and activity_type = "ISC" and project_status = "Started"');
     $orange = $this->activityRepository->getListOfLoadPerUserChart($inputs,'project_type = "Orange absence or other"');
     $presales = $this->activityRepository->getListOfLoadPerUserChart($inputs,'project_type = "Pre-sales"');
+
+    unset($temp_table);
 
     $data = [];
 
