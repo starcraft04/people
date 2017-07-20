@@ -320,7 +320,7 @@
                     <div class="col-md-9">
                       <select class="form-control select2" style="width: 100%;" id="country" name="country" data-placeholder="Select a country">
                         <option value="" ></option>
-                        @foreach(config('select.country') as $key => $value)
+                        @foreach(config('countries.country') as $key => $value)
                         <option value="{{ $key }}"
                           @if (old('country') == $key) selected
                           @elseif (isset($project->country) && $value == $project->country) selected

@@ -1,5 +1,20 @@
 @extends('layouts.app')
 
+@section('style')
+    <!-- CSS -->
+    <!-- Select2 -->
+    <link href="{{ asset('/plugins/select2/select2.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('/css/forms.css') }}" rel="stylesheet" />
+
+@stop
+
+@section('scriptsrc')
+    <!-- JS -->
+    <!-- Select2 -->
+    <script src="{{ asset('/plugins/select2/select2.full.min.js') }}" type="text/javascript"></script>
+
+@stop
+
 @section('content')
 <!-- Page title -->
 <div class="page-title">
@@ -162,7 +177,17 @@
               {!! Form::label('country', 'Country', ['class' => 'control-label']) !!}
             </div>
             <div class="col-md-9">
-              {!! Form::select('country', config('select.country'), (isset($project)) ? $project->country : '', ['class' => 'form-control']) !!}
+              <select class="form-control select2" style="width: 100%;" id="country" name="country" data-placeholder="Select a country">
+                <option value="" ></option>
+                @foreach(config('countries.country') as $key => $value)
+                <option value="{{ $key }}"
+                  @if (old('country') == $key) selected
+                  @elseif (isset($project->country) && $value == $project->country) selected
+                  @endif>
+                  {{ $value }}
+                </option>
+                @endforeach
+              </select>
               {!! $errors->first('country', '<small class="help-block">:message</small>') !!}
             </div>
           </div>
@@ -354,5 +379,17 @@
   </div>
 </div>
 <!-- Window -->
+
+@stop
+
+@section('script')
+
+<script>
+$(document).ready(function() {
+    $("#country").select2({
+    allowClear: true
+  });
+});
+</script>
 
 @stop

@@ -4,6 +4,7 @@
     <!-- CSS -->
     <!-- Select2 -->
     <link href="{{ asset('/plugins/select2/select2.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('/css/forms.css') }}" rel="stylesheet" />
 
 @stop
 
@@ -154,15 +155,25 @@
           </div>
 
           <div class="row">
-              <div class="form-group {!! $errors->has('country') ? 'has-error' : '' !!} col-md-12">
-                  <div class="col-md-2">
-                      {!! Form::label('country', 'Country', ['class' => 'control-label']) !!}
-                  </div>
-                  <div class="col-md-10">
-                      {!! Form::select('country', config('select.country'), (isset($user)) ? $user->country : '', ['class' => 'form-control']) !!}
-                      {!! $errors->first('country', '<small class="help-block">:message</small>') !!}
-                  </div>
+            <div class="form-group {!! $errors->has('country') ? 'has-error' : '' !!} col-md-12">
+              <div class="col-md-2">
+                  {!! Form::label('country', 'Country', ['class' => 'control-label']) !!}
               </div>
+              <div class="col-md-10">
+                <select class="form-control select2" style="width: 100%;" id="country" name="country" data-placeholder="Select a country">
+                <option value="" ></option>
+                @foreach(config('countries.country') as $key => $value)
+                <option value="{{ $key }}"
+                    @if (old('country') == $key) selected
+                    @elseif (isset($user->country) && $value == $user->country) selected
+                    @endif>
+                    {{ $value }}
+                </option>
+                @endforeach
+                </select>
+                {!! $errors->first('country', '<small class="help-block">:message</small>') !!}
+              </div>
+            </div>
           </div>
 
           <div class="row">
@@ -258,6 +269,10 @@ $(document).ready(function() {
   $("#roles").select2({
     allowClear: true,
     disabled: {{ $role_select_disabled }}
+  });
+
+  $("#country").select2({
+    allowClear: true
   });
 
 

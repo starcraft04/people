@@ -9,13 +9,6 @@ return [
     'region' => [
         'Europe' => 'Europe'
     ],
-    'country' => [
-        'Belgium' => 'Belgium',
-        'The Netherlands' => 'The Netherlands',
-        'United Kingdom' => 'United Kingdom',
-        'Switzerland' => 'Switzerland',
-        'Germany' => 'Germany'
-    ],
     'job_role' => [
         'DSC' => 'DSC',
         'ISC' => 'ISC',
