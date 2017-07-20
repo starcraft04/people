@@ -224,7 +224,7 @@
                   <option value="{{ $key }}" 
                   @if(isset($defaultRole) && $value == $defaultRole)
                   selected
-                  @elseif(in_array($key,$userRole))
+                  @elseif(isset($userRole) && in_array($key,$userRole))
                   selected
                   @endif>
                   {{ $value }}

@@ -124,8 +124,6 @@ class UserController extends Controller {
 	{
     // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
     $result = new \stdClass();
-    $result->result = 'success';
-    $result->msg = 'Record deleted successfully';
 
     // First we need to verify that we don't try to delete ourselve.
     if (Auth::user()->id == $id){
@@ -134,11 +132,35 @@ class UserController extends Controller {
       return json_encode($result);
     }
 
-    $user = $this->userRepository->destroy($id);
-    if (isset($user['status'])){
-      $result->result = 'error';
-      $result->msg = $user['msg'];
-    }
+    $user = User::find($id);
+
+    if (count($user->employees)){
+			$result->result = 'error';
+			$result->msg = 'Record cannot be deleted because some employees are associated to it.';
+			return json_encode($result);
+		}
+
+    if (count($user->activities)){
+			$result->result = 'error';
+			$result->msg = 'Record cannot be deleted because some activities are associated to it.';
+			return json_encode($result);
+		}
+
+
+    $projects = $user->projects;
+    if (count($projects)){
+      foreach ($projects as $project) {
+        $project->created_by_user_id = 1;
+        $project->save();
+      }
+		}
+
+    $user->managers()->detach();
+
+    User::destroy($id);
+
+    $result->result = 'success';
+    $result->msg = 'Record deleted successfully';
 
 		return json_encode($result);
 	}

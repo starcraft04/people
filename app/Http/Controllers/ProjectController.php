@@ -69,6 +69,7 @@ class ProjectController extends Controller {
 	{
     // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
     $result = new \stdClass();
+    
     if(count(Project::find($id)->activities) > 0){
 			$result->result = 'error';
 			$result->msg = 'Record cannot be deleted because some activities are associated to it.';

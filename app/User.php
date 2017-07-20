@@ -36,7 +36,7 @@ class User extends Authenticatable
 
     public function projects()
     {
-        return $this->hasMany('App\Project', 'project' , 'created_by_user_id', 'id');
+        return $this->hasMany('App\Project', 'created_by_user_id');
     }
 
     public function update_password($password,$toDB = false)
