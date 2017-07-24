@@ -79,8 +79,6 @@
                 <thead>
                     <tr>
                       <th>ID</th>
-                      <th>Manager name</th>
-                      <th>Employee name</th>
                       <th>Customer name</th>
                       <th>Project name</th>
                       <th>OTL project code</th>
@@ -107,8 +105,6 @@
                 </thead>
                 <tfoot>
                     <tr>
-                      <th></th>
-                      <th></th>
                       <th></th>
                       <th></th>
                       <th></th>
@@ -167,8 +163,6 @@
                     },
                 columns: [
                     { name: 'projects.id', data: 'id', searchable: false , visible: false },
-                    { name: 'u2.name', data: 'manager_name' },
-                    { name: 'users.name', data: 'name' },
                     { name: 'customers.name', data: 'customer_name' },
                     { name: 'projects.project_name', data: 'project_name' },
                     { name: 'projects.otl_project_code', data: 'otl_project_code' },
