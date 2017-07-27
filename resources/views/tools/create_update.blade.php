@@ -513,6 +513,7 @@
               </div>
               <div class="ln_solid"></div>
               <div id="all_comments">
+              @if($action == 'update')
               @foreach ($comments as $comment)
                 <div class="panel panel-default">
                   <div class="panel-heading">
@@ -527,6 +528,7 @@
                   </div>
                 </div>
               @endforeach
+              @endif
               </div>
             </div>
           </div>
@@ -540,7 +542,7 @@
 </div>
 <!-- Window -->
 
-
+@if($action == 'update')
 <!-- Modal -->
 <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -585,7 +587,7 @@
     </div>
 </div>
 <!-- Modal -->
-
+@endif
 @stop
 
 @section('script')
@@ -828,6 +830,8 @@ $(document).ready(function() {
       });
   });
 
+  @if($action == 'update')
+
   $(document).on('click', '.comment_edit', function () {
     comment_id = this.id;
     $.ajax({
@@ -975,6 +979,8 @@ $(document).ready(function() {
       }
     });
   } );
+
+  @endif
 
 });
 </script>

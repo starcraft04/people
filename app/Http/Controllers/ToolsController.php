@@ -175,6 +175,8 @@ class ToolsController extends Controller {
     $customers_list->prepend('', '');
     //dd($customers_list);
 
+    $num_of_comments = 0;
+
 		return view('tools/create_update', compact('year','customers_list',
       'user_list','user_selected','created_by_user_id',
       'project_name_disabled',
@@ -200,7 +202,8 @@ class ToolsController extends Controller {
       'product_code_disabled',
       'revenue_disabled',
       'win_ratio_disabled',
-      'show_change_button'
+      'show_change_button',
+      'num_of_comments'
       ))
       ->with('action','create');
 	}
