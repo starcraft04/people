@@ -518,7 +518,7 @@
                 <div class="panel panel-default">
                   <div class="panel-heading">
                     {{$comment->user->name}} said <small class="text-primary">{{$comment->updated_at->diffForHumans()}}</small>
-                    @if($comment->user_id == Auth::user()->id)
+                    @if($comment->user_id == Auth::user()->id || Auth::user()->id == 1)
                     <a id="{{ $comment->id }}" class="pull-right comment_edit"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
                     <a id="{{ $comment->id }}" style="margin-right: 10px;" class="pull-right comment_delete"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></a>
                     @endif
