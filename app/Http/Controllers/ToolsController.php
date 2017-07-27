@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Role;
 use App\Customer;
+use App\Comment;
 use App\Http\Controllers\Controller;
 use DB;
 use Entrust;
@@ -230,6 +231,16 @@ class ToolsController extends Controller {
       }
     }
 
+    // Here I will test if there is a comment
+    if (!empty($inputs['project_comment'])) {
+      $comment_input = [
+        'user_id' => Auth::user()->id,
+        'project_id' => $project->id,
+        'comment' => $inputs['project_comment']
+      ];
+      $comment = Comment::create($comment_input);
+    }
+
     if (!empty(Session::get('url'))){
       $redirect = Session::get('url');
     } else {
@@ -399,6 +410,9 @@ class ToolsController extends Controller {
       $show_change_button = true;
     }
 
+    $comments = Comment::where('project_id','=',$project_id)->orderBy('updated_at','desc')->get();
+    $num_of_comments = count($comments);
+
 		return view('tools/create_update', compact('user_id','project','year','activities','from_otl','forecast','otl','loe_list','show_change_button','customers_list',
     'project_name_disabled',
     'customer_id_select_disabled',
@@ -424,12 +438,13 @@ class ToolsController extends Controller {
     'revenue_disabled',
     'win_ratio_disabled',
     'show_change_button',
-      'user_list','user_selected','user_select_disabled','created_by_user_name'))
+    'num_of_comments','comments','user_list','user_selected','user_select_disabled','created_by_user_name'))
       ->with('action','update');
 	}
 
 	public function postFormUpdate(ProjectUpdateRequest $request)
 	{
+
     if (!empty(Session::get('url'))){
       $redirect = Session::get('url');
     } else {
@@ -482,6 +497,16 @@ class ToolsController extends Controller {
         $inputs_new['from_otl'] = 0;
         $activity = $this->activityRepository->createOrUpdate($inputs_new);
       }
+    }
+
+    // Here I will test if there is a comment
+    if (!empty($inputs['project_comment'])) {
+      $comment_input = [
+        'user_id' => Auth::user()->id,
+        'project_id' => $project->id,
+        'comment' => $inputs['project_comment']
+      ];
+      $comment = Comment::create($comment_input);
     }
 
     return redirect($redirect)->with('success','Project updated successfully');

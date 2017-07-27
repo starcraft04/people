@@ -120,6 +120,12 @@ Route::group(['middleware' => ['auth']], function() {
       Route::get('listOfActivitiesAjax', ['uses'=>'ActivityController@listOfActivities','as'=>'listOfActivitiesAjax','middleware'
                     => ['permission:activity-view|activity-create|activity-edit|activity-delete']]);
 
+      //Comment
+      Route::get('comment/{id}', ['uses'=>'CommentController@show','as'=>'comment_show','middleware' => ['permission:tools-activity-new|tools-activity-edit']]);
+      Route::get('comments/{project_id}', ['uses'=>'CommentController@list','as'=>'comment_list','middleware' => ['permission:tools-activity-new|tools-activity-edit']]);
+      Route::post('comment/edit/{id}', ['uses'=>'CommentController@edit','as'=>'comment_edit','middleware' => ['permission:tools-activity-new|tools-activity-edit']]);
+      Route::get('comment/delete/{id}', ['uses'=>'CommentController@delete','as'=>'comment_delete','middleware' => ['permission:tools-activity-new|tools-activity-edit']]);
+
       //Tools
       Route::get('toolsActivities', ['uses'=>'ToolsController@activities','as'=>'toolsActivities','middleware' => ['permission:tools-activity-view']]);
       Route::get('toolsProjectsAll', ['uses'=>'ToolsController@projectsAll','as'=>'projectsAll','middleware' => ['permission:tools-all_projects-view']]);
