@@ -11,6 +11,9 @@
 |
 */
 
+//Help section
+Route::get('help', ['as' => 'help', 'uses' => 'GeneralController@help']);
+
 
 //Auth
 // Authentication Routes...

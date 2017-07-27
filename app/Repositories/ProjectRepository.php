@@ -224,7 +224,7 @@ class ProjectRepository
     **/
 
     $projectList = $this->project
-      ->select( 'u2.name AS manager_name','users.name','projects.id','customers.name AS customer_name','projects.project_name','projects.otl_project_code','projects.project_type',
+      ->select( 'projects.id','customers.name AS customer_name','projects.project_name','projects.otl_project_code','projects.project_type',
                 'projects.activity_type','projects.project_status','projects.meta_activity','projects.region',
                 'projects.country','projects.technology','projects.description','projects.estimated_start_date','projects.estimated_end_date',
                 'projects.comments','projects.LoE_onshore','projects.LoE_nearshore',
@@ -234,7 +234,7 @@ class ProjectRepository
     $projectList->leftjoin('users_users', 'users.id', '=', 'users_users.user_id');
     $projectList->leftjoin('users AS u2', 'u2.id', '=', 'users_users.manager_id');
     $projectList->leftjoin('customers','projects.customer_id','=','customers.id');
-    $projectList->groupBy('users.name','projects.id');
+    $projectList->groupBy('projects.id');
 
     $data = Datatables::of($projectList)->make(true);
     return $data;
