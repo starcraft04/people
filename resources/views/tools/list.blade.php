@@ -122,6 +122,7 @@
       <!-- Window title -->
       <div class="x_title">
         <h2>List (activities in days)</small></h2>
+        <button id="legendButton" class="btn btn-success btn-sm" style="margin-left: 10px;">legend</button>
         <ul class="nav navbar-right panel_toolbox">
           <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
         </ul>
@@ -226,6 +227,50 @@
   </div>
 </div>
 <!-- Window -->
+
+<!-- Modal -->
+<div class="modal fade" id="legendModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+          <!-- Modal Header -->
+          <div class="modal-header">
+              <button type="button" class="close" 
+                  data-dismiss="modal">
+                      <span aria-hidden="true">&times;</span>
+                      <span class="sr-only">Close</span>
+              </button>
+              <h4 class="modal-title" id="myModalLabel">
+                  Legend
+              </h4>
+          </div>
+            
+          <!-- Modal Body -->
+          <div class="modal-body">
+              
+                <table class="table borderless">
+                  <thead>
+                    <th>Color</th><th>Meaning</th>
+                  </thead>
+                  <tbody>
+                    <tr><td style="color: green;">Green</td><td>Validated by OTL</td></tr>
+                    <tr><td style="color: blue;">Blue</td><td>Forecast entered by consultant</td></tr>
+                  </tbody>
+                </table>
+              
+          </div>
+            
+          <!-- Modal Footer -->
+          <div class="modal-footer">
+              <button type="button" class="btn btn-default"
+                      data-dismiss="modal">
+                          Close
+              </button>
+          </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+
   @stop
 
   @section('script')
@@ -527,6 +572,10 @@
       window.location.href = "{!! route('toolsFormCreate',['']) !!}/"+year[0];
     });
     @endpermission
+
+    $(document).on('click', '#legendButton', function () {
+    $('#legendModal').modal();
+  });
 
   } );
   </script>

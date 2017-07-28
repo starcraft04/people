@@ -58,6 +58,7 @@
       <!-- Window title -->
       <div class="x_title">
         <h2>Tools</small></h2>
+        <button id="legendButton" class="btn btn-success btn-sm" style="margin-left: 10px;">legend</button>
         <ul class="nav navbar-right panel_toolbox">
           <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
         </ul>
@@ -177,6 +178,50 @@
             </table>
       </div>
 <!-- Window content -->
+
+<!-- Modal -->
+<div class="modal fade" id="legendModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+          <!-- Modal Header -->
+          <div class="modal-header">
+              <button type="button" class="close" 
+                  data-dismiss="modal">
+                      <span aria-hidden="true">&times;</span>
+                      <span class="sr-only">Close</span>
+              </button>
+              <h4 class="modal-title" id="myModalLabel">
+                  Legend
+              </h4>
+          </div>
+            
+          <!-- Modal Body -->
+          <div class="modal-body">
+            We take 22 days as a base for the number of working days in a month (average)
+              
+                <table class="table borderless">
+                  <thead>
+                    <th>Color</th><th>Meaning</th>
+                  </thead>
+                  <tbody>
+                    <tr><td style="color: blue;">Blue</td><td>days smaller or equal to 22</td></tr>
+                    <tr><td style="color: red;">Red</td><td>days greater than 22</td></tr>
+                  </tbody>
+                </table>
+              
+          </div>
+            
+          <!-- Modal Footer -->
+          <div class="modal-footer">
+              <button type="button" class="btn btn-default"
+                      data-dismiss="modal">
+                          Close
+              </button>
+          </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
 
       </div>
     </div>
@@ -437,6 +482,10 @@
         assign_color(row,data.dec_com,'dec_com',{{ config('options.time_trak')['days_in_month'] }});
       }
     });
+
+    $(document).on('click', '#legendButton', function () {
+    $('#legendModal').modal();
+  });
 
   } );
   </script>
