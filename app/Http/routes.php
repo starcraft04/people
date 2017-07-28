@@ -122,7 +122,7 @@ Route::group(['middleware' => ['auth']], function() {
 
       //Comment
       Route::get('comment/{id}', ['uses'=>'CommentController@show','as'=>'comment_show','middleware' => ['permission:tools-activity-new|tools-activity-edit']]);
-      Route::get('comments/{project_id}', ['uses'=>'CommentController@list','as'=>'comment_list','middleware' => ['permission:tools-activity-new|tools-activity-edit']]);
+      Route::get('comments/{project_id}', ['uses'=>'CommentController@getList','as'=>'comment_list','middleware' => ['permission:tools-activity-new|tools-activity-edit']]);
       Route::post('comment/edit/{id}', ['uses'=>'CommentController@edit','as'=>'comment_edit','middleware' => ['permission:tools-activity-new|tools-activity-edit']]);
       Route::get('comment/delete/{id}', ['uses'=>'CommentController@delete','as'=>'comment_delete','middleware' => ['permission:tools-activity-new|tools-activity-edit']]);
 

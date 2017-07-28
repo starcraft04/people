@@ -22,7 +22,7 @@ class CommentController extends Controller {
         }
     }
 
-    public function list($project_id)
+    public function getList($project_id)
     {
         // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
         $result = new \stdClass();
