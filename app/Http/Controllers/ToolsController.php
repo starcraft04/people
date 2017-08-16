@@ -158,7 +158,7 @@ class ToolsController extends Controller {
     $created_by_user_id = Auth::user()->id;
 
     if (Entrust::can('tools-activity-all-view')){
-      $user_list = $this->userRepository->getAllUsersListNoManagers();
+      $user_list = $this->userRepository->getAllUsersList();
       $user_select_disabled = 'false';
     }
     elseif (Auth::user()->is_manager == 1) {
@@ -323,7 +323,7 @@ class ToolsController extends Controller {
     // Here we will define if we can select a user for this project and activity or not
     // Attention, we need to prevent in the user_list to have ids when already assigned to a project
     if (Entrust::can('tools-activity-all-edit')){
-      $user_list_temp = $this->userRepository->getAllUsersListNoManagers();
+      $user_list_temp = $this->userRepository->getAllUsersList();
 
       if ($user_id == '0') {
         foreach ($user_list_temp as $key => $value){
