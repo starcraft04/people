@@ -153,7 +153,7 @@
                 @if($action == 'create')
                 @for($i = 1; $i <= 12; $i++)
                 <div class="form-group {!! $errors->has('month['.$i.']') ? 'has-error' : '' !!} col-md-1">
-                  {!! Form::label('month['.$i.']', config('select.month_names')[$i].' *', ['class' => 'control-label']) !!}
+                  {!! Form::label('month['.$i.']', config('select.month_names')[$i], ['class' => 'control-label']) !!}
                   {!! Form::text('month['.$i.']',0, ['class' => 'form-control', 'placeholder' => config('select.month_names')[$i]]) !!}
                   {!! $errors->first('month['.$i.']', '<small class="help-block">:message</small>') !!}
                 </div>
@@ -161,7 +161,7 @@
                 @elseif($action == 'update')
                 @for($i = 1; $i <= 12; $i++)
                 <div class="form-group {!! $errors->has('month['.$i.']') ? 'has-error' : '' !!} col-md-1">
-                  {!! Form::label('month['.$i.']', config('select.month_names')[$i].' *', ['class' => 'control-label']) !!}
+                  {!! Form::label('month['.$i.']', config('select.month_names')[$i], ['class' => 'control-label']) !!}
                   {!! Form::text('month['.$i.']',isset($activities[$i]) ? $activities[$i] : 0, ['class' => 'form-control', 'placeholder' => config('select.month_names')[$i],!empty($from_otl[$i]) ? 'disabled' : '']) !!}
                   {!! $errors->first('month['.$i.']', '<small class="help-block">:message</small>') !!}
                 </div>
