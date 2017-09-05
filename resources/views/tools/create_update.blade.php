@@ -23,6 +23,8 @@
 <script src="{{ asset('/plugins/gentelella/vendors/switchery/dist/switchery.min.js') }}" type="text/javascript"></script>
 <!-- Bootbox -->
 <script src="{{ asset('/plugins/bootbox/bootbox.min.js') }}"></script>
+<!-- Balloon -->
+<script src="{{ asset('/plugins/balloon/jquery.balloon.min.js') }}" type="text/javascript"></script>
 @stop
 
 @section('content')
@@ -175,10 +177,22 @@
                   <div class="row">
                     <div class="form-group {!! $errors->has('project_name') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
-                        {!! Form::label('project_name', 'Project name', ['class' => 'control-label']) !!}
+                        {!! Form::label('project_name', 'Project name *', ['class' => 'control-label']) !!}
                       </div>
                       <div class="col-md-9">
-                        {!! Form::text('project_name', (isset($project->project_name)) ? $project->project_name : '', ['class' => 'form-control', 'placeholder' => 'project name',$project_name_disabled]) !!}
+                        {!! Form::text('project_name', (isset($project->project_name)) ? $project->project_name : '', 
+                        ['class' => 'form-control mandatory', 
+                        'placeholder' => 'project name',
+                        'title' => "<p>The only mandatory fields to save the project have a * next to them and are:</BR>
+                                      <ul>
+                                        <li>Project name</li>
+                                        <li>Customer name</li>
+                                        <li>Each month (leave 0 if you don't know yet or if nothing to be entered for a specific month.</li>
+                                      </ul>
+                                    </p>
+                                    ",
+                        $project_name_disabled
+                        ]) !!}
                         {!! $errors->first('project_name', '<small class="help-block">:message</small>') !!}
                       </div>
                     </div>
@@ -186,7 +200,7 @@
                   <div class="row">
                     <div class="form-group {!! $errors->has('customer_id') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
-                        {!! Form::label('customer_id', 'Customer name', ['class' => 'control-label']) !!}
+                        {!! Form::label('customer_id', 'Customer name *', ['class' => 'control-label']) !!}
                       </div>
                       <div class="col-md-9">
                         <select class="form-control select2" style="width: 100%;" id="customer_id" name="customer_id" data-placeholder="Select a customer name">
@@ -210,7 +224,18 @@
                         <a id="help_otl" href="#">(?)</a>
                       </div>
                       <div class="col-md-9">
-                        {!! Form::text('otl_project_code', (isset($project->otl_project_code)) ? $project->otl_project_code : '', ['class' => 'form-control', 'placeholder' => 'OTL project code',$otl_name_disabled]) !!}
+                        {!! Form::text('otl_project_code', (isset($project->otl_project_code)) ? $project->otl_project_code : '', 
+                        ['class' => 'form-control OTL_code', 
+                        'placeholder' => 'OTL project code',
+                        'title' => "<p>This field is NOT mandatory.</BR>
+                                    If you do not know the OTL code yet, then do not enter the OTL code nor the Meta-activity.</BR>
+                                    You can come back later to edit it when you will have the right OTL code.</BR>
+                                    But if you enter either the OTL code or the Meta-activity, then you will need to fill in the other one too.</BR></p>
+                                    <p>Also, keep in mind that the OTL data is fetched every month in this tool for the existing OTL code </BR>
+                                    so if you enter the OTL code, you will need to wait the 5th of the month to see the values.</p>
+                                    ",
+                        $otl_name_disabled]
+                        ) !!}
                         {!! $errors->first('otl_project_code', '<small class="help-block">:message</small>') !!}
                       </div>
                     </div>
@@ -597,6 +622,23 @@
 var year;
 
 $(document).ready(function() {
+
+  $('.OTL_code,.mandatory').balloon({ 
+    position: "right",
+    tipSize: 24,
+    html: true,
+    css: {
+      border: 'solid 4px #5baec0',
+      padding: '10px',
+      fontSize: '100%',
+      fontWeight: 'bold',
+      lineHeight: '2',
+      backgroundColor: '#666',
+      color: '#fff'
+    } 
+  });
+
+
 
   if($( "#project_type option:selected" ).text() == "Baseline"){
     $('#revenue_text').text("MRC (k€)");

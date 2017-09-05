@@ -476,21 +476,21 @@
           extend: "csv",
           className: "btn-sm",
           exportOptions: {
-              columns: [ 1, 3, 4, 6, 7, 8, 9, 10, 12, 14, 16,18,20,22,24,26,28,30,32 ]
+              columns: ':visible'
           }
         },
         {
           extend: "excel",
           className: "btn-sm",
           exportOptions: {
-              columns: [ 1, 3, 4, 6, 7, 8, 9, 10, 12, 14, 16,18,20,22,24,26,28,30,32 ]
+              columns: ':visible'
           }
         },
         {
           extend: "print",
           className: "btn-sm",
           exportOptions: {
-              columns: [ 1, 3, 4, 6, 7, 8, 9, 10, 12, 14, 16,18,20,22,24,26,28,30,32 ]
+              columns: ':visible'
           }
         },
       ],

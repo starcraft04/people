@@ -116,8 +116,8 @@
 
       </div>
     </div>
-    
-    <!-- All script sources -->
+
+<!-- All script sources -->
     <!-- jQuery -->
     <script src="{{ asset('/plugins/gentelella/vendors/jquery/dist/jquery.min.js') }}" type="text/javascript"></script>
     <!-- Bootstrap -->
@@ -135,27 +135,26 @@
     <!-- All scripts -->
     @yield('script')
     <script>
+      $(document).ready(function() {
 
-    $(document).ready(function() {
+        @if ($message = Session::get('success'))
+        $('#flash-success').delay(2000).queue(function () {
+            $(this).addClass('animated flipOutX')
+        });
+        @endif
+        @if ($message = Session::get('error'))
+        $('#flash-error').delay(2000).queue(function () {
+            $(this).addClass('animated flipOutX')
+        });
+        @endif
 
-      @if ($message = Session::get('success'))
-      $('#flash-success').delay(2000).queue(function () {
-          $(this).addClass('animated flipOutX')
+        $('#logout').on('click', function () {
+            Cookies.remove('year');
+            Cookies.remove('manager');
+            Cookies.remove('user');
+            window.location.href = "{{ route('auth.logout') }}";
+        });
       });
-      @endif
-      @if ($message = Session::get('error'))
-      $('#flash-error').delay(2000).queue(function () {
-          $(this).addClass('animated flipOutX')
-      });
-      @endif
-
-      $('#logout').on('click', function () {
-          Cookies.remove('year');
-          Cookies.remove('manager');
-          Cookies.remove('user');
-          window.location.href = "{{ route('auth.logout') }}";
-      });
-    });
     </script>
     <!-- END All scripts -->
 
