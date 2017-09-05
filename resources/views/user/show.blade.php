@@ -26,9 +26,60 @@
       <!-- Window title -->
 
       <!-- Window content -->
-      <div class="x_content">
+      <div class="x_content" align="center">
         <br />
-        <p>{!! $user->name !!}</p>
+        <h2><p align="center" > {!! $user->name !!}</p></h2>
+      
+
+        <div class="row" style="width: 70%;" align="left">
+
+          <div class="col-sm-12" style="background-color:lavender;">
+          <p> <b> Manager Name: </b> {!! $manager[0]->name !!}</p>
+          </div>
+
+          <div class="col-sm-12" style="background-color:lavenderblush;">
+          <p> <b>Email:</b>  {!! $user->email !!}</p>
+          </div>
+          <div class="col-sm-12" style="background-color:lavender;">
+          <p> <b>Type: </b> {!! $user->employee_type !!}</p>
+          </div>
+
+          <div class="col-sm-12" style="background-color:lavenderblush;">
+          <p> <b>Team:</b>  {!! $user->job_role !!}</p>
+          </div>
+          <div class="col-sm-12" style="background-color:lavender;">
+          <p> <b>Region:</b>  {!! $user->region !!}</p>
+          </div>
+
+          <div class="col-sm-12" style="background-color:lavenderblush;">
+          <p> <b>Country:</b>  {!! $user->country !!}</p>
+          </div>
+          <div class="col-sm-12" style="background-color:lavender;">
+          <p> <b>Managed clusters:</b>
+            @if(!empty($userCluster))
+               @foreach($userCluster as $cluster)
+                
+                 {{ $cluster }} , 
+
+               @endforeach
+            @else
+      
+              None.
+
+            @endif
+          </p>
+          </div>
+
+          <div class="col-sm-12" style="background-color:lavenderblush;">
+          <p> <b>Domain: </b> {!! $user->domain !!}</p>
+          </div>
+          <div class="col-sm-12" style="background-color:lavender;">
+          <p> <b>Management code:</b>  {!! $user->management_code !!}</p>
+          </div>
+
+
+        </div>
+
       </div>
       <!-- Window content -->
 

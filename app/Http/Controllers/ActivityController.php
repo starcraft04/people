@@ -38,7 +38,9 @@ class ActivityController extends Controller {
 	public function show($id)
 	{
     $activity = $this->activityRepository->getById($id);
-		return view('activity/show',  compact('activity'));
+    $allUsers_list = $this->userRepository->getAllUsersList();
+    $allProjects_list = $this->projectRepository->getAllProjectsList();
+		return view('activity/show',  compact('activity','allUsers_list','allProjects_list'));
 	}
 
 	public function getFormCreate()

@@ -177,6 +177,28 @@
           </div>
 
           <div class="row">
+            <div class="form-group {!! $errors->has('managed_cluster') ? 'has-error' : '' !!} col-md-12">
+              <div class="col-md-2">
+                {!! Form::label('managed_cluster', 'Managed Clusters', ['class' => 'control-label']) !!}
+              </div>
+              <div class="col-md-10">
+                <select class="form-control select2" style="width: 100%;" id="managed_cluster" name="managed_cluster[]" data-placeholder="Select a Cluster"  multiple="multiple">
+                  <option value="" ></option>
+                  @foreach($clusters as $key => $value)
+                  <option value="{{ $key }}" 
+                  @if (old('managed_cluster') == $key) selected
+                  @elseif(isset($userCluster) && in_array($key,$userCluster)) selected
+                  @endif>
+                  {{ $value }}
+                  </option>
+                  @endforeach
+                </select>
+                {!! $errors->first('managed_cluster', '<small class="help-block">:message</small>') !!}
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
               <div class="form-group {!! $errors->has('domain') ? 'has-error' : '' !!} col-md-12">
                   <div class="col-md-2">
                       {!! Form::label('domain', 'Domain', ['class' => 'control-label']) !!}
@@ -214,10 +236,10 @@
 
           <div class="row">
             <div class="form-group {!! $errors->has('roles') ? 'has-error' : '' !!} col-md-12">
-              <div class="col-md-1">
+              <div class="col-md-2">
                 {!! Form::label('roles', 'Roles', ['class' => 'control-label']) !!}
               </div>
-              <div class="col-md-11">
+              <div class="col-md-10">
                 <select class="form-control select2" style="width: 100%;" id="roles" name="roles[]" data-placeholder="Select a role"  multiple="multiple">
                   <option value="" ></option>
                   @foreach($roles as $key => $value)
@@ -235,6 +257,8 @@
               </div>
             </div>
           </div>
+
+          
 
           <div class="row">
               <div class="col-md-offset-11 col-md-1">
@@ -272,6 +296,10 @@ $(document).ready(function() {
   });
 
   $("#country").select2({
+    allowClear: true
+  });
+
+  $("#managed_cluster").select2({
     allowClear: true
   });
 

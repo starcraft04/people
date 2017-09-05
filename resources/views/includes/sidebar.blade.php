@@ -36,6 +36,9 @@
           @permission(['project-view','project-edit','project-create','project-delete'])
           <li><a href="{!!route('customerList')!!}">Customers list</a></li>
           @endpermission
+          @permission(['user-view','user-edit','user-create','user-delete'])
+          <li><a href="{!!route('clusterList')!!}">Cluster list</a></li>
+          @endpermission
         </ul>
       </li>
     </ul>

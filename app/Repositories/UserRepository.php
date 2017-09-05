@@ -91,6 +91,20 @@ class UserRepository
       DB::table('role_user')->where('user_id',$user->id)->delete();
     }
 
+    // Now we need to save the clusters
+    if (isset($inputs['managed_cluster'])) {
+      //DB::table('cluster_user')->where('user_id',$user->id)->delete();
+      $user->clusters()->detach();
+      foreach ($inputs['managed_cluster'] as $key => $value) {
+        $user->clusters()->attach($value);
+      }
+    }
+    else {
+      //DB::table('cluster_user')->where('user_id',$user->id)->delete();
+      $user->clusters()->detach();
+    }
+
+
     return $user;
   }
 

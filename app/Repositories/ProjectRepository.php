@@ -23,6 +23,13 @@ class ProjectRepository
 		return $this->project->findOrFail($id);
 	}
 
+  public function getProjectCustomer($id)
+  {
+    $data = $this->project->findOrFail($id)->customer()->select('name')->get();
+    return $data;
+  }
+
+
   public function getByOTL($otl_project_code,$meta_activity)
 	{
 		return $this->project->where('otl_project_code', $otl_project_code)->where('meta_activity', $meta_activity)->first();

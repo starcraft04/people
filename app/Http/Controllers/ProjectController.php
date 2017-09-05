@@ -32,7 +32,8 @@ class ProjectController extends Controller {
 	public function show($id)
 	{
     $project = $this->projectRepository->getById($id);
-		return view('project/show',  compact('project'));
+    $customer = $this->projectRepository->getProjectCustomer($id);
+		return view('project/show',  compact('project','customer'));
 	}
 
 	public function getFormCreate()

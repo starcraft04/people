@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\User;
 use App\Role;
+use App\Cluster;
 use App\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserCreateRequest;
@@ -31,7 +32,9 @@ class UserController extends Controller {
 	public function show($id)
 	{
     $user = User::find($id);
-		return view('user/show',  compact('user'));
+    $manager = $this->userRepository->getMyManagersList($id);
+    $userCluster = $user->clusters->lists('name')->toArray();
+		return view('user/show',  compact('user','manager','userCluster'));
 	}
 
   public function profile($id)
@@ -74,7 +77,10 @@ class UserController extends Controller {
     $manager_list = User::orderBy('name')->where('is_manager','1')->lists('name','id');
     $manager_list->prepend('', '');
 
-		return view('user/create_update', compact('manager_list','roles','role_select_disabled','defaultRole'))->with('action','create');
+
+    $clusters = Cluster::lists('name','id');
+
+		return view('user/create_update', compact('manager_list','clusters','roles','role_select_disabled','defaultRole'))->with('action','create');
 	}
 
 	public function getFormUpdate($id)
@@ -102,8 +108,13 @@ class UserController extends Controller {
     $user = $this->userRepository->getById($id);
     $manager = $this->userRepository->getMyManagersList($id);
 
+
+    $clusters = Cluster::lists('name','id');
+    $userCluster = $user->clusters->lists('id')->toArray();
+    //dd($userCluster);
+
 		//\Debugbar::info($manager_list);
-		return view('user/create_update', compact('manager_list','user','manager','roles','userRole','role_select_disabled'))->with('action','update');
+		return view('user/create_update', compact('manager_list','user','manager','roles','userRole','clusters','userCluster','role_select_disabled'))->with('action','update');
 	}
 
   public function postFormCreate(UserCreateRequest $request)

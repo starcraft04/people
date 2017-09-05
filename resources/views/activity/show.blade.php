@@ -26,9 +26,31 @@
       <!-- Window title -->
 
       <!-- Window content -->
-      <div class="x_content">
+      <div class="x_content" align="center">
         <br />
-        <p>{!! $activity->task_hour !!}</p>
+
+        <div class="row" style="width: 70%;" align="left">
+
+          <div class="col-sm-12" style="background-color:lavender;">
+          <p> <b> Year: </b> {!! config('select.year')[$activity->year] !!} </p>
+          </div>
+
+          <div class="col-sm-12" style="background-color:lavenderblush;">
+          <p> <b>Month:</b> {!! config('select.month')[$activity->month] !!}</p>
+          </div>
+          <div class="col-sm-12" style="background-color:lavender;">
+          <p> <b>User: </b> {!! $allUsers_list[$activity->user_id]  !!} </p>
+          </div>
+
+          <div class="col-sm-12" style="background-color:lavenderblush;">
+          <p> <b>Project:</b> {!! $allProjects_list[$activity->project_id] !!} </p>
+          </div>
+          <div class="col-sm-12" style="background-color:lavender;">
+          <p> <b>Task hour:</b> {!! $activity->task_hour !!} </p>
+          </div>
+
+        </div>
+
       </div>
       <!-- Window content -->
 

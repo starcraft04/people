@@ -39,6 +39,18 @@ Route::group(['middleware' => ['auth']], function() {
       Route::get('otlupload', ['uses'=>'OtlUploadController@getForm','as'=>'otluploadform','middleware' => ['permission:otl-upload']]);
       Route::post('otlupload', ['uses'=>'OtlUploadController@postForm','middleware' => ['permission:otl-upload']]);
 
+      //Test Clusters
+      Route::get('clusterList', ['uses'=>'ClusterController@getList','as'=>'clusterList','middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
+      Route::get('listOfClustersAjax', ['uses'=>'ClusterController@listOfClusters','as'=>'listOfClustersAjax','middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
+      Route::get('cluster/{n}', ['uses'=>'ClusterController@show','as'=>'cluster','middleware' => ['permission:user-view']]);
+      Route::get('clusterFormUpdate/{n}', ['uses'=>'ClusterController@getFormUpdate','as'=>'clusterFormUpdate','middleware' => ['permission:user-edit']]);
+      Route::post('clusterFormUpdate/{id}', ['uses'=>'ClusterController@postFormUpdate','middleware' => ['permission:user-edit']]);
+      //  Create new Cluster
+      Route::get('clusterFormCreate', ['uses'=>'ClusterController@getFormCreate','as'=>'clusterFormCreate','middleware' => ['permission:user-create']]);
+      Route::post('clusterFormCreate', ['uses'=>'ClusterController@postFormCreate','middleware' => ['permission:user-create']]);
+      //  Delete cluster
+      Route::get('clusterDelete/{n}', ['uses'=>'ClusterController@delete','as'=>'clusterDelete','middleware' => ['permission:user-delete']]);
+
       //User
       //  Main user list
       Route::get('userList', ['uses'=>'UserController@getList','as'=>'userList','middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);

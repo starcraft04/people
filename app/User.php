@@ -49,4 +49,9 @@ class User extends Authenticatable
         return $this;
     }
 
+    public function clusters()
+    {
+        return $this->belongsToMany('App\Cluster', 'cluster_user' , 'user_id', 'cluster_id');
+    }
+
 }
