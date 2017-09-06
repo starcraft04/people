@@ -163,6 +163,7 @@ class ToolsController extends Controller {
     }
     elseif (Auth::user()->is_manager == 1) {
       $user_list = Auth::user()->employees()->lists('name','user_id');
+      $user_list->prepend(Auth::user()->name,Auth::user()->id);
       $user_select_disabled = 'false';
     }
     else {

@@ -204,7 +204,13 @@ class ActivityRepository
     }
     // If the authenticated user is a manager, he can see his employees by default
     elseif (Auth::user()->is_manager == 1) {
-      $activityList->where('manager_id','=',Auth::user()->id);
+        if (!isset($where['user'])) {
+            $activityList->where('manager_id','=',Auth::user()->id);
+        }
+        elseif ($where['manager'] != $where['user']) {
+            $activityList->where('manager_id','=',Auth::user()->id);
+        }
+      
       if (!empty($where['user']))
           {
               $activityList->where(function ($query) use ($where) {
