@@ -39,7 +39,7 @@ Route::group(['middleware' => ['auth']], function() {
       Route::get('otlupload', ['uses'=>'OtlUploadController@getForm','as'=>'otluploadform','middleware' => ['permission:otl-upload']]);
       Route::post('otlupload', ['uses'=>'OtlUploadController@postForm','middleware' => ['permission:otl-upload']]);
 
-      //Test Clusters
+      //Clusters
       Route::get('clusterList', ['uses'=>'ClusterController@getList','as'=>'clusterList','middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
       Route::get('listOfClustersAjax', ['uses'=>'ClusterController@listOfClusters','as'=>'listOfClustersAjax','middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
       Route::get('cluster/{n}', ['uses'=>'ClusterController@show','as'=>'cluster','middleware' => ['permission:user-view']]);

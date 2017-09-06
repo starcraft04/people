@@ -34,6 +34,7 @@ class UserController extends Controller {
     $user = User::find($id);
     $manager = $this->userRepository->getMyManagersList($id);
     $userCluster = $user->clusters->lists('name')->toArray();
+
 		return view('user/show',  compact('user','manager','userCluster'));
 	}
 

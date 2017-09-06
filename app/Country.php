@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Country extends Model
 {
-    protected $table = 'countries';
+    protected $table = 'cluster_country';
     public $timestamps = false;
     protected $guarded = ['id'];
 

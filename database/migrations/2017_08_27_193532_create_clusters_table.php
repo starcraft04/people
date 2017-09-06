@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCountries extends Migration
+class CreateClustersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,10 +12,9 @@ class CreateCountries extends Migration
      */
     public function up()
     {
-        Schema::create('countries', function (Blueprint $table) {
+        Schema::create('clusters', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('cluster_id');
-            $table->string('country', 100);
+            $table->string('name', 100)->unique();
         });
     }
 
@@ -26,6 +25,6 @@ class CreateCountries extends Migration
      */
     public function down()
     {
-        Schema::drop('countries');
+        Schema::drop('clusters');
     }
 }

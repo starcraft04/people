@@ -25,7 +25,6 @@ class ClusterUpdateRequest extends Request
   {
 
     $id = $this->route('id');
-    dd($id);
 
     return [
       'name' => 'required|max:255|unique:clusters,name,' . $id . ',id',

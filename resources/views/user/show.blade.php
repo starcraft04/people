@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+
 <!-- Page title -->
 <div class="page-title">
   <div class="title_left">
@@ -34,7 +35,12 @@
         <div class="row" style="width: 70%;" align="left">
 
           <div class="col-sm-12" style="background-color:lavender;">
-          <p> <b> Manager Name: </b> {!! $manager[0]->name !!}</p>
+          <p> <b> Manager Name: </b> 
+            @if(isset($manager[0]))
+              {!! $manager[0]->name !!}</p>
+            @else
+              None.
+            @endif
           </div>
 
           <div class="col-sm-12" style="background-color:lavenderblush;">
@@ -54,6 +60,7 @@
           <div class="col-sm-12" style="background-color:lavenderblush;">
           <p> <b>Country:</b>  {!! $user->country !!}</p>
           </div>
+
           <div class="col-sm-12" style="background-color:lavender;">
           <p> <b>Managed clusters:</b>
             @if(!empty($userCluster))

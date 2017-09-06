@@ -91,6 +91,8 @@ class ClusterController extends Controller
 			return json_encode($result);
 		}
 
+	Country::where('cluster_id',$cluster->id)->delete();
+
     Cluster::destroy($id);
 
     $result->result = 'success';
