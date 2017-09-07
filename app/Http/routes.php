@@ -151,6 +151,9 @@ Route::group(['middleware' => ['auth']], function() {
       //  Update activity
       Route::get('toolsFormUpdate/{u}/{p}/{y}', ['uses'=>'ToolsController@getFormUpdate','as'=>'toolsFormUpdate','middleware' => ['permission:tools-activity-edit']]);
       Route::post('toolsFormUpdate', ['uses'=>'ToolsController@postFormUpdate','middleware' => ['permission:tools-activity-edit']]);
+      //  Transfer user
+      Route::get('toolsFormTransfer/{user_id}/{project_id}', ['uses'=>'ToolsController@getFormTransfer','as'=>'toolsFormTransfer','middleware' => ['permission:tools-user_assigned-transfer']]);
+      Route::get('toolsFormTransferAction/{user_id}/{old_project_id}/{new_project_id}', ['uses'=>'ToolsController@getFormTransferAction','as'=>'toolsFormTransferAction','middleware' => ['permission:tools-user_assigned-transfer']]);
       //  AJAX
       Route::post('listOfActivitiesPerUserAjax', ['uses'=>'ActivityController@listOfActivitiesPerUser','as'=>'listOfActivitiesPerUserAjax','middleware' => ['permission:tools-activity-view']]);
       Route::get('listOfProjectsMissingInfoAjax', ['uses'=>'ProjectController@listOfProjectsMissingInfo','as'=>'listOfProjectsMissingInfoAjax','middleware' => ['permission:tools-missing_info-view']]);

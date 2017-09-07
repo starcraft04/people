@@ -77,10 +77,17 @@
               <span class="glyphicon glyphicon-circle-arrow-left"></span> Back
             </a>
           </div>
-          <div class="col-md-offset-9 col-md-1" style="text-align: right;">
+          <div class="col-md-offset-8 col-md-1" style="text-align: right;">
             @if($action == 'update')
             @if(Entrust::can('tools-user_assigned-remove') && $user_id != 0)
             <button type="button" id="remove_user" class="btn btn-danger btn-sm">Remove user</button>
+            @endif
+            @endif
+          </div>
+          <div class="col-md-1" style="text-align: right;">
+            @if($action == 'update')
+            @if(Entrust::can('tools-user_assigned-transfer') && $user_id != 0)
+            <button type="button" id="transfer_user" class="btn btn-info btn-sm">Transfer</button>
             @endif
             @endif
           </div>
@@ -871,6 +878,17 @@ $(document).ready(function() {
           }
       });
   });
+
+
+  @if($action == 'update')
+  $('#transfer_user').on('click', function () {
+      bootbox.confirm("Are you sure want to transfer the user from this project?", function(result) {
+          if (result){
+            window.location.href = "{!! route('toolsFormTransfer',[$user_id,$project->id]) !!}";
+          }
+      });
+  });
+  @endif
 
   @if($action == 'update')
 

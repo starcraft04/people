@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Role;
 use App\Customer;
 use App\Comment;
+use App\Activity;
 use App\Http\Controllers\Controller;
 use DB;
 use Entrust;
@@ -518,5 +519,24 @@ class ToolsController extends Controller {
     }
 
     return redirect($redirect)->with('success','Project updated successfully');
-	}
+  }
+  public function getFormTransfer($user_id,$project_id)
+	{
+    return view('tools/transfer', compact('user_id','project_id'));
+  }
+  public function getFormTransferAction($user_id,$old_project_id,$new_project_id,Activity $activity)
+	{
+    if (!empty(Session::get('url'))){
+      $redirect = Session::get('url');
+    } else {
+      $redirect = 'toolsActivities';
+    }
+
+    // Now we need to look for all the activities assigned to this user and the old projects and update the project to new project
+    $activity->where('user_id',$user_id)
+              ->where('project_id',$old_project_id)
+              ->update(['project_id' => $new_project_id]);
+
+    return redirect($redirect)->with('success','User transfered to new project successfully');
+  }
 }
