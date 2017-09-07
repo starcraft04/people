@@ -207,19 +207,16 @@ class ActivityRepository
         if (!isset($where['user'])) {
             $activityList->where('manager_id','=',Auth::user()->id);
         }
-        elseif ($where['manager'] != $where['user']) {
-            $activityList->where('manager_id','=',Auth::user()->id);
-        }
       
-      if (!empty($where['user']))
-          {
-              $activityList->where(function ($query) use ($where) {
-                  foreach ($where['user'] as $w)
-                  {
-                      $query->orWhere('user_id',$w);
-                  }
-              });
-          }
+        if (!empty($where['user']))
+            {
+                $activityList->where(function ($query) use ($where) {
+                    foreach ($where['user'] as $w)
+                    {
+                        $query->orWhere('user_id',$w);
+                    }
+                });
+            }
     }
     // In the end, the user is not a manager and doesn't have a special role so he can only see himself
     else {

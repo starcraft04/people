@@ -342,6 +342,7 @@ class ToolsController extends Controller {
     }
     elseif (Auth::user()->is_manager == 1) {
       $user_list_temp = Auth::user()->employees()->lists('name','user_id');
+      $user_list_temp->prepend(Auth::user()->name,Auth::user()->id);
 
       if ($user_id == '0') {
         foreach ($user_list_temp as $key => $value){
@@ -417,7 +418,7 @@ class ToolsController extends Controller {
     $comments = Comment::where('project_id','=',$project_id)->orderBy('updated_at','desc')->get();
     $num_of_comments = count($comments);
 
-		return view('tools/create_update', compact('user_id','project','year','activities','from_otl','forecast','otl','loe_list','show_change_button','customers_list',
+		return view('tools/create_update', compact('user_id','project','year','activities','from_otl','forecast','otl','loe_list','customers_list',
     'project_name_disabled',
     'customer_id_select_disabled',
     'otl_name_disabled',
@@ -460,8 +461,11 @@ class ToolsController extends Controller {
 
     // Now we need to check if the user has been flagged for remove from project
     if ($inputs['action'] == 'Remove') {
-      $activity = $this->activityRepository->removeUserFromProject($inputs['user_id'],$inputs['project_id']);
-      return redirect($redirect)->with('success','User removed from project successfully');
+      if (Entrust::can('tools-user_assigned-remove')) {
+        $activity = $this->activityRepository->removeUserFromProject($inputs['user_id'],$inputs['project_id']);
+        return redirect($redirect)->with('success','User removed from project successfully');
+      }
+      return redirect($redirect)->with('error','You do not have permission to remove a user');
     }
 
     $start_end_date = explode(' - ',$inputs['estimated_date']);
@@ -471,7 +475,7 @@ class ToolsController extends Controller {
     $project = $this->projectRepository->update($inputs['project_id'],$inputs);
 
     // if user_id_url = 0 then it is only project update and we don't need to add or update tasks
-    if ($inputs['user_id_url'] != 0 && Entrust::can('tools-user_assigned-remove')) {
+    if ($inputs['user_id_url'] != 0 && Entrust::can('tools-user_assigned-change')) {
       // Let's check first if we changed the user
       if ($inputs['user_id_url'] != $inputs['user_id']){
         // Let's check if the user we changed to has already some activities on this project
