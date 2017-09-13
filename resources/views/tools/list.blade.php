@@ -12,7 +12,8 @@
     <link rel="stylesheet" href="{{ asset('/css/datatables.css') }}">
     <!-- Select2 -->
     <link href="{{ asset('/plugins/select2/select2.min.css') }}" rel="stylesheet" type="text/css" />
-
+    <!-- Switchery -->
+    <link href="{{ asset('/plugins/gentelella/vendors/switchery/dist/switchery.min.css') }}" rel="stylesheet">
 @stop
 
 @section('scriptsrc')
@@ -38,6 +39,8 @@
     <script src="{{ asset('/plugins/select2/select2.full.min.js') }}" type="text/javascript"></script>
     <!-- Bootbox -->
     <script src="{{ asset('/plugins/bootbox/bootbox.min.js') }}"></script>
+    <!-- Switchery -->
+    <script src="{{ asset('/plugins/gentelella/vendors/switchery/dist/switchery.min.js') }}" type="text/javascript"></script>
 @stop
 
 @section('content')
@@ -104,6 +107,10 @@
                 </option>
                 @endforeach
               </select>
+            </div>
+            <div class="form-group col-xs-1">
+              <label for="closed" class="control-label">Hide closed</label>
+              <input name="closed" type="checkbox" id="closed" class="form-group js-switch" checked /> 
             </div>
           </div>
       </div>
@@ -279,12 +286,14 @@
   var year = [];
   var manager = [];
   var user = [];
+  var checkbox_closed = 1;
 
   function ajaxData(){
     var obj = {
       'year[]': year,
       'manager[]': manager,
-      'user[]': user
+      'user[]': user,
+      'checkbox_closed':checkbox_closed
     };
     return obj;
   }
@@ -362,6 +371,14 @@
     year = fill_select('year');
     manager = fill_select('manager');
     user = fill_select('user');
+    if (Cookies.get('checkbox_closed') != null) {
+      if (Cookies.get('checkbox_closed') == 0) {
+        checkbox_closed = 0;
+        $('#closed').click();
+      } else {
+        checkbox_closed = 1;
+      }
+    }
 
     //alert($.fn.dataTable.version);
 
@@ -400,6 +417,18 @@
         user.push($(this).val());
 
       });
+      activitiesTable.ajax.reload();
+    });
+
+    $('#closed').on('change', function() {
+      if ($(this).is(':checked')) {
+        Cookies.set('checkbox_closed', 1);
+        checkbox_closed = 1;
+      } else {
+        Cookies.set('checkbox_closed', 0);
+        checkbox_closed = 0;
+      }
+      //console.log(checkbox_closed);
       activitiesTable.ajax.reload();
     });
 
