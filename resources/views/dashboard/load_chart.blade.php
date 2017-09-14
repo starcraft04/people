@@ -479,8 +479,8 @@
            label: 'DSC Pipeline',
            yAxisID: "y-axis-1",
            stack: 'Stack 1',
-           backgroundColor: color(window.chartColors.green).alpha(0.7).rgbString(),
-           borderColor: window.chartColors.green,
+           backgroundColor: color(window.chartColors.blue_light).alpha(0.7).rgbString(),
+           borderColor: window.chartColors.blue_light,
            borderWidth: 1,
            data: []
           },
@@ -509,8 +509,8 @@
            label: 'ISC Started',
            yAxisID: "y-axis-1",
            stack: 'Stack 1',
-           backgroundColor: color(window.chartColors.blue_light).alpha(0.7).rgbString(),
-           borderColor: window.chartColors.blue_light,
+           backgroundColor: color(window.chartColors.green).alpha(0.7).rgbString(),
+           borderColor: window.chartColors.green,
            borderWidth: 1,
            data: []
           },
@@ -596,7 +596,12 @@
                         gridLines: {
                             drawOnChartArea: false
                         },
-                        stacked: false
+                        stacked: false,
+                        ticks: {
+                            beginAtZero: true,
+                            min: 0,
+                            max: 100
+                        }
                     }],
                 }
       };

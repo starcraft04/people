@@ -157,6 +157,7 @@ class ActivityRepository
     *   Then we will need to use in the view page the name of the table.column. This is so that it knows how to do proper sorting or search.
     **/
 
+
     $temp_table = new ProjectTableRepository('table_temp_a','table_temp_b');
 
     $activityList = DB::table('table_temp_b');
@@ -177,6 +178,11 @@ class ActivityRepository
                 }
             });
         }
+
+    if (!empty($where['checkbox_closed']) && $where['checkbox_closed'] == 1)
+    {
+        $activityList->where('project_status','!=','Closed');
+    }
 
     // Checking the roles to see if allowed to see all users
     if (Entrust::can('tools-activity-all-view')){
