@@ -64,11 +64,9 @@
           <div class="col-sm-12" style="background-color:lavender;">
           <p> <b>Managed clusters:</b>
             @if(!empty($userCluster))
-               @foreach($userCluster as $cluster)
-                
-                 {{ $cluster }} , 
+               
+                 {{ implode(' - ', $userCluster) }}
 
-               @endforeach
             @else
       
               None.

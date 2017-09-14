@@ -544,5 +544,31 @@ class ActivityRepository
     dd($result);
   }
 
+    public function getCustomersPerCountry($country,$limit)
+    {
+        $customers = DB::table('projects');
+
+        $customers->select('customers.name',DB::raw('sum(task_hour)'),'country');
+        $customers->leftjoin('activities','activities.project_id', '=' ,'projects.id');
+        $customers->leftjoin('customers','projects.customer_id', '=' ,'customers.id');
+        $customers->where('country','=',$country);
+        $customers->groupBy('customers.name');
+        $customers->orderBy(DB::raw('sum(task_hour)'),'DESC');
+        $customers->limit($limit);
+        $data = $customers->get();
+        return $data;
+    }
+    public function getActivitiesPerCustomer($customer_name,$temp_table)
+    {
+        
+
+        $activityList = DB::table($temp_table);
+        $activityList->where('customer_name','=',$customer_name);
+        $activityList->orderBy('country','customer_name','project_name');
+        //$activityList->groupBy('project_name','user_name');
+        $data = $activityList->get();
+        
+        return $data;
+    }
 
 }

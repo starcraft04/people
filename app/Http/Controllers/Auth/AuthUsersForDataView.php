@@ -5,10 +5,13 @@ namespace App\Http\Controllers\Auth;
 use Entrust;
 use Auth;
 use App\Repositories\UserRepository;
+use App\Repositories\ClusterRepository;
+
 
 class AuthUsersForDataView
 {
   protected $userRepository;
+  protected $clusterRepository;
 
   public $year_list;
   public $year_selected = '';
@@ -20,9 +23,10 @@ class AuthUsersForDataView
   public $user_selected = '';
   public $user_select_disabled = 'true';
 
-  public function __construct(UserRepository $userRepository)
+  public function __construct(UserRepository $userRepository, ClusterRepository $clusterRepository)
   {
     $this->userRepository = $userRepository;
+    $this->clusterRepository = $clusterRepository;
 	}
 
   public function userCanView($permissionCheck = '')
@@ -64,5 +68,6 @@ class AuthUsersForDataView
       $this->manager_select_disabled = 'true';
       $this->user_select_disabled = 'true';
     }
+
   }
 }

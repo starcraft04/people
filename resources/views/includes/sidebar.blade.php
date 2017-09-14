@@ -44,13 +44,16 @@
     </ul>
     @endpermission
 
-      @permission(['dashboard-view'])
+      @permission(['dashboard-view','cluster-view'])
       <ul class="nav side-menu">
         <li><a><i class="fa fa-bar-chart-o"></i>Dashboard<span class="fa fa-chevron-down"></span></a>
           <ul class="nav child_menu">
             @permission(['dashboard-view'])
             <li><a href="{!!route('dashboardLoad')!!}">Users load</a></li>
             <li><a href="{!!route('dashboardLoadChart')!!}">Users load Chart</a></li>
+            @endpermission
+            @permission(['cluster-view'])
+            <li><a href="{!!route('clusterdashboard')!!}">Cluster Dashboard</a></li>
             @endpermission
           </ul>
         </li>

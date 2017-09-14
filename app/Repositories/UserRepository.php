@@ -194,4 +194,15 @@ class UserRepository
     $theoretical = [$data,$data,$data,$data,$data,$data,$data,$data,$data,$data,$data,$data];
     return $theoretical;
   }
+  public function getCountries($id)
+  {
+    $countries = DB::table('users')
+    ->select( 'cluster_country.country')
+    ->leftjoin('cluster_user', 'cluster_user.user_id', '=', 'users.id')
+    ->leftjoin('cluster_country', 'cluster_user.cluster_id', '=', 'cluster_country.cluster_id')
+    ->where('users.id', '=' ,$id)
+    ->groupBy('country')
+    ->lists('country');
+    return $countries;
+  }
 }

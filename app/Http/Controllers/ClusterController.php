@@ -40,7 +40,6 @@ class ClusterController extends Controller
 	public function getFormUpdate($id)
 	{
     $cluster = Cluster::find($id);
-
     $clusterCountries = $cluster->countries->lists('country')->toArray();
 
 		return view('cluster/create_update', compact('cluster','clusterCountries'))->with('action','update');

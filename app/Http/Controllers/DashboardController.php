@@ -16,6 +16,7 @@ use App\Repositories\ActivityRepository;
 use App\Http\Requests\DashboardCreateRequest;
 use App\Http\Requests\DashboardUpdateRequest;
 use App\Http\Controllers\Auth\AuthUsersForDataView;
+use App\Repositories\ProjectTableRepository;
 
 class DashboardController extends Controller {
 
@@ -37,7 +38,6 @@ class DashboardController extends Controller {
   public function load(AuthUsersForDataView $authUsersForDataView)
 	{
     $authUsersForDataView->userCanView('tools-activity-all-view');
-    Session::put('url','dashboard-all-view');
 
 		return view('dashboard/load', compact('authUsersForDataView'));
 	}
@@ -45,9 +45,44 @@ class DashboardController extends Controller {
   public function load_chart(AuthUsersForDataView $authUsersForDataView)
 	{
     $authUsersForDataView->userCanView('tools-activity-all-view');
-    Session::put('url','dashboard-all-view');
 
 		return view('dashboard/load_chart', compact('authUsersForDataView'));
 	}
+
+  public function clusterboard(UserRepository $userRepository,ActivityRepository $activityRepository)
+  {
+    $temp_table = new ProjectTableRepository('table_temp_a','table_temp_b');
+    $countries = $userRepository->getCountries(Auth::user()->id);
+    $customers = [];
+
+    foreach ($countries as $country) {
+      $customers_temp = $activityRepository->getCustomersPerCountry($country,5);
+      foreach ($customers_temp as $customer_temp) {
+        array_push($customers,['name'=>$customer_temp->name,'country'=>$customer_temp->country]);
+      }
+    }
+
+    //dd($customers);
+
+    $activities = [];
+
+
+    foreach ($customers as $customer) {
+      if(!isset($activities[$customer['country']])){
+        $activities[$customer['country']]= [];
+        }
+      if(!isset($activities[$customer['country']][$customer['name']])){
+        $activities[$customer['country']][$customer['name']]= [];
+        } 
+      $activities_temp = $activityRepository->getActivitiesPerCustomer($customer['name'],'table_temp_b');
+      foreach ($activities_temp as $activitie_temp) {
+        array_push($activities[$customer['country']][$customer['name']],$activitie_temp);
+      }
+    }
+
+    unset($temp_table);
+
+    return view('dashboard/clusterboard', compact('activities'));
+  }
 
 }

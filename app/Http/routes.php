@@ -164,6 +164,7 @@ Route::group(['middleware' => ['auth']], function() {
       //Dashboards
       Route::get('dashboardLoad', ['uses'=>'DashboardController@load','as'=>'dashboardLoad','middleware' => ['permission:dashboard-view']]);
       Route::get('dashboardLoadChart', ['uses'=>'DashboardController@load_chart','as'=>'dashboardLoadChart','middleware' => ['permission:dashboard-view']]);
+      Route::get('clusterdashboard', ['uses'=>'DashboardController@clusterboard','as'=>'clusterdashboard','middleware' => ['permission:cluster-view']]);
       //  AJAX
       Route::post('listOfLoadPerUserAjax', ['uses'=>'ActivityController@listOfLoadPerUserAjax','as'=>'listOfLoadPerUserAjax','middleware' => ['permission:dashboard-view']]);
       Route::post('listOfLoadPerUserChartAjax', ['uses'=>'ActivityController@listOfLoadPerUserChartAjax','as'=>'listOfLoadPerUserChartAjax','middleware' => ['permission:dashboard-view']]);
