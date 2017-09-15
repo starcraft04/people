@@ -57,12 +57,18 @@
             <div id="collapse{{$country}}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{$country}}">
               <div class="panel-body">
                 @foreach($customers as $customer => $users)
-                  <h4>{{$customer}}</h4></br>
-                  <table class="table table-bordered">
+                  <div class="row">
+                  <div class="col-md-6"><span style="font-size:24px;">{{$customer}}</span>
+                  <button type="button" id="{{str_replace(' ', '', $customer)}}" class="btn btn-success btn-xs btn-details">show details</button>
+                  </div>
+                  </div>
+                  <div class="row">
+                  <table id="table_{{str_replace(' ', '', $customer)}}" class="table table-bordered" style="display:none;">
                     <thead>
                       <tr>
                         <th>Project name</th>
                         <th>Consultant</th>
+                        <th>Year</th>
                         <th>Jan</th>
                         <th>Feb</th>
                         <th>Mar</th>
@@ -82,6 +88,7 @@
                       <tr>
                         <td>{{$activity->project_name}}</td>
                         <td>{{$activity->user_name}}</td>
+                        <td>{{$activity->year}}</td>
                         <td @if($activity->jan_otl == 1)style="color:green;font-weight: bold;"@endif>
                           @if($activity->jan_com != 0){{$activity->jan_com}}@endif
                         </td>
@@ -121,7 +128,8 @@
                       </tr>
                       @endforeach
                     </tbody>
-                  </table>       
+                  </table>
+                  </div>  
                 @endforeach
               </div>
             </div>
@@ -141,5 +149,20 @@
       </div>
     </div>
   </div>
-  @stop
+@stop
 
+@section('script')
+<script>
+
+$(document).on('click', '.btn-details', function () {
+  if ($(this).text() == 'show details') {
+    $(this).html('hide details');
+    $('#table_'+this.id).show();
+  } else {
+    $(this).html('show details');
+    $('#table_'+this.id).hide();
+  }
+});
+
+</script>
+@stop
