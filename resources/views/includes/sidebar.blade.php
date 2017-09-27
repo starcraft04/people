@@ -8,6 +8,9 @@
           @permission(['otl-upload'])
             <li><a href="{!!route('otluploadform')!!}">OTL upload</a></li>
           @endpermission
+          @permission(['otl-upload'])
+            <li><a href="{!!route('revenueuploadform')!!}">Revenue upload</a></li>
+          @endpermission
         </ul>
       </li>
     </ul>
