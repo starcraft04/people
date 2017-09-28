@@ -45,7 +45,7 @@
         <br />
         <!-- start accordion -->
         <div class="accordion" id="accordion" role="tablist" hide="true" aria-multiselectable="true">
-          
+        <?php $i = 0; ?>
         @foreach($activities as $country => $customers)
           <div class="panel">
             <a class="panel-heading" role="tab" id="heading{{$country}}" data-toggle="collapse" data-parent="#accordion" href="#collapse{{$country}}" aria-expanded="true" aria-controls="collapse{{$country}}">
@@ -56,14 +56,64 @@
 
             <div id="collapse{{$country}}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{$country}}">
               <div class="panel-body">
+              
                 @foreach($customers as $customer => $users)
                   <div class="row">
                   <div class="col-md-6"><span style="font-size:24px;">{{$customer}}</span>
-                  <button type="button" id="{{str_replace(' ', '', $customer)}}" class="btn btn-success btn-xs btn-details">show details</button>
+                  <button type="button" id="customer_{{$i}}" class="btn btn-success btn-xs btn-details">show details</button>
                   </div>
                   </div>
+                  <!-- revenues -->
                   <div class="row">
-                  <table id="table_{{str_replace(' ', '', $customer)}}" class="table table-bordered" style="display:none;">
+                  <table id="table_revenue_customer_{{$i}}" class="table table-bordered" style="display:none;">
+                    <thead>
+                      <tr>
+                        <th>Product name</th>
+                        <th>Product code</th>
+                        <th>Year</th>
+                        <th>Jan</th>
+                        <th>Feb</th>
+                        <th>Mar</th>
+                        <th>Apr</th>
+                        <th>May</th>
+                        <th>Jun</th>
+                        <th>Jul</th>
+                        <th>Aug</th>
+                        <th>Sep</th>
+                        <th>Oct</th>
+                        <th>Nov</th>
+                        <th>Dec</th>
+                      </tr>
+                    </thead>
+                    @if(isset($revenues[$customer]))
+                    <tbody>
+                      @foreach ($revenues[$customer] as $key => $revenue)
+                      <tr>
+                        <td style="width: 20%;"></td>
+                        <td style="width: 15%;">{{$revenue->product_code}}</td>
+                        <td style="width: 5%;">{{$revenue->year}}</td>
+                        <td style="width: 5%;">{{$revenue->jan}}</td>
+                        <td style="width: 5%;">{{$revenue->feb}}</td>
+                        <td style="width: 5%;">{{$revenue->mar}}</td>
+                        <td style="width: 5%;">{{$revenue->apr}}</td>
+                        <td style="width: 5%;">{{$revenue->may}}</td>
+                        <td style="width: 5%;">{{$revenue->jun}}</td>
+                        <td style="width: 5%;">{{$revenue->jul}}</td>
+                        <td style="width: 5%;">{{$revenue->aug}}</td>
+                        <td style="width: 5%;">{{$revenue->sep}}</td>
+                        <td style="width: 5%;">{{$revenue->oct}}</td>
+                        <td style="width: 5%;">{{$revenue->nov}}</td>
+                        <td>{{$revenue->dec}}</td>                        
+                      </tr>
+                      @endforeach
+                    </tbody>
+                    @endif
+                  </table>
+                  </div>
+                  <!-- revenues -->
+                  <!-- activities per user -->
+                  <div class="row">
+                  <table id="table_customer_{{$i}}" class="table table-bordered" style="display:none;">
                     <thead>
                       <tr>
                         <th>Project name</th>
@@ -86,50 +136,52 @@
                     <tbody>
                       @foreach ($users as $key => $activity)
                       <tr>
-                        <td>{{$activity->project_name}}</td>
-                        <td>{{$activity->user_name}}</td>
-                        <td>{{$activity->year}}</td>
-                        <td @if($activity->jan_otl == 1)style="color:green;font-weight: bold;"@endif>
+                        <td style="width: 20%;">{{$activity->project_name}}</td>
+                        <td style="width: 15%;">{{$activity->user_name}}</td>
+                        <td style="width: 5%;">{{$activity->year}}</td>
+                        <td style="width: 5%;@if($activity->jan_otl == 1)color:green;font-weight: bold;@endif">
                           @if($activity->jan_com != 0){{$activity->jan_com}}@endif
                         </td>
-                        <td @if($activity->feb_otl == 1)style="color:green;font-weight: bold;"@endif>
+                        <td style="width: 5%;@if($activity->feb_otl == 1)color:green;font-weight: bold;@endif">
                           @if($activity->feb_com != 0){{$activity->feb_com}}@endif
                         </td>
-                        <td @if($activity->mar_otl == 1)style="color:green;font-weight: bold;"@endif>
+                        <td style="width: 5%;@if($activity->mar_otl == 1)color:green;font-weight: bold;@endif">
                           @if($activity->mar_com != 0){{$activity->mar_com}}@endif
                         </td>
-                        <td @if($activity->apr_otl == 1)style="color:green;font-weight: bold;"@endif>
+                        <td style="width: 5%;@if($activity->apr_otl == 1)color:green;font-weight: bold;@endif">
                           @if($activity->apr_com != 0){{$activity->apr_com}}@endif
                         </td>
-                        <td @if($activity->may_otl == 1)style="color:green;font-weight: bold;"@endif>
+                        <td style="width: 5%;@if($activity->may_otl == 1)color:green;font-weight: bold;@endif">
                           @if($activity->may_com != 0){{$activity->may_com}}@endif
                         </td>
-                        <td @if($activity->jun_otl == 1)style="color:green;font-weight: bold;"@endif>
+                        <td style="width: 5%;@if($activity->jun_otl == 1)color:green;font-weight: bold;@endif">
                           @if($activity->jun_com != 0){{$activity->jun_com}}@endif
                         </td>
-                        <td @if($activity->jul_otl == 1)style="color:green;font-weight: bold;"@endif>
+                        <td style="width: 5%;@if($activity->jul_otl == 1)color:green;font-weight: bold;@endif">
                           @if($activity->jul_com != 0){{$activity->jul_com}}@endif
                         </td>
-                        <td @if($activity->aug_otl == 1)style="color:green;font-weight: bold;"@endif>
+                        <td style="width: 5%;@if($activity->aug_otl == 1)color:green;font-weight: bold;@endif">
                           @if($activity->aug_com != 0){{$activity->aug_com}}@endif
                         </td>
-                        <td @if($activity->sep_otl == 1)style="color:green;font-weight: bold;"@endif>
+                        <td style="width: 5%;@if($activity->sep_otl == 1)color:green;font-weight: bold;@endif">
                           @if($activity->sep_com != 0){{$activity->sep_com}}@endif
                         </td>
-                        <td @if($activity->oct_otl == 1)style="color:green;font-weight: bold;"@endif>
+                        <td style="width: 5%;@if($activity->oct_otl == 1)color:green;font-weight: bold;@endif">
                           @if($activity->oct_com != 0){{$activity->oct_com}}@endif
                         </td>
-                        <td @if($activity->nov_otl == 1)style="color:green;font-weight: bold;"@endif>
+                        <td style="width: 5%;@if($activity->nov_otl == 1)color:green;font-weight: bold;@endif">
                           @if($activity->nov_com != 0){{$activity->nov_com}}@endif
                         </td>
-                        <td @if($activity->dec_otl == 1)style="color:green;font-weight: bold;"@endif>
+                        <td style="width: 5%;@if($activity->dec_otl == 1)color:green;font-weight: bold;@endif">
                           @if($activity->dec_com != 0){{$activity->dec_com}}@endif
                         </td>
                       </tr>
                       @endforeach
                     </tbody>
                   </table>
-                  </div>  
+                  </div>
+                  <!-- activities per user -->
+                  <?php $i++; ?>
                 @endforeach
               </div>
             </div>
@@ -158,9 +210,11 @@ $(document).on('click', '.btn-details', function () {
   if ($(this).text() == 'show details') {
     $(this).html('hide details');
     $('#table_'+this.id).show();
+    $('#table_revenue_'+this.id).show();
   } else {
     $(this).html('show details');
     $('#table_'+this.id).hide();
+    $('#table_revenue_'+this.id).hide();
   }
 });
 

@@ -13,6 +13,7 @@ use Session;
 use App\Repositories\UserRepository;
 use App\Repositories\ProjectRepository;
 use App\Repositories\ActivityRepository;
+use App\Repositories\RevenueRepository;
 use App\Http\Requests\DashboardCreateRequest;
 use App\Http\Requests\DashboardUpdateRequest;
 use App\Http\Controllers\Auth\AuthUsersForDataView;
@@ -49,7 +50,7 @@ class DashboardController extends Controller {
 		return view('dashboard/load_chart', compact('authUsersForDataView'));
 	}
 
-  public function clusterboard(UserRepository $userRepository,ActivityRepository $activityRepository)
+  public function clusterboard(UserRepository $userRepository,ActivityRepository $activityRepository,RevenueRepository $revenueRepository)
   {
     $temp_table = new ProjectTableRepository('table_temp_a','table_temp_b');
     $countries = $userRepository->getCountries(Auth::user()->id);
@@ -65,6 +66,7 @@ class DashboardController extends Controller {
     //dd($customers);
 
     $activities = [];
+    $revenues = [];
 
 
     foreach ($customers as $customer) {
@@ -78,11 +80,21 @@ class DashboardController extends Controller {
       foreach ($activities_temp as $activitie_temp) {
         array_push($activities[$customer['country']][$customer['name']],$activitie_temp);
       }
+
+      if(!isset($revenues[$customer['name']])){
+        $revenues[$customer['name']]= [];
+        }
+      $revenues_temp = $revenueRepository->getRevenuesPerCustomer($customer['name']);
+      foreach ($revenues_temp as $revenue_temp) {
+        array_push($revenues[$customer['name']],$revenue_temp); 
+      }
     }
 
     unset($temp_table);
 
-    return view('dashboard/clusterboard', compact('activities'));
+    //dd($revenues);
+
+    return view('dashboard/clusterboard', compact('activities','revenues'));
   }
 
 }

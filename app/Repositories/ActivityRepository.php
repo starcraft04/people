@@ -570,7 +570,6 @@ class ActivityRepository
     }
     public function getActivitiesPerCustomer($customer_name,$temp_table)
     {
-        
 
         $activityList = DB::table($temp_table);
         $activityList->where('customer_name','=',$customer_name);

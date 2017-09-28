@@ -31,29 +31,31 @@ class RevenueUploadController extends Controller
       //$sheet->dd();
       $result = $sheet->toArray();
 
-      dd($result);
+      //dd($result);
 
       foreach ($result as $row){
         $customer = Customer::where('name','=',$row['pl_customer_name'])->get();
         //dd($customer[0]->id);
-        $revenue = Revenue::firstOrNew(array(
-          'customer_id' => $customer[0]->id,
-          'product_code' => $row['product_nfps_code'],
-          'year' => $year
-          ));
-        if (isset($row['jan'])) {$revenue->jan = $row['jan'];}
-        if (isset($row['feb'])) {$revenue->jan = $row['feb'];}
-        if (isset($row['mar'])) {$revenue->jan = $row['mar'];}
-        if (isset($row['apr'])) {$revenue->jan = $row['apr'];}
-        if (isset($row['may'])) {$revenue->jan = $row['may'];}
-        if (isset($row['jun'])) {$revenue->jan = $row['jun'];}
-        if (isset($row['jul'])) {$revenue->jan = $row['jul'];}
-        if (isset($row['aug'])) {$revenue->jan = $row['aug'];}
-        if (isset($row['sep'])) {$revenue->jan = $row['sep'];}
-        if (isset($row['oct'])) {$revenue->jan = $row['oct'];}
-        if (isset($row['nov'])) {$revenue->jan = $row['nov'];}
-        if (isset($row['dec'])) {$revenue->jan = $row['dec'];}
-        $revenue->save();
+        if (isset($customer[0]->id)) {
+          $revenue = Revenue::firstOrNew(array(
+            'customer_id' => $customer[0]->id,
+            'product_code' => $row['product_nfps_code'],
+            'year' => $year
+            ));
+          if (isset($row['jan'])) {$revenue->jan = $row['jan'];}
+          if (isset($row['feb'])) {$revenue->feb = $row['feb'];}
+          if (isset($row['mar'])) {$revenue->mar = $row['mar'];}
+          if (isset($row['apr'])) {$revenue->apr = $row['apr'];}
+          if (isset($row['may'])) {$revenue->may = $row['may'];}
+          if (isset($row['jun'])) {$revenue->jun = $row['jun'];}
+          if (isset($row['jul'])) {$revenue->jul = $row['jul'];}
+          if (isset($row['aug'])) {$revenue->aug = $row['aug'];}
+          if (isset($row['sep'])) {$revenue->sep = $row['sep'];}
+          if (isset($row['oct'])) {$revenue->oct = $row['oct'];}
+          if (isset($row['nov'])) {$revenue->nov = $row['nov'];}
+          if (isset($row['dec'])) {$revenue->dec = $row['dec'];}
+          $revenue->save();
+        }
       }
     }
     return redirect('revenueupload')->with('success','File processed');
