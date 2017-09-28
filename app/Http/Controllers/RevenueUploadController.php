@@ -36,7 +36,7 @@ class RevenueUploadController extends Controller
       foreach ($result as $row){
         $customer = Customer::where('name','=',$row['pl_customer_name'])->get();
         //dd($customer[0]->id);
-        if (isset($customer[0]->id)) {
+        if ($customer->count()) {
           $revenue = Revenue::firstOrNew(array(
             'customer_id' => $customer[0]->id,
             'product_code' => $row['product_nfps_code'],
