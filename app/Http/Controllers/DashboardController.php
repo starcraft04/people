@@ -50,14 +50,24 @@ class DashboardController extends Controller {
 		return view('dashboard/load_chart', compact('authUsersForDataView'));
 	}
 
-  public function clusterboard(UserRepository $userRepository,ActivityRepository $activityRepository,RevenueRepository $revenueRepository)
+  public function clusterboard(AuthUsersForDataView $authUsersForDataView,UserRepository $userRepository,ActivityRepository $activityRepository,RevenueRepository $revenueRepository,$year = null,$customer_id = null)
   {
+    $authUsersForDataView->userCanView('tools-activity-all-view');
+    if ($year == null) {
+      $year = date('Y');
+    }
+    //dd($year);
     $temp_table = new ProjectTableRepository('table_temp_a','table_temp_b');
     $countries = $userRepository->getCountries(Auth::user()->id);
     $customers = [];
+    if (Auth::user()->clusterboard_top < 1) {
+      $top = 5;
+    } else {
+      $top = Auth::user()->clusterboard_top;
+    }
 
     foreach ($countries as $country) {
-      $customers_temp = $activityRepository->getCustomersPerCountry($country,5);
+      $customers_temp = $activityRepository->getCustomersPerCountry($country,$year,$top);
       foreach ($customers_temp as $customer_temp) {
         array_push($customers,['name'=>$customer_temp->name,'country'=>$customer_temp->country]);
       }
@@ -76,7 +86,7 @@ class DashboardController extends Controller {
       if(!isset($activities[$customer['country']][$customer['name']])){
         $activities[$customer['country']][$customer['name']]= [];
         } 
-      $activities_temp = $activityRepository->getActivitiesPerCustomer($customer['name'],'table_temp_b');
+      $activities_temp = $activityRepository->getActivitiesPerCustomer($customer['name'],$year,'table_temp_b');
       foreach ($activities_temp as $activitie_temp) {
         array_push($activities[$customer['country']][$customer['name']],$activitie_temp);
       }
@@ -84,7 +94,7 @@ class DashboardController extends Controller {
       if(!isset($revenues[$customer['name']])){
         $revenues[$customer['name']]= [];
         }
-      $revenues_temp = $revenueRepository->getRevenuesPerCustomer($customer['name']);
+      $revenues_temp = $revenueRepository->getRevenuesPerCustomer($customer['name'],$year);
       foreach ($revenues_temp as $revenue_temp) {
         array_push($revenues[$customer['name']],$revenue_temp); 
       }
@@ -94,7 +104,7 @@ class DashboardController extends Controller {
 
     //dd($revenues);
 
-    return view('dashboard/clusterboard', compact('activities','revenues'));
+    return view('dashboard/clusterboard', compact('authUsersForDataView','activities','revenues','top','year'));
   }
 
 }

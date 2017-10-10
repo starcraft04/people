@@ -67,6 +67,54 @@
   </div>
 </div>
 <!-- Window -->
+
+<!-- Window -->
+<div class="row">
+  <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="x_panel">
+
+      <!-- Window title -->
+      <div class="x_title">
+        <h2>Options</h2>
+        <ul class="nav navbar-right panel_toolbox">
+          <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+        </ul>
+        <div class="clearfix"></div>
+      </div>
+      <!-- Window title -->
+
+      <!-- Window content -->
+      <div class="x_content">
+          {!! Form::open(['url' => 'optionsUpdate/'.$user->id, 'method' => 'post', 'class' => 'form-horizontal']) !!}
+          {!! Form::hidden('id', $user->id, ['class' => 'form-control', 'placeholder' => 'id']) !!}
+
+          <div class="row">
+              <div class="form-group {!! $errors->has('clusterboard_top') ? 'has-error' : '' !!} col-md-12">
+                  <div class="col-md-2">
+                      {!! Form::label('clusterboard_top', 'Cluster Dashboard Top', ['class' => 'control-label']) !!}
+                  </div>
+                  <div class="col-md-10">
+                  {!! Form::text('clusterboard_top', (isset(Auth::user()->clusterboard_top)) ? Auth::user()->clusterboard_top : 0, ['class' => 'form-control', 'placeholder' => 'Top']) !!}
+                  {!! $errors->first('clusterboard_top', '<small class="help-block">:message</small>') !!}
+                  </div>
+              </div>
+          </div>
+
+          <div class="row">
+              <div class="col-md-offset-11 col-md-1">
+                {!! Form::submit('Update', ['class' => 'btn btn-primary']) !!}
+              </div>
+          </div>
+          {!! Form::close() !!}
+      </div>
+      <!-- Window content -->
+
+    </div>
+  </div>
+</div>
+<!-- Window -->
+
+
 @if (Auth::user()->name == 'admin')
 <!-- Window -->
 <div class="row">

@@ -43,6 +43,47 @@
       <!-- Window content -->
       <div class="x_content">
         <br />
+          <div class="row">
+            <div class="form-group col-xs-2">
+              <label for="month" class="control-label">Year</label>
+              <select class="form-control select2" style="width: 100%;" id="year" name="year" data-placeholder="Select a year">
+                @foreach($authUsersForDataView->year_list as $key => $value)
+                <option value="{{ $key }}"
+                  @if($key == $year) selected
+                  @endif>
+                  {{ $value }}
+                </option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+      </div>
+      <!-- Window content -->
+
+    </div>
+  </div>
+</div>
+<!-- Window -->
+
+<!-- Window -->
+<div class="row">
+  <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="x_panel">
+
+      <!-- Window title -->
+      <div class="x_title">
+        <h2>Top {{$top}} accounts per country</small></h2>
+        <button id="legendButton" class="btn btn-success btn-sm" style="margin-left: 10px;">info</button>
+        <ul class="nav navbar-right panel_toolbox">
+          <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+        </ul>
+        <div class="clearfix"></div>
+      </div>
+      <!-- Window title -->
+
+      <!-- Window content -->
+      <div class="x_content">
+        <br />
         <!-- start accordion -->
         <div class="accordion" id="accordion" role="tablist" hide="true" aria-multiselectable="true">
         <?php $i = 0; ?>
@@ -54,7 +95,7 @@
             </strong></p>
             </a>
 
-            <div id="collapse{{$country}}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{$country}}">
+            <div id="collapse{{$country}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{$country}}">
               <div class="panel-body">
               
                 @foreach($customers as $customer => $users)
@@ -92,18 +133,18 @@
                         <td style="width: 20%;"></td>
                         <td style="width: 15%;">{{$revenue->product_code}}</td>
                         <td style="width: 5%;">{{$revenue->year}}</td>
-                        <td style="width: 5%;">{{$revenue->jan}}</td>
-                        <td style="width: 5%;">{{$revenue->feb}}</td>
-                        <td style="width: 5%;">{{$revenue->mar}}</td>
-                        <td style="width: 5%;">{{$revenue->apr}}</td>
-                        <td style="width: 5%;">{{$revenue->may}}</td>
-                        <td style="width: 5%;">{{$revenue->jun}}</td>
-                        <td style="width: 5%;">{{$revenue->jul}}</td>
-                        <td style="width: 5%;">{{$revenue->aug}}</td>
-                        <td style="width: 5%;">{{$revenue->sep}}</td>
-                        <td style="width: 5%;">{{$revenue->oct}}</td>
-                        <td style="width: 5%;">{{$revenue->nov}}</td>
-                        <td>{{$revenue->dec}}</td>                        
+                        <td style="width: 5%;">{{number_format($revenue->jan,0,'.','')}}</td>
+                        <td style="width: 5%;">{{number_format($revenue->feb,0,'.','')}}</td>
+                        <td style="width: 5%;">{{number_format($revenue->mar,0,'.','')}}</td>
+                        <td style="width: 5%;">{{number_format($revenue->apr,0,'.','')}}</td>
+                        <td style="width: 5%;">{{number_format($revenue->may,0,'.','')}}</td>
+                        <td style="width: 5%;">{{number_format($revenue->jun,0,'.','')}}</td>
+                        <td style="width: 5%;">{{number_format($revenue->jul,0,'.','')}}</td>
+                        <td style="width: 5%;">{{number_format($revenue->aug,0,'.','')}}</td>
+                        <td style="width: 5%;">{{number_format($revenue->sep,0,'.','')}}</td>
+                        <td style="width: 5%;">{{number_format($revenue->oct,0,'.','')}}</td>
+                        <td style="width: 5%;">{{number_format($revenue->nov,0,'.','')}}</td>
+                        <td>{{number_format($revenue->dec,0,'.','')}}</td>                        
                       </tr>
                       @endforeach
                     </tbody>
@@ -194,6 +235,41 @@
       </div>
       <!-- Window content -->
 
+      <!-- Modal -->
+<div class="modal fade" id="legendModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+          <!-- Modal Header -->
+          <div class="modal-header">
+              <button type="button" class="close" 
+                  data-dismiss="modal">
+                      <span aria-hidden="true">&times;</span>
+                      <span class="sr-only">Close</span>
+              </button>
+              <h4 class="modal-title" id="myModalLabel">
+                  Info
+              </h4>
+          </div>
+            
+          <!-- Modal Body -->
+          <div class="modal-body">
+          Those are the top {{$top}} accounts per country in number of hours spent for this year from consultants.</br>
+        Green means it has been validated by OTL.</br>
+        If you need to see more accounts per country, please click on your name (top right) and select profile.
+          </div>
+            
+          <!-- Modal Footer -->
+          <div class="modal-footer">
+              <button type="button" class="btn btn-default"
+                      data-dismiss="modal">
+                          Close
+              </button>
+          </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+
     </div>
   </div>
 </div>
@@ -216,6 +292,27 @@ $(document).on('click', '.btn-details', function () {
     $('#table_'+this.id).hide();
     $('#table_revenue_'+this.id).hide();
   }
+});
+
+$(document).on('click', '#legendButton', function () {
+    $('#legendModal').modal();
+  });
+
+//Init select2 boxes
+$("#year").select2({
+  allowClear: false
+});
+
+$('#year').on('change', function() {
+  Cookies.set('year', $('#year').val());
+  year = [];
+  $("#year option:selected").each(function()
+  {
+    // log the value and text of each option
+    year = $(this).val();
+
+  });
+  window.location.href = "{!! route('clusterdashboard','') !!}/"+year;
 });
 
 </script>

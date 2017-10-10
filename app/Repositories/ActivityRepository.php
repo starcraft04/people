@@ -256,18 +256,18 @@ class ActivityRepository
     $activityList = DB::table('table_temp_b');
 
     $activityList->select('manager_id','manager_name','user_id','user_name','year',
-                            DB::raw('SUM(jan_com) AS jan_com'),
-                            DB::raw('SUM(feb_com) AS feb_com'),
-                            DB::raw('SUM(mar_com) AS mar_com'),
-                            DB::raw('SUM(apr_com) AS apr_com'),
-                            DB::raw('SUM(may_com) AS may_com'),
-                            DB::raw('SUM(jun_com) AS jun_com'),
-                            DB::raw('SUM(jul_com) AS jul_com'),
-                            DB::raw('SUM(aug_com) AS aug_com'),
-                            DB::raw('SUM(sep_com) AS sep_com'),
-                            DB::raw('SUM(oct_com) AS oct_com'),
-                            DB::raw('SUM(nov_com) AS nov_com'),
-                            DB::raw('SUM(dec_com) AS dec_com')
+                            DB::raw('ROUND(SUM(jan_com),1) AS jan_com'),
+                            DB::raw('ROUND(SUM(feb_com),1) AS feb_com'),
+                            DB::raw('ROUND(SUM(mar_com),1) AS mar_com'),
+                            DB::raw('ROUND(SUM(apr_com),1) AS apr_com'),
+                            DB::raw('ROUND(SUM(may_com),1) AS may_com'),
+                            DB::raw('ROUND(SUM(jun_com),1) AS jun_com'),
+                            DB::raw('ROUND(SUM(jul_com),1) AS jul_com'),
+                            DB::raw('ROUND(SUM(aug_com),1) AS aug_com'),
+                            DB::raw('ROUND(SUM(sep_com),1) AS sep_com'),
+                            DB::raw('ROUND(SUM(oct_com),1) AS oct_com'),
+                            DB::raw('ROUND(SUM(nov_com),1) AS nov_com'),
+                            DB::raw('ROUND(SUM(dec_com),1) AS dec_com')
     );
 
     if (!empty($where['year']))
@@ -554,7 +554,7 @@ class ActivityRepository
     dd($result);
   }
 
-    public function getCustomersPerCountry($country,$limit)
+    public function getCustomersPerCountry($country,$year,$limit)
     {
         $customers = DB::table('projects');
 
@@ -562,17 +562,19 @@ class ActivityRepository
         $customers->leftjoin('activities','activities.project_id', '=' ,'projects.id');
         $customers->leftjoin('customers','projects.customer_id', '=' ,'customers.id');
         $customers->where('country','=',$country);
+        $customers->where('activities.year','=',$year);
         $customers->groupBy('customers.name');
         $customers->orderBy(DB::raw('sum(task_hour)'),'DESC');
         $customers->limit($limit);
         $data = $customers->get();
         return $data;
     }
-    public function getActivitiesPerCustomer($customer_name,$temp_table)
+    public function getActivitiesPerCustomer($customer_name,$year,$temp_table)
     {
 
         $activityList = DB::table($temp_table);
         $activityList->where('customer_name','=',$customer_name);
+        $activityList->where('year','=',$year);
         $activityList->orderBy('country','customer_name','project_name');
         //$activityList->groupBy('project_name','user_name');
         $data = $activityList->get();

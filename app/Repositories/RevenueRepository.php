@@ -17,13 +17,14 @@ class RevenueRepository
 
     }
 
-    public function getRevenuesPerCustomer($customer_name)
+    public function getRevenuesPerCustomer($customer_name,$year)
     {
 
         $revenueList = DB::table('revenues');
         $revenueList->select('customers.name AS customer_name', 'product_code', 'year', 'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec');
         $revenueList->leftjoin('customers', 'customers.id', '=', 'revenues.customer_id');
         $revenueList->where('customers.name','=',$customer_name);
+        $revenueList->where('revenues.year','=',$year);
         $revenueList->orderBy('product_code');
         
         $data = $revenueList->get();
