@@ -17,6 +17,13 @@ class RevenueUploadController extends Controller
   }
   public function postForm(RevenueUploadRequest $request)
   {
+    $color = [
+      'error' => 'text-danger',
+      'info' => 'text-info',
+      'update' => 'text-warning',
+      'add' => 'text-primary'
+    ];
+
     $file = $request->file('uploadfile');
     if($file->isValid())
     {
@@ -32,6 +39,10 @@ class RevenueUploadController extends Controller
       $result = $sheet->toArray();
 
       //dd($result);
+
+      $messages = [];
+      // $i corresponds to the line in the excel file and because the column title is on line 1, we start with $i = 2
+      $i = 2;
 
       foreach ($result as $row){
         $customer = Customer::where('name','=',$row['pl_customer_name'])->get();
@@ -55,9 +66,12 @@ class RevenueUploadController extends Controller
           if (isset($row['nov'])) {$revenue->nov = $row['nov'];}
           if (isset($row['dec'])) {$revenue->dec = $row['dec'];}
           $revenue->save();
+        } else {
+          array_push($messages,['status'=>'error','msg'=>'LINE '.$i.': Customer '.$row['pl_customer_name'].' not in DB']);
         }
+        $i += 1;
       }
     }
-    return redirect('revenueupload')->with('success','File processed');
+    return view('dataFeed/revenueupload',  compact('messages','color'))->with('success','File processed');
   }
 }

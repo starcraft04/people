@@ -67,4 +67,43 @@
 </div>
 <!-- Window -->
 
+<!-- Window -->
+@if (isset($messages))
+<div class="row">
+  <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="x_panel">
+
+      <!-- Window title -->
+      <div class="x_title">
+        <h2>Results</small></h2>
+        <ul class="nav navbar-right panel_toolbox">
+          <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+        </ul>
+        <div class="clearfix"></div>
+      </div>
+      <!-- Window title -->
+
+      <!-- Window content -->
+      <div class="x_content">
+          <div class="text-info"><H2>Full result</H2></div>
+          </BR>
+          @foreach($messages as $m)
+          <div class="row">
+            <div class="col-md-1 {!! isset($color[$m['status']]) ? $color[$m['status']] : '' !!}">
+              {!! $m['status'] !!}
+            </div>
+            <div class="col-md-offset-1 col-md-10 {!! isset($color[$m['status']]) ? $color[$m['status']] : '' !!}">
+              {!! isset($m['msg']) ? $m['msg'] : '' !!}
+            </div>
+          </div>
+          @endforeach
+      </div>
+      <!-- Window content -->
+
+    </div>
+  </div>
+</div>
+@endif
+<!-- Window -->
+
 @stop
