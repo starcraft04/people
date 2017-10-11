@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Http\Requests\PasswordUpdateRequest;
+use App\Http\Requests\OptionsUpdateRequest;
 use DB;
 use Entrust;
 use Auth;
@@ -57,6 +58,19 @@ class UserController extends Controller {
     $inputs = $request->only('password');
     $password = $user->update_password($inputs['password'],true);
     return redirect('profile/'.$id)->with('success','Password updated successfully');
+  }
+
+  public function optionsUpdate(OptionsUpdateRequest $request, $id)
+  {
+    $user = User::find($id);
+    if (Auth::user()->id != $id){
+      return redirect('userList')->with('error','You are not user '.  $user->name.'!!!');
+    }
+    $inputs = $request->all();
+    //dd($inputs);
+    $user->clusterboard_top = $inputs['clusterboard_top'];
+    $user->save();
+    return redirect('profile/'.$id)->with('success','Options updated successfully');
   }
 
 	public function getFormCreate()

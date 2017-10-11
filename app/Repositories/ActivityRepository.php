@@ -554,14 +554,14 @@ class ActivityRepository
     dd($result);
   }
 
-    public function getCustomersPerCountry($country,$year,$limit)
+    public function getCustomersPerCluster($cluster,$year,$limit)
     {
         $customers = DB::table('projects');
 
-        $customers->select('customers.name',DB::raw('sum(task_hour)'),'country');
+        $customers->select('customers.name',DB::raw('sum(task_hour)'),'customers.cluster_owner');
         $customers->leftjoin('activities','activities.project_id', '=' ,'projects.id');
         $customers->leftjoin('customers','projects.customer_id', '=' ,'customers.id');
-        $customers->where('country','=',$country);
+        $customers->where('customers.cluster_owner','=',$cluster);
         $customers->where('activities.year','=',$year);
         $customers->groupBy('customers.name');
         $customers->orderBy(DB::raw('sum(task_hour)'),'DESC');

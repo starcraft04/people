@@ -56,6 +56,19 @@
                 @endforeach
               </select>
             </div>
+            <div class="form-group col-xs-2">
+              <label for="month" class="control-label">Customer</label>
+              <select class="form-control select2" style="width: 100%;" id="customer_list" name="customer_list" data-placeholder="Select a customer">
+                <option></option>
+                @foreach($customers_list as $key => $value)
+                <option value="{{ $key }}"
+                  @if($key == $customer_id) selected
+                  @endif>
+                  {{$value}}
+                </option>
+                @endforeach
+              </select>
+            </div>
           </div>
       </div>
       <!-- Window content -->
@@ -72,7 +85,7 @@
 
       <!-- Window title -->
       <div class="x_title">
-        <h2>Top {{$top}} accounts per country</small></h2>
+        <h2>Top {{$top}} accounts per cluster</small></h2>
         <button id="legendButton" class="btn btn-success btn-sm" style="margin-left: 10px;">info</button>
         <ul class="nav navbar-right panel_toolbox">
           <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
@@ -86,27 +99,27 @@
         <br />
         <!-- start accordion -->
         <div class="accordion" id="accordion" role="tablist" hide="true" aria-multiselectable="true">
-        <?php $i = 0; ?>
-        @foreach($activities as $country => $customers)
+        <?php $customer_i = 0; $cluster_i = 0; ?>
+        @foreach($activities as $cluster => $customers)
           <div class="panel">
-            <a class="panel-heading" role="tab" id="heading{{$country}}" data-toggle="collapse" data-parent="#accordion" href="#collapse{{$country}}" aria-expanded="true" aria-controls="collapse{{$country}}">
+            <a class="panel-heading" role="tab" id="heading{{$cluster_i}}" data-toggle="collapse" data-parent="#accordion" href="#collapse{{$cluster_i}}" aria-expanded="true" aria-controls="collapse{{$cluster_i}}">
             <p><strong>
-            <h2 class="panel-title" align="center">{{$country}}</h2>
+            <h2 class="panel-title" align="center">{{$cluster}}</h2>
             </strong></p>
             </a>
 
-            <div id="collapse{{$country}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{$country}}">
+            <div id="collapse{{$cluster_i}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{$cluster_i}}">
               <div class="panel-body">
               
                 @foreach($customers as $customer => $users)
                   <div class="row">
                   <div class="col-md-6"><span style="font-size:24px;">{{$customer}}</span>
-                  <button type="button" id="customer_{{$i}}" class="btn btn-success btn-xs btn-details">show details</button>
+                  <button type="button" id="customer_{{$customer_i}}" class="btn btn-success btn-xs btn-details">show details</button>
                   </div>
                   </div>
                   <!-- revenues -->
                   <div class="row">
-                  <table id="table_revenue_customer_{{$i}}" class="table table-bordered" style="display:none;">
+                  <table id="table_revenue_customer_{{$customer_i}}" class="table table-bordered" style="display:none;">
                     <thead>
                       <tr>
                         <th>Product name</th>
@@ -154,7 +167,7 @@
                   <!-- revenues -->
                   <!-- activities per user -->
                   <div class="row">
-                  <table id="table_customer_{{$i}}" class="table table-bordered" style="display:none;">
+                  <table id="table_customer_{{$customer_i}}" class="table table-bordered" style="display:none;">
                     <thead>
                       <tr>
                         <th>Project name</th>
@@ -222,11 +235,12 @@
                   </table>
                   </div>
                   <!-- activities per user -->
-                  <?php $i++; ?>
+                  <?php $customer_i++; ?>
                 @endforeach
               </div>
             </div>
           </div>
+          <?php $cluster_i++; ?>
         @endforeach
 
         </div>
@@ -253,9 +267,9 @@
             
           <!-- Modal Body -->
           <div class="modal-body">
-          Those are the top {{$top}} accounts per country in number of hours spent for this year from consultants.</br>
+          Those are the top {{$top}} accounts per cluster in number of hours spent for this year from consultants.</br>
         Green means it has been validated by OTL.</br>
-        If you need to see more accounts per country, please click on your name (top right) and select profile.
+        If you need to see more accounts per cluster, please click on your name (top right) and select profile.
           </div>
             
           <!-- Modal Footer -->
@@ -281,7 +295,9 @@
 
 @section('script')
 <script>
-
+$(document).ready(function() {
+  $('#collapse0').addClass('in');
+});
 $(document).on('click', '.btn-details', function () {
   if ($(this).text() == 'show details') {
     $(this).html('hide details');
@@ -302,18 +318,20 @@ $(document).on('click', '#legendButton', function () {
 $("#year").select2({
   allowClear: false
 });
-
-$('#year').on('change', function() {
-  Cookies.set('year', $('#year').val());
-  year = [];
-  $("#year option:selected").each(function()
-  {
-    // log the value and text of each option
-    year = $(this).val();
-
-  });
-  window.location.href = "{!! route('clusterdashboard','') !!}/"+year;
+$("#customer_list").select2({
+  allowClear: true
 });
+
+$('#year,#customer_list').on('change', function() {
+  year = $('#year').val();
+  customer = $('#customer_list').val();
+  if (customer) {
+    window.location.href = "{!! route('clusterdashboard',['','']) !!}/"+year+"/"+customer;
+  } else {
+    window.location.href = "{!! route('clusterdashboard','') !!}/"+year;
+  }
+});
+
 
 </script>
 @stop

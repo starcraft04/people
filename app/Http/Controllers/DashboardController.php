@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Role;
+use App\Customer;
 use App\Http\Controllers\Controller;
 use DB;
 use Entrust;
@@ -58,19 +59,31 @@ class DashboardController extends Controller {
     }
     //dd($year);
     $temp_table = new ProjectTableRepository('table_temp_a','table_temp_b');
-    $countries = $userRepository->getCountries(Auth::user()->id);
     $customers = [];
     if (Auth::user()->clusterboard_top < 1) {
       $top = 5;
     } else {
       $top = Auth::user()->clusterboard_top;
     }
-
-    foreach ($countries as $country) {
-      $customers_temp = $activityRepository->getCustomersPerCountry($country,$year,$top);
-      foreach ($customers_temp as $customer_temp) {
-        array_push($customers,['name'=>$customer_temp->name,'country'=>$customer_temp->country]);
+    $clusters = Auth::user()->clusters()->lists('cluster_owner');
+    //dd($clusters);
+    $customers_list = Customer::where(function ($query) use ($clusters){
+      foreach ($clusters as $cluster) {
+        $query->orWhere('cluster_owner', $cluster);
       }
+    })->lists('name','id');
+    //dd($customers_list);
+    
+    if (is_null($customer_id)) {
+      foreach ($clusters as $cluster) {
+        $customers_temp = $activityRepository->getCustomersPerCluster($cluster,$year,$top);
+        foreach ($customers_temp as $customer_temp) {
+          array_push($customers,['name'=>$customer_temp->name,'cluster'=>$customer_temp->cluster_owner]);
+        }
+      }
+    } else {
+      $customer_temp = Customer::find($customer_id);
+      array_push($customers,['name'=>$customer_temp->name,'cluster'=>$customer_temp->cluster_owner]);
     }
 
     //dd($customers);
@@ -80,15 +93,15 @@ class DashboardController extends Controller {
 
 
     foreach ($customers as $customer) {
-      if(!isset($activities[$customer['country']])){
-        $activities[$customer['country']]= [];
+      if(!isset($activities[$customer['cluster']])){
+        $activities[$customer['cluster']]= [];
         }
-      if(!isset($activities[$customer['country']][$customer['name']])){
-        $activities[$customer['country']][$customer['name']]= [];
+      if(!isset($activities[$customer['cluster']][$customer['name']])){
+        $activities[$customer['cluster']][$customer['name']]= [];
         } 
       $activities_temp = $activityRepository->getActivitiesPerCustomer($customer['name'],$year,'table_temp_b');
       foreach ($activities_temp as $activitie_temp) {
-        array_push($activities[$customer['country']][$customer['name']],$activitie_temp);
+        array_push($activities[$customer['cluster']][$customer['name']],$activitie_temp);
       }
 
       if(!isset($revenues[$customer['name']])){
@@ -102,9 +115,10 @@ class DashboardController extends Controller {
 
     unset($temp_table);
 
+    //dd($activities);
     //dd($revenues);
 
-    return view('dashboard/clusterboard', compact('authUsersForDataView','activities','revenues','top','year'));
+    return view('dashboard/clusterboard', compact('authUsersForDataView','activities','revenues','top','year','customers_list','customer_id'));
   }
 
 }
