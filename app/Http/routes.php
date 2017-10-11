@@ -43,18 +43,6 @@ Route::group(['middleware' => ['auth']], function() {
       Route::get('revenueupload', ['uses'=>'RevenueUploadController@getForm','as'=>'revenueuploadform','middleware' => ['permission:otl-upload']]);
       Route::post('revenueupload', ['uses'=>'RevenueUploadController@postForm','middleware' => ['permission:otl-upload']]);
 
-      //Clusters
-      Route::get('clusterList', ['uses'=>'ClusterController@getList','as'=>'clusterList','middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
-      Route::get('listOfClustersAjax', ['uses'=>'ClusterController@listOfClusters','as'=>'listOfClustersAjax','middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
-      Route::get('cluster/{n}', ['uses'=>'ClusterController@show','as'=>'cluster','middleware' => ['permission:user-view']]);
-      Route::get('clusterFormUpdate/{n}', ['uses'=>'ClusterController@getFormUpdate','as'=>'clusterFormUpdate','middleware' => ['permission:user-edit']]);
-      Route::post('clusterFormUpdate/{id}', ['uses'=>'ClusterController@postFormUpdate','middleware' => ['permission:user-edit']]);
-      //  Create new Cluster
-      Route::get('clusterFormCreate', ['uses'=>'ClusterController@getFormCreate','as'=>'clusterFormCreate','middleware' => ['permission:user-create']]);
-      Route::post('clusterFormCreate', ['uses'=>'ClusterController@postFormCreate','middleware' => ['permission:user-create']]);
-      //  Delete cluster
-      Route::get('clusterDelete/{n}', ['uses'=>'ClusterController@delete','as'=>'clusterDelete','middleware' => ['permission:user-delete']]);
-
       //User
       //  Main user list
       Route::get('userList', ['uses'=>'UserController@getList','as'=>'userList','middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
@@ -71,7 +59,6 @@ Route::group(['middleware' => ['auth']], function() {
       //  user profile
       Route::get('profile/{n}', ['uses'=>'UserController@profile','as'=>'profile']);
       Route::post('passwordUpdate/{n}', ['uses'=>'UserController@passwordUpdate','as'=>'passwordUpdate']);
-      Route::post('optionsUpdate/{id}', ['uses'=>'UserController@optionsUpdate','as'=>'optionsUpdate']);
       //  AJAX
       Route::get('listOfUsersAjax', ['uses'=>'UserController@listOfUsers','as'=>'listOfUsersAjax','middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
 
@@ -169,7 +156,7 @@ Route::group(['middleware' => ['auth']], function() {
       //Dashboards
       Route::get('dashboardLoad', ['uses'=>'DashboardController@load','as'=>'dashboardLoad','middleware' => ['permission:dashboard-view']]);
       Route::get('dashboardLoadChart', ['uses'=>'DashboardController@load_chart','as'=>'dashboardLoadChart','middleware' => ['permission:dashboard-view']]);
-      Route::get('clusterdashboard/{year?}/{customer_id?}', ['uses'=>'DashboardController@clusterboard','as'=>'clusterdashboard','middleware' => ['permission:cluster-view']]);
+      Route::get('clusterdashboard', ['uses'=>'DashboardController@clusterboard','as'=>'clusterdashboard','middleware' => ['permission:cluster-view']]);
       //  AJAX
       Route::post('listOfLoadPerUserAjax', ['uses'=>'ActivityController@listOfLoadPerUserAjax','as'=>'listOfLoadPerUserAjax','middleware' => ['permission:dashboard-view']]);
       Route::post('listOfLoadPerUserChartAjax', ['uses'=>'ActivityController@listOfLoadPerUserChartAjax','as'=>'listOfLoadPerUserChartAjax','middleware' => ['permission:dashboard-view']]);

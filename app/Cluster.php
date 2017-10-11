@@ -8,17 +8,12 @@ class Cluster extends Model
 {
     //
 	public $timestamps = false;
-    protected $table = 'clusters';
+    protected $table = 'cluster_user';
     protected $guarded = ['id'];
-    
-    public function countries()
-    {
-        return $this->hasMany('App\Country');
-    }
 
-    public function users()
+    public function user()
     {
-        return $this->belongsToMany('App\User', 'cluster_user' , 'cluster_id', 'user_id');
+        return $this->belongsTo('App\User');
     }
 
 }

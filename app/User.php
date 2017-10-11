@@ -14,7 +14,7 @@ class User extends Authenticatable
     protected $fillable = [
       'name', 'email', 'password', 'created_at', 'is_manager', 'updated_at',
       'from_otl', 'region', 'country', 'domain', 'management_code', 'job_role',
-      'employee_type','clusterboard_top'
+      'employee_type'
       ];
     protected $hidden = [
         'remember_token','password'
@@ -51,7 +51,7 @@ class User extends Authenticatable
 
     public function clusters()
     {
-        return $this->belongsToMany('App\Cluster', 'cluster_user' , 'user_id', 'cluster_id');
+        return $this->hasMany('App\Cluster');
     }
 
 }

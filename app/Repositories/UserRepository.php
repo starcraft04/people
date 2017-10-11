@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\User;
+use App\Cluster;
 use Datatables;
 use DB;
 use Entrust;
@@ -94,14 +95,17 @@ class UserRepository
     // Now we need to save the clusters
     if (isset($inputs['managed_cluster'])) {
       //DB::table('cluster_user')->where('user_id',$user->id)->delete();
-      $user->clusters()->detach();
+      $user->clusters()->delete();
       foreach ($inputs['managed_cluster'] as $key => $value) {
-        $user->clusters()->attach($value);
+        $cluster = new Cluster;
+        $cluster->user_id = $user->id;
+        $cluster->cluster_owner = $value;
+        $cluster->save();
       }
     }
     else {
       //DB::table('cluster_user')->where('user_id',$user->id)->delete();
-      $user->clusters()->detach();
+      $user->clusters()->delete();
     }
 
 

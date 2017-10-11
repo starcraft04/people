@@ -184,12 +184,12 @@
               <div class="col-md-10">
                 <select class="form-control select2" style="width: 100%;" id="managed_cluster" name="managed_cluster[]" data-placeholder="Select a Cluster"  multiple="multiple">
                   <option value="" ></option>
-                  @foreach($clusters as $key => $value)
-                  <option value="{{ $key }}" 
-                  @if (old('managed_cluster') == $key) selected
-                  @elseif(isset($userCluster) && in_array($key,$userCluster)) selected
+                  @foreach($clusters as $cluster)
+                  <option value="{{ $cluster }}" 
+                  @if (old('managed_cluster') == $cluster) selected
+                  @elseif(isset($userCluster) && in_array($cluster,$userCluster)) selected
                   @endif>
-                  {{ $value }}
+                  {{ $cluster }}
                   </option>
                   @endforeach
                 </select>

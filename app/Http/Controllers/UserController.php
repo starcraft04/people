@@ -7,12 +7,12 @@ use Illuminate\Http\Request;
 use App\User;
 use App\Role;
 use App\Cluster;
+use App\Customer;
 use App\Repositories\UserRepository;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Http\Requests\PasswordUpdateRequest;
-use App\Http\Requests\OptionsUpdateRequest;
 use DB;
 use Entrust;
 use Auth;
@@ -34,7 +34,7 @@ class UserController extends Controller {
 	{
     $user = User::find($id);
     $manager = $this->userRepository->getMyManagersList($id);
-    $userCluster = $user->clusters->lists('name')->toArray();
+    $userCluster = $user->clusters->lists('cluster_owner')->toArray();
 
 		return view('user/show',  compact('user','manager','userCluster'));
 	}
@@ -59,19 +59,6 @@ class UserController extends Controller {
     return redirect('profile/'.$id)->with('success','Password updated successfully');
   }
 
-  public function optionsUpdate(OptionsUpdateRequest $request, $id)
-  {
-    $user = User::find($id);
-    if (Auth::user()->id != $id){
-      return redirect('userList')->with('error','You are not user '.  $user->name.'!!!');
-    }
-    $inputs = $request->all();
-    //dd($inputs);
-    $user->clusterboard_top = $inputs['clusterboard_top'];
-    $user->save();
-    return redirect('profile/'.$id)->with('success','Options updated successfully');
-  }
-
 	public function getFormCreate()
 	{
     $defaultRole = config('select.defaultRole');
@@ -93,7 +80,7 @@ class UserController extends Controller {
     $manager_list->prepend('', '');
 
 
-    $clusters = Cluster::lists('name','id');
+    $clusters = Customer::where('cluster_owner','!=','')->groupBy('cluster_owner')->lists('cluster_owner');
 
 		return view('user/create_update', compact('manager_list','clusters','roles','role_select_disabled','defaultRole'))->with('action','create');
 	}
@@ -124,8 +111,8 @@ class UserController extends Controller {
     $manager = $this->userRepository->getMyManagersList($id);
 
 
-    $clusters = Cluster::lists('name','id');
-    $userCluster = $user->clusters->lists('id')->toArray();
+    $clusters = Customer::where('cluster_owner','!=','')->groupBy('cluster_owner')->lists('cluster_owner');
+    $userCluster = $user->clusters->lists('cluster_owner')->toArray();
     //dd($userCluster);
 
 		//\Debugbar::info($manager_list);
@@ -135,6 +122,7 @@ class UserController extends Controller {
   public function postFormCreate(UserCreateRequest $request)
 	{
     $inputs = $request->all();
+    //dd($inputs);
     $user = $this->userRepository->create($inputs);
     return redirect('userList')->with('success','Record created successfully');
 	}
@@ -182,6 +170,7 @@ class UserController extends Controller {
 		}
 
     $user->managers()->detach();
+    $user->clusters()->delete();
 
     User::destroy($id);
 
