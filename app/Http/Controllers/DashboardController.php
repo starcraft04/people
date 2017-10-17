@@ -67,6 +67,10 @@ class DashboardController extends Controller {
     }
     $clusters = Auth::user()->clusters()->lists('cluster_owner');
     //dd($clusters);
+    if (count($clusters) == 0) {
+      $clusters = Customer::whereNotNull('cluster_owner')->groupBy('cluster_owner')->lists('cluster_owner');
+      //dd($clusters);
+    }
     $customers_list = Customer::where(function ($query) use ($clusters){
       foreach ($clusters as $cluster) {
         $query->orWhere('cluster_owner', $cluster);
