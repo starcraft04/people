@@ -30,6 +30,12 @@ class RevenueUploadController extends Controller
       $filename = $file->getClientOriginalName();
       $fileextension = $file->getClientOriginalExtension();
       $year = explode(".", $filename)[0];
+      $year = explode("_", $filename)[0];
+
+      if (!checkdate ( 1 , 1 , (int)$year )) {
+        return redirect('revenueupload')->with('error','File name incorrect');
+      }
+
       $year_short = substr($year, -2); 
 
       $sheet = \Excel::selectSheetsByIndex(0)
@@ -72,6 +78,7 @@ class RevenueUploadController extends Controller
         $i += 1;
       }
     }
-    return view('dataFeed/revenueupload',  compact('messages','color'))->with('success','File processed');
+    \Session::flash('success', 'File uploaded');
+    return view('dataFeed/revenueupload',  compact('messages','color'));
   }
 }

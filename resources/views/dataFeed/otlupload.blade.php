@@ -35,8 +35,8 @@
                 {!! Form::label('sample', 'Sample file', ['class' => 'control-label']) !!}
               </div>
               <div class="col-md-10">
-                Download this
-                <a href="{{ asset('/Samples/otl_upload_sample.xls') }}">this file</a> to get the structure needed. The file needs to be named with the following convention:year.xls so for example for 2017, you need the file 2017.xls
+                Download 
+                <a href="{{ asset('/Samples/otl_upload_sample.xls') }}">this file</a> to get the structure needed. The file needs to be named with the following convention:year_whateveryouwant.xls so for example for 2017, you need the file 2017_whateveryouwant.xls
               </div>
             </div>
           </div>

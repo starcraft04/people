@@ -37,6 +37,12 @@ class OtlUploadController extends Controller
       $filename = $file->getClientOriginalName();
       $fileextension = $file->getClientOriginalExtension();
       $year = explode(".", $filename)[0];
+      $year = explode("_", $filename)[0];
+
+      if (!checkdate ( 1 , 1 , (int)$year )) {
+        return redirect('otlupload')->with('error','File name incorrect');
+      }
+
       $year_short = substr($year, -2); 
 
       $sheet = \Excel::selectSheetsByIndex(0)
@@ -141,7 +147,7 @@ class OtlUploadController extends Controller
       }
     }
     array_multisort(array_column($messages_only_errors, 'mgr'), SORT_ASC, $messages_only_errors);
-
-  return view('dataFeed/otlupload',  compact('messages_only_errors','messages','color'))->with('success','File processed');
+    \Session::flash('success', 'File uploaded');
+  return view('dataFeed/otlupload',  compact('messages_only_errors','messages','color'));
   }
 }

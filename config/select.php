@@ -15,12 +15,10 @@ return [
         'Cairo' => 'Cairo'
     ],
     'domain-users' => [
-        'GCP' => 'GCP',
-        'OGSB' => 'OGSB',
-        'Hybrid' => 'Hybrid',
-        'Hybrid Security' => 'Hybrid Security',
-        'Hybrid APM' => 'Hybrid APM',
-        'Hybrid Network' => 'Hybrid Network',
+        '' => '',
+        'APM' => 'APM',
+        'Security' => 'Security',
+        'Network' => 'Network',
         'UC' => 'UC'
     ],
     'domain-projects' => [

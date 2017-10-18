@@ -68,7 +68,7 @@
             <li><a href="{!!route('toolsActivities')!!}">Activity list per project</a></li>
             @endpermission
             @permission(['tools-all_projects-view'])
-            <li><a href="{!!route('projectsAll')!!}">Project assignment</a></li>
+            <li><a href="{!!route('projectsAll')!!}">Project list</a></li>
             @endpermission
             @permission(['tools-all_projects-view'])
             <li><a href="{!!route('projectsLost')!!}">Projects lost</a></li>

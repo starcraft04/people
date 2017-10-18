@@ -204,7 +204,7 @@
                       {!! Form::label('domain', 'Domain', ['class' => 'control-label']) !!}
                   </div>
                   <div class="col-md-10">
-                      {!! Form::select('domain', config('select.domain-users'), (isset($user)) ? $user->domain : '', ['class' => 'form-control']) !!}
+                      {!! Form::select('domain', config('domains.domain-users'), (isset($user)) ? $user->domain : '', ['class' => 'form-control']) !!}
                       {!! $errors->first('domain', '<small class="help-block">:message</small>') !!}
                   </div>
               </div>
