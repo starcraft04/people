@@ -94,9 +94,12 @@ class DashboardController extends Controller {
 
     $activities = [];
     $revenues = [];
+    $activities_tot = [];
+    $revenues_tot = [];
 
 
     foreach ($customers as $customer) {
+      // Activities
       if(!isset($activities[$customer['cluster']])){
         $activities[$customer['cluster']]= [];
         }
@@ -107,7 +110,9 @@ class DashboardController extends Controller {
       foreach ($activities_temp as $activitie_temp) {
         array_push($activities[$customer['cluster']][$customer['name']],$activitie_temp);
       }
+      $activities_tot[$customer['name']] = $activityRepository->getActivitiesPerCustomerTot($customer['name'],$year,'table_temp_b');
 
+      // Revenues
       if(!isset($revenues[$customer['name']])){
         $revenues[$customer['name']]= [];
         }
@@ -115,14 +120,15 @@ class DashboardController extends Controller {
       foreach ($revenues_temp as $revenue_temp) {
         array_push($revenues[$customer['name']],$revenue_temp); 
       }
+      $revenues_tot[$customer['name']] = $revenueRepository->getRevenuesPerCustomerTot($customer['name'],$year);
     }
 
     unset($temp_table);
 
-    //dd($activities);
-    //dd($revenues);
+    //dd($activities_tot);
+    //dd($revenues_tot);
 
-    return view('dashboard/clusterboard', compact('authUsersForDataView','activities','revenues','top','year','customers_list','customer_id'));
+    return view('dashboard/clusterboard', compact('authUsersForDataView','activities','revenues','activities_tot','revenues_tot','top','year','customers_list','customer_id'));
   }
 
 }

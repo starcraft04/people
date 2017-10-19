@@ -31,5 +31,30 @@ class RevenueRepository
         
         return $data;
     }
+    public function getRevenuesPerCustomerTot($customer_name,$year)
+    {
+
+        $revenueList = DB::table('revenues');
+        $revenueList->select('customers.name AS customer_name','year',DB::raw('sum(jan) AS jan')
+                                                                    ,DB::raw('sum(feb) AS feb')
+                                                                    ,DB::raw('sum(mar) AS mar')
+                                                                    ,DB::raw('sum(apr) AS apr')
+                                                                    ,DB::raw('sum(may) AS may')
+                                                                    ,DB::raw('sum(jun) AS jun')
+                                                                    ,DB::raw('sum(jul) AS jul')
+                                                                    ,DB::raw('sum(aug) AS aug')
+                                                                    ,DB::raw('sum(sep) AS sep')
+                                                                    ,DB::raw('sum(oct) AS oct')
+                                                                    ,DB::raw('sum(nov) AS nov')
+                                                                    ,DB::raw('sum(`dec`) AS `dec`'));
+        $revenueList->leftjoin('customers', 'customers.id', '=', 'revenues.customer_id');
+        $revenueList->where('customers.name','=',$customer_name);
+        $revenueList->where('revenues.year','=',$year);
+        $revenueList->groupBy('revenues.customer_id');
+        
+        $data = $revenueList->first();
+        
+        return $data;
+    }
 
 }

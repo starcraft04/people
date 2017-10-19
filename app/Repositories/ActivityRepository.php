@@ -581,5 +581,30 @@ class ActivityRepository
         
         return $data;
     }
+    public function getActivitiesPerCustomerTot($customer_name,$year,$temp_table)
+    {
+
+        $activityList = DB::table($temp_table);
+        $activityList->select('year',DB::raw('sum(jan_com) AS jan_com')
+                                    ,DB::raw('sum(feb_com) AS feb_com')
+                                    ,DB::raw('sum(mar_com) AS mar_com')
+                                    ,DB::raw('sum(apr_com) AS apr_com')
+                                    ,DB::raw('sum(may_com) AS may_com')
+                                    ,DB::raw('sum(jun_com) AS jun_com')
+                                    ,DB::raw('sum(jul_com) AS jul_com')
+                                    ,DB::raw('sum(aug_com) AS aug_com')
+                                    ,DB::raw('sum(sep_com) AS sep_com')
+                                    ,DB::raw('sum(oct_com) AS oct_com')
+                                    ,DB::raw('sum(nov_com) AS nov_com')
+                                    ,DB::raw('sum(dec_com) AS dec_com'));
+        $activityList->where('customer_name','=',$customer_name);
+        $activityList->where('year','=',$year);
+        $activityList->groupBy('customer_name');
+        $activityList->orderBy('country','customer_name');
+        $data = $activityList->first();
+        //dd($data);
+        
+        return $data;
+    }
 
 }
