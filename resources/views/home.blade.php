@@ -28,7 +28,19 @@
       <!-- Window content -->
       <div class="x_content">
         <br />
+        @if($employee_list)
+        <div class="row">
+        <div class="col-md-2"><b>User name</b></div><div class="col-md-2"><b>Last login</b></div><div class="col-md-2"><b>Last update</b></div>
+        </div>
+        @foreach($employee_list as $employee)
+        <div class="row">
+        <div class="col-md-2">{{$employee->name}}</div><div class="col-md-2">{{$employee->last_login}}</div><div class="col-md-2">{{$employee->last_activity_update}}</div>
+        </div>
+        @endforeach
+        
+        @else
         You are logged in!
+        @endif
       </div>
       <!-- Window content -->
       

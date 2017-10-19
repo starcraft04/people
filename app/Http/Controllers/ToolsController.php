@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Role;
+use App\User;
 use App\Customer;
 use App\Comment;
 use App\Activity;
@@ -251,6 +252,11 @@ class ToolsController extends Controller {
     } else {
       $redirect = 'toolsActivities';
     }
+
+    date_default_timezone_set('CET');
+    $user = User::find(Auth::user()->id);
+    $user->last_activity_update = date("Y-m-d H:i:s");
+    $user->save();
 
     return redirect($redirect)->with('success','New project created successfully');
 	}
@@ -517,6 +523,11 @@ class ToolsController extends Controller {
       ];
       $comment = Comment::create($comment_input);
     }
+
+    date_default_timezone_set('CET');
+    $user = User::find(Auth::user()->id);
+    $user->last_activity_update = date("Y-m-d H:i:s");
+    $user->save();
 
     return redirect($redirect)->with('success','Project updated successfully');
   }
