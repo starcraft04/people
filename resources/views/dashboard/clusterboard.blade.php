@@ -114,6 +114,9 @@
                 @foreach($customers as $customer => $users)
                   <div class="row">
                   <div class="col-md-6"><span style="font-size:24px;">{{$customer}}</span>
+                  @if(isset($grand_total[$customer]['div']))
+                    {{'(Average revenue per day:'.number_format($grand_total[$customer]['div'],0,'.','').')'}}
+                  @endif
                   <button type="button" id="customer_{{$customer_i}}" class="btn btn-success btn-xs btn-details">show details</button>
                   </div>
                   </div>

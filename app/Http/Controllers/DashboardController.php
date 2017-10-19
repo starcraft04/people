@@ -96,7 +96,7 @@ class DashboardController extends Controller {
     $revenues = [];
     $activities_tot = [];
     $revenues_tot = [];
-
+    $grand_total = [];
 
     foreach ($customers as $customer) {
       // Activities
@@ -121,14 +121,50 @@ class DashboardController extends Controller {
         array_push($revenues[$customer['name']],$revenue_temp); 
       }
       $revenues_tot[$customer['name']] = $revenueRepository->getRevenuesPerCustomerTot($customer['name'],$year);
+
+      // Grand total
+      if(!isset($grand_total[$customer['name']])){
+        $grand_total[$customer['name']]= [];
+        }
+      if (isset($revenues_tot[$customer['name']]) && isset($activities_tot[$customer['name']])) {
+        $grand_total[$customer['name']]['revenue'] = floatval($revenues_tot[$customer['name']]->jan)
+        + floatval($revenues_tot[$customer['name']]->feb)
+        + floatval($revenues_tot[$customer['name']]->mar)
+        + floatval($revenues_tot[$customer['name']]->apr)
+        + floatval($revenues_tot[$customer['name']]->may)
+        + floatval($revenues_tot[$customer['name']]->jun)
+        + floatval($revenues_tot[$customer['name']]->jul)
+        + floatval($revenues_tot[$customer['name']]->aug)
+        + floatval($revenues_tot[$customer['name']]->sep)
+        + floatval($revenues_tot[$customer['name']]->oct)
+        + floatval($revenues_tot[$customer['name']]->nov)
+        + floatval($revenues_tot[$customer['name']]->dec);
+        $grand_total[$customer['name']]['activity'] = floatval($activities_tot[$customer['name']]->jan_com)
+          + floatval($activities_tot[$customer['name']]->feb_com)
+          + floatval($activities_tot[$customer['name']]->mar_com)
+          + floatval($activities_tot[$customer['name']]->apr_com)
+          + floatval($activities_tot[$customer['name']]->may_com)
+          + floatval($activities_tot[$customer['name']]->jun_com)
+          + floatval($activities_tot[$customer['name']]->jul_com)
+          + floatval($activities_tot[$customer['name']]->aug_com)
+          + floatval($activities_tot[$customer['name']]->sep_com)
+          + floatval($activities_tot[$customer['name']]->oct_com)
+          + floatval($activities_tot[$customer['name']]->nov_com)
+          + floatval($activities_tot[$customer['name']]->dec_com);
+        $grand_total[$customer['name']]['div'] = $grand_total[$customer['name']]['revenue']/$grand_total[$customer['name']]['activity'];
+      }
+      else {
+        $grand_total[$customer['name']]['div'] = null;
+      }
     }
 
     unset($temp_table);
 
     //dd($activities_tot);
     //dd($revenues_tot);
+    //dd($grand_total);
 
-    return view('dashboard/clusterboard', compact('authUsersForDataView','activities','revenues','activities_tot','revenues_tot','top','year','customers_list','customer_id'));
+    return view('dashboard/clusterboard', compact('authUsersForDataView','activities','revenues','activities_tot','revenues_tot','grand_total','top','year','customers_list','customer_id'));
   }
 
 }
