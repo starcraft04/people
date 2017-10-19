@@ -17,22 +17,39 @@ class RevenueRepository
 
     }
 
-    public function getRevenuesPerCustomer($customer_name,$year)
+    public function getRevenuesPerCustomer($customer_name,$year,$domain)
     {
-
+        if (isset(config('domains.domain-fpc')[$domain])) {
+            $fpc = config('domains.domain-fpc')[$domain];
+        } else {
+            $fpc = null;
+        }
+        //dd($fpc);
         $revenueList = DB::table('revenues');
         $revenueList->select('customers.name AS customer_name', 'product_code', 'year', 'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec');
         $revenueList->leftjoin('customers', 'customers.id', '=', 'revenues.customer_id');
         $revenueList->where('customers.name','=',$customer_name);
         $revenueList->where('revenues.year','=',$year);
+        if ($fpc) {
+            $revenueList->where(function ($query) use ($fpc){
+                foreach ($fpc as $f) {
+                  $query->orWhere('product_code', $f);
+                }
+              });
+        }
         $revenueList->orderBy('product_code');
         
         $data = $revenueList->get();
         
         return $data;
     }
-    public function getRevenuesPerCustomerTot($customer_name,$year)
+    public function getRevenuesPerCustomerTot($customer_name,$year,$domain)
     {
+        if (isset(config('domains.domain-fpc')[$domain])) {
+            $fpc = config('domains.domain-fpc')[$domain];
+        } else {
+            $fpc = null;
+        }
 
         $revenueList = DB::table('revenues');
         $revenueList->select('customers.name AS customer_name','year',DB::raw('sum(jan) AS jan')
@@ -50,6 +67,13 @@ class RevenueRepository
         $revenueList->leftjoin('customers', 'customers.id', '=', 'revenues.customer_id');
         $revenueList->where('customers.name','=',$customer_name);
         $revenueList->where('revenues.year','=',$year);
+        if ($fpc) {
+            $revenueList->where(function ($query) use ($fpc){
+                foreach ($fpc as $f) {
+                  $query->orWhere('product_code', $f);
+                }
+              });
+        }
         $revenueList->groupBy('revenues.customer_id');
         
         $data = $revenueList->first();

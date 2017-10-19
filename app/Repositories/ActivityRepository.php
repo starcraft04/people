@@ -554,34 +554,42 @@ class ActivityRepository
     dd($result);
   }
 
-    public function getCustomersPerCluster($cluster,$year,$limit)
+    public function getCustomersPerCluster($cluster,$year,$limit,$domain)
     {
         $customers = DB::table('projects');
 
         $customers->select('customers.name',DB::raw('sum(task_hour)'),'customers.cluster_owner');
         $customers->leftjoin('activities','activities.project_id', '=' ,'projects.id');
         $customers->leftjoin('customers','projects.customer_id', '=' ,'customers.id');
+        $customers->leftjoin('users','activities.user_id', '=' ,'users.id');
         $customers->where('customers.cluster_owner','=',$cluster);
         $customers->where('activities.year','=',$year);
+        if ($domain != 'all') {
+            $customers->where('users.domain','=',$domain);
+        }
         $customers->groupBy('customers.name');
         $customers->orderBy(DB::raw('sum(task_hour)'),'DESC');
         $customers->limit($limit);
         $data = $customers->get();
+        //dd($data);
         return $data;
     }
-    public function getActivitiesPerCustomer($customer_name,$year,$temp_table)
+    public function getActivitiesPerCustomer($customer_name,$year,$temp_table,$domain)
     {
 
         $activityList = DB::table($temp_table);
         $activityList->where('customer_name','=',$customer_name);
         $activityList->where('year','=',$year);
+        if ($domain != 'all') {
+            $activityList->where('user_domain','=',$domain);
+        }
         $activityList->orderBy('country','customer_name','project_name');
         //$activityList->groupBy('project_name','user_name');
         $data = $activityList->get();
-        
+        //dd($data);
         return $data;
     }
-    public function getActivitiesPerCustomerTot($customer_name,$year,$temp_table)
+    public function getActivitiesPerCustomerTot($customer_name,$year,$temp_table,$domain)
     {
 
         $activityList = DB::table($temp_table);
@@ -599,6 +607,9 @@ class ActivityRepository
                                     ,DB::raw('sum(dec_com) AS dec_com'));
         $activityList->where('customer_name','=',$customer_name);
         $activityList->where('year','=',$year);
+        if ($domain != 'all') {
+            $activityList->where('user_domain','=',$domain);
+        }
         $activityList->groupBy('customer_name');
         $activityList->orderBy('country','customer_name');
         $data = $activityList->first();

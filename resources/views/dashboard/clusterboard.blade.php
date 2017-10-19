@@ -45,7 +45,7 @@
         <br />
           <div class="row">
             <div class="form-group col-xs-2">
-              <label for="month" class="control-label">Year</label>
+              <label for="year" class="control-label">Year</label>
               <select class="form-control select2" style="width: 100%;" id="year" name="year" data-placeholder="Select a year">
                 @foreach($authUsersForDataView->year_list as $key => $value)
                 <option value="{{ $key }}"
@@ -57,7 +57,7 @@
               </select>
             </div>
             <div class="form-group col-xs-2">
-              <label for="month" class="control-label">Customer</label>
+              <label for="customer_list" class="control-label">Customer</label>
               <select class="form-control select2" style="width: 100%;" id="customer_list" name="customer_list" data-placeholder="Select a customer">
                 <option></option>
                 @foreach($customers_list as $key => $value)
@@ -65,6 +65,19 @@
                   @if($key == $customer_id) selected
                   @endif>
                   {{$value}}
+                </option>
+                @endforeach
+              </select>
+            </div>
+            <div class="form-group col-xs-2">
+              <label for="domain" class="control-label">Domain</label>
+              <select class="form-control select2" style="width: 100%;" id="domain" name="domain" data-placeholder="Select a domain">
+                <option></option>
+                @foreach(config('domains.domain-users') as $domain)
+                <option value="{{ $domain }}"
+                  @if($domain == $domain_selected) selected
+                  @endif>
+                  {{$domain}}
                 </option>
                 @endforeach
               </select>
@@ -380,15 +393,21 @@ $("#year").select2({
 $("#customer_list").select2({
   allowClear: true
 });
+$("#domain").select2({
+  allowClear: true
+});
 
-$('#year,#customer_list').on('change', function() {
+$('#year,#customer_list,#domain').on('change', function() {
   year = $('#year').val();
   customer = $('#customer_list').val();
-  if (customer) {
-    window.location.href = "{!! route('clusterdashboard',['','']) !!}/"+year+"/"+customer;
-  } else {
-    window.location.href = "{!! route('clusterdashboard','') !!}/"+year;
+  domain = $('#domain').val();
+  if (!customer) {
+    customer = '0';
   }
+  if (!domain) {
+    domain = 'all';
+  }
+  window.location.href = "{!! route('clusterdashboard',['','']) !!}/"+year+"/"+customer+"/"+domain;
 });
 
 

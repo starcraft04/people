@@ -53,7 +53,7 @@
             <li><a href="{!!route('dashboardLoadChart')!!}">Users load Chart</a></li>
             @endpermission
             @permission(['cluster-view'])
-            <li><a href="{!!route('clusterdashboard')!!}">Cluster Dashboard</a></li>
+            <li><a href="{!!route('clusterdashboard')!!}/{{date('Y')}}/0/all">Cluster Dashboard</a></li>
             @endpermission
           </ul>
         </li>

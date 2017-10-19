@@ -67,6 +67,7 @@ class ProjectTableRepository
                     temp_a.user_id AS user_id,
                     u.name AS user_name,
                     u.employee_type AS user_employee_type,
+                    u.domain AS user_domain,
                     uu.manager_id AS manager_id,
                     m.name AS manager_name,
                     temp_a.project_id AS project_id,
