@@ -44,7 +44,7 @@
         <div class="col-md-3 left_col menu_fixed">
           <div class="left_col scroll-view">
             <div class="navbar nav_title" style="border: 0;">
-              <a href="{!!route('home')!!}" class="site_title"><i class="fa fa-paw"></i> <span>People</span></a>
+              <a href="{!!route('home')!!}" class="site_title"><img src="{{ asset("/img/dolphin-logo.png") }}"><span>Dolphin</span></a>
             </div>
 
             <div class="clearfix"></div>
