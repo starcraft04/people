@@ -9,6 +9,7 @@ return [
     ],
     'domain-fpc' => [
         'APM' => ['P07','F27','H10'],
-        'Security' => ['F35']
+        'Security' => ['F35'],
+        'UC' => ['H13', 'F39', 'D30', 'D23'  ]
     ],
 ];
