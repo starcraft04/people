@@ -170,71 +170,37 @@
     ];
     return myarray;
   };
-  function ajaxdscpipeline(){
+  function ajaxdsc(){
     var myarray = [
-      myvar.dscpipeline[0].jan_com,
-      myvar.dscpipeline[0].feb_com,
-      myvar.dscpipeline[0].mar_com,
-      myvar.dscpipeline[0].apr_com,
-      myvar.dscpipeline[0].may_com,
-      myvar.dscpipeline[0].jun_com,
-      myvar.dscpipeline[0].jul_com,
-      myvar.dscpipeline[0].aug_com,
-      myvar.dscpipeline[0].sep_com,
-      myvar.dscpipeline[0].oct_com,
-      myvar.dscpipeline[0].nov_com,
-      myvar.dscpipeline[0].dec_com
+      myvar.dsc[0].jan_com,
+      myvar.dsc[0].feb_com,
+      myvar.dsc[0].mar_com,
+      myvar.dsc[0].apr_com,
+      myvar.dsc[0].may_com,
+      myvar.dsc[0].jun_com,
+      myvar.dsc[0].jul_com,
+      myvar.dsc[0].aug_com,
+      myvar.dsc[0].sep_com,
+      myvar.dsc[0].oct_com,
+      myvar.dsc[0].nov_com,
+      myvar.dsc[0].dec_com
     ];
     return myarray;
   };
-  function ajaxiscpipeline(){
+  function ajaxisc(){
     var myarray = [
-      myvar.iscpipeline[0].jan_com,
-      myvar.iscpipeline[0].feb_com,
-      myvar.iscpipeline[0].mar_com,
-      myvar.iscpipeline[0].apr_com,
-      myvar.iscpipeline[0].may_com,
-      myvar.iscpipeline[0].jun_com,
-      myvar.iscpipeline[0].jul_com,
-      myvar.iscpipeline[0].aug_com,
-      myvar.iscpipeline[0].sep_com,
-      myvar.iscpipeline[0].oct_com,
-      myvar.iscpipeline[0].nov_com,
-      myvar.iscpipeline[0].dec_com
-    ];
-    return myarray;
-  };
-  function ajaxdscstarted(){
-    var myarray = [
-      myvar.dscstarted[0].jan_com,
-      myvar.dscstarted[0].feb_com,
-      myvar.dscstarted[0].mar_com,
-      myvar.dscstarted[0].apr_com,
-      myvar.dscstarted[0].may_com,
-      myvar.dscstarted[0].jun_com,
-      myvar.dscstarted[0].jul_com,
-      myvar.dscstarted[0].aug_com,
-      myvar.dscstarted[0].sep_com,
-      myvar.dscstarted[0].oct_com,
-      myvar.dscstarted[0].nov_com,
-      myvar.dscstarted[0].dec_com
-    ];
-    return myarray;
-  };
-  function ajaxiscstarted(){
-    var myarray = [
-      myvar.iscstarted[0].jan_com,
-      myvar.iscstarted[0].feb_com,
-      myvar.iscstarted[0].mar_com,
-      myvar.iscstarted[0].apr_com,
-      myvar.iscstarted[0].may_com,
-      myvar.iscstarted[0].jun_com,
-      myvar.iscstarted[0].jul_com,
-      myvar.iscstarted[0].aug_com,
-      myvar.iscstarted[0].sep_com,
-      myvar.iscstarted[0].oct_com,
-      myvar.iscstarted[0].nov_com,
-      myvar.iscstarted[0].dec_com
+      myvar.isc[0].jan_com,
+      myvar.isc[0].feb_com,
+      myvar.isc[0].mar_com,
+      myvar.isc[0].apr_com,
+      myvar.isc[0].may_com,
+      myvar.isc[0].jun_com,
+      myvar.isc[0].jul_com,
+      myvar.isc[0].aug_com,
+      myvar.isc[0].sep_com,
+      myvar.isc[0].oct_com,
+      myvar.isc[0].nov_com,
+      myvar.isc[0].dec_com
     ];
     return myarray;
   };
@@ -366,12 +332,10 @@
             useReturnData(data);
             barChart.data.datasets[0].data = ajaxdscvstotal();
             barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
-            barChart.data.datasets[2].data = ajaxdscpipeline();
-            barChart.data.datasets[3].data = ajaxiscpipeline();
-            barChart.data.datasets[4].data = ajaxdscstarted();
-            barChart.data.datasets[5].data = ajaxiscstarted();
-            barChart.data.datasets[6].data = ajaxpresales();
-            barChart.data.datasets[7].data = ajaxorange();
+            barChart.data.datasets[2].data = ajaxdsc();
+            barChart.data.datasets[3].data = ajaxisc();
+            barChart.data.datasets[4].data = ajaxpresales();
+            barChart.data.datasets[5].data = ajaxorange();
             console.log(barChart.data);
             barChart.update();
           }
@@ -394,12 +358,10 @@
             useReturnData(data);
             barChart.data.datasets[0].data = ajaxdscvstotal();
             barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
-            barChart.data.datasets[2].data = ajaxdscpipeline();
-            barChart.data.datasets[3].data = ajaxiscpipeline();
-            barChart.data.datasets[4].data = ajaxdscstarted();
-            barChart.data.datasets[5].data = ajaxiscstarted();
-            barChart.data.datasets[6].data = ajaxpresales();
-            barChart.data.datasets[7].data = ajaxorange();
+            barChart.data.datasets[2].data = ajaxdsc();
+            barChart.data.datasets[3].data = ajaxisc();
+            barChart.data.datasets[4].data = ajaxpresales();
+            barChart.data.datasets[5].data = ajaxorange();
             console.log(barChart.data);
             barChart.update();
           }
@@ -422,12 +384,10 @@
             useReturnData(data);
             barChart.data.datasets[0].data = ajaxdscvstotal();
             barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
-            barChart.data.datasets[2].data = ajaxdscpipeline();
-            barChart.data.datasets[3].data = ajaxiscpipeline();
-            barChart.data.datasets[4].data = ajaxdscstarted();
-            barChart.data.datasets[5].data = ajaxiscstarted();
-            barChart.data.datasets[6].data = ajaxpresales();
-            barChart.data.datasets[7].data = ajaxorange();
+            barChart.data.datasets[2].data = ajaxdsc();
+            barChart.data.datasets[3].data = ajaxisc();
+            barChart.data.datasets[4].data = ajaxpresales();
+            barChart.data.datasets[5].data = ajaxorange();
             console.log(barChart.data);
             barChart.update();
           }
@@ -476,7 +436,7 @@
          },
           {
           type: 'bar',
-           label: 'DSC Pipeline',
+           label: 'DSC',
            yAxisID: "y-axis-1",
            stack: 'Stack 1',
            backgroundColor: color(window.chartColors.blue_light).alpha(0.7).rgbString(),
@@ -486,31 +446,11 @@
           },
           {
           type: 'bar',
-           label: 'ISC Pipeline',
+           label: 'ISC',
            yAxisID: "y-axis-1",
            stack: 'Stack 1',
            backgroundColor: color(window.chartColors.green_light).alpha(0.7).rgbString(),
            borderColor: window.chartColors.green_light,
-           borderWidth: 1,
-           data: []
-          },
-          {
-          type: 'bar',
-           label: 'DSC Started',
-           yAxisID: "y-axis-1",
-           stack: 'Stack 1',
-           backgroundColor: color(window.chartColors.blue).alpha(0.7).rgbString(),
-           borderColor: window.chartColors.blue,
-           borderWidth: 1,
-           data: []
-          },
-          {
-          type: 'bar',
-           label: 'ISC Started',
-           yAxisID: "y-axis-1",
-           stack: 'Stack 1',
-           backgroundColor: color(window.chartColors.green).alpha(0.7).rgbString(),
-           borderColor: window.chartColors.green,
            borderWidth: 1,
            data: []
           },
@@ -545,15 +485,13 @@
            console.log(ajaxDataPOST());
          },
          success: function(data) {
-           useReturnData(data);
-           barChart.data.datasets[0].data = ajaxdscvstotal();
-           barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
-           barChart.data.datasets[2].data = ajaxdscpipeline();
-           barChart.data.datasets[3].data = ajaxiscpipeline();
-           barChart.data.datasets[4].data = ajaxdscstarted();
-           barChart.data.datasets[5].data = ajaxiscstarted();
-           barChart.data.datasets[6].data = ajaxpresales();
-           barChart.data.datasets[7].data = ajaxorange();
+            useReturnData(data);
+            barChart.data.datasets[0].data = ajaxdscvstotal();
+            barChart.data.datasets[1].data = ajaxtheoreticalCapacity();
+            barChart.data.datasets[2].data = ajaxdsc();
+            barChart.data.datasets[3].data = ajaxisc();
+            barChart.data.datasets[4].data = ajaxpresales();
+            barChart.data.datasets[5].data = ajaxorange();
            console.log(barChart.data);
            barChart.update();
          }

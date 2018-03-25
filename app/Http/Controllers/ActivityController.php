@@ -107,10 +107,8 @@ class ActivityController extends Controller {
 
     $temp_table = new ProjectTableRepository('table_temp_a','table_temp_b');
 
-    $dscpipeline = $this->activityRepository->getListOfLoadPerUserChart($inputs,'project_type != "Pre-sales" and activity_type = "DSC" and project_status = "Pipeline"');
-    $iscpipeline = $this->activityRepository->getListOfLoadPerUserChart($inputs,'project_type != "Pre-sales" and activity_type = "ISC" and project_status = "Pipeline"');
-    $dscstarted = $this->activityRepository->getListOfLoadPerUserChart($inputs,'project_type != "Pre-sales" and activity_type = "DSC" and project_status = "Started"');
-    $iscstarted = $this->activityRepository->getListOfLoadPerUserChart($inputs,'project_type != "Pre-sales" and activity_type = "ISC" and project_status = "Started"');
+    $dsc = $this->activityRepository->getListOfLoadPerUserChart($inputs,'project_type != "Pre-sales" and activity_type = "DSC"');
+    $isc = $this->activityRepository->getListOfLoadPerUserChart($inputs,'project_type != "Pre-sales" and activity_type = "ISC"');
     $orange = $this->activityRepository->getListOfLoadPerUserChart($inputs,'project_type = "Orange absence or other"');
     $presales = $this->activityRepository->getListOfLoadPerUserChart($inputs,'project_type = "Pre-sales"');
 
@@ -121,18 +119,18 @@ class ActivityController extends Controller {
     $data ["dscvstotal"] = [];
     $data ["dscvstotal"][0] = new \stdClass();
     $data ["dscvstotal"][0]->year = $inputs['year'][0];
-    $data ["dscvstotal"][0]->jan_com = ($dscpipeline[0]->jan_com+$dscstarted[0]->jan_com+$iscpipeline[0]->jan_com+$iscstarted[0]->jan_com) != 0 ? 100*($dscpipeline[0]->jan_com+$dscstarted[0]->jan_com)/($dscpipeline[0]->jan_com+$dscstarted[0]->jan_com+$iscpipeline[0]->jan_com+$iscstarted[0]->jan_com):0;
-    $data ["dscvstotal"][0]->feb_com = ($dscpipeline[0]->feb_com+$dscstarted[0]->feb_com+$iscpipeline[0]->feb_com+$iscstarted[0]->feb_com) != 0 ? 100*($dscpipeline[0]->feb_com+$dscstarted[0]->feb_com)/($dscpipeline[0]->feb_com+$dscstarted[0]->feb_com+$iscpipeline[0]->feb_com+$iscstarted[0]->feb_com):0;
-    $data ["dscvstotal"][0]->mar_com = ($dscpipeline[0]->mar_com+$dscstarted[0]->mar_com+$iscpipeline[0]->mar_com+$iscstarted[0]->mar_com) != 0 ? 100*($dscpipeline[0]->mar_com+$dscstarted[0]->mar_com)/($dscpipeline[0]->mar_com+$dscstarted[0]->mar_com+$iscpipeline[0]->mar_com+$iscstarted[0]->mar_com):0;
-    $data ["dscvstotal"][0]->apr_com = ($dscpipeline[0]->apr_com+$dscstarted[0]->apr_com+$iscpipeline[0]->apr_com+$iscstarted[0]->apr_com) != 0 ? 100*($dscpipeline[0]->apr_com+$dscstarted[0]->apr_com)/($dscpipeline[0]->apr_com+$dscstarted[0]->apr_com+$iscpipeline[0]->apr_com+$iscstarted[0]->apr_com):0;
-    $data ["dscvstotal"][0]->may_com = ($dscpipeline[0]->may_com+$dscstarted[0]->may_com+$iscpipeline[0]->may_com+$iscstarted[0]->may_com) != 0 ? 100*($dscpipeline[0]->may_com+$dscstarted[0]->may_com)/($dscpipeline[0]->may_com+$dscstarted[0]->may_com+$iscpipeline[0]->may_com+$iscstarted[0]->may_com):0;
-    $data ["dscvstotal"][0]->jun_com = ($dscpipeline[0]->jun_com+$dscstarted[0]->jun_com+$iscpipeline[0]->jun_com+$iscstarted[0]->jun_com) != 0 ? 100*($dscpipeline[0]->jun_com+$dscstarted[0]->jun_com)/($dscpipeline[0]->jun_com+$dscstarted[0]->jun_com+$iscpipeline[0]->jun_com+$iscstarted[0]->jun_com):0;
-    $data ["dscvstotal"][0]->jul_com = ($dscpipeline[0]->jul_com+$dscstarted[0]->jul_com+$iscpipeline[0]->jul_com+$iscstarted[0]->jul_com) != 0 ? 100*($dscpipeline[0]->jul_com+$dscstarted[0]->jul_com)/($dscpipeline[0]->jul_com+$dscstarted[0]->jul_com+$iscpipeline[0]->jul_com+$iscstarted[0]->jul_com):0;
-    $data ["dscvstotal"][0]->aug_com = ($dscpipeline[0]->aug_com+$dscstarted[0]->aug_com+$iscpipeline[0]->aug_com+$iscstarted[0]->aug_com) != 0 ? 100*($dscpipeline[0]->aug_com+$dscstarted[0]->aug_com)/($dscpipeline[0]->aug_com+$dscstarted[0]->aug_com+$iscpipeline[0]->aug_com+$iscstarted[0]->aug_com):0;
-    $data ["dscvstotal"][0]->sep_com = ($dscpipeline[0]->sep_com+$dscstarted[0]->sep_com+$iscpipeline[0]->sep_com+$iscstarted[0]->sep_com) != 0 ? 100*($dscpipeline[0]->sep_com+$dscstarted[0]->sep_com)/($dscpipeline[0]->sep_com+$dscstarted[0]->sep_com+$iscpipeline[0]->sep_com+$iscstarted[0]->sep_com):0;
-    $data ["dscvstotal"][0]->oct_com = ($dscpipeline[0]->oct_com+$dscstarted[0]->oct_com+$iscpipeline[0]->oct_com+$iscstarted[0]->oct_com) != 0 ? 100*($dscpipeline[0]->oct_com+$dscstarted[0]->oct_com)/($dscpipeline[0]->oct_com+$dscstarted[0]->oct_com+$iscpipeline[0]->oct_com+$iscstarted[0]->oct_com):0;
-    $data ["dscvstotal"][0]->nov_com = ($dscpipeline[0]->nov_com+$dscstarted[0]->nov_com+$iscpipeline[0]->nov_com+$iscstarted[0]->nov_com) != 0 ? 100*($dscpipeline[0]->nov_com+$dscstarted[0]->nov_com)/($dscpipeline[0]->nov_com+$dscstarted[0]->nov_com+$iscpipeline[0]->nov_com+$iscstarted[0]->nov_com):0;
-    $data ["dscvstotal"][0]->dec_com = ($dscpipeline[0]->dec_com+$dscstarted[0]->dec_com+$iscpipeline[0]->dec_com+$iscstarted[0]->dec_com) != 0 ? 100*($dscpipeline[0]->dec_com+$dscstarted[0]->dec_com)/($dscpipeline[0]->dec_com+$dscstarted[0]->dec_com+$iscpipeline[0]->dec_com+$iscstarted[0]->dec_com):0;
+    $data ["dscvstotal"][0]->jan_com = ($dsc[0]->jan_com+$isc[0]->jan_com) != 0 ? 100*($dsc[0]->jan_com)/($dsc[0]->jan_com+$isc[0]->jan_com):0;
+    $data ["dscvstotal"][0]->feb_com = ($dsc[0]->feb_com+$isc[0]->feb_com) != 0 ? 100*($dsc[0]->feb_com)/($dsc[0]->feb_com+$isc[0]->feb_com):0;
+    $data ["dscvstotal"][0]->mar_com = ($dsc[0]->mar_com+$isc[0]->mar_com) != 0 ? 100*($dsc[0]->mar_com)/($dsc[0]->mar_com+$isc[0]->mar_com):0;
+    $data ["dscvstotal"][0]->apr_com = ($dsc[0]->apr_com+$isc[0]->apr_com) != 0 ? 100*($dsc[0]->apr_com)/($dsc[0]->apr_com+$isc[0]->apr_com):0;
+    $data ["dscvstotal"][0]->may_com = ($dsc[0]->may_com+$isc[0]->may_com) != 0 ? 100*($dsc[0]->may_com)/($dsc[0]->may_com+$isc[0]->may_com):0;
+    $data ["dscvstotal"][0]->jun_com = ($dsc[0]->jun_com+$isc[0]->jun_com) != 0 ? 100*($dsc[0]->jun_com)/($dsc[0]->jun_com+$isc[0]->jun_com):0;
+    $data ["dscvstotal"][0]->jul_com = ($dsc[0]->jul_com+$isc[0]->jul_com) != 0 ? 100*($dsc[0]->jul_com)/($dsc[0]->jul_com+$isc[0]->jul_com):0;
+    $data ["dscvstotal"][0]->aug_com = ($dsc[0]->aug_com+$isc[0]->aug_com) != 0 ? 100*($dsc[0]->aug_com)/($dsc[0]->aug_com+$isc[0]->aug_com):0;
+    $data ["dscvstotal"][0]->sep_com = ($dsc[0]->sep_com+$isc[0]->sep_com) != 0 ? 100*($dsc[0]->sep_com)/($dsc[0]->sep_com+$isc[0]->sep_com):0;
+    $data ["dscvstotal"][0]->oct_com = ($dsc[0]->oct_com+$isc[0]->oct_com) != 0 ? 100*($dsc[0]->oct_com)/($dsc[0]->oct_com+$isc[0]->oct_com):0;
+    $data ["dscvstotal"][0]->nov_com = ($dsc[0]->nov_com+$isc[0]->nov_com) != 0 ? 100*($dsc[0]->nov_com)/($dsc[0]->nov_com+$isc[0]->nov_com):0;
+    $data ["dscvstotal"][0]->dec_com = ($dsc[0]->dec_com+$isc[0]->dec_com) != 0 ? 100*($dsc[0]->dec_com)/($dsc[0]->dec_com+$isc[0]->dec_com):0;
 
     $data ["theoreticalCapacity"] = $theoreticalCapacity;
     $data ["theoreticalCapacity"] = [];
@@ -151,10 +149,8 @@ class ActivityController extends Controller {
     $data ["theoreticalCapacity"][0]->nov_com = $theoreticalCapacity[10];
     $data ["theoreticalCapacity"][0]->dec_com = $theoreticalCapacity[11];
 
-    $data ["dscpipeline"] = $dscpipeline;
-    $data ["iscpipeline"] = $iscpipeline;
-    $data ["dscstarted"] = $dscstarted;
-    $data ["iscstarted"] = $iscstarted;
+    $data ["dsc"] = $dsc;
+    $data ["isc"] = $isc;
     $data ["orange"] = $orange;
     $data ["presales"] = $presales;
 
