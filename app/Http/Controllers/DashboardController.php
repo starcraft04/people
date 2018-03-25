@@ -151,7 +151,12 @@ class DashboardController extends Controller {
           + floatval($activities_tot[$customer['name']]->oct_com)
           + floatval($activities_tot[$customer['name']]->nov_com)
           + floatval($activities_tot[$customer['name']]->dec_com);
-        $grand_total[$customer['name']]['div'] = $grand_total[$customer['name']]['revenue']/$grand_total[$customer['name']]['activity'];
+        if ($grand_total[$customer['name']]['activity'] != 0) {
+          $grand_total[$customer['name']]['div'] = $grand_total[$customer['name']]['revenue']/$grand_total[$customer['name']]['activity'];
+        } else {
+          $grand_total[$customer['name']]['div'] = null;
+        }
+        
       }
       else {
         $grand_total[$customer['name']]['div'] = null;
