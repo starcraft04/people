@@ -51,6 +51,7 @@
             @permission(['dashboard-view'])
             <li><a href="{!!route('dashboardLoad')!!}">Users load</a></li>
             <li><a href="{!!route('dashboardLoadChart')!!}">Users load Chart</a></li>
+            <li><a href="{!!route('dashboarddscisc')!!}/{{date('Y')}}">DSC vs ISC</a></li>
             @endpermission
             @permission(['cluster-view'])
             <li><a href="{!!route('clusterdashboard')!!}/{{date('Y')}}/0/all">Cluster Dashboard</a></li>

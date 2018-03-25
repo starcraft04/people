@@ -49,6 +49,13 @@ class DashboardController extends Controller {
     $authUsersForDataView->userCanView('tools-activity-all-view');
 
 		return view('dashboard/load_chart', compact('authUsersForDataView'));
+  }
+  
+  public function dscisc(AuthUsersForDataView $authUsersForDataView,$year)
+	{
+    $authUsersForDataView->userCanView('tools-activity-all-view');
+
+		return view('dashboard/dscisc', compact('authUsersForDataView','year'));
 	}
 
   public function clusterboard(AuthUsersForDataView $authUsersForDataView,UserRepository $userRepository,ActivityRepository $activityRepository,RevenueRepository $revenueRepository,$year = null,$customer_id = null,$domain_selected = null)
@@ -151,12 +158,7 @@ class DashboardController extends Controller {
           + floatval($activities_tot[$customer['name']]->oct_com)
           + floatval($activities_tot[$customer['name']]->nov_com)
           + floatval($activities_tot[$customer['name']]->dec_com);
-        if ($grand_total[$customer['name']]['activity'] != 0) {
-          $grand_total[$customer['name']]['div'] = $grand_total[$customer['name']]['revenue']/$grand_total[$customer['name']]['activity'];
-        } else {
-          $grand_total[$customer['name']]['div'] = null;
-        }
-        
+        $grand_total[$customer['name']]['div'] = $grand_total[$customer['name']]['revenue']/$grand_total[$customer['name']]['activity'];
       }
       else {
         $grand_total[$customer['name']]['div'] = null;
