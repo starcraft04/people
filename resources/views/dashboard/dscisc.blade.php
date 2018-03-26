@@ -80,7 +80,52 @@
 
       <!-- Window content -->
       <div class="x_content">
-
+        @foreach($dscvsisc as $manager => $employee)
+          <div class="row">
+          <div class="col-md-12"><span style="font-size:24px;">Manager: {{$manager}}</span></div>
+          @foreach($employee as $employee_name => $activities)
+          <div class="col-md-12"><span style="font-size:16px;">{{$employee_name}}</span></div>
+          <div class="col-md-6">
+            <span style="font-size:12px;">DSC - {{round($activities['totaldscdays'],2)}}%</span>
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Customer</th>
+                  <th>Days (%)</th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach($activities['dsclist'] as $key => $activity)
+                  <tr>
+                    <td>{{$activity->name}}</td>
+                    <td>{{round($activity->sum_task,2)}}%</td>
+                  </tr>
+                @endforeach
+              </tbody>
+            </table>
+          </div>
+          <div class="col-md-6">
+            <span style="font-size:12px;">ISC - {{round($activities['totaliscdays'],2)}}%</span>
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Customer</th>
+                  <th>Days (%)</th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach($activities['isclist'] as $key => $activity)
+                  <tr>
+                    <td>{{$activity->name}}</td>
+                    <td>{{round($activity->sum_task,2)}}%</td>
+                  </tr>
+                @endforeach
+              </tbody>
+            </table>
+          </div>
+          @endforeach
+          </div>
+        @endforeach
       </div>
       <!-- Window content -->
     </div>

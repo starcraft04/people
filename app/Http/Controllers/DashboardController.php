@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Role;
 use App\Customer;
+use App\User;
 use App\Http\Controllers\Controller;
 use DB;
 use Entrust;
@@ -54,8 +55,66 @@ class DashboardController extends Controller {
   public function dscisc(AuthUsersForDataView $authUsersForDataView,$year)
 	{
     $authUsersForDataView->userCanView('tools-activity-all-view');
-
-		return view('dashboard/dscisc', compact('authUsersForDataView','year'));
+    $managers = config('reports.dscisc_report_managers');
+    //dd($managers);
+    $dscvsisc = [];
+    foreach ($managers as $manager_name) {
+      $dscvsisc[$manager_name] = [];
+      $manager = User::where('name',$manager_name)->first();
+      $employee_list = $manager->employees()->lists('name','users.id');
+      foreach ($employee_list as $employee_id => $employee_name) {
+        $totalworkdays = DB::table('activities')
+          ->select(DB::raw('SUM(activities.task_hour) as sum_task'))
+          ->leftjoin('projects', 'projects.id', '=', 'activities.project_id')
+          ->where('year',$year)
+          ->where('activities.user_id',$employee_id)
+          ->where('projects.activity_type','!=','Orange absence or other')
+          ->first()->sum_task;
+        if ($totalworkdays == 0) {
+          continue;
+        }
+        $dscvsisc[$manager_name][$employee_name] = [];
+        $dscvsisc[$manager_name][$employee_name]['totalworkdays'] = $totalworkdays;
+        $totaliscdays = DB::table('activities')
+          ->select(DB::raw('SUM(activities.task_hour) as sum_task'))
+          ->leftjoin('projects', 'projects.id', '=', 'activities.project_id')
+          ->where('year',$year)
+          ->where('activities.user_id',$employee_id)
+          ->where('projects.activity_type','ISC')
+          ->first()->sum_task*100/$totalworkdays;
+        $dscvsisc[$manager_name][$employee_name]['totaliscdays'] = $totaliscdays;
+        $totaldscdays = DB::table('activities')
+          ->select(DB::raw('SUM(activities.task_hour) as sum_task'))
+          ->leftjoin('projects', 'projects.id', '=', 'activities.project_id')
+          ->where('year',$year)
+          ->where('activities.user_id',$employee_id)
+          ->where('projects.activity_type','DSC')
+          ->first()->sum_task*100/$totalworkdays;
+        $dscvsisc[$manager_name][$employee_name]['totaldscdays'] = $totaldscdays;
+        $dsclist = DB::table('activities')
+          ->select('customers.name','projects.activity_type',DB::raw('((SUM(activities.task_hour)*100)/'.$totalworkdays.') as sum_task'))
+          ->leftjoin('projects', 'projects.id', '=', 'activities.project_id')
+          ->leftjoin('customers', 'projects.customer_id', '=', 'customers.id')
+          ->where('year',$year)
+          ->where('activities.user_id',$employee_id)
+          ->where('projects.activity_type','DSC')
+          ->groupBy('customers.name','projects.activity_type')
+          ->get();
+        $dscvsisc[$manager_name][$employee_name]['dsclist'] = $dsclist;
+        $isclist = DB::table('activities')
+          ->select('customers.name','projects.activity_type',DB::raw('((SUM(activities.task_hour)*100)/'.$totalworkdays.') as sum_task'))
+          ->leftjoin('projects', 'projects.id', '=', 'activities.project_id')
+          ->leftjoin('customers', 'projects.customer_id', '=', 'customers.id')
+          ->where('year',$year)
+          ->where('activities.user_id',$employee_id)
+          ->where('projects.activity_type','ISC')
+          ->groupBy('customers.name','projects.activity_type')
+          ->get();
+        $dscvsisc[$manager_name][$employee_name]['isclist'] = $isclist;
+      }
+    }
+    //dd($dscvsisc);
+		return view('dashboard/dscisc', compact('authUsersForDataView','year','dscvsisc'));
 	}
 
   public function clusterboard(AuthUsersForDataView $authUsersForDataView,UserRepository $userRepository,ActivityRepository $activityRepository,RevenueRepository $revenueRepository,$year = null,$customer_id = null,$domain_selected = null)
