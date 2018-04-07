@@ -162,6 +162,22 @@ Route::group(['middleware' => ['auth']], function() {
       //  AJAX
       Route::post('listOfLoadPerUserAjax', ['uses'=>'ActivityController@listOfLoadPerUserAjax','as'=>'listOfLoadPerUserAjax','middleware' => ['permission:dashboard-view']]);
       Route::post('listOfLoadPerUserChartAjax', ['uses'=>'ActivityController@listOfLoadPerUserChartAjax','as'=>'listOfLoadPerUserChartAjax','middleware' => ['permission:dashboard-view']]);
+      // Skills
+      //  Main skill list
+      Route::get('skillList', ['uses'=>'SkillController@getList','as'=>'skillList','middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
+      //  skill information
+      Route::get('skill/{n}', ['uses'=>'SkillController@show','as'=>'skill','middleware' => ['permission:user-view']]);
+      //  Create new skill
+      Route::get('skillFormCreate', ['uses'=>'SkillController@getFormCreate','as'=>'skillFormCreate','middleware' => ['permission:user-create']]);
+      Route::post('skillFormCreate', ['uses'=>'SkillController@postFormCreate','middleware' => ['permission:user-create']]);
+      //  Update skill
+      Route::get('skillFormUpdate/{n}', ['uses'=>'SkillController@getFormUpdate','as'=>'skillFormUpdate','middleware' => ['permission:user-edit']]);
+      Route::post('skillFormUpdate/{n}', ['uses'=>'SkillController@postFormUpdate','middleware' => ['permission:user-edit']]);
+      //  Delete skill
+      Route::get('skillDelete/{n}', ['uses'=>'SkillController@delete','as'=>'skillDelete','middleware' => ['permission:user-delete']]);
+      //  AJAX
+      Route::post('listOfSkillsAjax', ['uses'=>'SkillController@listOfSkills','as'=>'listOfSkillsAjax','middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
+
 });
 
 //Route::get('test', ['uses'=>'ActivityController@test']);
