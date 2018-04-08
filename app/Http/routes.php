@@ -147,12 +147,15 @@ Route::group(['middleware' => ['auth']], function() {
       //  Transfer user
       Route::get('toolsFormTransfer/{user_id}/{project_id}', ['uses'=>'ToolsController@getFormTransfer','as'=>'toolsFormTransfer','middleware' => ['permission:tools-user_assigned-transfer']]);
       Route::get('toolsFormTransferAction/{user_id}/{old_project_id}/{new_project_id}', ['uses'=>'ToolsController@getFormTransferAction','as'=>'toolsFormTransferAction','middleware' => ['permission:tools-user_assigned-transfer']]);
+      // Users skills
+      Route::get('toolsUsersSkills', ['uses'=>'ToolsController@userskillslist','as'=>'toolsUsersSkills','middleware' => ['permission:tools-usersskills']]);
       //  AJAX
       Route::post('listOfActivitiesPerUserAjax', ['uses'=>'ActivityController@listOfActivitiesPerUser','as'=>'listOfActivitiesPerUserAjax','middleware' => ['permission:tools-activity-view']]);
       Route::get('listOfProjectsMissingInfoAjax', ['uses'=>'ProjectController@listOfProjectsMissingInfo','as'=>'listOfProjectsMissingInfoAjax','middleware' => ['permission:tools-missing_info-view']]);
       Route::get('listOfProjectsMissingOTLAjax', ['uses'=>'ProjectController@listOfProjectsMissingOTL','as'=>'listOfProjectsMissingOTLAjax','middleware' => ['permission:tools-missing_info-view']]);
       Route::get('listOfProjectsLostAjax', ['uses'=>'ProjectController@listOfProjectsLost','as'=>'listOfProjectsLostAjax','middleware' => ['permission:tools-all_projects-view']]);
       Route::get('listOfProjectsAll', ['uses'=>'ProjectController@listOfProjectsAll','as'=>'listOfProjectsAllAjax','middleware' => ['permission:tools-all_projects-view']]);
+      Route::post('listOfUsersSkills', ['uses'=>'ToolsController@listOfUsersSkills','as'=>'listOfUsersSkills','middleware' => ['permission:tools-usersskills']]);
 
       //Dashboards
       Route::get('dashboardLoad', ['uses'=>'DashboardController@load','as'=>'dashboardLoad','middleware' => ['permission:dashboard-view']]);

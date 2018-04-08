@@ -77,6 +77,9 @@
             @permission(['tools-all_projects-view'])
             <li><a href="{!!route('projectsLost')!!}">Projects lost</a></li>
             @endpermission
+            @permission(['tools-usersskills'])
+            <li><a href="{!!route('toolsUsersSkills')!!}">Users skills</a></li>
+            @endpermission
           </ul>
         </li>
       </ul>

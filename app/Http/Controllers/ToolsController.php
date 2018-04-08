@@ -9,11 +9,13 @@ use App\User;
 use App\Customer;
 use App\Comment;
 use App\Activity;
+use App\Skill;
 use App\Http\Controllers\Controller;
 use DB;
 use Entrust;
 use Auth;
 use Session;
+use Datatables;
 use App\Repositories\UserRepository;
 use App\Repositories\ProjectRepository;
 use App\Repositories\ActivityRepository;
@@ -550,4 +552,26 @@ class ToolsController extends Controller {
 
     return redirect($redirect)->with('success','User transfered to new project successfully');
   }
+
+  public function userskillslist()
+	{
+    return view('tools/usersskillslist');
+  }
+
+  public function listOfUsersSkills()
+  {
+    $skillList = DB::table('skills')
+          ->select('skill_user.id','skills.domain','skills.subdomain','skills.technology','skills.skill','skills.certification','users.name','skill_user.rating')
+          ->leftjoin('skill_user', 'skills.id', '=', 'skill_user.skill_id')
+          ->leftjoin('users', 'users.id', '=', 'skill_user.user_id')
+          ->orderBy('skills.domain')
+          ->orderBy('skills.subdomain')
+          ->orderBy('skills.technology')
+          ->orderBy('skills.skill')
+          ->orderBy('skills.certification')
+          ->orderBy('users.name');
+    $data = Datatables::of($skillList)->make(true);
+    return $data;
+  }
+
 }

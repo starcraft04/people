@@ -14,7 +14,8 @@ class PermissionTableSeeder7 extends Seeder
     {
         $permission = [
         	[
-        		'name' => 'cluster-view',
+                'id' => 34,
+                'name' => 'cluster-view',
         		'display_name' => 'Cluster dashboard view',
         		'description' => 'Allow cluster managers to view the cluster dashboard'
         	]
