@@ -74,12 +74,14 @@
                         <th>Certification</th>
                         <th>Name</th>
                         <th>Rating</th>
+                        <th>Skill ID</th>
                         <th>
                         </th>
                     </tr>
                 </thead>
                 <tfoot>
                     <tr>
+                        <th></th>
                         <th></th>
                         <th></th>
                         <th></th>
@@ -137,6 +139,7 @@
                     { name: 'skills.certification', data: 'certification', searchable: true , visible: true },
                     { name: 'users.name', data: 'name', searchable: true , visible: true },
                     { name: 'skill_user.rating', data: 'rating', searchable: true , visible: true },
+                    { name: 'skills.id', data: 'skill_id', searchable: false , visible: false },
                     {
                         name: 'actions',
                         data: null,
@@ -145,7 +148,7 @@
                         render: function (data) {
                             var actions = '';
                             actions += '<div class="btn-group btn-group-xs">';
-                            actions += '<button id="'+data.id+'" class="buttonAdd btn btn-success"><span class="glyphicon glyphicon-plus"></span></button>';
+                            actions += '<button id="'+data.skill_id+'" class="buttonCreate btn btn-success"><span class="glyphicon glyphicon-plus"></span></button>';
                             if (data.name) {
                                 actions += '<button id="'+data.id+'" class="buttonUpdate btn btn-primary"><span class="glyphicon glyphicon-pencil"></span></button>';
                             }
@@ -158,6 +161,7 @@
                         width: '70px'
                     }
                     ],
+                order: [[5, 'asc'],[1, 'asc'],[2, 'asc'],[3, 'asc'],[4, 'asc']],
                 lengthMenu: [
                     [ 10, 25, 50, -1 ],
                     [ '10 rows', '25 rows', '50 rows', 'Show all' ]
@@ -232,8 +236,12 @@
                 }
             });
 
+            $(document).on('click', '.buttonCreate', function () {
+                window.location.href = "{!! route('userskillFormCreate','') !!}/"+this.id;
+            } );
+
             $(document).on('click', '.buttonUpdate', function () {
-                window.location.href = "{!! route('skillFormUpdate','') !!}/"+this.id;
+                window.location.href = "{!! route('userskillFormUpdate','') !!}/"+this.id;
             } );
 
             $(document).on('click', '.buttonDelete', function () {
@@ -242,7 +250,7 @@
                     if (result){
                         $.ajax({
                             type: 'get',
-                            url: "{!! route('skillDelete','') !!}/"+record_id,
+                            url: "{!! route('userskillDelete','') !!}/"+record_id,
                             dataType: 'json',
                             success: function(data) {
                                 console.log(data);

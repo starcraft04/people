@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Entrust;
 use App\Skill;
+use App\UserSkill;
 use Datatables;
 use App\Http\Requests\SkillCreateRequest;
 use App\Http\Requests\SkillUpdateRequest;
@@ -73,12 +74,16 @@ class SkillController extends Controller {
     $result = new \stdClass();
 		
 		// Include a check to see if a user has this skill or not and cannot delete in case there is a link with a user !!!
-
-    $skill = Skill::destroy($id);
-		$result->result = 'success';
-    $result->msg = 'Record deleted successfully';
-		return json_encode($result);
-		
+		if (count(UserSkill::where('skill_id',$id)->get()) > 0) {
+			$result->result = 'error';
+			$result->msg = 'Record cannot be deleted because some users are associated to this skill';
+			return json_encode($result);
+		} else {
+			$skill = Skill::destroy($id);
+			$result->result = 'success';
+			$result->msg = 'Record deleted successfully';
+			return json_encode($result);
+		}
 	}
 
 }

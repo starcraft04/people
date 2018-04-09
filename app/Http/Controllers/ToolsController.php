@@ -10,6 +10,7 @@ use App\Customer;
 use App\Comment;
 use App\Activity;
 use App\Skill;
+use App\UserSkill;
 use App\Http\Controllers\Controller;
 use DB;
 use Entrust;
@@ -561,17 +562,83 @@ class ToolsController extends Controller {
   public function listOfUsersSkills()
   {
     $skillList = DB::table('skills')
-          ->select('skill_user.id','skills.domain','skills.subdomain','skills.technology','skills.skill','skills.certification','users.name','skill_user.rating')
+          ->select('skill_user.id','skills.domain','skills.subdomain','skills.technology','skills.skill','skills.certification','users.name','skill_user.rating','skills.id AS skill_id')
           ->leftjoin('skill_user', 'skills.id', '=', 'skill_user.skill_id')
-          ->leftjoin('users', 'users.id', '=', 'skill_user.user_id')
-          ->orderBy('skills.domain')
-          ->orderBy('skills.subdomain')
-          ->orderBy('skills.technology')
-          ->orderBy('skills.skill')
-          ->orderBy('skills.certification')
-          ->orderBy('users.name');
+          ->leftjoin('users', 'users.id', '=', 'skill_user.user_id');
     $data = Datatables::of($skillList)->make(true);
     return $data;
   }
+
+  public function userSkillDelete($id)
+	{
+    // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
+    $result = new \stdClass();
+		
+    // Do a check first to see if you can delete this or not
+    $userskill = UserSkill::find($id);
+    if ((Auth::user()->id == $userskill->user_id) or (Entrust::can('tools-usersskills-editall'))) {
+      $userskill = UserSkill::destroy($id);
+		  $result->result = 'success';
+      $result->msg = 'Record deleted successfully';
+		  return json_encode($result);
+    } else {
+      $result->result = 'error';
+      $result->msg = 'You don\'t have the rights to delete this record';
+      return json_encode($result);
+    }
+  }
+  
+  public function getuserskillFormCreate($id)
+	{
+    $skill = Skill::find($id);
+
+    if (Entrust::can('tools-usersskills-editall')) {
+      $user_list = [];
+      $user_list_temp = $this->userRepository->getAllUsersList();
+      foreach ($user_list_temp as $key => $value){
+        $userinskilllist = DB::table('skill_user')
+            ->select('id')
+            ->where('user_id',$key)
+            ->where('skill_id',$id)
+            ->get();
+        if (count($userinskilllist) == 0){
+          $user_list[$key] = $value;
+        }
+      }
+    } else {
+      $user_list = User::where('id',Auth::user()->id)->lists('name','id');
+    }
+		return view('tools/userskill_create_update', compact('skill','user_list'))->with('action','create');
+	}
+
+	public function getuserskillFormUpdate($id)
+	{
+    $userskill = UserSkill::find($id);
+    $skill = Skill::find($userskill->skill_id);
+    $user_list = User::where('id',$userskill->user_id)->lists('name','id');
+    if (Entrust::can('tools-usersskills-editall') or (Auth::user()->id == $userskill->user_id)) {
+      return view('tools/userskill_create_update', compact('userskill','skill','user_list'))->with('action','update');
+    } else {
+      return redirect('toolsUsersSkills')->with('error','You don\'t have the rights to modify this record');
+    }
+	}
+
+	public function postuserskillFormCreate(Request $request)
+	{
+    $inputs = $request->only('skill_id','user_id','rating');
+    $userskill = UserSkill::create($inputs);
+
+    return redirect('toolsUsersSkills')->with('success','Record created successfully');
+	}
+
+	public function postuserskillFormUpdate(Request $request, $id)
+	{
+		$inputs = $request->only('rating');
+
+    $userskill = UserSkill::find($id);
+		$userskill->update($inputs);
+
+    return redirect('toolsUsersSkills')->with('success','Record updated successfully');
+	}
 
 }

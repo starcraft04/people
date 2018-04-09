@@ -87,5 +87,11 @@ return [
         '11' => 'November',
         '12' => 'December'
     ],
+    'userskill_rating' => [
+        '1' => '1-basic',
+        '2' => '2-proficient',
+        '3' => '3-advanced',
+        '4' => '4-expert'
+    ],
     'defaultRole' => 'User'
 ];
