@@ -159,7 +159,7 @@ Route::group(['middleware' => ['auth']], function() {
       Route::get('listOfProjectsMissingOTLAjax', ['uses'=>'ProjectController@listOfProjectsMissingOTL','as'=>'listOfProjectsMissingOTLAjax','middleware' => ['permission:tools-missing_info-view']]);
       Route::get('listOfProjectsLostAjax', ['uses'=>'ProjectController@listOfProjectsLost','as'=>'listOfProjectsLostAjax','middleware' => ['permission:tools-all_projects-view']]);
       Route::get('listOfProjectsAll', ['uses'=>'ProjectController@listOfProjectsAll','as'=>'listOfProjectsAllAjax','middleware' => ['permission:tools-all_projects-view']]);
-      Route::post('listOfUsersSkills', ['uses'=>'ToolsController@listOfUsersSkills','as'=>'listOfUsersSkills','middleware' => ['permission:tools-usersskills']]);
+      Route::post('listOfUsersSkills/{cert}', ['uses'=>'ToolsController@listOfUsersSkills','as'=>'listOfUsersSkills','middleware' => ['permission:tools-usersskills']]);
       Route::get('userskillDelete/{id}', ['uses'=>'ToolsController@userSkillDelete','as'=>'userskillDelete','middleware' => ['permission:tools-usersskills']]);
 
       //Dashboards
