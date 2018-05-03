@@ -211,7 +211,7 @@
                     {
                     extend: "colvis",
                     className: "btn-sm",
-                    columns: [ 1,2,3,4,5,6,7 ]
+                    columns: [ 1,2,3,4,5,6 ]
                     },
                     
                   {
@@ -322,7 +322,7 @@
                     {
                     extend: "colvis",
                     className: "btn-sm",
-                    columns: [ 1,2,3,4,5,6,7 ]
+                    columns: [ 1,2,3,4,5 ]
                     },
                     
                   {
