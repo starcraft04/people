@@ -276,7 +276,7 @@
                 }
             });
 
-            skillTable = $('#certificationTable').DataTable({
+            certificationTable = $('#certificationTable').DataTable({
                 serverSide: true,
                 processing: true,
                 stateSave: true,
@@ -292,7 +292,7 @@
                     { name: 'skills.technology', data: 'technology', searchable: true , visible: true },
                     { name: 'skills.skill', data: 'skill', searchable: true , visible: true },
                     { name: 'users.name', data: 'name', searchable: true , visible: true },
-                    { name: 'skill_user.rating', data: 'rating', searchable: true , visible: true },
+                    { name: 'skill_user.rating', data: 'rating', searchable: false , visible: false },
                     { name: 'skills.id', data: 'skill_id', searchable: false , visible: false },
                     {
                         name: 'actions',
@@ -303,9 +303,6 @@
                             var actions = '';
                             actions += '<div class="btn-group btn-group-xs">';
                             actions += '<button id="'+data.skill_id+'" class="buttonCreate btn btn-success"><span class="glyphicon glyphicon-plus"></span></button>';
-                            if (data.name) {
-                                actions += '<button id="'+data.id+'" class="buttonUpdate btn btn-primary"><span class="glyphicon glyphicon-pencil"></span></button>';
-                            }
                             if (data.name) {
                             actions += '<button id="'+data.id+'" class="buttonDelete btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
                             }
@@ -375,17 +372,17 @@
                         }
                     });
                     // Restore state
-                    var state = skillTable.state.loaded();
+                    var state = certificationTable.state.loaded();
                     if (state) {
-                        skillTable.columns().eq(0).each(function (colIdx) {
+                        certificationTable.columns().eq(0).each(function (colIdx) {
                             var colSearch = state.columns[colIdx].search;
 
                             if (colSearch.search) {
-                                $('input', skillTable.column(colIdx).footer()).val(colSearch.search);
+                                $('input', certificationTable.column(colIdx).footer()).val(colSearch.search);
                             }
                         });
 
-                        skillTable.draw();
+                        certificationTable.draw();
                     }
                 }
             });
@@ -424,12 +421,14 @@
                                     $(this).addClass('animated flipOutX')
                                 });
                                 skillTable.ajax.reload();
+                                certificationTable.ajax.reload();
                             }
                         });
                     }
                 });
             } );
-
+            
         } );
+
     </script>
 @stop

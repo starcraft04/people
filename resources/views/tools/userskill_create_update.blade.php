@@ -62,14 +62,12 @@
             <div class="col-md-2"><b>Sub-domain</b></div>
             <div class="col-md-2"><b>Technology</b></div>
             <div class="col-md-2"><b>Skill</b></div>
-            <div class="col-md-2"><b>Certification</b></div>
           </div>
           <div class="row">
             <div class="col-md-1">{!! $skill->domain !!}</div>
             <div class="col-md-2">{!! $skill->subdomain !!}</div>
             <div class="col-md-2">{!! $skill->technology !!}</div>
             <div class="col-md-2">{!! $skill->skill !!}</div>
-            <div class="col-md-2">{!! $skill->certification !!}</div>
           </div>
           <br />
 
@@ -85,13 +83,13 @@
           </div>
         </div>
 
-        <div class="row">
+        <div class="row" @if($skill->certification == 1)style="display:none;"@endif>
           <div class="form-group {!! $errors->has('rating') ? 'has-error' : '' !!} col-md-12">
             <div class="col-md-2">
               {!! Form::label('rating', 'Rating', ['class' => 'control-label']) !!}
             </div>
             <div class="col-md-10">
-              {!! Form::select('rating', config('select.userskill_rating'), (isset($userskill)) ? $userskill->rating : '', ['class' => 'form-control']) !!}
+              {!! Form::select('rating', $select, (isset($userskill)) ? $userskill->rating : '', ['class' => 'form-control']) !!}
               {!! $errors->first('rating', '<small class="help-block">:message</small>') !!}
             </div>
           </div>

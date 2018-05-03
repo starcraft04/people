@@ -592,6 +592,11 @@ class ToolsController extends Controller {
   public function getuserskillFormCreate($id)
 	{
     $skill = Skill::find($id);
+    if ($skill->certification == 1) {
+      $select = config('select.usercert_rating');
+    } else {
+      $select = config('select.userskill_rating');
+    }
 
     if (Entrust::can('tools-usersskills-editall')) {
       $user_list = [];
@@ -609,16 +614,22 @@ class ToolsController extends Controller {
     } else {
       $user_list = User::where('id',Auth::user()->id)->lists('name','id');
     }
-		return view('tools/userskill_create_update', compact('skill','user_list'))->with('action','create');
+		return view('tools/userskill_create_update', compact('skill','user_list','select'))->with('action','create');
 	}
 
 	public function getuserskillFormUpdate($id)
 	{
     $userskill = UserSkill::find($id);
     $skill = Skill::find($userskill->skill_id);
+    if ($skill->certification == 1) {
+      $select = config('select.usercert_rating');
+    } else {
+      $select = config('select.userskill_rating');
+    }
+    
     $user_list = User::where('id',$userskill->user_id)->lists('name','id');
     if (Entrust::can('tools-usersskills-editall') or (Auth::user()->id == $userskill->user_id)) {
-      return view('tools/userskill_create_update', compact('userskill','skill','user_list'))->with('action','update');
+      return view('tools/userskill_create_update', compact('userskill','skill','user_list','select'))->with('action','update');
     } else {
       return redirect('toolsUsersSkills')->with('error','You don\'t have the rights to modify this record');
     }

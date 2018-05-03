@@ -93,5 +93,8 @@ return [
         '3' => '3-advanced',
         '4' => '4-expert'
     ],
+    'usercert_rating' => [
+        '1' => 'yes'
+    ],
     'defaultRole' => 'User'
 ];
