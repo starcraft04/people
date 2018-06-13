@@ -19,7 +19,8 @@
     @permission(['user-view','user-edit','user-create','user-delete',
     'role-view','role-edit','role-create','role-delete',
     'project-view','project-edit','project-create','project-delete',
-    'activity-view','activity-edit','activity-create','activity-delete'
+    'activity-view','activity-edit','activity-create','activity-delete',
+    'skills-addnew'
     ])
     <ul class="nav side-menu">
       <li><a><i class="fa fa-edit"></i>DB Management <span class="fa fa-chevron-down"></span></a>
@@ -39,7 +40,7 @@
           @permission(['project-view','project-edit','project-create','project-delete'])
           <li><a href="{!!route('customerList')!!}">Customers list</a></li>
           @endpermission
-          @permission(['user-view','user-edit','user-create','user-delete'])
+          @permission(['skills-addnew'])
           <li><a href="{!!route('skillList')!!}">Skills list</a></li>
           @endpermission
         </ul>
