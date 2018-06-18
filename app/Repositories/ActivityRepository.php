@@ -9,6 +9,7 @@ use Entrust;
 use Auth;
 use App\Repositories\UserRepository;
 use App\Repositories\ProjectTableRepository;
+use App\Repositories\ProjectTableRepositoryV2;
 
 class ActivityRepository
 {
@@ -158,15 +159,20 @@ class ActivityRepository
     **/
 
 
-    $temp_table = new ProjectTableRepository('table_temp_a','table_temp_b');
+    $temp_table = new ProjectTableRepositoryV2('temp_a');
 
-    $activityList = DB::table('table_temp_b');
+    $activityList = DB::table('temp_a');
 
-    $activityList->select('manager_id','manager_name','user_id','user_name','project_id','project_name','customer_name','year','activity_type','project_status','project_type',
-                          'jan_com','jan_otl','feb_com','feb_otl','mar_com','mar_otl','apr_com','apr_otl','may_com','may_otl','jun_com','jun_otl',
-                          'jul_com','jul_otl','aug_com','aug_otl','sep_com','sep_otl','oct_com','oct_otl','nov_com','nov_otl','dec_com','dec_otl'
-
+    $activityList->select('uu.manager_id AS manager_id','m.name AS manager_name','temp_a.user_id AS user_id','u.name AS user_name','temp_a.project_id AS project_id',
+                            'p.project_name AS project_name','c.name AS customer_name','temp_a.year AS year','p.activity_type AS activity_type','p.project_status AS project_status','p.project_type AS project_type',
+                            'jan_com','jan_otl','feb_com','feb_otl','mar_com','mar_otl','apr_com','apr_otl','may_com','may_otl','jun_com','jun_otl',
+                            'jul_com','jul_otl','aug_com','aug_otl','sep_com','sep_otl','oct_com','oct_otl','nov_com','nov_otl','dec_com','dec_otl'
     );
+    $activityList->leftjoin('projects AS p', 'p.id', '=', 'temp_a.project_id');
+    $activityList->leftjoin('users AS u', 'temp_a.user_id', '=', 'u.id');
+    $activityList->leftjoin('users_users AS uu', 'u.id', '=', 'uu.user_id');
+    $activityList->leftjoin('users AS m', 'm.id', '=', 'uu.manager_id');
+    $activityList->leftjoin('customers AS c', 'c.id', '=', 'p.customer_id');
 
     // Checking which year to display
     if (!empty($where['year']))
