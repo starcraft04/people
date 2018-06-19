@@ -105,12 +105,12 @@ class ActivityController extends Controller {
 
     $theoreticalCapacity = $this->userRepository->getTheoreticalCapacity($inputs);
 
-    $temp_table = new ProjectTableRepository('table_temp_a','table_temp_b');
+    $temp_table = new ProjectTableRepository('temp_a');
 
-    $dsc = $this->activityRepository->getListOfLoadPerUserChart($inputs,'project_type != "Pre-sales" and activity_type = "DSC"');
-    $isc = $this->activityRepository->getListOfLoadPerUserChart($inputs,'project_type != "Pre-sales" and activity_type = "ISC"');
-    $orange = $this->activityRepository->getListOfLoadPerUserChart($inputs,'project_type = "Orange absence or other"');
-    $presales = $this->activityRepository->getListOfLoadPerUserChart($inputs,'project_type = "Pre-sales"');
+    $dsc = $this->activityRepository->getListOfLoadPerUserChart('temp_a',$inputs,'project_type != "Pre-sales" and activity_type = "DSC"');
+    $isc = $this->activityRepository->getListOfLoadPerUserChart('temp_a',$inputs,'project_type != "Pre-sales" and activity_type = "ISC"');
+    $orange = $this->activityRepository->getListOfLoadPerUserChart('temp_a',$inputs,'project_type = "Orange absence or other"');
+    $presales = $this->activityRepository->getListOfLoadPerUserChart('temp_a',$inputs,'project_type = "Pre-sales"');
 
     unset($temp_table);
 

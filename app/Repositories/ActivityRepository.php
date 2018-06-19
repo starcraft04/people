@@ -259,11 +259,11 @@ class ActivityRepository
     *   Then we will need to use in the view page the name of the table.column. This is so that it knows how to do proper sorting or search.
     **/
 
-    $temp_table = new ProjectTableRepository('table_temp_a','table_temp_b');
+    $temp_table = new ProjectTableRepository('temp_a');
 
-    $activityList = DB::table('table_temp_b');
+    $activityList = DB::table('temp_a');
 
-    $activityList->select('manager_id','manager_name','user_id','user_name','year',
+    $activityList->select('uu.manager_id AS manager_id','m.name AS manager_name','temp_a.user_id','u.name AS user_name','year',
                             DB::raw('ROUND(SUM(jan_com),1) AS jan_com'),
                             DB::raw('ROUND(SUM(feb_com),1) AS feb_com'),
                             DB::raw('ROUND(SUM(mar_com),1) AS mar_com'),
@@ -277,6 +277,9 @@ class ActivityRepository
                             DB::raw('ROUND(SUM(nov_com),1) AS nov_com'),
                             DB::raw('ROUND(SUM(dec_com),1) AS dec_com')
     );
+    $activityList->leftjoin('users_users AS uu', 'temp_a.user_id', '=', 'uu.user_id');
+    $activityList->leftjoin('users AS u', 'temp_a.user_id', '=', 'u.id');
+    $activityList->leftjoin('users AS m', 'm.id', '=', 'uu.manager_id');
 
     if (!empty($where['year']))
         {
@@ -284,36 +287,6 @@ class ActivityRepository
                 foreach ($where['year'] as $w)
                 {
                     $query->orWhere('year',$w);
-                }
-            });
-        }
-
-    if (!empty($where['meta_activity']))
-        {
-            $activityList->where(function ($query) use ($where) {
-                foreach ($where['meta_activity'] as $w)
-                {
-                    $query->orWhere('meta_activity',$w);
-                }
-            });
-        }
-
-    if (!empty($where['project_status']))
-        {
-            $activityList->where(function ($query) use ($where) {
-                foreach ($where['project_status'] as $w)
-                {
-                    $query->orWhere('project_status',$w);
-                }
-            });
-        }
-
-    if (!empty($where['project_type']))
-        {
-            $activityList->where(function ($query) use ($where) {
-                foreach ($where['project_type'] as $w)
-                {
-                    $query->orWhere('project_type',$w);
                 }
             });
         }
@@ -326,7 +299,7 @@ class ActivityRepository
               $activityList->where(function ($query) use ($where) {
                   foreach ($where['user'] as $w)
                   {
-                      $query->orWhere('user_id',$w);
+                      $query->orWhere('temp_a.user_id',$w);
                   }
               });
           }
@@ -335,7 +308,7 @@ class ActivityRepository
               $activityList->where(function ($query) use ($where) {
                   foreach ($where['manager'] as $w)
                   {
-                      $query->orWhere('manager_id',$w);
+                      $query->orWhere('uu.manager_id',$w);
                   }
               });
           }
@@ -348,16 +321,18 @@ class ActivityRepository
               $activityList->where(function ($query) use ($where) {
                   foreach ($where['user'] as $w)
                   {
-                      $query->orWhere('user_id',$w);
+                      $query->orWhere('temp_a.user_id',$w);
                   }
               });
           }
     }
     else {
-      $activityList->where('user_id','=',Auth::user()->id);
+      $activityList->where('temp_a.user_id','=',Auth::user()->id);
     }
 
-    $activityList->groupBy('manager_id','manager_name','user_id','user_name','year');
+    $activityList->groupBy('manager_id','user_id','year','m.name','u.name');
+
+    //dd($activityList->get());
 
     $data = Datatables::of($activityList)->make(true);
 
@@ -366,7 +341,7 @@ class ActivityRepository
     return $data;
   }
 
-  public function getListOfLoadPerUserChart($where = null,$where_raw)
+  public function getListOfLoadPerUserChart($table,$where = null,$where_raw)
   {
     /** We create here a SQL statement and the Datatables function will add the information it got from the AJAX request to have things like search or limit or show.
     *   So we need to have a proper SQL search that the ajax can use via get with parameters given to it.
@@ -376,7 +351,7 @@ class ActivityRepository
 
     $data = 0;
     
-    $activityList = DB::table('table_temp_b');
+    $activityList = DB::table($table);
 
     $activityList->select('year',
                             DB::raw('SUM(jan_com) AS jan_com'),
@@ -392,6 +367,8 @@ class ActivityRepository
                             DB::raw('SUM(nov_com) AS nov_com'),
                             DB::raw('SUM(dec_com) AS dec_com')
     );
+    $activityList->leftjoin('projects AS p', 'p.id', '=', $table.'.project_id');
+    $activityList->leftjoin('users_users AS uu', $table.'.user_id', '=', 'uu.user_id');
 
     if (!empty($where['year']))
         {
@@ -408,10 +385,10 @@ class ActivityRepository
       // Format of $manager_list is [ 1=> 'manager1', 2=>'manager2',...]
       if (!empty($where['user']))
           {
-              $activityList->where(function ($query) use ($where) {
+              $activityList->where(function ($query) use ($where,$table) {
                   foreach ($where['user'] as $w)
                   {
-                      $query->orWhere('user_id',$w);
+                      $query->orWhere($table.'.user_id',$w);
                   }
               });
           }
@@ -420,7 +397,7 @@ class ActivityRepository
               $activityList->where(function ($query) use ($where) {
                   foreach ($where['manager'] as $w)
                   {
-                      $query->orWhere('manager_id',$w);
+                      $query->orWhere('uu.manager_id',$w);
                   }
               });
           }
@@ -429,29 +406,33 @@ class ActivityRepository
       $activityList->where('manager_id','=',Auth::user()->id);
       if (!empty($where['user']))
           {
-              $activityList->where(function ($query) use ($where) {
+              $activityList->where(function ($query) use ($where,$table) {
                   foreach ($where['user'] as $w)
                   {
-                      $query->orWhere('user_id',$w);
+                      $query->orWhere($table.'.user_id',$w);
                   }
               });
           }
     }
     else {
-      $activityList->where('user_id','=',Auth::user()->id);
+      $activityList->where($table.'.user_id','=',Auth::user()->id);
     }
 
     if (!empty($where_raw)) {
       $activityList->whereRaw($where_raw);
     }
 
+    
+    $activityList->groupBy('year');
+
     //dd($activityList->toSql());
 
     $data = $activityList->get();
 
     // This is in case we don't find any record then we put everything to 0
-    $activityList->groupBy('year');
-    if ($data [0]->year == null){
+    if (count($data) == 0){
+      $data = [];
+      $data [0] = new \stdClass();
       $data [0]->year = $where['year'][0];
       $data [0]->jan_com = 0;
       $data [0]->feb_com = 0;
@@ -513,53 +494,6 @@ class ActivityRepository
 
   public function getNumberPerUserAndProject($user_id,$project_id){
     return $this->activity->where('user_id', $user_id)->where('project_id', $project_id)->count();
-  }
-
-  public function test()
-  {
-
-    /*
-    This select will get a temporary table with all the records where if from_otl=0
-    then it will check if there is not a record with from_otl=1 and
-    if yes, will not include it.
-     */
-
-    $temp_table = new ProjectTableRepository('table_temp_a','table_temp_b');
-
-
-    $activity = DB::table('table_temp_b')
-    ->select('year','user_id',
-        DB::raw('SUM(jan_com) AS jan_com'),
-        DB::raw('SUM(feb_com) AS feb_com'),
-        DB::raw('SUM(mar_com) AS mar_com'),
-        DB::raw('SUM(apr_com) AS apr_com'),
-        DB::raw('SUM(may_com) AS may_com'),
-        DB::raw('SUM(jun_com) AS jun_com'),
-        DB::raw('SUM(jul_com) AS jul_com'),
-        DB::raw('SUM(aug_com) AS aug_com'),
-        DB::raw('SUM(sep_com) AS sep_com'),
-        DB::raw('SUM(oct_com) AS oct_com'),
-        DB::raw('SUM(nov_com) AS nov_com'),
-        DB::raw('SUM(dec_com) AS dec_com')
-        )
-    ->where('project_type','=','Project')
-    ->where(function($query){
-      $query->where('user_id','=','15');
-      $query->orWhere('user_id','=','16');
-    })
-    ->groupBy('year','user_id')
-    ->orderBy('user_id')
-    ->get();
-
-    $activity2 = DB::table('table_temp_b')
-    ->where(function($query){
-      $query->where('user_id','=','15');
-      $query->orWhere('user_id','=','16');
-    })
-    ->get();
-    $result = $activity2;
-
-    dd($result);
   }
 
     public function getCustomersPerCluster($cluster,$year,$limit,$domain)
