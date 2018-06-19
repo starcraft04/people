@@ -162,33 +162,81 @@
                   <th>Project status</th>
                   <th>Year</th>
                   <th>Jan</th>
+                  <th>Jan user</th>
+                  <th>Jan otl</th>
                   <th>OTL</th>
                   <th>Feb</th>
+                  <th>Feb user</th>
+                  <th>Feb otl</th>
                   <th>OTL</th>
                   <th>Mar</th>
+                  <th>Mar user</th>
+                  <th>Mar otl</th>
                   <th>OTL</th>
                   <th>Apr</th>
+                  <th>Apr user</th>
+                  <th>Apr otl</th>
                   <th>OTL</th>
                   <th>May</th>
+                  <th>May user</th>
+                  <th>May otl</th>
                   <th>OTL</th>
                   <th>Jun</th>
+                  <th>Jun user</th>
+                  <th>Jun otl</th>
                   <th>OTL</th>
                   <th>Jul</th>
+                  <th>Jul user</th>
+                  <th>Jul otl</th>
                   <th>OTL</th>
                   <th>Aug</th>
+                  <th>Aug user</th>
+                  <th>Aug otl</th>
                   <th>OTL</th>
                   <th>Sep</th>
+                  <th>Sep user</th>
+                  <th>Sep otl</th>
                   <th>OTL</th>
                   <th>Oct</th>
+                  <th>Oct user</th>
+                  <th>Oct otl</th>
                   <th>OTL</th>
                   <th>Nov</th>
+                  <th>Nov user</th>
+                  <th>Nov otl</th>
                   <th>OTL</th>
                   <th>Dec</th>
+                  <th>Dec user</th>
+                  <th>Dec otl</th>
                   <th>OTL</th>
                 </tr>
               </thead>
               <tfoot>
                 <tr>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
                   <th></th>
                   <th></th>
                   <th></th>
@@ -459,30 +507,78 @@
         { name: 'p.activity_type', data: 'activity_type', visible: false},
         { name: 'p.project_status', data: 'project_status' , visible: false},
         { name: 'temp_a.year', data: 'year' , searchable: false , visible: false},
-        { name: 'jan_com', data: 'jan_com', width: '30px', searchable: false , className: "jan_com"},
+        { data: function ( row, type, val, meta ) {
+          if (row.jan_from_otl == 1){return row.jan_otl;}else{return row.jan_user;}
+            }, width: '30px', searchable: false},
+        { name: 'jan_user', data: 'jan_user', width: '30px', searchable: false , visible: false},
         { name: 'jan_otl', data: 'jan_otl', width: '10px', searchable: false , visible: false},
-        { name: 'feb_com', data: 'feb_com', width: '30px', searchable: false , className: "feb_com"},
+        { name: 'jan_from_otl', data: 'jan_from_otl', width: '10px', searchable: false , visible: false},
+        { data: function ( row, type, val, meta ) {
+          if (row.feb_from_otl == 1){return row.feb_otl;}else{return row.feb_user;}
+            }, width: '30px', searchable: false},
+        { name: 'feb_user', data: 'feb_user', width: '30px', searchable: false , visible: false},
         { name: 'feb_otl', data: 'feb_otl', width: '10px', searchable: false , visible: false},
-        { name: 'mar_com', data: 'mar_com', width: '30px', searchable: false , className: "mar_com"},
+        { name: 'feb_from_otl', data: 'feb_from_otl', width: '10px', searchable: false , visible: false},
+        { data: function ( row, type, val, meta ) {
+          if (row.mar_from_otl == 1){return row.mar_otl;}else{return row.mar_user;}
+            }, width: '30px', searchable: false},
+        { name: 'mar_user', data: 'mar_user', width: '30px', searchable: false , visible: false},
         { name: 'mar_otl', data: 'mar_otl', width: '10px', searchable: false , visible: false},
-        { name: 'apr_com', data: 'apr_com', width: '30px', searchable: false , className: "apr_com"},
+        { name: 'mar_from_otl', data: 'mar_from_otl', width: '10px', searchable: false , visible: false},
+        { data: function ( row, type, val, meta ) {
+          if (row.apr_from_otl == 1){return row.apr_otl;}else{return row.apr_user;}
+            }, width: '30px', searchable: false},
+        { name: 'apr_user', data: 'apr_user', width: '30px', searchable: false , visible: false},
         { name: 'apr_otl', data: 'apr_otl', width: '10px', searchable: false , visible: false},
-        { name: 'may_com', data: 'may_com', width: '30px', searchable: false , className: "may_com"},
+        { name: 'apr_from_otl', data: 'apr_from_otl', width: '10px', searchable: false , visible: false},
+        { data: function ( row, type, val, meta ) {
+          if (row.may_from_otl == 1){return row.may_otl;}else{return row.may_user;}
+            }, width: '30px', searchable: false},
+        { name: 'may_user', data: 'may_user', width: '30px', searchable: false , visible: false},
         { name: 'may_otl', data: 'may_otl', width: '10px', searchable: false , visible: false},
-        { name: 'jun_com', data: 'jun_com', width: '30px', searchable: false , className: "jun_com"},
+        { name: 'may_from_otl', data: 'may_from_otl', width: '10px', searchable: false , visible: false},
+        { data: function ( row, type, val, meta ) {
+          if (row.jun_from_otl == 1){return row.jun_otl;}else{return row.jun_user;}
+            }, width: '30px', searchable: false},
+        { name: 'jun_user', data: 'jun_user', width: '30px', searchable: false , visible: false},
         { name: 'jun_otl', data: 'jun_otl', width: '10px', searchable: false , visible: false},
-        { name: 'jul_com', data: 'jul_com', width: '30px', searchable: false , className: "jul_com"},
+        { name: 'jun_from_otl', data: 'jun_from_otl', width: '10px', searchable: false , visible: false},
+        { data: function ( row, type, val, meta ) {
+          if (row.jul_from_otl == 1){return row.jul_otl;}else{return row.jul_user;}
+            }, width: '30px', searchable: false},
+        { name: 'jul_user', data: 'jul_user', width: '30px', searchable: false , visible: false},
         { name: 'jul_otl', data: 'jul_otl', width: '10px', searchable: false , visible: false},
-        { name: 'aug_com', data: 'aug_com', width: '30px', searchable: false , className: "aug_com"},
+        { name: 'jul_from_otl', data: 'jul_from_otl', width: '10px', searchable: false , visible: false},
+        { data: function ( row, type, val, meta ) {
+          if (row.aug_from_otl == 1){return row.aug_otl;}else{return row.aug_user;}
+            }, width: '30px', searchable: false},
+        { name: 'aug_user', data: 'aug_user', width: '30px', searchable: false , visible: false},
         { name: 'aug_otl', data: 'aug_otl', width: '10px', searchable: false , visible: false},
-        { name: 'sep_com', data: 'sep_com', width: '30px', searchable: false , className: "sep_com"},
+        { name: 'aug_from_otl', data: 'aug_from_otl', width: '10px', searchable: false , visible: false},
+        { data: function ( row, type, val, meta ) {
+          if (row.sep_from_otl == 1){return row.sep_otl;}else{return row.sep_user;}
+            }, width: '30px', searchable: false},
+        { name: 'sep_user', data: 'sep_user', width: '30px', searchable: false , visible: false},
         { name: 'sep_otl', data: 'sep_otl', width: '10px', searchable: false , visible: false},
-        { name: 'oct_com', data: 'oct_com', width: '30px', searchable: false , className: "oct_com"},
+        { name: 'sep_from_otl', data: 'sep_from_otl', width: '10px', searchable: false , visible: false},
+        { data: function ( row, type, val, meta ) {
+          if (row.oct_from_otl == 1){return row.oct_otl;}else{return row.oct_user;}
+            }, width: '30px', searchable: false},
+        { name: 'oct_user', data: 'oct_user', width: '30px', searchable: false , visible: false},
         { name: 'oct_otl', data: 'oct_otl', width: '10px', searchable: false , visible: false},
-        { name: 'nov_com', data: 'nov_com', width: '30px', searchable: false , className: "nov_com"},
+        { name: 'oct_from_otl', data: 'oct_from_otl', width: '10px', searchable: false , visible: false},
+        { data: function ( row, type, val, meta ) {
+          if (row.nov_from_otl == 1){return row.nov_otl;}else{return row.nov_user;}
+            }, width: '30px', searchable: false},
+        { name: 'nov_user', data: 'nov_user', width: '30px', searchable: false , visible: false},
         { name: 'nov_otl', data: 'nov_otl', width: '10px', searchable: false , visible: false},
-        { name: 'dec_com', data: 'dec_com', width: '30px', searchable: false , className: "dec_com"},
-        { name: 'dec_otl', data: 'dec_otl', width: '10px', searchable: false , visible: false}
+        { name: 'nov_from_otl', data: 'nov_from_otl', width: '10px', searchable: false , visible: false},
+        { data: function ( row, type, val, meta ) {
+          if (row.dec_from_otl == 1){return row.dec_otl;}else{return row.dec_user;}
+            }, width: '30px', searchable: false},
+        { name: 'dec_user', data: 'dec_user', width: '30px', searchable: false , visible: false},
+        { name: 'dec_otl', data: 'dec_otl', width: '10px', searchable: false , visible: false},
+        { name: 'dec_from_otl', data: 'dec_from_otl', width: '10px', searchable: false , visible: false}
       ],
       order: [[1, 'asc'],[3, 'asc'],[4, 'asc'],[6, 'asc']],
 
@@ -495,7 +591,7 @@
         {
           extend: "colvis",
           className: "btn-sm",
-          columns: [ 1, 3, 4, 6, 7, 8, 9, 10, 11, 13, 15,17,19,21,23,25,27,29,31,33 ]
+          columns: [ 1, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 15,16,17,19,20,21,23,24,25,27,28,29,31,32,33,35,36,37,39,40,41,43,44,45,47,48,49,51,52,53,55,56,57 ]
         },
         {
           extend: "pageLength",
@@ -557,20 +653,6 @@
             activitiesTable.draw();
         }
       },
-      rowCallback: function(row, data, index){
-        assign_color(row,data.jan_com,data.jan_otl,'jan_com');
-        assign_color(row,data.feb_com,data.feb_otl,'feb_com');
-        assign_color(row,data.mar_com,data.mar_otl,'mar_com');
-        assign_color(row,data.apr_com,data.apr_otl,'apr_com');
-        assign_color(row,data.may_com,data.may_otl,'may_com');
-        assign_color(row,data.jun_com,data.jun_otl,'jun_com');
-        assign_color(row,data.jul_com,data.jul_otl,'jul_com');
-        assign_color(row,data.aug_com,data.aug_otl,'aug_com');
-        assign_color(row,data.sep_com,data.sep_otl,'sep_com');
-        assign_color(row,data.oct_com,data.oct_otl,'oct_com');
-        assign_color(row,data.nov_com,data.nov_otl,'nov_com');
-        assign_color(row,data.dec_com,data.dec_otl,'dec_com');
-      }
     });
 
     @permission('tools-activity-edit')
