@@ -231,17 +231,17 @@ class ActivityRepository
                 $activityList->where(function ($query) use ($where) {
                     foreach ($where['user'] as $w)
                     {
-                        $query->orWhere('user_id',$w);
+                        $query->orWhere('temp_a.user_id',$w);
                     }
                 });
             }
     }
     // In the end, the user is not a manager and doesn't have a special role so he can only see himself
     else {
-      $activityList->where('user_id','=',Auth::user()->id);
+      $activityList->where('temp_a.user_id','=',Auth::user()->id);
     }
 
-    $activityList->groupBy('manager_id','manager_name','user_id','user_name','project_id','project_name','year');
+    //$activityList->groupBy('manager_id','manager_name','user_id','user_name','project_id','project_name','year');
 
     $data = Datatables::of($activityList)->make(true);
 

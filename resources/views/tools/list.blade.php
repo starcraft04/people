@@ -545,7 +545,14 @@
         { name: 'jun_from_otl', data: 'jun_from_otl', width: '10px', searchable: false , visible: false},
         { data: function ( row, type, val, meta ) {
           if (row.jul_from_otl == 1){return row.jul_otl;}else{return row.jul_user;}
-            }, width: '30px', searchable: false},
+          }, 
+          render: function ( data, type, row ) {
+              if(row.jul_from_otl == 1){
+                className: "otl";
+              }        
+              return data;
+          },
+          width: '30px', searchable: false}, 
         { name: 'jul_user', data: 'jul_user', width: '30px', searchable: false , visible: false},
         { name: 'jul_otl', data: 'jul_otl', width: '10px', searchable: false , visible: false},
         { name: 'jul_from_otl', data: 'jul_from_otl', width: '10px', searchable: false , visible: false},
@@ -652,7 +659,7 @@
 
             activitiesTable.draw();
         }
-      },
+      }
     });
 
     @permission('tools-activity-edit')

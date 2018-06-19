@@ -416,9 +416,6 @@ class ToolsController extends Controller {
       }
     }
 
-    $loe_list = $this->activityRepository->getListOfActivitiesPerUserForProject(['project_id'=>$project_id]);
-    //dd($loe_list);
-
     //here is the check to see if we need the change user button
     $has_otl_activities = $this->activityRepository->getNumberOfOTLPerUserAndProject($user_id,$project_id);
     if (Entrust::can('tools-user_assigned-change') && $user_id != 0 && $has_otl_activities == 0){
@@ -428,7 +425,7 @@ class ToolsController extends Controller {
     $comments = Comment::where('project_id','=',$project_id)->orderBy('updated_at','desc')->get();
     $num_of_comments = count($comments);
 
-		return view('tools/create_update', compact('user_id','project','year','activities','from_otl','forecast','otl','loe_list','customers_list',
+		return view('tools/create_update', compact('user_id','project','year','activities','from_otl','forecast','otl','customers_list',
     'project_name_disabled',
     'customer_id_select_disabled',
     'otl_name_disabled',

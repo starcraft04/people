@@ -49,7 +49,6 @@
           Create project
           @elseif($action == 'update')
           Update project {{ isset($created_by_user_name) ? '(created by user '.$created_by_user_name.')' : '' }}
-          <button id="project_info" class="btn btn-success btn-sm">info</button>
           @endif
         </h2>
         <ul class="nav navbar-right panel_toolbox">
@@ -665,90 +664,6 @@ $(document).ready(function() {
         '<img src="{{ asset("/img/help/OTL_help.jpg") }}">'
     });
   } );
-
-  @if($action == 'update')
-  $(document).on('click', '#project_info', function () {
-    swal({
-      title: 'Project info',
-      width: '80%',
-      animation: false,
-      html:
-        @if(isset($user_id) && $user_id != 0)
-        '<div class="row">'+
-        '<div style="text-align: left;"><h3>OTL forecast comparison ({{$year}})</h3></div>'+
-        '<table class="table">'+
-        '<thead><th></th><th>Jan</th><th>Feb</th><th>Mar</th><th>Apr</th><th>May</th><th>Jun</th><th>Jul</th><th>Aug</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Dec</th><thead>'+
-        '<tbody>'+
-        '<tr>'+
-        '<td><b>OTL</b></td><td>{{$otl[1]}}</td><td>{{$otl[2]}}</td><td>{{$otl[3]}}</td><td>{{$otl[4]}}</td><td>{{$otl[5]}}</td><td>{{$otl[6]}}</td><td>{{$otl[7]}}</td><td>{{$otl[8]}}</td><td>{{$otl[9]}}</td><td>{{$otl[10]}}</td><td>{{$otl[11]}}</td><td>{{$otl[12]}}</td>'+
-        '</tr>'+
-        '<tr>'+
-        '<td><b>Forecast</b></td><td>{{$forecast[1]}}</td><td>{{$forecast[2]}}</td><td>{{$forecast[3]}}</td><td>{{$forecast[4]}}</td><td>{{$forecast[5]}}</td><td>{{$forecast[6]}}</td><td>{{$forecast[7]}}</td><td>{{$forecast[8]}}</td><td>{{$forecast[9]}}</td><td>{{$forecast[10]}}</td><td>{{$forecast[11]}}</td><td>{{$forecast[12]}}</td>'+
-        '</tr>'+
-        '</tbody>'+
-        '</table>'+
-        '</div>'+
-        @endif
-
-        '<div class="row">'+
-        '<div style="text-align: left;"><h3>LoE</h3></div>'+
-        '</div>'+
-        //onshore
-        '<div class="row">'+
-        '<div class="row">'+
-        '<div class="col-sm-12 text-left" style="padding-bottom: 10px;">LoE onshore ({!! $project->LoE_onshore !!} days)</div>'+
-        '</div>'+
-        @foreach($loe_list as $loe)
-        @if($loe->user_employee_type == 'onshore')
-        '<div class="row">'+
-        '<div class="col-sm-3 text-right">{{ $loe->user_name }} ({{ $loe->year }}):</div><div class="col-sm-9 text-left">{{ $loe->LoE }} days</div>'+
-        '</div>'+
-        @endif
-        @endforeach
-        '</div>'+
-        //nearshore
-        '<div class="row">'+
-        '<div class="row">'+
-        '<div class="col-sm-12 text-left" style="padding-top: 10px;padding-bottom: 10px;">LoE nearshore ({!! $project->LoE_nearshore !!} days)</div>'+
-        '</div>'+
-        @foreach($loe_list as $loe)
-        @if($loe->user_employee_type == 'nearshore')
-        '<div class="row">'+
-        '<div class="col-sm-3 text-right">{{ $loe->user_name }} ({{ $loe->year }}):</div><div class="col-sm-9 text-left">{{ $loe->LoE }} days</div>'+
-        '</div>'+
-        @endif
-        @endforeach
-        '</div>'+
-        //offshore
-        '<div class="row">'+
-        '<div class="row">'+
-        '<div class="col-sm-12 text-left" style="padding-top: 10px;padding-bottom: 10px;">LoE offshore ({!! $project->LoE_offshore !!} days)</div>'+
-        '</div>'+
-        @foreach($loe_list as $loe)
-        @if($loe->user_employee_type == 'offshore')
-        '<div class="row">'+
-        '<div class="col-sm-3 text-right">{{ $loe->user_name }} ({{ $loe->year }}):</div><div class="col-sm-9 text-left">{{ $loe->LoE }} days</div>'+
-        '</div>'+
-        @endif
-        @endforeach
-        '</div>'+
-        //contractor
-        '<div class="row">'+
-        '<div class="row">'+
-        '<div class="col-sm-12 text-left" style="padding-top: 10px;">LoE contractor ({!! $project->LoE_contractor !!} days)</div>'+
-        '</div>'+
-        @foreach($loe_list as $loe)
-        @if($loe->user_employee_type == 'contractor')
-        '<div class="row">'+
-        '<div class="col-sm-3 text-right">{{ $loe->user_name }} ({{ $loe->year }}):</div><div class="col-sm-9 text-left">{{ $loe->LoE }} days</div>'+
-        '</div>'+
-        @endif
-        @endforeach
-        '</div>'
-
-    });
-  } );
-  @endif
 
   // Now this is important so that we send the value of all disabled fields
   // What it does is when you try to submit, it will remove the disabled property on all fields with disabled
