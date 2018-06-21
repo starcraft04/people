@@ -86,7 +86,7 @@
                                 <th>Country</th>
                                 <th>Rating</th>
                                 <th>Skill ID</th>
-                                <th>
+                                <th><button class="buttonCreate btn btn-success"><span class="glyphicon glyphicon-plus"></span></button>
                                 </th>
                             </tr>
                         </thead>
@@ -121,7 +121,7 @@
                                 <th>Country</th>
                                 <th>Rating</th>
                                 <th>Skill ID</th>
-                                <th>
+                                <th><button class="buttonCreate btn btn-success"><span class="glyphicon glyphicon-plus"></span></button>
                                 </th>
                             </tr>
                         </thead>
@@ -198,11 +198,10 @@
                         render: function (data) {
                             var actions = '';
                             actions += '<div class="btn-group btn-group-xs">';
-                            actions += '<button id="'+data.skill_id+'" class="buttonCreate btn btn-success"><span class="glyphicon glyphicon-plus"></span></button>';
-                            if (data.name) {
+                            if (data.user_name) {
                                 actions += '<button id="'+data.id+'" class="buttonUpdate btn btn-primary"><span class="glyphicon glyphicon-pencil"></span></button>';
                             }
-                            if (data.name) {
+                            if (data.user_name) {
                             actions += '<button id="'+data.id+'" class="buttonDelete btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
                             }
                             actions += '</div>';
@@ -314,8 +313,7 @@
                         render: function (data) {
                             var actions = '';
                             actions += '<div class="btn-group btn-group-xs">';
-                            actions += '<button id="'+data.skill_id+'" class="buttonCreate btn btn-success"><span class="glyphicon glyphicon-plus"></span></button>';
-                            if (data.name) {
+                            if (data.user_name) {
                             actions += '<button id="'+data.id+'" class="buttonDelete btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
                             }
                             actions += '</div>';
@@ -334,7 +332,7 @@
                     {
                     extend: "colvis",
                     className: "btn-sm",
-                    columns: [ 1,2,3,4,5,7,8 ]
+                    columns: [ 1,2,3,4,5,7 ]
                     },
                     
                   {
@@ -400,7 +398,7 @@
             });
 
             $(document).on('click', '.buttonCreate', function () {
-                window.location.href = "{!! route('userskillFormCreate','') !!}/"+this.id;
+                window.location.href = "{!! route('userskillFormCreate','') !!}";
             } );
 
             $(document).on('click', '.buttonUpdate', function () {

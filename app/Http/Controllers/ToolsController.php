@@ -565,6 +565,20 @@ class ToolsController extends Controller {
           ->leftjoin('users_users AS uu', 'u.id', '=', 'uu.user_id')
           ->leftjoin('users AS m', 'm.id', '=', 'uu.manager_id')
           ->where('skills.certification','=',$cert);
+
+    if (!Entrust::can('tools-usersskills-view-all')) {
+      $skillList->where('u.id','=',Auth::user()->id);
+    }
+    $data = Datatables::of($skillList)->make(true);
+    return $data;
+  }
+
+  public function listOfSkills($cert)
+  {
+    $skillList = DB::table('skills')
+          ->select('id','domain','subdomain','technology','skill')
+          ->where('certification','=',$cert);
+
     $data = Datatables::of($skillList)->make(true);
     return $data;
   }
@@ -588,31 +602,38 @@ class ToolsController extends Controller {
     }
   }
   
-  public function getuserskillFormCreate($id)
+  public function getuserskillFormCreate($id=null)
 	{
-    $skill = Skill::find($id);
-    if ($skill->certification == 1) {
-      $select = config('select.usercert_rating');
-    } else {
-      $select = config('select.userskill_rating');
-    }
+    if (!empty($id)) {
+      $skill = Skill::find($id);
+      if ($skill->certification == 1) {
+        $select = config('select.usercert_rating');
+      } else {
+        $select = config('select.userskill_rating');
+      }
 
-    if (Entrust::can('tools-usersskills-editall')) {
-      $user_list = [];
-      $user_list_temp = $this->userRepository->getAllUsersList();
-      foreach ($user_list_temp as $key => $value){
-        $userinskilllist = DB::table('skill_user')
-            ->select('id')
-            ->where('user_id',$key)
-            ->where('skill_id',$id)
-            ->get();
-        if (count($userinskilllist) == 0){
-          $user_list[$key] = $value;
+      if (Entrust::can('tools-usersskills-editall')) {
+        $user_list = [];
+        $user_list_temp = $this->userRepository->getAllUsersList();
+        foreach ($user_list_temp as $key => $value){
+          $userinskilllist = DB::table('skill_user')
+              ->select('id')
+              ->where('user_id',$key)
+              ->where('skill_id',$id)
+              ->get();
+          if (count($userinskilllist) == 0){
+            $user_list[$key] = $value;
+          }
         }
+      } else {
+        $user_list = User::where('id',Auth::user()->id)->lists('name','id');
       }
     } else {
-      $user_list = User::where('id',Auth::user()->id)->lists('name','id');
+      $skill = null;
+      $user_list = null;
+      $select = null;
     }
+    
 		return view('tools/userskill_create_update', compact('skill','user_list','select'))->with('action','create');
 	}
 
@@ -637,9 +658,14 @@ class ToolsController extends Controller {
 	public function postuserskillFormCreate(Request $request)
 	{
     $inputs = $request->only('skill_id','user_id','rating');
-    $userskill = UserSkill::create($inputs);
+    if (UserSkill::where('skill_id',$inputs['skill_id'])->where('user_id',$inputs['user_id'])->exists()) {
+      return redirect('toolsUsersSkills')->with('error','This record has already been assigned');
+    } else {
+      $userskill = UserSkill::create($inputs);
 
-    return redirect('toolsUsersSkills')->with('success','Record created successfully');
+      return redirect('toolsUsersSkills')->with('success','Record created successfully');
+    }
+    
 	}
 
 	public function postuserskillFormUpdate(Request $request, $id)

@@ -149,7 +149,7 @@ Route::group(['middleware' => ['auth']], function() {
       Route::get('toolsFormTransferAction/{user_id}/{old_project_id}/{new_project_id}', ['uses'=>'ToolsController@getFormTransferAction','as'=>'toolsFormTransferAction','middleware' => ['permission:tools-user_assigned-transfer']]);
       // Users skills
       Route::get('toolsUsersSkills', ['uses'=>'ToolsController@userskillslist','as'=>'toolsUsersSkills','middleware' => ['permission:tools-usersskills']]);
-      Route::get('userskillFormCreate/{id}', ['uses'=>'ToolsController@getuserskillFormCreate','as'=>'userskillFormCreate','middleware' => ['permission:tools-usersskills']]);
+      Route::get('userskillFormCreate/{id?}', ['uses'=>'ToolsController@getuserskillFormCreate','as'=>'userskillFormCreate','middleware' => ['permission:tools-usersskills']]);
       Route::post('userskillFormCreate', ['uses'=>'ToolsController@postuserskillFormCreate','middleware' => ['permission:tools-usersskills']]);
       Route::get('userskillFormUpdate/{id}', ['uses'=>'ToolsController@getuserskillFormUpdate','as'=>'userskillFormUpdate','middleware' => ['permission:tools-usersskills']]);
       Route::post('userskillFormUpdate/{id}', ['uses'=>'ToolsController@postuserskillFormUpdate','middleware' => ['permission:tools-usersskills']]);
@@ -159,6 +159,7 @@ Route::group(['middleware' => ['auth']], function() {
       Route::get('listOfProjectsMissingOTLAjax', ['uses'=>'ProjectController@listOfProjectsMissingOTL','as'=>'listOfProjectsMissingOTLAjax','middleware' => ['permission:tools-missing_info-view']]);
       Route::get('listOfProjectsLostAjax', ['uses'=>'ProjectController@listOfProjectsLost','as'=>'listOfProjectsLostAjax','middleware' => ['permission:tools-all_projects-view']]);
       Route::get('listOfProjectsAll', ['uses'=>'ProjectController@listOfProjectsAll','as'=>'listOfProjectsAllAjax','middleware' => ['permission:tools-all_projects-view']]);
+      Route::post('listOfSkills/{cert}', ['uses'=>'ToolsController@listOfSkills','as'=>'listOfSkills','middleware' => ['permission:tools-usersskills']]);
       Route::post('listOfUsersSkills/{cert}', ['uses'=>'ToolsController@listOfUsersSkills','as'=>'listOfUsersSkills','middleware' => ['permission:tools-usersskills']]);
       Route::get('userskillDelete/{id}', ['uses'=>'ToolsController@userSkillDelete','as'=>'userskillDelete','middleware' => ['permission:tools-usersskills']]);
 
