@@ -559,9 +559,11 @@ class ToolsController extends Controller {
   public function listOfUsersSkills($cert)
   {
     $skillList = DB::table('skills')
-          ->select('skill_user.id','skills.domain','skills.subdomain','skills.technology','skills.skill','users.name','skill_user.rating','skills.id AS skill_id')
+          ->select('skill_user.id','skills.domain','skills.subdomain','skills.technology','skills.skill','m.name AS manager_name','u.name AS user_name','u.country','skill_user.rating','skills.id AS skill_id')
           ->leftjoin('skill_user', 'skills.id', '=', 'skill_user.skill_id')
-          ->leftjoin('users', 'users.id', '=', 'skill_user.user_id')
+          ->leftjoin('users AS u', 'u.id', '=', 'skill_user.user_id')
+          ->leftjoin('users_users AS uu', 'u.id', '=', 'uu.user_id')
+          ->leftjoin('users AS m', 'm.id', '=', 'uu.manager_id')
           ->where('skills.certification','=',$cert);
     $data = Datatables::of($skillList)->make(true);
     return $data;

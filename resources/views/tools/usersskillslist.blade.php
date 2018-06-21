@@ -81,7 +81,9 @@
                                 <th>Sub Domain</th>
                                 <th>technology</th>
                                 <th>Skill</th>
-                                <th>Name</th>
+                                <th>Manager Name</th>
+                                <th>User Name</th>
+                                <th>Country</th>
                                 <th>Rating</th>
                                 <th>Skill ID</th>
                                 <th>
@@ -90,6 +92,8 @@
                         </thead>
                         <tfoot>
                             <tr>
+                                <th></th>
+                                <th></th>
                                 <th></th>
                                 <th></th>
                                 <th></th>
@@ -112,7 +116,9 @@
                                 <th>Sub Domain</th>
                                 <th>technology</th>
                                 <th>Certification</th>
-                                <th>Name</th>
+                                <th>Manager Name</th>
+                                <th>User Name</th>
+                                <th>Country</th>
                                 <th>Rating</th>
                                 <th>Skill ID</th>
                                 <th>
@@ -121,6 +127,8 @@
                         </thead>
                         <tfoot>
                             <tr>
+                                <th></th>
+                                <th></th>
                                 <th></th>
                                 <th></th>
                                 <th></th>
@@ -177,7 +185,9 @@
                     { name: 'skills.subdomain', data: 'subdomain', searchable: true , visible: true },
                     { name: 'skills.technology', data: 'technology', searchable: true , visible: true },
                     { name: 'skills.skill', data: 'skill', searchable: true , visible: true },
-                    { name: 'users.name', data: 'name', searchable: true , visible: true },
+                    { name: 'm.name', data: 'manager_name', searchable: true , visible: false },
+                    { name: 'u.name', data: 'user_name', searchable: true , visible: true },
+                    { name: 'u.country', data: 'country', searchable: true , visible: false },
                     { name: 'skill_user.rating', data: 'rating', searchable: true , visible: true },
                     { name: 'skills.id', data: 'skill_id', searchable: false , visible: false },
                     {
@@ -211,7 +221,7 @@
                     {
                     extend: "colvis",
                     className: "btn-sm",
-                    columns: [ 1,2,3,4,5,6 ]
+                    columns: [ 1,2,3,4,5,6,7,8 ]
                     },
                     
                   {
@@ -291,7 +301,9 @@
                     { name: 'skills.subdomain', data: 'subdomain', searchable: true , visible: true },
                     { name: 'skills.technology', data: 'technology', searchable: true , visible: true },
                     { name: 'skills.skill', data: 'skill', searchable: true , visible: true },
-                    { name: 'users.name', data: 'name', searchable: true , visible: true },
+                    { name: 'm.name', data: 'manager_name', searchable: true , visible: false },
+                    { name: 'u.name', data: 'user_name', searchable: true , visible: true },
+                    { name: 'u.country', data: 'country', searchable: true , visible: false },
                     { name: 'skill_user.rating', data: 'rating', searchable: false , visible: false },
                     { name: 'skills.id', data: 'skill_id', searchable: false , visible: false },
                     {
@@ -322,7 +334,7 @@
                     {
                     extend: "colvis",
                     className: "btn-sm",
-                    columns: [ 1,2,3,4,5 ]
+                    columns: [ 1,2,3,4,5,7,8 ]
                     },
                     
                   {
