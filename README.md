@@ -105,4 +105,7 @@ For Linux Ubuntu
 ```
     sudo apt-get install mysql-client
 ```
-
+19) if you are going to use the automatic backup function, then you need to enter this in your cron
+```
+    * * * * * php /path-to-your-project/artisan schedule:run >> /dev/null 2>&1
+```
