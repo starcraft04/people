@@ -109,3 +109,5 @@ For Linux Ubuntu
 ```
     * * * * * php /path-to-your-project/artisan schedule:run >> /dev/null 2>&1
 ```
+20) if you need to change the frequency of automatic backups, edit config/laravel-backup.php
+21) the backups will be stored in storage/app/http--localhost/
