@@ -101,3 +101,8 @@ For Linux Ubuntu
     sudo visudo
 ```
   > Add the line: git ALL=(www-data) /usr/bin/git pull
+18) run mysqldump --version to make sure it is installed or install it if not already done
+```
+    sudo apt-get install mysql-client
+```
+
