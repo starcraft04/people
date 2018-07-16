@@ -35,6 +35,12 @@ Route::group(['middleware' => ['auth']], function() {
       Route::get('/home', ['uses'=>'HomeController@index','as'=>'home']);
       Route::get('/', ['uses'=>'HomeController@index']);
 
+      // Backup routes
+      Route::get('backup', ['uses'=>'BackupController@index','as'=>'backupList','middleware' => ['permission:backup-create|backup-download|backup-delete']]);
+      Route::get('backup/create', ['uses'=>'BackupController@create','as'=>'backupCreate','middleware' => ['permission:backup-create']]);
+      Route::get('backup/download/{file_name}', ['uses'=>'BackupController@download','as'=>'backupDownload','middleware' => ['permission:backup-download']]);
+      Route::get('backup/delete/{file_name}', ['uses'=>'BackupController@delete','as'=>'backupDelete','middleware' => ['permission:backup-delete']]);
+
       //OTL
       Route::get('otlupload', ['uses'=>'OtlUploadController@getForm','as'=>'otluploadform','middleware' => ['permission:otl-upload']]);
       Route::post('otlupload', ['uses'=>'OtlUploadController@postForm','middleware' => ['permission:otl-upload']]);
