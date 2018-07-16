@@ -109,5 +109,9 @@ For Linux Ubuntu
 ```
     * * * * * php /path-to-your-project/artisan schedule:run >> /dev/null 2>&1
 ```
-20) if you need to change the frequency of automatic backups, edit config/laravel-backup.php
-21) the backups will be stored in storage/app/http--localhost/
+20) if you need to change the frequency of automatic backups, edit app/console/kernel.php
+21) the backups will be stored in storage/app/backup/ and you need to make sure to modify the access to 2 folders:
+```
+    sudo chmod a+rwx /var/www/html/storage/app/backup
+    sudo chmod a+rwx /var/www/html/storage/laravel-backups
+```
