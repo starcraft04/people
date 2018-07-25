@@ -7,7 +7,11 @@ return [
         'contractor' => 'contractor'
     ],
     'region' => [
-        'Europe' => 'Europe'
+        'Europe' => 'Europe',
+        'MEA' => 'MEA',
+        'NAM' => 'NAM',
+        'LATAM' => 'LATAM',
+        'APAC' => 'APAC'
     ],
     'job_role' => [
         'DSC' => 'DSC',
