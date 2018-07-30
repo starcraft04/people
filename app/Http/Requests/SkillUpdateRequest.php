@@ -28,6 +28,8 @@ class SkillUpdateRequest extends Request
     $subdomain = $this->subdomain;
     $technology = $this->technology;
     $skill = $this->skill;
+    $certification = $this->certification;
+
     /**
     *          Forcing A Unique Rule To Ignore A Given ID:
     *
@@ -42,7 +44,7 @@ class SkillUpdateRequest extends Request
 
 
     return [
-      'domain' => 'unique:skills,domain,' . $id . ',id,subdomain,'.$subdomain.',technology,'.$technology.',skill,'.$skill,
+      'domain' => 'unique:skills,domain,' . $id . ',id,subdomain,'.$subdomain.',technology,'.$technology.',skill,'.$skill.',certification,'.$certification,
       'subdomain' => 'required',
       'technology' => 'required',
       'skill' => 'required',

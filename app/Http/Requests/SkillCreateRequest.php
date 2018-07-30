@@ -27,9 +27,10 @@ class SkillCreateRequest extends Request
     $subdomain = $this->subdomain;
     $technology = $this->technology;
     $skill = $this->skill;
+    $certification = $this->certification;
 
     return [
-      'domain' => 'unique:skills,domain,NULL,id,subdomain,'.$subdomain.',technology,'.$technology.',skill,'.$skill,
+      'domain' => 'unique:skills,domain,NULL,id,subdomain,'.$subdomain.',technology,'.$technology.',skill,'.$skill.',certification,'.$certification,
       'subdomain' => 'required',
       'technology' => 'required',
       'skill' => 'required',
