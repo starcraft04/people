@@ -124,7 +124,7 @@ class DashboardController extends Controller {
       $year = date('Y');
     }
     //dd($year);
-    $temp_table = new ProjectTableRepository('table_temp_a','table_temp_b');
+    $temp_table = new ProjectTableRepository('table_temp_a');
     $customers = [];
     if (Auth::user()->clusterboard_top < 1) {
       $top = 5;
@@ -172,12 +172,12 @@ class DashboardController extends Controller {
       if(!isset($activities[$customer['cluster']][$customer['name']])){
         $activities[$customer['cluster']][$customer['name']]= [];
         } 
-      $activities_temp = $activityRepository->getActivitiesPerCustomer($customer['name'],$year,'table_temp_b',$domain_selected);
+      $activities_temp = $activityRepository->getActivitiesPerCustomer($customer['name'],$year,'table_temp_a',$domain_selected);
       foreach ($activities_temp as $activitie_temp) {
         array_push($activities[$customer['cluster']][$customer['name']],$activitie_temp);
       }
-      $activities_tot[$customer['name']] = $activityRepository->getActivitiesPerCustomerTot($customer['name'],$year,'table_temp_b',$domain_selected);
-
+      $activities_tot[$customer['name']] = $activityRepository->getActivitiesPerCustomerTot($customer['name'],$year,'table_temp_a',$domain_selected);
+      
       // Revenues
       if(!isset($revenues[$customer['name']])){
         $revenues[$customer['name']]= [];
@@ -223,7 +223,7 @@ class DashboardController extends Controller {
         $grand_total[$customer['name']]['div'] = null;
       }
     }
-
+    //dd($activities);
     unset($temp_table);
 
     //dd($activities_tot);

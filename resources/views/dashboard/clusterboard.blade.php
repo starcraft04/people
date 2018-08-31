@@ -114,6 +114,7 @@
         <div class="accordion" id="accordion" role="tablist" hide="true" aria-multiselectable="true">
         <?php $customer_i = 0; $cluster_i = 0; ?>
         @foreach($activities as $cluster => $customers)
+        
           <div class="panel">
             <a class="panel-heading" role="tab" id="heading{{$cluster_i}}" data-toggle="collapse" data-parent="#accordion" href="#collapse{{$cluster_i}}" aria-expanded="true" aria-controls="collapse{{$cluster_i}}">
             <p><strong>
@@ -247,40 +248,40 @@
                       <tr class="table_customer_{{$customer_i}}" style="display:none;">
                         <td>{{$activity->project_name}}</td>
                         <td>{{$activity->user_name}}</td>
-                        <td style="@if($activity->jan_otl == 1)color:green;font-weight: bold;@endif">
+                        <td>
                           @if($activity->jan_com != 0){{$activity->jan_com}}@endif
                         </td>
-                        <td style="@if($activity->feb_otl == 1)color:green;font-weight: bold;@endif">
+                        <td>
                           @if($activity->feb_com != 0){{$activity->feb_com}}@endif
                         </td>
-                        <td style="@if($activity->mar_otl == 1)color:green;font-weight: bold;@endif">
+                        <td>
                           @if($activity->mar_com != 0){{$activity->mar_com}}@endif
                         </td>
-                        <td style="@if($activity->apr_otl == 1)color:green;font-weight: bold;@endif">
+                        <td>
                           @if($activity->apr_com != 0){{$activity->apr_com}}@endif
                         </td>
-                        <td style="@if($activity->may_otl == 1)color:green;font-weight: bold;@endif">
+                        <td>
                           @if($activity->may_com != 0){{$activity->may_com}}@endif
                         </td>
-                        <td style="@if($activity->jun_otl == 1)color:green;font-weight: bold;@endif">
+                        <td>
                           @if($activity->jun_com != 0){{$activity->jun_com}}@endif
                         </td>
-                        <td style="@if($activity->jul_otl == 1)color:green;font-weight: bold;@endif">
+                        <td>
                           @if($activity->jul_com != 0){{$activity->jul_com}}@endif
                         </td>
-                        <td style="@if($activity->aug_otl == 1)color:green;font-weight: bold;@endif">
+                        <td>
                           @if($activity->aug_com != 0){{$activity->aug_com}}@endif
                         </td>
-                        <td style="@if($activity->sep_otl == 1)color:green;font-weight: bold;@endif">
+                        <td>
                           @if($activity->sep_com != 0){{$activity->sep_com}}@endif
                         </td>
-                        <td style="@if($activity->oct_otl == 1)color:green;font-weight: bold;@endif">
+                        <td>
                           @if($activity->oct_com != 0){{$activity->oct_com}}@endif
                         </td>
-                        <td style="@if($activity->nov_otl == 1)color:green;font-weight: bold;@endif">
+                        <td>
                           @if($activity->nov_com != 0){{$activity->nov_com}}@endif
                         </td>
-                        <td style="@if($activity->dec_otl == 1)color:green;font-weight: bold;@endif">
+                        <td>
                           @if($activity->dec_com != 0){{$activity->dec_com}}@endif
                         </td>
                       </tr>

@@ -451,43 +451,6 @@ class ActivityRepository
     return $data;
   }
 
-  public function getListOfActivitiesPerUserForProject($where = null)
-  {
-    /** We create here a SQL statement and the Datatables function will add the information it got from the AJAX request to have things like search or limit or show.
-    *   So we need to have a proper SQL search that the ajax can use via get with parameters given to it.
-    *   In the ajax datatables (view), there will be a parameter name that is going to be used here for the extra parameters so if we use a join,
-    *   Then we will need to use in the view page the name of the table.column. This is so that it knows how to do proper sorting or search.
-    **/
-
-    $temp_table = new ProjectTableRepository('table_temp_a','table_temp_b');
-
-    $activityList = DB::table('table_temp_b');
-
-    $activityList->select('manager_id','manager_name','user_id','user_name','user_employee_type','project_id','project_name','customer_name','year',
-                          DB::Raw('(jan_com+feb_com+mar_com+apr_com+may_com+jun_com+
-                          jul_com+aug_com+sep_com+oct_com+nov_com+dec_com) AS LoE')
-
-    );
-
-    if (!empty($where['project_id']))
-        {
-          $activityList->where('project_id','=',$where['project_id']);
-        };
-
-    if (!empty($where['employee_type']))
-        {
-          $activityList->where('user_employee_type','=',$where['employee_type']);
-        };
-
-
-    $activityList->groupBy('manager_id','user_id','project_id','year');
-    $data = $activityList->get();
-    // Destroying the object so it will remove the 2 temp tables created
-    unset($temp_table);
-
-    return $data;
-  }
-
   public function getNumberOfOTLPerUserAndProject($user_id,$project_id){
     return $this->activity->where('user_id', $user_id)->where('project_id', $project_id)->where('from_otl',1)->count();
   }
@@ -520,12 +483,17 @@ class ActivityRepository
     {
 
         $activityList = DB::table($temp_table);
-        $activityList->where('customer_name','=',$customer_name);
+        $activityList->leftjoin('projects AS p', 'p.id', '=', $temp_table.'.project_id');
+        $activityList->leftjoin('users AS u', $temp_table.'.user_id', '=', 'u.id');
+        $activityList->leftjoin('customers AS c', 'c.id', '=', 'p.customer_id');
+        $activityList->select('year','project_id','user_id','jan_com','feb_com','mar_com','apr_com','may_com','jun_com','jul_com','aug_com','sep_com','oct_com','nov_com','dec_com',
+                                'project_name','u.name AS user_name','u.domain AS user_domain');
+        $activityList->where('c.name','=',$customer_name);
         $activityList->where('year','=',$year);
         if ($domain != 'all') {
-            $activityList->where('user_domain','=',$domain);
+            $activityList->where('u.domain','=',$domain);
         }
-        $activityList->orderBy('country','customer_name','project_name');
+        $activityList->orderBy('p.country','c.name','project_name');
         //$activityList->groupBy('project_name','user_name');
         $data = $activityList->get();
         //dd($data);
@@ -535,6 +503,9 @@ class ActivityRepository
     {
 
         $activityList = DB::table($temp_table);
+        $activityList->leftjoin('projects AS p', 'p.id', '=', $temp_table.'.project_id');
+        $activityList->leftjoin('users AS u', $temp_table.'.user_id', '=', 'u.id');
+        $activityList->leftjoin('customers AS c', 'c.id', '=', 'p.customer_id');
         $activityList->select('year',DB::raw('sum(jan_com) AS jan_com')
                                     ,DB::raw('sum(feb_com) AS feb_com')
                                     ,DB::raw('sum(mar_com) AS mar_com')
@@ -547,13 +518,13 @@ class ActivityRepository
                                     ,DB::raw('sum(oct_com) AS oct_com')
                                     ,DB::raw('sum(nov_com) AS nov_com')
                                     ,DB::raw('sum(dec_com) AS dec_com'));
-        $activityList->where('customer_name','=',$customer_name);
+        $activityList->where('c.name','=',$customer_name);
         $activityList->where('year','=',$year);
         if ($domain != 'all') {
-            $activityList->where('user_domain','=',$domain);
+            $activityList->where('u.domain','=',$domain);
         }
-        $activityList->groupBy('customer_name');
-        $activityList->orderBy('country','customer_name');
+        $activityList->groupBy('c.name');
+        $activityList->orderBy('p.country','c.name');
         $data = $activityList->first();
         //dd($data);
         
