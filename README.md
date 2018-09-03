@@ -40,18 +40,23 @@ For Linux Ubuntu
 ```
     mv .env.example .env
 ```
-9) Go in phpmyadmin and create a database people
-10) Edit .env
-    > Enter information about MySQL database
-11) restart apache
+9) Install composer dependencies
 ```
-    sudo service apache2 restart
+    composer install --prefer-dist
 ```
-12) Create a key
+10) Create an application key
 ```
     sudo php artisan key:generate
 ```
-13) Edit /etc/apache2/apache2.conf
+11) Go in phpmyadmin and create a database name "people"
+12) Edit .env
+    > Update Application key eg: "base64:26pmIRt/R7deEbuTNjlIlugejU++DpXLfKKLuAAAAAA="
+    > Enter information about MySQL database credentials 
+13) Restart apache
+```
+    sudo service apache2 restart
+```
+14) Edit /etc/apache2/apache2.conf
     > change from
     ```
     <Directory /var/www/>
@@ -77,13 +82,18 @@ For Linux Ubuntu
     ```
     sudo service apache2 restart
     ```
-14) Go to .../public/niceartisan/
+15) Go to .../public/niceartisan/
 
   >  do migrate
   >  do db seed
-    If reset is not working, do
-  > php composer dump-autoload
-15) Modify your php.ini file (for php 7, located at: /etc/php/7.0/apache2/php.ini)
+  ```
+    php artisan migrate --seed
+  ```
+  > If reset is not working, do
+```
+    php composer dump-autoload
+```
+16) Modify your php.ini file (for php 7, located at: /etc/php/7.0/apache2/php.ini)
 ```
     Upload_max_filesize  - 15 M
     Max_input_time  - 600
@@ -91,26 +101,26 @@ For Linux Ubuntu
     Max_execution_time -  600
     Post_max_size - 15 M
 ```
-16) Install zip support for the Excel file module to work
+17) Install zip support for the Excel file module to work
 ```
     sudo apt-get install php7.0-zip
     sudo service apache2 restart
 ```
-17) In order to make sure that the git update button works, please enter the following
+18) In order to make sure that the git update button works, please enter the following
 ```
     sudo visudo
 ```
   > Add the line: git ALL=(www-data) /usr/bin/git pull
-18) run mysqldump --version to make sure it is installed or install it if not already done
+19) run mysqldump --version to make sure it is installed or install it if not already done
 ```
     sudo apt-get install mysql-client
 ```
-19) if you are going to use the automatic backup function, then you need to enter this in your cron
+20) if you are going to use the automatic backup function, then you need to enter this in your cron
 ```
     * * * * * php /path-to-your-project/artisan schedule:run >> /dev/null 2>&1
 ```
-20) if you need to change the frequency of automatic backups, edit app/console/kernel.php
-21) the backups will be stored in storage/app/backup/ and you need to make sure to modify the access to 2 folders:
+21) if you need to change the frequency of automatic backups, edit app/console/kernel.php
+22) the backups will be stored in storage/app/backup/ and you need to make sure to modify the access to 2 folders:
 ```
     sudo chmod a+rwx /var/www/html/storage/app/backup
     sudo chmod a+rwx /var/www/html/storage/laravel-backups
