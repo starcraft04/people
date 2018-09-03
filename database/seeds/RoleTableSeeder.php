@@ -36,6 +36,24 @@ class RoleTableSeeder extends Seeder
         		'name' => 'User',
         		'display_name' => 'User',
         		'description' => 'This role is used for the users'
+        	],
+          [
+            'id' => 5,
+        		'name' => 'user_extended',
+        		'display_name' => 'User extended',
+        		'description' => 'User with extended functionalities'
+        	],
+          [
+            'id' => 6,
+        		'name' => 'Super viewer',
+        		'display_name' => 'Viewer for everything',
+        		'description' => 'Can view all the projects and what has been entered in this tool'
+        	],
+          [
+            'id' => 7,
+        		'name' => 'Super manager extended',
+        		'display_name' => 'Super manager extended',
+        		'description' => 'Super manager with creation of skills added'
         	]
         ];
 

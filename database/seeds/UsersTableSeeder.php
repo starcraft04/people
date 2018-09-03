@@ -12,7 +12,7 @@ class UsersTableSeeder extends Seeder {
 				'id' => '1',
 				'name' => 'admin',
 				'email' => 'admin@orange.com',
-				'password' => bcrypt('***REMOVED***'),
+				'password' => bcrypt('***Change your Password here***'),
 				'is_manager' => 0
 			));
 		// John
@@ -20,7 +20,7 @@ class UsersTableSeeder extends Seeder {
 				'id' => '2',
 				'name' => 'Dauphinais,John',
 				'email' => 'john.dauphinais@orange.com',
-				'password' => bcrypt('***REMOVED***'),
+				'password' => bcrypt('***Change your Password here***'),
 				'is_manager' => 1,
 				'region' => 'Europe',
 				'domain' => 'Hybrid',
