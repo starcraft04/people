@@ -15,7 +15,9 @@ return [
     ],
     'job_role' => [
         'DSC' => 'DSC',
+	'ASC' => 'ASC',
         'ISC' => 'ISC',
+	'ATD' => 'ATD',
         'Cairo' => 'Cairo'
     ],
     'domain-users' => [
