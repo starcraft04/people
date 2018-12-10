@@ -14,14 +14,15 @@ return [
         'APAC' => 'APAC'
     ],
     'job_role' => [
-        'DSC' => 'DSC',
 	'ASC' => 'ASC',
         'ISC' => 'ISC',
 	'ATD' => 'ATD',
-        'Cairo' => 'Cairo'
+        'BA' => 'BA',
+	'PMO' => 'PMO'
     ],
     'domain-users' => [
         '' => '',
+	'ATD' => 'ATD',
         'APM' => 'APM',
         'Security' => 'Security',
         'Network' => 'Network',
