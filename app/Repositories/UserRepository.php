@@ -56,6 +56,9 @@ class UserRepository
     if (isset($inputs['management_code'])) {$user->management_code = $inputs['management_code'];}
     if (isset($inputs['job_role'])) {$user->job_role = $inputs['job_role'];}
     if (isset($inputs['employee_type'])) {$user->employee_type = $inputs['employee_type'];}
+    if (isset($inputs['activity_status'])) {$user->activity_status = $inputs['activity_status'];}
+    if (isset($inputs['date_started'])) {$user->date_started = $inputs['date_started'];}
+    if (isset($inputs['date_ended'])) {$user->date_ended = $inputs['date_ended'];}
     // Boolean
     if (isset($inputs['from_otl'])) {$user->from_otl = $inputs['from_otl'];}
     $user->is_manager = isset($inputs['is_manager']) ? $inputs['is_manager']:0;
@@ -136,7 +139,7 @@ class UserRepository
     $userList = DB::table('users')
     ->select( 'users.id', 'users.name','users.email','users.is_manager', 'users.region',
     'users.country', 'users.domain', 'users.management_code', 'users.job_role','users.from_otl',
-    'users.employee_type','users_users.manager_id','u2.name AS manager_name')
+    'users.employee_type','users_users.manager_id','u2.name AS manager_name', 'users.activity_status', 'users.date_started', 'users.date_ended')
     ->leftjoin('users_users', 'users.id', '=', 'users_users.user_id')
     ->leftjoin('users AS u2', 'u2.id', '=', 'users_users.manager_id');
     if (Auth::user()->id != 1){

@@ -47,21 +47,30 @@
           <p> <b>Email:</b>  {!! $user->email !!}</p>
           </div>
           <div class="col-sm-12" style="background-color:lavender;">
+          <p> <b>Activity status: </b> {!! $user->activity_status !!}</p>
+          </div>
+          <div class="col-sm-12" style="background-color:lavender;">
+          <p> <b>Date started: </b> {!! $user->date_started !!}</p>
+          </div>
+          <div class="col-sm-12" style="background-color:lavender;">
+          <p> <b>Date ended: </b> {!! $user->date_ended !!}</p>
+          </div>
+          <div class="col-sm-12" style="background-color:lavenderblush;">
           <p> <b>Type: </b> {!! $user->employee_type !!}</p>
           </div>
 
-          <div class="col-sm-12" style="background-color:lavenderblush;">
+          <div class="col-sm-12" style="background-color:lavender;">
           <p> <b>Team:</b>  {!! $user->job_role !!}</p>
           </div>
-          <div class="col-sm-12" style="background-color:lavender;">
+          <div class="col-sm-12" style="background-color:lavenderblush;">
           <p> <b>Region:</b>  {!! $user->region !!}</p>
           </div>
 
-          <div class="col-sm-12" style="background-color:lavenderblush;">
+          <div class="col-sm-12" style="background-color:lavender;">
           <p> <b>Country:</b>  {!! $user->country !!}</p>
           </div>
 
-          <div class="col-sm-12" style="background-color:lavender;">
+          <div class="col-sm-12" style="background-color:lavenderblush;">
           <p> <b>Managed clusters:</b>
             @if(!empty($userCluster))
                

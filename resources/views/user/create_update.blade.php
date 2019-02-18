@@ -12,7 +12,6 @@
     <!-- JS -->
     <!-- Select2 -->
     <script src="{{ asset('/plugins/select2/select2.full.min.js') }}" type="text/javascript"></script>
-
 @stop
 
 @section('content')
@@ -119,6 +118,42 @@
           </div>
 
           <div class="row">
+              <div class="form-group {!! $errors->has('activity_status') ? 'has-error' : '' !!} col-md-12">
+                  <div class="col-md-2">
+                      {!! Form::label('activity_status', 'Activity status', ['class' => 'control-label']) !!}
+                  </div>
+                  <div class="col-md-10">
+                      {!! Form::select('activity_status', config('select.activity_status'), (isset($user)) ? $user->activity_status : '', ['class' => 'form-control']) !!}
+                      {!! $errors->first('activity_status', '<small class="help-block">:message</small>') !!}
+                  </div>
+              </div>
+          </div>
+
+          <div class="row">
+            <div class="form-group {!! $errors->has('date_started') ? 'has-error' : '' !!} col-md-12">
+              <div class="col-md-2">
+                {!! Form::label('date_started', 'Date started', ['class' => 'control-label']) !!}
+              </div>
+              <div class="col-md-10">
+                {!! Form::date('date_started', (isset($user->date_started)) ? $user->date_started : '', ['class' => 'form-control']) !!}
+                {!! $errors->first('date_started', '<small class="help-block">:message</small>') !!}
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="form-group {!! $errors->has('date_ended') ? 'has-error' : '' !!} col-md-12">
+              <div class="col-md-2">
+                {!! Form::label('date_ended', 'Date ended', ['class' => 'control-label']) !!}
+              </div>
+              <div class="col-md-10">
+                {!! Form::date('date_ended', (isset($user->date_ended)) ? $user->date_ended : '', ['class' => 'form-control']) !!}
+                {!! $errors->first('date_ended', '<small class="help-block">:message</small>') !!}
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
               <div class="form-group {!! $errors->has('employee_type') ? 'has-error' : '' !!} col-md-12">
                   <div class="col-md-2">
                       {!! Form::label('employee_type', 'Type', ['class' => 'control-label']) !!}
@@ -204,7 +239,7 @@
                       {!! Form::label('domain', 'Domain', ['class' => 'control-label']) !!}
                   </div>
                   <div class="col-md-10">
-                      {!! Form::select('domain', config('select.domain-users'), (isset($user)) ? $user->domain : '', ['class' => 'form-control']) !!}
+                      {!! Form::select('domain', config('domains.domain-users'), (isset($user)) ? $user->domain : '', ['class' => 'form-control']) !!}
                       {!! $errors->first('domain', '<small class="help-block">:message</small>') !!}
                   </div>
               </div>

@@ -14,15 +14,12 @@ return [
         'APAC' => 'APAC'
     ],
     'job_role' => [
-	'ASC' => 'ASC',
+        'DSC' => 'DSC',
         'ISC' => 'ISC',
-	'ATD' => 'ATD',
-        'BA' => 'BA',
-	'PMO' => 'PMO'
+        'Cairo' => 'Cairo'
     ],
     'domain-users' => [
         '' => '',
-	'ATD' => 'ATD',
         'APM' => 'APM',
         'Security' => 'Security',
         'Network' => 'Network',
@@ -103,5 +100,9 @@ return [
     'usercert_rating' => [
         '1' => 'yes'
     ],
-    'defaultRole' => 'User'
+    'defaultRole' => 'User',
+    'activity_status' => [
+        'active' => 'active',
+        'inactive' => 'inactive'
+    ]
 ];

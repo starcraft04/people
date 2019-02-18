@@ -21,6 +21,7 @@
     <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/buttons.flash.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/buttons.html5.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/buttons.print.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/buttons.colVis.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-keytable/js/dataTables.keyTable.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-responsive/js/dataTables.responsive.min.js') }}" type="text/javascript"></script>
@@ -71,6 +72,9 @@
                         <th>Manager name</th>
                         <th>Email</th>
                         <th>Is Manager</th>
+                        <th>Activity</th>
+                        <th>Date started</th>
+                        <th>Date ended</th>
                         <th>Region</th>
                         <th>Country</th>
                         <th>Domain</th>
@@ -93,6 +97,9 @@
                         <th>Manager name</th>
                         <th>Email</th>
                         <th>Is Manager</th>
+                        <th>Activity</th>
+                        <th>Date started</th>
+                        <th>Date ended</th>
                         <th>Region</th>
                         <th>Country</th>
                         <th>Domain</th>
@@ -147,6 +154,7 @@
                 serverSide: true,
                 processing: true,
                 scrollX: true,
+                stateSave: true,
                 ajax: {
                         url: "{!! route('listOfUsersAjax') !!}",
                         type: "GET",
@@ -165,17 +173,20 @@
                     },
                 columns: [
                     { name: 'users.id', data: 'id' , searchable: false , visible: false },
-                    { name: 'users.name', data: 'name' },
-                    { name: 'u2.name', data: 'manager_name' },
-                    { name: 'users.email', data: 'email' , searchable: false , visible: false },
-                    { name: 'users.is_manager', data: 'is_manager'},
-                    { name: 'users.region', data: 'region' },
-                    { name: 'users.country', data: 'country' },
-                    { name: 'users.domain', data: 'domain' },
-                    { name: 'users.management_code', data: 'management_code' , searchable: false , visible: false },
-                    { name: 'users.job_role', data: 'job_role' },
-                    { name: 'users.employee_type', data: 'employee_type' },
-                    { name: 'users.from_otl', data: 'from_otl' },
+                    { name: 'users.name', data: 'name' , searchable: true , visible: true },
+                    { name: 'u2.name', data: 'manager_name' , searchable: true , visible: true  },
+                    { name: 'users.email', data: 'email' , searchable: true , visible: false },
+                    { name: 'users.is_manager', data: 'is_manager' , searchable: true , visible: true },
+                    { name: 'users.activity_status', data: 'activity_status' , searchable: true , visible: true },
+                    { name: 'users.date_started', data: 'date_started' , searchable: true , visible: true },
+                    { name: 'users.date_ended', data: 'date_ended' , searchable: true , visible: true },
+                    { name: 'users.region', data: 'region' , searchable: true , visible: true },
+                    { name: 'users.country', data: 'country' , searchable: true , visible: true },
+                    { name: 'users.domain', data: 'domain' , searchable: true , visible: true },
+                    { name: 'users.management_code', data: 'management_code' , searchable: true , visible: false },
+                    { name: 'users.job_role', data: 'job_role' , searchable: true , visible: true },
+                    { name: 'users.employee_type', data: 'employee_type' , searchable: true , visible: true },
+                    { name: 'users.from_otl', data: 'from_otl' , searchable: false , visible: false },
                     {
                         name: 'actions',
                         data: null,
@@ -207,6 +218,11 @@
                 dom: 'Bfrtip',
                 buttons: [
                   {
+                    extend: "colvis",
+                    className: "btn-sm",
+                    columns: [ 1,2,3,4,5,6,7,8,9,10,11,12,13 ]
+                  },
+                  {
                     extend: "pageLength",
                     className: "btn-sm"
                   },
@@ -214,21 +230,21 @@
                     extend: "csv",
                     className: "btn-sm",
                     exportOptions: {
-                        columns: [ 1, 2, 4, 5, 6, 7, 8, 9, 10, 11 ]
+                        columns: ':visible'
                     }
                   },
                   {
                     extend: "excel",
                     className: "btn-sm",
                     exportOptions: {
-                        columns: [ 1, 2, 4, 5, 6, 7, 8, 9, 10, 11 ]
+                        columns: ':visible'
                     }
                   },
                   {
                     extend: "print",
                     className: "btn-sm",
                     exportOptions: {
-                        columns: [ 1, 2, 4, 5, 6, 7, 8, 9, 10, 11 ]
+                        columns: ':visible'
                     }
                   },
                 ],
@@ -252,6 +268,19 @@
                           });
                         }
                     });
+                    // Restore state
+                    var state = userTable.state.loaded();
+                    if (state) {
+                        userTable.columns().eq(0).each(function (colIdx) {
+                            var colSearch = state.columns[colIdx].search;
+
+                            if (colSearch.search) {
+                                $('input', userTable.column(colIdx).footer()).val(colSearch.search);
+                            }
+                        });
+
+                        userTable.draw();
+                    }
                 }
             });
 
