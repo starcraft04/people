@@ -163,7 +163,7 @@ class ActivityRepository
 
     $activityList = DB::table('temp_a');
 
-    $activityList->select('uu.manager_id AS manager_id','m.name AS manager_name','temp_a.user_id AS user_id','u.name AS user_name','temp_a.project_id AS project_id',
+    $activityList->select('uu.manager_id AS manager_id','m.name AS manager_name','temp_a.user_id AS user_id','u.name AS user_name','u.country AS user_country','u.employee_type AS user_employee_type','temp_a.project_id AS project_id',
                             'p.project_name AS project_name','c.name AS customer_name','temp_a.year AS year','p.activity_type AS activity_type','p.project_status AS project_status','p.project_type AS project_type',
                             'jan_user','jan_otl','jan_from_otl','feb_user','feb_otl','feb_from_otl','mar_user','mar_otl','mar_from_otl',
                             'apr_user','apr_otl','apr_from_otl','may_user','may_otl','may_from_otl','jun_user','jun_otl','jun_from_otl',

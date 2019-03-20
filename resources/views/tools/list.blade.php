@@ -154,6 +154,8 @@
                   <th>Manager name</th>
                   <th>User ID</th>
                   <th>User name</th>
+                  <th>User country</th>
+                  <th>Employee type</th>
                   <th>Customer name</th>
                   <th>Project ID</th>
                   <th>Project name</th>
@@ -213,6 +215,8 @@
               </thead>
               <tfoot>
                 <tr>
+                  <th></th>
+                  <th></th>
                   <th></th>
                   <th></th>
                   <th></th>
@@ -500,6 +504,8 @@
         { name: 'm.name', data: 'manager_name', width: '150px' },
         { name: 'temp_a.user_id', data: 'user_id' , searchable: false , visible: false},
         { name: 'u.name', data: 'user_name' , width: '150px'},
+        { name: 'u.country', data: 'user_country' , searchable: true , visible: false},
+        { name: 'u.employee_type', data: 'user_employee_type' , searchable: true , visible: false},
         { name: 'c.name', data: 'customer_name' , width: '200px'},
         { name: 'temp_a.project_id', data: 'project_id' , searchable: false , visible: false},
         { name: 'p.project_name', data: 'project_name', width: '200px'},
@@ -700,7 +706,7 @@
         {
           extend: "colvis",
           className: "btn-sm",
-          columns: [ 1, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 15,16,17,19,20,21,23,24,25,27,28,29,31,32,33,35,36,37,39,40,41,43,44,45,47,48,49,51,52,53,55,56,57 ]
+          columns: [ 1, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13, 17,21,25,29,33,37,41,45,49,53,57 ]
         },
         {
           extend: "pageLength",
