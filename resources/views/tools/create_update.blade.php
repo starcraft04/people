@@ -480,10 +480,10 @@
                       </div>
                     </div>
                   </div>
-                  <div class="row">
+                  <div id="gold_order_row" class="row">
                     <div class="form-group {!! $errors->has('gold_order_number') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
-                        {!! Form::label('gold_order_number', 'Gold order', ['class' => 'control-label']) !!}
+                        {!! Form::label('gold_order_number', 'Gold order', ['class' => 'control-label', 'id' => 'gold_order_text']) !!}
                       </div>
                       <div class="col-md-9">
                         {!! Form::text('gold_order_number', (isset($project)) ? $project->gold_order_number : '', ['class' => 'form-control', 'placeholder' => 'Gold order',$gold_order_disabled]) !!}
@@ -513,7 +513,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="row">
+                  <div id="win_ratio_row" class="row">
                     <div class="form-group {!! $errors->has('win_ratio') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
                         {!! Form::label('win_ratio', 'Win ratio (%)', ['class' => 'control-label']) !!}
@@ -644,15 +644,38 @@ $(document).ready(function() {
     } 
   });
 
+  // In case this is baseline, project or pre-sales, we will have different text to be selected
 
-
-  if($( "#project_type option:selected" ).text() == "Baseline"){
-    $('#revenue_text').text("MRC (k€)");
-    $("#revenue").attr("placeholder", "MRC (k€)");
-  } else {
-    $('#revenue_text').text("Revenue (k€)");
-    $("#revenue").attr("placeholder", "Revenue (k€)");
+  function project_type_value_check() { 
+    switch ($("#project_type option:selected").val()){
+      case "Baseline":
+        $('#revenue_text').text("MRC (k€)");
+        $("#revenue").attr("placeholder", "MRC (k€)");
+        $('#gold_order_text').text("Gold Order");
+        $("#gold_order_number").attr("placeholder", "Gold Order");
+        $("#win_ratio_row").hide();
+        break;
+      case "Pre-sales":
+        $("#win_ratio_row").show();
+        $('#gold_order_text').text("Samba ID");
+        $("#gold_order_number").attr("placeholder", "Samba ID");
+        break;
+      default:
+        $("#win_ratio_row").hide();
+        $('#revenue_text').text("Revenue (k€)");
+        $("#revenue").attr("placeholder", "Revenue (k€)");
+        $('#gold_order_text').text("Gold Order");
+        $("#gold_order_number").attr("placeholder", "Gold Order");
+    } 
   }
+
+  // This is when the page loads
+  project_type_value_check();
+
+  // This is when the select box changes
+  $('#project_type').change(function() {
+    project_type_value_check();
+  });
 
   $(document).on('click', '#help_otl', function () {
     swal({
@@ -701,16 +724,7 @@ $(document).ready(function() {
     }
   });
 
-  $('#project_type').change(function() {
-    if($(this).val()==="Baseline"){
-      $('#revenue_text').text("MRC (k€)");
-      $("#revenue").attr("placeholder", "MRC (k€)");
-    }
-    else {
-      $('#revenue_text').text("Revenue (k€)");
-      $("#revenue").attr("placeholder", "Revenue (k€)");
-    }
-  });
+
 
   // init DateRange picker
   $('#estimated_date').daterangepicker({
