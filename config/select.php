@@ -47,8 +47,26 @@ return [
         'Baseline' => 'Baseline',
         'Project' => 'Project',
         'Pre-sales' => 'Pre-sales',
-        'POC' => 'POC',
         'Orange absence or other' => 'Orange absence or other'
+    ],
+    'project_subtype' => [
+        'POC' => 'POC',
+        'Assessment' => 'Assessment',
+        'Pilot' => 'Pilot',
+        'Build/Run' => 'Build/Run',
+        'Recurring consulting' => 'Recurring consulting',
+        'OpenLab' => 'OpenLab'
+    ],
+    'samba_stage' => [
+        '1 Pre-Qualification' => '1 Pre-Qualification',
+        '2 Qualification' => '2 Qualification',
+        '3 Proposal' => '3 Proposal',
+        '4 Negotiation' => '4 Negotiation',
+        '5 Handover' => '5 Handover',
+        'Closed Cancelled' => 'Closed Cancelled',
+        'Closed Duplicate' => 'Closed Duplicate',
+        'Closed Lost' => 'Closed Lost',
+        'Closed Won' => 'Closed Won'
     ],
     'activity_type' => [
         'ISC' => 'ISC',

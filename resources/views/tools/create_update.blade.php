@@ -289,6 +289,27 @@
                     </div>
                   </div>
                   <div class="row">
+                    <div class="form-group {!! $errors->has('project_subtype') ? 'has-error' : '' !!} col-md-12">
+                      <div class="col-md-3">
+                        {!! Form::label('project_subtype', ' ', ['class' => 'control-label']) !!}
+                      </div>
+                      <div class="col-md-9">
+                        <select class="form-control select2" style="width: 100%;" id="project_subtype" name="project_subtype" data-placeholder="Select a sub-type">
+                          <option value="" ></option>
+                          @foreach(config('select.project_subtype') as $key => $value)
+                          <option value="{{ $key }}"
+                            @if (old('project_subtype') == $key) selected
+                            @elseif (isset($project->project_subtype) && $value == $project->project_subtype) selected
+                            @endif>
+                            {{ $value }}
+                          </option>
+                          @endforeach
+                        </select>
+                        {!! $errors->first('project_subtype', '<small class="help-block">:message</small>') !!}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
                     <div class="form-group {!! $errors->has('activity_type') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
                         {!! Form::label('activity_type', 'Activity type', ['class' => 'control-label']) !!}
@@ -491,6 +512,71 @@
                       </div>
                     </div>
                   </div>
+                  <div id="samba_id_row" class="row">
+                    <div class="form-group {!! $errors->has('samba_id') ? 'has-error' : '' !!} col-md-12">
+                      <div class="col-md-3">
+                        {!! Form::label('samba_id', 'Samba ID', ['class' => 'control-label', 'id' => 'samba_id_text']) !!}
+                      </div>
+                      <div class="col-md-9">
+                        {!! Form::text('samba_id', (isset($project)) ? $project->samba_id : '', ['class' => 'form-control', 'placeholder' => 'Samba ID']) !!}
+                        {!! $errors->first('samba_id', '<small class="help-block">:message</small>') !!}
+                      </div>
+                    </div>
+                  </div>
+                  <div id="pullthru_samba_id_row" class="row">
+                    <div class="form-group {!! $errors->has('pullthru_samba_id') ? 'has-error' : '' !!} col-md-12">
+                      <div class="col-md-3">
+                        {!! Form::label('pullthru_samba_id', 'Pull-Thru Samba ID', ['class' => 'control-label', 'id' => 'pullthru_samba_id_text']) !!}
+                      </div>
+                      <div class="col-md-9">
+                        {!! Form::text('pullthru_samba_id', (isset($project)) ? $project->pullthru_samba_id : '', ['class' => 'form-control', 'placeholder' => 'Pull-Thru Samba ID']) !!}
+                        {!! $errors->first('pullthru_samba_id', '<small class="help-block">:message</small>') !!}
+                      </div>
+                    </div>
+                  </div>
+                  <div id="samba_opportunit_owner_row" class="row">
+                    <div class="form-group {!! $errors->has('samba_opportunit_owner') ? 'has-error' : '' !!} col-md-12">
+                      <div class="col-md-3">
+                        {!! Form::label('samba_opportunit_owner', 'Samba opportunity owner', ['class' => 'control-label', 'id' => 'samba_opportunit_owner_text']) !!}
+                      </div>
+                      <div class="col-md-9">
+                        {!! Form::text('samba_opportunit_owner', (isset($project)) ? $project->samba_opportunit_owner : '', ['class' => 'form-control', 'placeholder' => 'Samba opportunity owner']) !!}
+                        {!! $errors->first('samba_opportunit_owner', '<small class="help-block">:message</small>') !!}
+                      </div>
+                    </div>
+                  </div>
+                  <div id="samba_lead_domain_row" class="row">
+                    <div class="form-group {!! $errors->has('samba_lead_domain') ? 'has-error' : '' !!} col-md-12">
+                      <div class="col-md-3">
+                        {!! Form::label('samba_lead_domain', 'Samba lead domain', ['class' => 'control-label', 'id' => 'samba_lead_domain_text']) !!}
+                      </div>
+                      <div class="col-md-9">
+                        {!! Form::text('samba_lead_domain', (isset($project)) ? $project->samba_lead_domain : '', ['class' => 'form-control', 'placeholder' => 'Samba lead domain']) !!}
+                        {!! $errors->first('samba_lead_domain', '<small class="help-block">:message</small>') !!}
+                      </div>
+                    </div>
+                  </div>
+                  <div id="samba_stage_row" class="row">
+                    <div class="form-group {!! $errors->has('samba_stage') ? 'has-error' : '' !!} col-md-12">
+                      <div class="col-md-3">
+                        {!! Form::label('samba_stage', 'Samba stage', ['class' => 'control-label']) !!}
+                      </div>
+                      <div class="col-md-9">
+                        <select class="form-control select2" style="width: 100%;" id="samba_stage" name="samba_stage" data-placeholder="Select a stage">
+                          <option value="" ></option>
+                          @foreach(config('select.samba_stage') as $key => $value)
+                          <option value="{{ $key }}"
+                            @if (old('samba_stage') == $key) selected
+                            @elseif (isset($project->samba_stage) && $value == $project->samba_stage) selected
+                            @endif>
+                            {{ $value }}
+                          </option>
+                          @endforeach
+                        </select>
+                        {!! $errors->first('samba_stage', '<small class="help-block">:message</small>') !!}
+                      </div>
+                    </div>
+                  </div>
                   <div class="row">
                     <div class="form-group {!! $errors->has('product_code') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
@@ -502,14 +588,36 @@
                       </div>
                     </div>
                   </div>
-                  <div class="row">
+                  <div id="revenue_row" class="row">
                     <div class="form-group {!! $errors->has('revenue') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
-                        {!! Form::label('revenue', 'Revenue (k€)', ['class' => 'control-label', 'id' => 'revenue_text']) !!}
+                        {!! Form::label('revenue', 'Order Intake incl. CS (€)', ['class' => 'control-label', 'id' => 'revenue_text']) !!}
                       </div>
                       <div class="col-md-9">
-                        {!! Form::text('revenue', (isset($project)) ? $project->revenue : '', ['class' => 'form-control', 'placeholder' => 'Revenue (€)',$revenue_disabled]) !!}
+                        {!! Form::text('revenue', (isset($project)) ? $project->revenue : '', ['class' => 'form-control', 'placeholder' => 'Order Intake incl. CS (€)',$revenue_disabled]) !!}
                         {!! $errors->first('revenue', '<small class="help-block">:message</small>') !!}
+                      </div>
+                    </div>
+                  </div>
+                  <div id="samba_consulting_product_tcv_row" class="row">
+                    <div class="form-group {!! $errors->has('samba_consulting_product_tcv') ? 'has-error' : '' !!} col-md-12">
+                      <div class="col-md-3">
+                        {!! Form::label('samba_consulting_product_tcv', 'Samba consulting TCV (€)', ['class' => 'control-label', 'id' => 'samba_consulting_product_tcv_text']) !!}
+                      </div>
+                      <div class="col-md-9">
+                        {!! Form::text('samba_consulting_product_tcv', (isset($project)) ? $project->samba_consulting_product_tcv : '', ['class' => 'form-control', 'placeholder' => 'Samba consulting TCV (€)']) !!}
+                        {!! $errors->first('samba_consulting_product_tcv', '<small class="help-block">:message</small>') !!}
+                      </div>
+                    </div>
+                  </div>
+                  <div id="samba_pullthru_tcv_row" class="row">
+                    <div class="form-group {!! $errors->has('samba_pullthru_tcv') ? 'has-error' : '' !!} col-md-12">
+                      <div class="col-md-3">
+                        {!! Form::label('samba_pullthru_tcv', 'Samba Pull-Thru TCV (€)', ['class' => 'control-label', 'id' => 'samba_pullthru_tcv_text']) !!}
+                      </div>
+                      <div class="col-md-9">
+                        {!! Form::text('samba_pullthru_tcv', (isset($project)) ? $project->samba_pullthru_tcv : '', ['class' => 'form-control', 'placeholder' => 'Samba Pull-Thru TCV (€)']) !!}
+                        {!! $errors->first('samba_pullthru_tcv', '<small class="help-block">:message</small>') !!}
                       </div>
                     </div>
                   </div>
@@ -651,21 +759,15 @@ $(document).ready(function() {
       case "Baseline":
         $('#revenue_text').text("MRC (k€)");
         $("#revenue").attr("placeholder", "MRC (k€)");
-        $('#gold_order_text').text("Gold Order");
-        $("#gold_order_number").attr("placeholder", "Gold Order");
         $("#win_ratio_row").hide();
         break;
       case "Pre-sales":
         $("#win_ratio_row").show();
-        $('#gold_order_text').text("Samba ID");
-        $("#gold_order_number").attr("placeholder", "Samba ID");
         break;
       default:
         $("#win_ratio_row").hide();
         $('#revenue_text').text("Revenue (k€)");
         $("#revenue").attr("placeholder", "Revenue (k€)");
-        $('#gold_order_text').text("Gold Order");
-        $("#gold_order_number").attr("placeholder", "Gold Order");
     } 
   }
 
@@ -769,12 +871,22 @@ $(document).ready(function() {
     disabled: {{ $project_type_select_disabled }}
   });
 
+  $("#project_subtype").select2({
+    allowClear: true,
+    disabled: {{ $project_type_select_disabled }}
+  });
+
   $("#activity_type").select2({
     allowClear: true,
     disabled: {{ $activity_type_select_disabled }}
   });
 
   $("#project_status").select2({
+    allowClear: true,
+    disabled: {{ $project_status_select_disabled }}
+  });
+
+  $("#samba_stage").select2({
     allowClear: true,
     disabled: {{ $project_status_select_disabled }}
   });
