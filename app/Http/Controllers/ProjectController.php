@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Project;
 use App\Customer;
 use App\Role;
+use App\ProjectRevenue;
 use App\Repositories\ProjectRepository;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProjectCreateRequest;
@@ -15,6 +16,7 @@ use App\Http\Requests\PasswordUpdateRequest;
 use DB;
 use Entrust;
 use Auth;
+use Datatables;
 
 class ProjectController extends Controller {
 
@@ -81,12 +83,29 @@ class ProjectController extends Controller {
     $result->msg = 'Record deleted successfully';
 		return json_encode($result);
 		}
+  }
+  
+  public function deleteRevenue($id)
+	{
+    // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
+    $result = new \stdClass();
+    $customer = ProjectRevenue::destroy($id);
+		$result->result = 'success';
+    $result->msg = 'Record deleted successfully';
+		return json_encode($result);
 	}
 
   public function listOfprojects(Request $request)
   {
     $inputs = $request->all();
     return $this->projectRepository->getListOfProjects($inputs);
+  }
+
+  public function listOfProjectsRevenue($id)
+  {
+    $project_revenues = Project::findOrFail($id)->revenues();
+    $data = Datatables::of($project_revenues)->make(true);
+    return $data;
   }
 
   public function listOfProjectsMissingInfo(Request $request)

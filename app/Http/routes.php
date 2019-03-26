@@ -94,6 +94,7 @@ Route::group(['middleware' => ['auth']], function() {
       Route::post('projectFormUpdate/{n}', ['uses'=>'ProjectController@postFormUpdate','middleware' => ['permission:project-edit']]);
       //  Delete project
       Route::get('projectDelete/{n}', ['uses'=>'ProjectController@delete','as'=>'projectDelete','middleware' => ['permission:project-delete']]);
+      Route::get('projectRevenueDelete/{n}', ['uses'=>'ProjectController@deleteRevenue','as'=>'projectRevenueDelete','middleware' => ['permission:projectRevenue-delete']]);
       //  AJAX
       Route::post('listOfProjectsAjax', ['uses'=>'ProjectController@listOfProjects','as'=>'listOfProjectsAjax','middleware' => ['permission:tools-all_projects-view|tools-unassigned-view|tools-activity-edit|project-view|project-create|project-edit|project-delete']]);
 
@@ -160,6 +161,7 @@ Route::group(['middleware' => ['auth']], function() {
       Route::get('userskillFormUpdate/{id}', ['uses'=>'ToolsController@getuserskillFormUpdate','as'=>'userskillFormUpdate','middleware' => ['permission:tools-usersskills']]);
       Route::post('userskillFormUpdate/{id}', ['uses'=>'ToolsController@postuserskillFormUpdate','middleware' => ['permission:tools-usersskills']]);
       //  AJAX
+      Route::get('ProjectsRevenueAjax/{id}', ['uses'=>'ProjectController@listOfProjectsRevenue','as'=>'listOfProjectsRevenueAjax','middleware' => ['permission:projectRevenue-create']]);
       Route::post('listOfActivitiesPerUserAjax', ['uses'=>'ActivityController@listOfActivitiesPerUser','as'=>'listOfActivitiesPerUserAjax','middleware' => ['permission:tools-activity-view']]);
       Route::get('listOfProjectsMissingInfoAjax', ['uses'=>'ProjectController@listOfProjectsMissingInfo','as'=>'listOfProjectsMissingInfoAjax','middleware' => ['permission:tools-missing_info-view']]);
       Route::get('listOfProjectsMissingOTLAjax', ['uses'=>'ProjectController@listOfProjectsMissingOTL','as'=>'listOfProjectsMissingOTLAjax','middleware' => ['permission:tools-missing_info-view']]);

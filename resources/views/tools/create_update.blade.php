@@ -10,6 +10,12 @@
 <link href="{{ asset('/plugins/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" />
 <!-- Switchery -->
 <link href="{{ asset('/plugins/gentelella/vendors/switchery/dist/switchery.min.css') }}" rel="stylesheet">
+<!-- Datatables -->
+<link href="{{ asset('/plugins/gentelella/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css') }}" rel="stylesheet">
+<link href="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css') }}" rel="stylesheet">
+<link href="{{ asset('/plugins/gentelella/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css') }}" rel="stylesheet">
+<link href="{{ asset('/plugins/gentelella/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css') }}" rel="stylesheet">
+<link href="{{ asset('/plugins/gentelella/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css') }}" rel="stylesheet">
 @stop
 
 @section('scriptsrc')
@@ -25,17 +31,27 @@
 <script src="{{ asset('/plugins/bootbox/bootbox.min.js') }}"></script>
 <!-- Balloon -->
 <script src="{{ asset('/plugins/balloon/jquery.balloon.min.js') }}" type="text/javascript"></script>
+<!-- DataTables -->
+<script src="{{ asset('/plugins/gentelella/vendors/datatables.net/js/jquery.dataTables.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/gentelella/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/dataTables.buttons.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/buttons.flash.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/buttons.html5.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/buttons.print.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/buttons.colVis.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/gentelella/vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/gentelella/vendors/datatables.net-keytable/js/dataTables.keyTable.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/gentelella/vendors/datatables.net-responsive/js/dataTables.responsive.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/gentelella/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/gentelella/vendors/datatables.net-scroller/js/dataTables.scroller.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/gentelella/vendors/jszip/dist/jszip.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/gentelella/vendors/pdfmake/build/pdfmake.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/gentelella/vendors/pdfmake/build/vfs_fonts.js') }}" type="text/javascript"></script>
 @stop
 
 @section('content')
-<!-- Page title -->
-<div class="page-title">
-  <div class="title_left">
-    <h3>Project </h3>
-  </div>
-</div>
-<div class="clearfix"></div>
-<!-- Page title -->
+
 
 <!-- Window -->
 <div class="row">
@@ -103,11 +119,14 @@
           <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
             <li role="presentation" class="active"><a href="#tab_content1" id="project-tab" role="tab" data-toggle="tab" aria-expanded="true">Project</a>
             </li>
-            <li role="presentation" class=""><a href="#tab_content2" id="comments-tab" role="tab" data-toggle="tab" aria-expanded="false">Comments (<span id="num_of_comments">{{ $num_of_comments }}</span>)</a>
+            <li role="presentation" class=""><a href="#tab_content2" id="revenue-tab" role="tab" data-toggle="tab" aria-expanded="true">Revenue</a>
+            </li>
+            <li role="presentation" class=""><a href="#tab_content3" id="comments-tab" role="tab" data-toggle="tab" aria-expanded="false">Comments (<span id="num_of_comments">{{ $num_of_comments }}</span>)</a>
             </li>
           </ul>
 
           <div id="myTabContent" class="tab-content">
+            <!-- Project -->
             <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="project-tab">
               
               <div class="row">
@@ -226,13 +245,13 @@
                   <div class="row">
                     <div class="form-group {!! $errors->has('otl_project_code') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
-                        {!! Form::label('otl_project_code', 'OTL project code', ['class' => 'control-label']) !!}
+                        {!! Form::label('otl_project_code', 'Prime project code', ['class' => 'control-label']) !!}
                         <a id="help_otl" href="#">(?)</a>
                       </div>
                       <div class="col-md-9">
                         {!! Form::text('otl_project_code', (isset($project->otl_project_code)) ? $project->otl_project_code : '', 
                         ['class' => 'form-control OTL_code', 
-                        'placeholder' => 'OTL project code',
+                        'placeholder' => 'Prime project code',
                         'title' => "<p>This field is NOT mandatory.</BR>
                                     If you do not know the OTL code yet, then do not enter the OTL code nor the Meta-activity.</BR>
                                     You can come back later to edit it when you will have the right OTL code.</BR>
@@ -439,10 +458,10 @@
                   </div>
                 </div>
                 <div class="col-md-6">
-                  <div class="row">
+                  <div id="estimated_date_row" class="row">
                     <div class="form-group {!! $errors->has('estimated_date') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
-                        {!! Form::label('estimated_date', 'Estimated start to end date', ['class' => 'control-label']) !!}
+                        {!! Form::label('estimated_date', 'Estimated start to end date', ['class' => 'control-label', 'id' => 'estimated_date_text']) !!}
                       </div>
                       <div class="col-md-9">
                         <div class="control-group">
@@ -457,7 +476,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="row">
+                  <div class="row hidden">
                     <div class="form-group {!! $errors->has('LoE_onshore') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
                         {!! Form::label('LoE_onshore', 'LoE onshore (days)', ['class' => 'control-label']) !!}
@@ -468,7 +487,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="row">
+                  <div class="row hidden">
                     <div class="form-group {!! $errors->has('LoE_nearshore') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
                         {!! Form::label('LoE_nearshore', 'LoE nearshore (days)', ['class' => 'control-label']) !!}
@@ -479,7 +498,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="row">
+                  <div class="row hidden">
                     <div class="form-group {!! $errors->has('LoE_offshore') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
                         {!! Form::label('LoE_offshore', 'LoE offshore (days)', ['class' => 'control-label']) !!}
@@ -490,7 +509,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="row">
+                  <div class="row hidden">
                     <div class="form-group {!! $errors->has('LoE_contractor') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
                         {!! Form::label('LoE_contractor', 'LoE contractor (days)', ['class' => 'control-label']) !!}
@@ -534,7 +553,7 @@
                       </div>
                     </div>
                   </div>
-                  <div id="samba_opportunit_owner_row" class="row">
+                  <div id="samba_opportunity_owner_row" class="row">
                     <div class="form-group {!! $errors->has('samba_opportunit_owner') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
                         {!! Form::label('samba_opportunit_owner', 'Samba opportunity owner', ['class' => 'control-label', 'id' => 'samba_opportunit_owner_text']) !!}
@@ -577,13 +596,13 @@
                       </div>
                     </div>
                   </div>
-                  <div class="row">
+                  <div class="row hidden">
                     <div class="form-group {!! $errors->has('product_code') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
-                        {!! Form::label('product_code', 'Product code', ['class' => 'control-label']) !!}
+                        {!! Form::label('product_code', 'Product codes', ['class' => 'control-label']) !!}
                       </div>
                       <div class="col-md-9">
-                        {!! Form::text('product_code', (isset($project)) ? $project->product_code : '', ['class' => 'form-control', 'placeholder' => 'Product code',$product_code_disabled]) !!}
+                        {!! Form::text('product_code', (isset($project)) ? $project->product_code : '', ['class' => 'form-control', 'placeholder' => 'Product codes',$product_code_disabled]) !!}
                         {!! $errors->first('product_code', '<small class="help-block">:message</small>') !!}
                       </div>
                     </div>
@@ -638,7 +657,39 @@
               </div>
 
             </div>
-            <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="comments-tab">
+            <!-- Revenues -->
+            <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="revenue-tab">
+              <div class="row">
+                <table class="table table-striped table-hover table-bordered" width="100%" id="projectRevenue">
+                  <thead>
+                    <tr>
+                      <th scope="col">ID</th>
+                      <th scope="col">Year</th>
+                      <th scope="col">FPC</th>
+                      <th scope="col">Jan</th>
+                      <th scope="col">feb</th>
+                      <th scope="col">Mar</th>
+                      <th scope="col">Apr</th>
+                      <th scope="col">May</th>
+                      <th scope="col">Jun</th>
+                      <th scope="col">Jul</th>
+                      <th scope="col">Aug</th>
+                      <th scope="col">Sep</th>
+                      <th scope="col">Oct</th>
+                      <th scope="col">Nov</th>
+                      <th scope="col">Dec</th>
+                      <th scope="col" class="last_column">
+                        @permission('projectRevenue-create')
+                          <button type="button" id="new_revenue" class="btn btn-info btn-xs" align="right"><span class="glyphicon glyphicon-plus"></span></button>
+                        @endpermission
+                      </th>
+                    </tr>
+                  </thead>
+                </table>
+              </div>
+            </div>
+            <!-- Comments -->
+            <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="comments-tab">
               <div class="row">
                 <div class="form-group {!! $errors->has('project_comment') ? 'has-error' : '' !!} col-md-12">
                   <div class="col-md-1">
@@ -734,9 +785,18 @@
 
 <script>
 var year;
+var revenues;
+
+<?php
+  $options = array(
+    'validate_all' => true,
+    'return_type' => 'both'
+  );
+  list($validate, $allValidations) = Entrust::ability(null,array('projectRevenue-edit','projectRevenue-delete','projectRevenue-create'),$options);
+  echo "var permissions = jQuery.parseJSON('".json_encode($allValidations['permissions'])."');";
+?>
 
 $(document).ready(function() {
-
   $('.OTL_code,.mandatory').balloon({ 
     position: "right",
     tipSize: 24,
@@ -754,28 +814,48 @@ $(document).ready(function() {
 
   // In case this is baseline, project or pre-sales, we will have different text to be selected
 
-  function project_type_value_check() { 
-    switch ($("#project_type option:selected").val()){
-      case "Baseline":
-        $('#revenue_text').text("MRC (k€)");
-        $("#revenue").attr("placeholder", "MRC (k€)");
-        $("#win_ratio_row").hide();
-        break;
-      case "Pre-sales":
-        $("#win_ratio_row").show();
-        break;
-      default:
-        $("#win_ratio_row").hide();
-        $('#revenue_text').text("Revenue (k€)");
-        $("#revenue").attr("placeholder", "Revenue (k€)");
-    } 
+  function project_type_value_check() {
+    project_type_val = $("#project_type option:selected").val();
+    project_status_val = $("#project_status option:selected").val();
+    if (project_type_val == "Pre-sales")
+    {
+      $('#estimated_date_text').text("Start / Close date");
+      $("#gold_order_row").hide();
+      $("#samba_id_row").show();
+      $("#pullthru_samba_id_row").show();
+      $("#samba_opportunity_owner_row").show();
+      $("#samba_lead_domain_row").show();
+      $("#samba_stage_row").show();
+      $("#revenue_row").show();
+      $("#samba_consulting_product_tcv_row").show();
+      $("#samba_pullthru_tcv_row").show();
+      $("#win_ratio_row").show();
+    }
+    else {
+      $('#estimated_date_text').text("Estimated Start to End date");
+      if (project_status_val == "Pipeline") {
+        $("#gold_order_row").hide();
+        $("#samba_id_row").show();
+      } else {
+        $("#gold_order_row").show();
+        $("#samba_id_row").hide();
+      }
+      $("#pullthru_samba_id_row").hide();
+      $("#samba_opportunity_owner_row").hide();
+      $("#samba_lead_domain_row").hide();
+      $("#samba_stage_row").hide();
+      $("#revenue_row").hide();
+      $("#samba_consulting_product_tcv_row").hide();
+      $("#samba_pullthru_tcv_row").hide();
+      $("#win_ratio_row").hide();
+    }
   }
 
   // This is when the page loads
   project_type_value_check();
 
   // This is when the select box changes
-  $('#project_type').change(function() {
+  $('#project_type, #project_status').change(function() {
     project_type_value_check();
   });
 
@@ -922,166 +1002,260 @@ $(document).ready(function() {
 
 
   @if($action == 'update')
-  $('#transfer_user').on('click', function () {
-      bootbox.confirm("Are you sure want to transfer the user from this project?", function(result) {
-          if (result){
-            window.location.href = "{!! route('toolsFormTransfer',[$user_id,$project->id]) !!}";
-          }
-      });
-  });
+    $('#transfer_user').on('click', function () {
+        bootbox.confirm("Are you sure want to transfer the user from this project?", function(result) {
+            if (result){
+              window.location.href = "{!! route('toolsFormTransfer',[$user_id,$project->id]) !!}";
+            }
+        });
+    });
   @endif
 
   @if($action == 'update')
 
-  $(document).on('click', '.comment_edit', function () {
-    comment_id = this.id;
-    $.ajax({
-      type: 'get',
-      url: "{!! route('comment_show','') !!}/"+comment_id,
-      dataType: 'json',
-      success: function(data) {
-        console.log(data);
-        $('textarea#project_comment_modal').val(data.comment);
-      }
-    }); 
-    $('#comment_hidden').empty();
-    var hidden = '';
-    hidden += '<input class="form-control" id="comment_id" name="comment_id" type="hidden" value="'+comment_id+'">';
-    $('#comment_hidden').append(hidden);
-    $('#commentModal').modal();
-  });
-
-  $("#comment_form").submit(function(e){
-    e.preventDefault();
-    var comment_id = $('input#comment_id').val();
-    var comment_comment = $('textarea#project_comment_modal').val();
-    $.ajax({
-      type: 'post',
-      url: "{!! route('comment_edit','') !!}/"+comment_id,
-      dataType: 'json',
-      data: {
-        'comment': comment_comment,
-        '_token':'{{ csrf_token() }}'
-      },
-      success: function(data) {
-        console.log(data);
-
-        $.ajax({
-          type: 'get',
-          url: "{!! route('comment_list','') !!}/"+{{ $project->id }},
-          dataType: 'json',
-          success: function(data) {
-            console.log(data);
-            $('#num_of_comments').text(data.num_of_comments);
-            $('#all_comments').empty();
-
-            var comments = '';
-            $.each(data.list, function( index, value ) {
-              comments += '<div class="panel panel-default">';
-              comments += '<div class="panel-heading">';
-              comments += value.user_name +' said <small class="text-primary">'+value.time+'</small>';
-              if (value.id > 0) {
-                comments += '<a id="'+value.id+'" class="pull-right comment_edit"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span></a>';
-                comments += '<a id="'+value.id+'" style="margin-right: 10px;" class="pull-right comment_delete"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></a>';
-              }
-              comments += '</div>';
-              comments += '<div class="panel-body">';
-              comments += value.comment;
-              comments += '</div>';
-              comments += '</div>';
-            });
-            
-            $('#all_comments').append(comments); 
-
-          }
-        }); 
-
-        if (data.result == 'success'){
-            box_type = 'success';
-            message_type = 'success';
+    $(document).on('click', '.comment_edit', function () {
+      comment_id = this.id;
+      $.ajax({
+        type: 'get',
+        url: "{!! route('comment_show','') !!}/"+comment_id,
+        dataType: 'json',
+        success: function(data) {
+          console.log(data);
+          $('textarea#project_comment_modal').val(data.comment);
         }
-        else {
-            box_type = 'danger';
-            message_type = 'error';
-        }
-
-        $('#flash-message').empty();
-        var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
-        console.log(data.msg);
-        $('#flash-message').append(box);
-        $('#delete-message').delay(2000).queue(function () {
-            $(this).addClass('animated flipOutX')
-        }); 
-      } 
+      }); 
+      $('#comment_hidden').empty();
+      var hidden = '';
+      hidden += '<input class="form-control" id="comment_id" name="comment_id" type="hidden" value="'+comment_id+'">';
+      $('#comment_hidden').append(hidden);
+      $('#commentModal').modal();
     });
 
-    $('#commentModal').modal('hide');
-  });
+    $("#comment_form").submit(function(e){
+      e.preventDefault();
+      var comment_id = $('input#comment_id').val();
+      var comment_comment = $('textarea#project_comment_modal').val();
+      $.ajax({
+        type: 'post',
+        url: "{!! route('comment_edit','') !!}/"+comment_id,
+        dataType: 'json',
+        data: {
+          'comment': comment_comment,
+          '_token':'{{ csrf_token() }}'
+        },
+        success: function(data) {
+          console.log(data);
 
-  $(document).on('click', '.comment_delete', function () {
-    var comment_id = this.id;
-    bootbox.confirm("Are you sure want to delete this message?", function(result) {
-      if (result){
-        $.ajax({
-          type: 'get',
-          url: "{!! route('comment_delete','') !!}/"+comment_id,
-          dataType: 'json',
-          success: function(data) {
-            console.log(data);
+          $.ajax({
+            type: 'get',
+            url: "{!! route('comment_list','') !!}/"+{{ $project->id }},
+            dataType: 'json',
+            success: function(data) {
+              console.log(data);
+              $('#num_of_comments').text(data.num_of_comments);
+              $('#all_comments').empty();
 
-            $.ajax({
-              type: 'get',
-              url: "{!! route('comment_list','') !!}/"+{{ $project->id }},
-              dataType: 'json',
-              success: function(data) {
-                console.log(data);
-                $('#num_of_comments').text(data.num_of_comments);
-                $('#all_comments').empty();
+              var comments = '';
+              $.each(data.list, function( index, value ) {
+                comments += '<div class="panel panel-default">';
+                comments += '<div class="panel-heading">';
+                comments += value.user_name +' said <small class="text-primary">'+value.time+'</small>';
+                if (value.id > 0) {
+                  comments += '<a id="'+value.id+'" class="pull-right comment_edit"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span></a>';
+                  comments += '<a id="'+value.id+'" style="margin-right: 10px;" class="pull-right comment_delete"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></a>';
+                }
+                comments += '</div>';
+                comments += '<div class="panel-body">';
+                comments += value.comment;
+                comments += '</div>';
+                comments += '</div>';
+              });
+              
+              $('#all_comments').append(comments); 
 
-                var comments = '';
-                $.each(data.list, function( index, value ) {
-                  comments += '<div class="panel panel-default">';
-                  comments += '<div class="panel-heading">';
-                  comments += value.user_name +' said <small class="text-primary">'+value.time+'</small>';
-                  if (value.id > 0) {
-                    comments += '<a id="'+value.id+'" class="pull-right comment_edit"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span></a>';
-                    comments += '<a id="'+value.id+'" style="margin-right: 10px;" class="pull-right comment_delete"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></a>';
-                  }
-                  comments += '</div>';
-                  comments += '<div class="panel-body">';
-                  comments += value.comment;
-                  comments += '</div>';
-                  comments += '</div>';
-                });
-                
-                $('#all_comments').append(comments); 
-
-              }
-            }); 
-
-            if (data.result == 'success'){
-                box_type = 'success';
-                message_type = 'success';
             }
-            else {
-                box_type = 'danger';
-                message_type = 'error';
-            }
+          }); 
 
-            $('#flash-message').empty();
-            var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
-            console.log(data.msg);
-            $('#flash-message').append(box);
-            $('#delete-message').delay(2000).queue(function () {
-                $(this).addClass('animated flipOutX')
-            });
+          if (data.result == 'success'){
+              box_type = 'success';
+              message_type = 'success';
           }
-        });
-      }
+          else {
+              box_type = 'danger';
+              message_type = 'error';
+          }
+
+          $('#flash-message').empty();
+          var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button type="button" href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+          console.log(data.msg);
+          $('#flash-message').append(box);
+          $('#delete-message').delay(2000).queue(function () {
+              $(this).addClass('animated flipOutX')
+          }); 
+        } 
+      });
+
+      $('#commentModal').modal('hide');
     });
-  } );
+
+    $(document).on('click', '.comment_delete', function () {
+      var comment_id = this.id;
+      bootbox.confirm("Are you sure want to delete this message?", function(result) {
+        if (result){
+          $.ajax({
+            type: 'get',
+            url: "{!! route('comment_delete','') !!}/"+comment_id,
+            dataType: 'json',
+            success: function(data) {
+              console.log(data);
+
+              $.ajax({
+                type: 'get',
+                url: "{!! route('comment_list','') !!}/"+{{ $project->id }},
+                dataType: 'json',
+                success: function(data) {
+                  console.log(data);
+                  $('#num_of_comments').text(data.num_of_comments);
+                  $('#all_comments').empty();
+
+                  var comments = '';
+                  $.each(data.list, function( index, value ) {
+                    comments += '<div class="panel panel-default">';
+                    comments += '<div class="panel-heading">';
+                    comments += value.user_name +' said <small class="text-primary">'+value.time+'</small>';
+                    if (value.id > 0) {
+                      comments += '<a id="'+value.id+'" class="pull-right comment_edit"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span></a>';
+                      comments += '<a id="'+value.id+'" style="margin-right: 10px;" class="pull-right comment_delete"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></a>';
+                    }
+                    comments += '</div>';
+                    comments += '<div class="panel-body">';
+                    comments += value.comment;
+                    comments += '</div>';
+                    comments += '</div>';
+                  });
+                  
+                  $('#all_comments').append(comments); 
+
+                }
+              }); 
+
+              if (data.result == 'success'){
+                  box_type = 'success';
+                  message_type = 'success';
+              }
+              else {
+                  box_type = 'danger';
+                  message_type = 'error';
+              }
+
+              $('#flash-message').empty();
+              var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button type="button" href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+              console.log(data.msg);
+              $('#flash-message').append(box);
+              $('#delete-message').delay(2000).queue(function () {
+                  $(this).addClass('animated flipOutX')
+              });
+            }
+          });
+        }
+      });
+    } );
 
   @endif
+
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+
+projectRevenue = $('#projectRevenue').DataTable({
+    serverSide: true,
+    processing: true,
+    scrollX: true,
+    stateSave: true,
+    ajax: {
+            url: "{!! route('listOfProjectsRevenueAjax',$project->id) !!}",
+            type: "GET",
+            dataType: "JSON"
+        },
+    columns: [
+        { name: 'id', data: 'id' , searchable: false , visible: false },
+        { name: 'year', data: 'year' , searchable: true , visible: true },
+        { name: 'product_code', data: 'product_code' , searchable: true , visible: true  },
+        { name: 'jan', data: 'jan' , searchable: true , visible: true },
+        { name: 'feb', data: 'feb' , searchable: true , visible: true },
+        { name: 'mar', data: 'mar' , searchable: true , visible: true },
+        { name: 'apr', data: 'apr' , searchable: true , visible: true },
+        { name: 'may', data: 'may' , searchable: true , visible: true },
+        { name: 'jun', data: 'jun' , searchable: true , visible: true },
+        { name: 'jul', data: 'jul' , searchable: true , visible: true },
+        { name: 'aug', data: 'aug' , searchable: true , visible: true },
+        { name: 'sep', data: 'sep' , searchable: true , visible: true },
+        { name: 'oct', data: 'oct' , searchable: true , visible: true },
+        { name: 'nov', data: 'nov' , searchable: true , visible: true },
+        { name: 'dec', data: 'dec' , searchable: true , visible: true },
+        {
+            name: 'actions',
+            data: null,
+            sortable: false,
+            searchable: false,
+            render: function (data) {
+          var actions = '';
+          actions += '<div class="btn-group btn-group-xs">';
+          if (permissions['projectRevenue-edit']){
+            actions += '<button type="button" id="'+data.id+'" class="buttonRevenueUpdate btn btn-primary"><span class="glyphicon glyphicon-pencil"></span></button>';
+          };
+          if (permissions['projectRevenue-delete']){
+            actions += '<button type="button" id="'+data.id+'" class="buttonRevenueDelete btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
+          };
+          actions += '</div>';
+          return actions;
+        },
+            width: '70px'
+        }
+        ],
+    order: [[1, 'desc']],
+    lengthMenu: [
+        [ 10, 25, 50, -1 ],
+        [ '10 rows', '25 rows', '50 rows', 'Show all' ]
+    ],
+    dom: 'Bfrtip',
+    buttons: [
+      {
+        extend: "colvis",
+        className: "btn-sm",
+        columns: [ 1,2,3,4,5,6,7,8,9,10,11,12,13,14]
+      },
+      {
+        extend: "pageLength",
+        className: "btn-sm"
+      },
+      {
+        extend: "csv",
+        className: "btn-sm",
+        exportOptions: {
+            columns: ':visible'
+        }
+      },
+      {
+        extend: "excel",
+        className: "btn-sm",
+        exportOptions: {
+            columns: ':visible'
+        }
+      },
+      {
+        extend: "print",
+        className: "btn-sm",
+        exportOptions: {
+            columns: ':visible'
+        }
+      },
+    ]   
+});
+
+projectRevenue.draw();
 
 });
 </script>

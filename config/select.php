@@ -40,8 +40,7 @@ return [
     'project_status' => [
         'Pipeline' => 'Pipeline',
         'Started' => 'Started',
-        'Closed' => 'Closed',
-        'Orange absence or other' => 'Orange absence or other'
+        'Closed' => 'Closed'
     ],
     'project_type' => [
         'Baseline' => 'Baseline',
@@ -71,7 +70,7 @@ return [
     'activity_type' => [
         'ISC' => 'ISC',
         'DSC' => 'DSC',
-        'Orange absence or other' => 'Orange absence or other'
+        'ASC' => 'ASC'
     ],
     'year' => [
         '2015' => '2015',
