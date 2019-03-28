@@ -69,6 +69,9 @@ class UserController extends Controller {
     $inputs = $request->all();
     //dd($inputs);
     $user->clusterboard_top = $inputs['clusterboard_top'];
+    $user->revenue_product_codes = $inputs['revenue_product_codes'];
+    $user->revenue_target = $inputs['revenue_target'];
+    $user->order_target = $inputs['order_target'];
     $user->save();
     return redirect('profile/'.$id)->with('success','Options updated successfully');
   }

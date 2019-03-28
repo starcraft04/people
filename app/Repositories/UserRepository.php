@@ -166,6 +166,23 @@ class UserRepository
   {
     return $this->user->lists('name','id');
   }
+  public function getAllUsersFromManager($id)
+  {
+    $result = [];
+    $manager = $this->user->findOrFail($id)->toArray();
+    array_push($result,$manager);
+    $data = $this->user->findOrFail($id)->employees->toArray();
+    foreach ($data as $key => $value) {
+      if ($value['is_manager']=='1') {
+        $team = $this->getAllUsersFromManager($value['id']);
+        $result = array_merge($result,$team);
+      } else {
+        array_push($result,$value);
+      }
+    }
+
+    return $result;
+  }
   public function getAllUsersListNoManagers()
   {
     return $this->user->where('is_manager', '!=','1')->where('id', '!=','1')->lists('name','id');

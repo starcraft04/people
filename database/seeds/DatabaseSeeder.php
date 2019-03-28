@@ -35,6 +35,10 @@ class DatabaseSeeder extends Seeder {
 		$this->command->info('Permissions table seeded11!');
 		$this->call('PermissionTableSeeder12');
 		$this->command->info('Permissions table seeded12!');
+		$this->call('PermissionTableSeeder13');
+		$this->command->info('Permissions table seeded13!');
+		$this->call('PermissionTableSeeder14');
+		$this->command->info('Permissions table seeded14!');
 		$this->call('RoleTableSeeder');
 		$this->command->info('Roles table seeded!');
 		$this->call('SkillsTableSeeder');

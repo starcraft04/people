@@ -63,6 +63,12 @@
             @permission(['cluster-view'])
             <li><a href="{!!route('clusterdashboard')!!}/{{date('Y')}}/0/all">Cluster Dashboard</a></li>
             @endpermission
+            @permission(['dashboardRevenue-view'])
+            <li><a href="{!!route('revenuedashboard')!!}/{{date('Y')}}/0">Revenue Dashboard</a></li>
+            @endpermission
+            @permission(['dashboardOrder-view'])
+            <li><a href="{!!route('orderdashboard')!!}/{{date('Y')}}/0">Order Dashboard</a></li>
+            @endpermission
           </ul>
         </li>
       </ul>

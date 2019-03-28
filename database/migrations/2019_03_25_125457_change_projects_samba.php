@@ -33,7 +33,7 @@ class ChangeProjectsSamba extends Migration
     public function down()
     {
         DB::statement("UPDATE projects SET project_type = 'POC' WHERE project_subtype = 'POC';");
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('projects', function (Blueprint $table) {
             $table->dropColumn('pullthru_samba_id');
             $table->dropColumn('samba_id');
             $table->dropColumn('samba_opportunit_owner');

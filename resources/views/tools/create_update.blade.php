@@ -840,9 +840,11 @@ $(document).ready(function() {
       if (project_status_val == "Pipeline") {
         $("#gold_order_row").hide();
         $("#samba_id_row").show();
+        $("#win_ratio_row").show();
       } else {
         $("#gold_order_row").show();
         $("#samba_id_row").hide();
+        $("#win_ratio_row").hide();
       }
       $("#pullthru_samba_id_row").hide();
       $("#samba_opportunity_owner_row").hide();
@@ -851,7 +853,6 @@ $(document).ready(function() {
       $("#revenue_row").hide();
       $("#samba_consulting_product_tcv_row").hide();
       $("#samba_pullthru_tcv_row").hide();
-      $("#win_ratio_row").hide();
       $("#tab_revenue").show();
     }
   }

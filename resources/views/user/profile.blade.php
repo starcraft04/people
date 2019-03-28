@@ -101,6 +101,42 @@
           </div>
 
           <div class="row">
+              <div class="form-group {!! $errors->has('revenue_product_codes') ? 'has-error' : '' !!} col-md-12">
+                  <div class="col-md-2">
+                      {!! Form::label('revenue_product_codes', 'Revenue product codes', ['class' => 'control-label']) !!}
+                  </div>
+                  <div class="col-md-10">
+                  {!! Form::text('revenue_product_codes', (isset(Auth::user()->revenue_product_codes)) ? Auth::user()->revenue_product_codes : '', ['class' => 'form-control', 'placeholder' => 'comma separated values / leave blank for all']) !!}
+                  {!! $errors->first('revenue_product_codes', '<small class="help-block">:message</small>') !!}
+                  </div>
+              </div>
+          </div>
+
+          <div class="row">
+              <div class="form-group {!! $errors->has('revenue_target') ? 'has-error' : '' !!} col-md-12">
+                  <div class="col-md-2">
+                      {!! Form::label('revenue_target', 'Revenue target (€)', ['class' => 'control-label']) !!}
+                  </div>
+                  <div class="col-md-10">
+                  {!! Form::text('revenue_target', (isset(Auth::user()->revenue_target)) ? Auth::user()->revenue_target : '', ['class' => 'form-control', 'placeholder' => 'Revenue target (€)']) !!}
+                  {!! $errors->first('revenue_target', '<small class="help-block">:message</small>') !!}
+                  </div>
+              </div>
+          </div>
+
+          <div class="row">
+              <div class="form-group {!! $errors->has('order_target') ? 'has-error' : '' !!} col-md-12">
+                  <div class="col-md-2">
+                      {!! Form::label('order_target', 'Order target (€)', ['class' => 'control-label']) !!}
+                  </div>
+                  <div class="col-md-10">
+                  {!! Form::text('order_target', (isset(Auth::user()->order_target)) ? Auth::user()->order_target : '', ['class' => 'form-control', 'placeholder' => 'Order target (€)']) !!}
+                  {!! $errors->first('order_target', '<small class="help-block">:message</small>') !!}
+                  </div>
+              </div>
+          </div>
+
+          <div class="row">
               <div class="col-md-offset-11 col-md-1">
                 {!! Form::submit('Update', ['class' => 'btn btn-primary']) !!}
               </div>
