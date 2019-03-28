@@ -119,8 +119,10 @@
           <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
             <li role="presentation" class="active"><a href="#tab_content1" id="project-tab" role="tab" data-toggle="tab" aria-expanded="true">Project</a>
             </li>
-            <li role="presentation" class=""><a href="#tab_content2" id="revenue-tab" role="tab" data-toggle="tab" aria-expanded="true">Revenue</a>
+            @permission(['projectRevenue-create'])
+            <li role="presentation" class="" id="tab_revenue"><a href="#tab_content2" id="revenue-tab" role="tab" data-toggle="tab" aria-expanded="true">Revenue</a>
             </li>
+            @endpermission
             <li role="presentation" class=""><a href="#tab_content3" id="comments-tab" role="tab" data-toggle="tab" aria-expanded="false">Comments (<span id="num_of_comments">{{ $num_of_comments }}</span>)</a>
             </li>
           </ul>
@@ -657,6 +659,7 @@
               </div>
 
             </div>
+            @permission(['projectRevenue-create'])
             <!-- Revenues -->
             <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="revenue-tab">
               <div class="row">
@@ -690,6 +693,7 @@
               </div>
               </div>
             </div>
+            @endpermission
             <!-- Comments -->
             <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="comments-tab">
               <div class="row">
@@ -791,11 +795,7 @@ var revenues;
 var projectRevenue;
 
 <?php
-  $options = array(
-    'validate_all' => true,
-    'return_type' => 'both'
-  );
-  list($validate, $allValidations) = Entrust::ability(null,array('projectRevenue-edit','projectRevenue-delete','projectRevenue-create'),$options);
+  list($validate, $allValidations) = Entrust::ability(null,array('projectRevenue-delete'),['validate_all' => true,'return_type' => 'both']);
   echo "var permissions = jQuery.parseJSON('".json_encode($allValidations['permissions'])."');";
 ?>
 
@@ -833,6 +833,7 @@ $(document).ready(function() {
       $("#samba_consulting_product_tcv_row").show();
       $("#samba_pullthru_tcv_row").show();
       $("#win_ratio_row").show();
+      $("#tab_revenue").hide();
     }
     else {
       $('#estimated_date_text').text("Estimated Start to End date");
@@ -851,6 +852,7 @@ $(document).ready(function() {
       $("#samba_consulting_product_tcv_row").hide();
       $("#samba_pullthru_tcv_row").hide();
       $("#win_ratio_row").hide();
+      $("#tab_revenue").show();
     }
   }
 
@@ -1398,6 +1400,12 @@ $(document).on('click', '#rev_insert', function(){
             projectRevenue.ajax.reload();
           }
         });
+  });
+
+  // This part is to make sure that datatables can adjust the columns size when it is hidden because on non active tab when created
+  $('a[data-toggle="tab"]').on('shown.bs.tab', function(e){
+   $($.fn.dataTable.tables(true)).DataTable()
+      .columns.adjust();
   });
 
 </script>
