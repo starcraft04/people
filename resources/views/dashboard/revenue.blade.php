@@ -221,6 +221,85 @@
   </div>
 </div>
 <!-- Window -->
+
+<!-- Window -->
+<div class="row">
+  <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="x_panel">
+
+      <!-- Window title -->
+      <div class="x_title">
+        <h2>Projects missing revenue</small></h2>
+        <ul class="nav navbar-right panel_toolbox">
+          <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+        </ul>
+        <div class="clearfix"></div>
+      </div>
+      <!-- Window title -->
+
+      <!-- Window content -->
+      <div class="x_content">
+        <div class="row">
+          <table id="revenueMissingTable" class="table table-striped table-hover table-bordered" width="100%">
+            <thead>
+              <tr>
+                <th>Cluster</th>
+                <th>Customer</th>
+                <th>Project ID</th>
+                <th>Project name</th>
+                <th>Project type</th>
+                <th>Project subtype</th>
+                <th>Project status</th>
+                <th>Gold Order</th>
+                <th>Samba ID</th>
+                <th>User ID</th>
+                <th>User name</th>
+                <th>Win ratio (%)</th>
+              </tr>
+            </thead>
+            <tbody>
+            @foreach($projects_without_revenue as $key => $revenueMissing)
+              <tr>
+                <td>{!! $revenueMissing->cluster_owner !!}</td>
+                <td>{!! $revenueMissing->customer_name !!}</td>
+                <td>{!! $revenueMissing->project_id !!}</td>
+                <td>{!! $revenueMissing->project_name !!}</td>
+                <td>{!! $revenueMissing->project_type !!}</td>
+                <td>{!! $revenueMissing->project_subtype !!}</td>
+                <td>{!! $revenueMissing->project_status !!}</td>
+                <td>{!! $revenueMissing->gold_order !!}</td>
+                <td>{!! $revenueMissing->samba_id !!}</td>
+                <td>{!! $revenueMissing->user_id !!}</td>
+                <td>{!! $revenueMissing->user_name !!}</td>
+                <td>{!! $revenueMissing->win_ratio !!}</td>
+              </tr>
+            @endforeach
+            </tbody>
+            <tfoot>
+              <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+      <!-- Window content -->
+    </div>
+  </div>
+</div>
+<!-- Window -->
+
       </div>
     </div>
   </div>
@@ -257,22 +336,42 @@ $(document).ready(function() {
 
   month_col = [13,14,15,16,17,18,19,20,21,22,23,24];
 
-  $('#revenueTable').DataTable({
+  revenueTable = $('#revenueTable').DataTable({
     scrollX: true,
     stateSave: true,
     order: [[0, 'asc']],
+    columns: [
+        { name: 'cluster_owner', data: 'cluster_owner' , searchable: true , visible: true},
+        { name: 'customer_name', data: 'customer_name' , searchable: true , visible: true},
+        { name: 'project_id', data: 'project_id' , searchable: false , visible: false},
+        { name: 'project_name', data: 'project_name' , searchable: true , visible: true},
+        { name: 'project_type', data: 'project_type' , searchable: true , visible: true},
+        { name: 'project_subtype', data: 'project_subtype' , searchable: true , visible: true},
+        { name: 'project_status', data: 'project_status' , searchable: true , visible: true},
+        { name: 'gold_order', data: 'gold_order' , searchable: true , visible: true},
+        { name: 'samba_id', data: 'samba_id' , searchable: true , visible: true},
+        { name: 'user_id', data: 'user_id' , searchable: true , visible: true},
+        { name: 'user_name', data: 'user_name' , searchable: true , visible: true},
+        { name: 'product_code', data: 'product_code' , searchable: true , visible: true},
+        { name: 'win_ratio', data: 'win_ratio' , searchable: true , visible: true},
+        { name: 'jan', data: 'jan' , searchable: true , visible: true},
+        { name: 'feb', data: 'feb' , searchable: true , visible: true},
+        { name: 'mar', data: 'mar' , searchable: true , visible: true},
+        { name: 'apr', data: 'apr' , searchable: true , visible: true},
+        { name: 'may', data: 'may' , searchable: true , visible: true},
+        { name: 'jun', data: 'jun' , searchable: true , visible: true},
+        { name: 'jul', data: 'jul' , searchable: true , visible: true},
+        { name: 'aug', data: 'aug' , searchable: true , visible: true},
+        { name: 'sep', data: 'sep' , searchable: true , visible: true},
+        { name: 'oct', data: 'oct' , searchable: true , visible: true},
+        { name: 'nov', data: 'nov' , searchable: true , visible: true},
+        { name: 'dec', data: 'dec' , searchable: true , visible: true}
+    ],
     lengthMenu: [
         [ 10, 25, 50, -1 ],
         [ '10 rows', '25 rows', '50 rows', 'Show all' ]
     ],
     dom: 'Bfrtip',
-    columnDefs: [
-            {
-                "targets": [ 2,9 ],
-                "visible": false,
-                "searchable": false
-            }
-        ],
     buttons: [
       {
         extend: "colvis",
@@ -327,13 +426,112 @@ $(document).ready(function() {
 
         // Update footer
         $( api.column( value ).footer() ).html(
-            '<div style="font-size: 150%;">'+pageTotal+'</div>'
+            '<div style="font-size: 120%;">'+pageTotal+'('+total+')</div>'
         );
       });
       
     }
 
   });
+
+  revenueMissingTable = $('#revenueMissingTable').DataTable({
+    scrollX: true,
+    stateSave: true,
+    order: [[0, 'asc']],
+    columns: [
+        { name: 'cluster_owner', data: 'cluster_owner' , searchable: true , visible: true},
+        { name: 'customer_name', data: 'customer_name' , searchable: true , visible: true},
+        { name: 'project_id', data: 'project_id' , searchable: false , visible: false},
+        { name: 'project_name', data: 'project_name' , searchable: true , visible: true},
+        { name: 'project_type', data: 'project_type' , searchable: true , visible: true},
+        { name: 'project_subtype', data: 'project_subtype' , searchable: true , visible: true},
+        { name: 'project_status', data: 'project_status' , searchable: true , visible: true},
+        { name: 'gold_order', data: 'gold_order' , searchable: true , visible: true},
+        { name: 'samba_id', data: 'samba_id' , searchable: true , visible: true},
+        { name: 'user_id', data: 'user_id' , searchable: true , visible: true},
+        { name: 'user_name', data: 'user_name' , searchable: true , visible: true},
+        { name: 'win_ratio', data: 'win_ratio' , searchable: true , visible: true}
+    ],
+    lengthMenu: [
+        [ 10, 25, 50, -1 ],
+        [ '10 rows', '25 rows', '50 rows', 'Show all' ]
+    ],
+    dom: 'Bfrtip',
+    buttons: [
+      {
+        extend: "colvis",
+        className: "btn-sm",
+        columns: [0,1,3,4,5,6,7,8,10,11]
+      },
+      {
+        extend: "pageLength",
+        className: "btn-sm"
+      },
+      {
+        extend: "csv",
+        className: "btn-sm",
+        exportOptions: {
+            columns: ':visible'
+        }
+      },
+      {
+        extend: "excel",
+        className: "btn-sm",
+        exportOptions: {
+            columns: ':visible'
+        }
+      },
+      {
+        extend: "print",
+        className: "btn-sm",
+        exportOptions: {
+            columns: ':visible'
+        }
+      },
+    ]
+  });
+
+  $('#revenueMissingTable').on('click', 'tbody td', function() {
+      var table = revenueMissingTable;
+      var tr = $(this).closest('tr');
+      var row = table.row(tr);
+      //get the initialization options
+      var columns = table.settings().init().columns;
+      //get the index of the clicked cell
+      var colIndex = table.cell(this).index().column;
+      //console.log('you clicked on the column with the name '+columns[colIndex].name);
+      //console.log('the user id is '+row.data().user_id);
+      //console.log('the project id is '+row.data().project_id);
+      // If we click on the name, then we create a new project
+      year = [];
+      $("#year option:selected").each(function()
+      {
+        // log the value and text of each option
+        year.push($(this).val());
+      });
+      window.location.href = "{!! route('toolsFormUpdate',['','','']) !!}/"+row.data().user_id+"/"+row.data().project_id+"/"+year[0];
+    });
+
+    $('#revenueTable').on('click', 'tbody td', function() {
+      var table = revenueTable;
+      var tr = $(this).closest('tr');
+      var row = table.row(tr);
+      //get the initialization options
+      var columns = table.settings().init().columns;
+      //get the index of the clicked cell
+      var colIndex = table.cell(this).index().column;
+      //console.log('you clicked on the column with the name '+columns[colIndex].name);
+      //console.log('the user id is '+row.data().user_id);
+      //console.log('the project id is '+row.data().project_id);
+      // If we click on the name, then we create a new project
+      year = [];
+      $("#year option:selected").each(function()
+      {
+        // log the value and text of each option
+        year.push($(this).val());
+      });
+      window.location.href = "{!! route('toolsFormUpdate',['','','']) !!}/"+row.data().user_id+"/"+row.data().project_id+"/"+year[0];
+    });
 
 });
 

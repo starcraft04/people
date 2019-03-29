@@ -259,18 +259,18 @@ class DashboardController extends Controller {
                       'projects.gold_order_number as gold_order','projects.samba_id as samba_id',
                       DB::raw('IF(projects.win_ratio IS NULL,0,projects.win_ratio) as win_ratio'),
                       'project_revenues.product_code as product_code','project_revenues.year as year',
-                      DB::raw('IF(projects.project_status = "Pipeline",IF(projects.win_ratio IS NULL,0,project_revenues.jan*projects.win_ratio/100),project_revenues.jan) as jan'),
-                      DB::raw('IF(projects.project_status = "Pipeline",IF(projects.win_ratio IS NULL,0,project_revenues.feb*projects.win_ratio/100),project_revenues.feb) as feb'),
-                      DB::raw('IF(projects.project_status = "Pipeline",IF(projects.win_ratio IS NULL,0,project_revenues.mar*projects.win_ratio/100),project_revenues.mar) as mar'),
-                      DB::raw('IF(projects.project_status = "Pipeline",IF(projects.win_ratio IS NULL,0,project_revenues.apr*projects.win_ratio/100),project_revenues.apr) as apr'),
-                      DB::raw('IF(projects.project_status = "Pipeline",IF(projects.win_ratio IS NULL,0,project_revenues.may*projects.win_ratio/100),project_revenues.may) as may'),
-                      DB::raw('IF(projects.project_status = "Pipeline",IF(projects.win_ratio IS NULL,0,project_revenues.jun*projects.win_ratio/100),project_revenues.jun) as jun'),
-                      DB::raw('IF(projects.project_status = "Pipeline",IF(projects.win_ratio IS NULL,0,project_revenues.jul*projects.win_ratio/100),project_revenues.jul) as jul'),
-                      DB::raw('IF(projects.project_status = "Pipeline",IF(projects.win_ratio IS NULL,0,project_revenues.aug*projects.win_ratio/100),project_revenues.aug) as aug'),
-                      DB::raw('IF(projects.project_status = "Pipeline",IF(projects.win_ratio IS NULL,0,project_revenues.sep*projects.win_ratio/100),project_revenues.sep) as sep'),
-                      DB::raw('IF(projects.project_status = "Pipeline",IF(projects.win_ratio IS NULL,0,project_revenues.oct*projects.win_ratio/100),project_revenues.oct) as oct'),
-                      DB::raw('IF(projects.project_status = "Pipeline",IF(projects.win_ratio IS NULL,0,project_revenues.nov*projects.win_ratio/100),project_revenues.nov) as nov'),
-                      DB::raw('IF(projects.project_status = "Pipeline",IF(projects.win_ratio IS NULL,0,project_revenues.dec*projects.win_ratio/100),project_revenues.dec) as dece')
+                      DB::raw('IF(projects.project_status = "Pipeline",IF(projects.win_ratio IS NULL,project_revenues.jan,project_revenues.jan*projects.win_ratio/100),project_revenues.jan) as jan'),
+                      DB::raw('IF(projects.project_status = "Pipeline",IF(projects.win_ratio IS NULL,project_revenues.feb,project_revenues.feb*projects.win_ratio/100),project_revenues.feb) as feb'),
+                      DB::raw('IF(projects.project_status = "Pipeline",IF(projects.win_ratio IS NULL,project_revenues.mar,project_revenues.mar*projects.win_ratio/100),project_revenues.mar) as mar'),
+                      DB::raw('IF(projects.project_status = "Pipeline",IF(projects.win_ratio IS NULL,project_revenues.apr,project_revenues.apr*projects.win_ratio/100),project_revenues.apr) as apr'),
+                      DB::raw('IF(projects.project_status = "Pipeline",IF(projects.win_ratio IS NULL,project_revenues.may,project_revenues.may*projects.win_ratio/100),project_revenues.may) as may'),
+                      DB::raw('IF(projects.project_status = "Pipeline",IF(projects.win_ratio IS NULL,project_revenues.jun,project_revenues.jun*projects.win_ratio/100),project_revenues.jun) as jun'),
+                      DB::raw('IF(projects.project_status = "Pipeline",IF(projects.win_ratio IS NULL,project_revenues.jul,project_revenues.jul*projects.win_ratio/100),project_revenues.jul) as jul'),
+                      DB::raw('IF(projects.project_status = "Pipeline",IF(projects.win_ratio IS NULL,project_revenues.aug,project_revenues.aug*projects.win_ratio/100),project_revenues.aug) as aug'),
+                      DB::raw('IF(projects.project_status = "Pipeline",IF(projects.win_ratio IS NULL,project_revenues.sep,project_revenues.sep*projects.win_ratio/100),project_revenues.sep) as sep'),
+                      DB::raw('IF(projects.project_status = "Pipeline",IF(projects.win_ratio IS NULL,project_revenues.oct,project_revenues.oct*projects.win_ratio/100),project_revenues.oct) as oct'),
+                      DB::raw('IF(projects.project_status = "Pipeline",IF(projects.win_ratio IS NULL,project_revenues.nov,project_revenues.nov*projects.win_ratio/100),project_revenues.nov) as nov'),
+                      DB::raw('IF(projects.project_status = "Pipeline",IF(projects.win_ratio IS NULL,project_revenues.dec,project_revenues.dec*projects.win_ratio/100),project_revenues.dec) as dece')
                     );
     $revenues->leftjoin('projects','project_revenues.project_id', '=' ,'projects.id');
     $revenues->leftjoin('customers','projects.customer_id', '=' ,'customers.id');
