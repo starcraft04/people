@@ -57,7 +57,7 @@
 
       <!-- Window title -->
       <div class="x_title">
-        <h2>Tools</small></h2>
+        <h2>Tools</h2>
         <ul class="nav navbar-right panel_toolbox">
           <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
         </ul>
@@ -107,202 +107,189 @@
   <div class="col-md-12 col-sm-12 col-xs-12">
     <div class="x_panel">
 
-      <!-- Window title -->
-      <div class="x_title">
-        <h2>Revenue (€)</small></h2>
-        <ul class="nav navbar-right panel_toolbox">
-          <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
-        </ul>
-        <div class="clearfix"></div>
-      </div>
-      <!-- Window title -->
-
       <!-- Window content -->
       <div class="x_content">
         <div class="row">
-          <table id="revenueTable" class="table table-striped table-hover table-bordered" width="100%">
-            <thead>
-              <tr>
-                <th>Cluster</th>
-                <th>Customer</th>
-                <th>Project ID</th>
-                <th>Project name</th>
-                <th>Project type</th>
-                <th>Project subtype</th>
-                <th>Project status</th>
-                <th>Gold Order</th>
-                <th>Samba ID</th>
-                <th>User ID</th>
-                <th>User name</th>
-                <th>FPC</th>
-                <th>Win ratio (%)</th>
-                <th>Jan</th>
-                <th>Feb</th>
-                <th>Mar</th>
-                <th>Apr</th>
-                <th>May</th>
-                <th>Jun</th>
-                <th>Jul</th>
-                <th>Aug</th>
-                <th>Sep</th>
-                <th>Oct</th>
-                <th>Nov</th>
-                <th>Dec</th>
-              </tr>
-            </thead>
-            <tbody>
-            @foreach($all_revenues as $key => $revenue)
-              <tr>
-                <td>{!! $revenue->cluster_owner !!}</td>
-                <td>{!! $revenue->customer_name !!}</td>
-                <td>{!! $revenue->project_id !!}</td>
-                <td>{!! $revenue->project_name !!}</td>
-                <td>{!! $revenue->project_type !!}</td>
-                <td>{!! $revenue->project_subtype !!}</td>
-                <td>{!! $revenue->project_status !!}</td>
-                <td>{!! $revenue->gold_order !!}</td>
-                <td>{!! $revenue->samba_id !!}</td>
-                <td>{!! $revenue->user_id !!}</td>
-                <td>{!! $revenue->user_name !!}</td>
-                <td>{!! $revenue->product_code !!}</td>
-                <td>{!! $revenue->win_ratio !!}</td>
-                <td>{!! $revenue->jan !!}</td>
-                <td>{!! $revenue->feb !!}</td>
-                <td>{!! $revenue->mar !!}</td>
-                <td>{!! $revenue->apr !!}</td>
-                <td>{!! $revenue->may !!}</td>
-                <td>{!! $revenue->jun !!}</td>
-                <td>{!! $revenue->jul !!}</td>
-                <td>{!! $revenue->aug !!}</td>
-                <td>{!! $revenue->sep !!}</td>
-                <td>{!! $revenue->oct !!}</td>
-                <td>{!! $revenue->nov !!}</td>
-                <td>{!! $revenue->dece !!}</td>
-              </tr>
-            @endforeach
-            </tbody>
-            <tfoot>
-              <tr>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-        <div style="font-size: 150%;" class="row">
-          Grand Total: €{!! $grand_total !!} / My revenue target: €{!! $revenue_target !!} / Diff: €{!! $revenue_target-$grand_total !!}
+          <div class="" role="tabpanel" data-example-id="togglable-tabs">
+            <!-- Tab titles -->
+            <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
+              <li role="presentation" class="active"><a href="#tab_content1" id="revenue-tab" role="tab" data-toggle="tab" aria-expanded="true">Revenue(€)</a>
+              </li>
+              <li role="presentation" class=""><a href="#tab_content2" id="missingRevenue-tab" role="tab" data-toggle="tab" aria-expanded="true">Projects missing revenue</a>
+              </li>
+            </ul>
+            <!-- Tab titles -->
+
+            <!-- Tab content -->
+            <div id="myTabContent" class="tab-content">
+              <!-- Tab Revenue -->
+              <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="revenue-tab">
+                <table id="revenueTable" class="table table-striped table-hover table-bordered" width="100%">
+                  <thead>
+                    <tr>
+                      <th>Cluster</th>
+                      <th>Customer</th>
+                      <th>Project ID</th>
+                      <th>Project name</th>
+                      <th>Project type</th>
+                      <th>Project subtype</th>
+                      <th>Project status</th>
+                      <th>Gold Order</th>
+                      <th>Samba ID</th>
+                      <th>User ID</th>
+                      <th>User name</th>
+                      <th>FPC</th>
+                      <th>Win ratio (%)</th>
+                      <th>Jan</th>
+                      <th>Feb</th>
+                      <th>Mar</th>
+                      <th>Apr</th>
+                      <th>May</th>
+                      <th>Jun</th>
+                      <th>Jul</th>
+                      <th>Aug</th>
+                      <th>Sep</th>
+                      <th>Oct</th>
+                      <th>Nov</th>
+                      <th>Dec</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  @foreach($all_revenues as $key => $revenue)
+                    <tr>
+                      <td>{!! $revenue->cluster_owner !!}</td>
+                      <td>{!! $revenue->customer_name !!}</td>
+                      <td>{!! $revenue->project_id !!}</td>
+                      <td>{!! $revenue->project_name !!}</td>
+                      <td>{!! $revenue->project_type !!}</td>
+                      <td>{!! $revenue->project_subtype !!}</td>
+                      <td>{!! $revenue->project_status !!}</td>
+                      <td>{!! $revenue->gold_order !!}</td>
+                      <td>{!! $revenue->samba_id !!}</td>
+                      <td>{!! $revenue->user_id !!}</td>
+                      <td>{!! $revenue->user_name !!}</td>
+                      <td>{!! $revenue->product_code !!}</td>
+                      <td>{!! $revenue->win_ratio !!}</td>
+                      <td>{!! $revenue->jan !!}</td>
+                      <td>{!! $revenue->feb !!}</td>
+                      <td>{!! $revenue->mar !!}</td>
+                      <td>{!! $revenue->apr !!}</td>
+                      <td>{!! $revenue->may !!}</td>
+                      <td>{!! $revenue->jun !!}</td>
+                      <td>{!! $revenue->jul !!}</td>
+                      <td>{!! $revenue->aug !!}</td>
+                      <td>{!! $revenue->sep !!}</td>
+                      <td>{!! $revenue->oct !!}</td>
+                      <td>{!! $revenue->nov !!}</td>
+                      <td>{!! $revenue->dece !!}</td>
+                    </tr>
+                  @endforeach
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                    </tr>
+                  </tfoot>
+                </table>
+
+                <div style="font-size: 150%;" class="row">
+                  Grand Total: €{!! $grand_total !!} / My revenue target: €{!! $revenue_target !!} / Diff: €{!! $revenue_target-$grand_total !!}
+                </div>
+              </div>
+              <!-- Tab Revenue -->
+
+              <!-- Tab Missing Revenue -->
+              <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="missingRevenue-tab">
+                <table id="revenueMissingTable" class="table table-striped table-hover table-bordered" width="100%">
+                  <thead>
+                    <tr>
+                      <th>Cluster</th>
+                      <th>Customer</th>
+                      <th>Project ID</th>
+                      <th>Project name</th>
+                      <th>Project type</th>
+                      <th>Project subtype</th>
+                      <th>Project status</th>
+                      <th>Gold Order</th>
+                      <th>Samba ID</th>
+                      <th>User ID</th>
+                      <th>User name</th>
+                      <th>Win ratio (%)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach($projects_without_revenue as $key => $revenueMissing)
+                      <tr>
+                        <td>{!! $revenueMissing->cluster_owner !!}</td>
+                        <td>{!! $revenueMissing->customer_name !!}</td>
+                        <td>{!! $revenueMissing->project_id !!}</td>
+                        <td>{!! $revenueMissing->project_name !!}</td>
+                        <td>{!! $revenueMissing->project_type !!}</td>
+                        <td>{!! $revenueMissing->project_subtype !!}</td>
+                        <td>{!! $revenueMissing->project_status !!}</td>
+                        <td>{!! $revenueMissing->gold_order !!}</td>
+                        <td>{!! $revenueMissing->samba_id !!}</td>
+                        <td>{!! $revenueMissing->user_id !!}</td>
+                        <td>{!! $revenueMissing->user_name !!}</td>
+                        <td>{!! $revenueMissing->win_ratio !!}</td>
+                      </tr>
+                    @endforeach
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+              <!-- Tab Missing Revenue -->
+            </div>
+            <!-- Tab content -->
+
+          </div>
         </div>
       </div>
       <!-- Window content -->
+
     </div>
   </div>
 </div>
 <!-- Window -->
-
-<!-- Window -->
-<div class="row">
-  <div class="col-md-12 col-sm-12 col-xs-12">
-    <div class="x_panel">
-
-      <!-- Window title -->
-      <div class="x_title">
-        <h2>Projects missing revenue</small></h2>
-        <ul class="nav navbar-right panel_toolbox">
-          <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
-        </ul>
-        <div class="clearfix"></div>
-      </div>
-      <!-- Window title -->
-
-      <!-- Window content -->
-      <div class="x_content">
-        <div class="row">
-          <table id="revenueMissingTable" class="table table-striped table-hover table-bordered" width="100%">
-            <thead>
-              <tr>
-                <th>Cluster</th>
-                <th>Customer</th>
-                <th>Project ID</th>
-                <th>Project name</th>
-                <th>Project type</th>
-                <th>Project subtype</th>
-                <th>Project status</th>
-                <th>Gold Order</th>
-                <th>Samba ID</th>
-                <th>User ID</th>
-                <th>User name</th>
-                <th>Win ratio (%)</th>
-              </tr>
-            </thead>
-            <tbody>
-            @foreach($projects_without_revenue as $key => $revenueMissing)
-              <tr>
-                <td>{!! $revenueMissing->cluster_owner !!}</td>
-                <td>{!! $revenueMissing->customer_name !!}</td>
-                <td>{!! $revenueMissing->project_id !!}</td>
-                <td>{!! $revenueMissing->project_name !!}</td>
-                <td>{!! $revenueMissing->project_type !!}</td>
-                <td>{!! $revenueMissing->project_subtype !!}</td>
-                <td>{!! $revenueMissing->project_status !!}</td>
-                <td>{!! $revenueMissing->gold_order !!}</td>
-                <td>{!! $revenueMissing->samba_id !!}</td>
-                <td>{!! $revenueMissing->user_id !!}</td>
-                <td>{!! $revenueMissing->user_name !!}</td>
-                <td>{!! $revenueMissing->win_ratio !!}</td>
-              </tr>
-            @endforeach
-            </tbody>
-            <tfoot>
-              <tr>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-      </div>
-      <!-- Window content -->
-    </div>
-  </div>
-</div>
-<!-- Window -->
-
-      </div>
-    </div>
-  </div>
 @stop
 
 @section('script')
@@ -531,6 +518,12 @@ $(document).ready(function() {
         year.push($(this).val());
       });
       window.location.href = "{!! route('toolsFormUpdate',['','','']) !!}/"+row.data().user_id+"/"+row.data().project_id+"/"+year[0];
+    });
+
+    // This part is to make sure that datatables can adjust the columns size when it is hidden because on non active tab when created
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function(e){
+    $($.fn.dataTable.tables(true)).DataTable()
+        .columns.adjust();
     });
 
 });
