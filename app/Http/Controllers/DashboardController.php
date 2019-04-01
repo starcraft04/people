@@ -247,7 +247,9 @@ class DashboardController extends Controller {
     $all_users = $userRepository->getAllUsersFromManager($user_id);
     $user = User::find($user_id);
     $revenue_target = $user->revenue_target;
+    //dd($revenue_target);
     $revenue_product_codes = explode(",",$user->revenue_product_codes);
+    //dd($user->revenue_product_codes);
     $users_id = [];
     foreach ($all_users as $key => $user) {
       array_push($users_id,$user['id']);
@@ -257,7 +259,7 @@ class DashboardController extends Controller {
     $revenues->select('users.id as user_id','users.name as user_name','projects.id as project_id','customers.name as customer_name','customers.cluster_owner as cluster_owner',
                       'projects.project_name as project_name','projects.project_type as project_type','projects.project_subtype as project_subtype','projects.project_status as project_status',
                       'projects.gold_order_number as gold_order','projects.samba_id as samba_id',
-                      DB::raw('IF(projects.win_ratio IS NULL,0,projects.win_ratio) as win_ratio'),
+                      DB::raw('IF(projects.win_ratio IS NULL,100,projects.win_ratio) as win_ratio'),
                       'project_revenues.product_code as product_code','project_revenues.year as year',
                       DB::raw('IF(projects.project_status = "Pipeline",IF(projects.win_ratio IS NULL,project_revenues.jan,project_revenues.jan*projects.win_ratio/100),project_revenues.jan) as jan'),
                       DB::raw('IF(projects.project_status = "Pipeline",IF(projects.win_ratio IS NULL,project_revenues.feb,project_revenues.feb*projects.win_ratio/100),project_revenues.feb) as feb'),
@@ -280,7 +282,9 @@ class DashboardController extends Controller {
     $revenues->where('project_revenues.year','=',$year);
     $revenues->where('projects.project_type','!=','Pre-sales');
     $revenues->whereIn('users.id',$users_id);
-    $revenues->whereIn('project_revenues.product_code',$revenue_product_codes);
+    if ($revenue_product_codes[0] != "") {
+      $revenues->whereIn('project_revenues.product_code',$revenue_product_codes);
+    }
     $revenues->groupBy('project_revenues.id');
     $all_revenues = $revenues->get();
     //dd($all_revenues);

@@ -215,9 +215,12 @@
                     </tr>
                   </tfoot>
                 </table>
-
+                </br></br>
                 <div style="font-size: 150%;" class="row">
-                  Grand Total: €{!! $grand_total !!} / My revenue target: €{!! $revenue_target !!} / Diff: €{!! $revenue_target-$grand_total !!}
+                  Grand Total: €{!! $grand_total !!} / 
+                  @if(isset($revenue_target))My revenue target: €{!! $revenue_target !!} / Diff: €{!! $revenue_target-$grand_total !!}
+                  @else My revenue target: - / Diff: - 
+                  @endif
                 </div>
               </div>
               <!-- Tab Revenue -->
@@ -337,7 +340,7 @@ $(document).ready(function() {
         { name: 'project_status', data: 'project_status' , searchable: true , visible: true},
         { name: 'gold_order', data: 'gold_order' , searchable: true , visible: true},
         { name: 'samba_id', data: 'samba_id' , searchable: true , visible: true},
-        { name: 'user_id', data: 'user_id' , searchable: true , visible: true},
+        { name: 'user_id', data: 'user_id' , searchable: false , visible: false},
         { name: 'user_name', data: 'user_name' , searchable: true , visible: true},
         { name: 'product_code', data: 'product_code' , searchable: true , visible: true},
         { name: 'win_ratio', data: 'win_ratio' , searchable: true , visible: true},
