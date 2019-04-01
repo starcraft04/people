@@ -119,10 +119,12 @@
           <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
             <li role="presentation" class="active"><a href="#tab_content1" id="project-tab" role="tab" data-toggle="tab" aria-expanded="true">Project</a>
             </li>
-            @permission(['projectRevenue-create'])
-            <li role="presentation" class="" id="tab_revenue"><a href="#tab_content2" id="revenue-tab" role="tab" data-toggle="tab" aria-expanded="true">Revenue</a>
-            </li>
-            @endpermission
+            @if($action == 'update')
+              @permission(['projectRevenue-create'])
+              <li role="presentation" class="" id="tab_revenue"><a href="#tab_content2" id="revenue-tab" role="tab" data-toggle="tab" aria-expanded="true">Revenue</a>
+              </li>
+              @endpermission
+            @endif
             <li role="presentation" class=""><a href="#tab_content3" id="comments-tab" role="tab" data-toggle="tab" aria-expanded="false">Comments (<span id="num_of_comments">{{ $num_of_comments }}</span>)</a>
             </li>
           </ul>
@@ -659,41 +661,43 @@
               </div>
 
             </div>
-            @permission(['projectRevenue-create'])
-            <!-- Revenues -->
-            <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="revenue-tab">
-              <div class="row">
-              <div class="table-responsive">
-                <table class="table table-striped table-hover table-bordered" width="100%" id="projectRevenue">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Year</th>
-                      <th>FPC</th>
-                      <th>Jan</th>
-                      <th>feb</th>
-                      <th>Mar</th>
-                      <th>Apr</th>
-                      <th>May</th>
-                      <th>Jun</th>
-                      <th>Jul</th>
-                      <th>Aug</th>
-                      <th>Sep</th>
-                      <th>Oct</th>
-                      <th>Nov</th>
-                      <th>Dec</th>
-                      <th>
-                        @permission('projectRevenue-create')
-                          <button type="button" id="new_revenue" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span></button>
-                        @endpermission
-                      </th>
-                    </tr>
-                  </thead>
-                </table>
+            @if($action == 'update')
+              @permission(['projectRevenue-create'])
+              <!-- Revenues -->
+              <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="revenue-tab">
+                <div class="row">
+                <div class="table-responsive">
+                  <table class="table table-striped table-hover table-bordered" width="100%" id="projectRevenue">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Year</th>
+                        <th>FPC</th>
+                        <th>Jan</th>
+                        <th>feb</th>
+                        <th>Mar</th>
+                        <th>Apr</th>
+                        <th>May</th>
+                        <th>Jun</th>
+                        <th>Jul</th>
+                        <th>Aug</th>
+                        <th>Sep</th>
+                        <th>Oct</th>
+                        <th>Nov</th>
+                        <th>Dec</th>
+                        <th>
+                          @permission('projectRevenue-create')
+                            <button type="button" id="new_revenue" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span></button>
+                          @endpermission
+                        </th>
+                      </tr>
+                    </thead>
+                  </table>
+                </div>
+                </div>
               </div>
-              </div>
-            </div>
-            @endpermission
+              @endpermission
+            @endif
             <!-- Comments -->
             <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="comments-tab">
               <div class="row">
@@ -885,11 +889,11 @@ $(document).ready(function() {
   });
 
   @if($action == 'update')
-  @if($show_change_button)
-  $(document).on('click', '#change_user', function () {
-    $('#user_id').prop('disabled', false);
-  });
-  @endif
+    @if($show_change_button)
+    $(document).on('click', '#change_user', function () {
+      $('#user_id').prop('disabled', false);
+    });
+    @endif
   @endif
 
   if($('#user_id').val()===""){
@@ -911,8 +915,6 @@ $(document).ready(function() {
       $('.user_selected').show();
     }
   });
-
-
 
   // init DateRange picker
   $('#estimated_date').daterangepicker({
@@ -1009,11 +1011,11 @@ $(document).ready(function() {
 
   @if($action == 'update')
     $('#transfer_user').on('click', function () {
-        bootbox.confirm("Are you sure want to transfer the user from this project?", function(result) {
-            if (result){
-              window.location.href = "{!! route('toolsFormTransfer',[$user_id,$project->id]) !!}";
-            }
-        });
+      bootbox.confirm("Are you sure want to transfer the user from this project?", function(result) {
+          if (result){
+            window.location.href = "{!! route('toolsFormTransfer',[$user_id,$project->id]) !!}";
+          }
+      });
     });
   @endif
 
@@ -1169,246 +1171,249 @@ $(document).ready(function() {
 
   @endif
 
-$.ajaxSetup({
-    headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    }
-});
+  @if($action == 'update')
 
-projectRevenue = $('#projectRevenue').DataTable({
-    serverSide: true,
-    processing: true,
-    scrollX: true,
-    stateSave: true,
-    responsive: false,
-    ajax: {
-            url: "{!! route('listOfProjectsRevenueAjax',$project->id) !!}",
-            type: "GET",
-            dataType: "JSON"
-        },
-    columns: [
-        { name: 'id', data: 'id' , searchable: false , visible: false },
-        { name: 'year', data: 'year' , searchable: true , visible: true },
-        { name: 'product_code', data: 'product_code' , searchable: true , visible: true },
-        { name: 'jan', data: 'jan' , searchable: true , visible: true },
-        { name: 'feb', data: 'feb' , searchable: true , visible: true },
-        { name: 'mar', data: 'mar' , searchable: true , visible: true },
-        { name: 'apr', data: 'apr' , searchable: true , visible: true },
-        { name: 'may', data: 'may' , searchable: true , visible: true },
-        { name: 'jun', data: 'jun' , searchable: true , visible: true },
-        { name: 'jul', data: 'jul' , searchable: true , visible: true },
-        { name: 'aug', data: 'aug' , searchable: true , visible: true },
-        { name: 'sep', data: 'sep' , searchable: true , visible: true },
-        { name: 'oct', data: 'oct' , searchable: true , visible: true },
-        { name: 'nov', data: 'nov' , searchable: true , visible: true },
-        { name: 'dec', data: 'dec' , searchable: true , visible: true },
-        {
-            name: 'actions',
-            data: null,
-            sortable: false,
-            searchable: false,
-            render: function (data) {
-          var actions = '';
-          actions += '<div class="btn-group btn-group-xs">';
-          if (permissions['projectRevenue-delete']){
-            actions += '<button type="button" id="'+data.id+'" class="buttonRevenueDelete btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
-          };
-          actions += '</div>';
-          return actions;
-        },
-            width: '70px'
-        }
-        ],
-    order: [[1, 'desc']],
-    lengthMenu: [
-        [ 10, 25, 50, -1 ],
-        [ '10 rows', '25 rows', '50 rows', 'Show all' ]
-    ],
-    dom: 'Bfrtip',
-    buttons: [
-      {
-        extend: "colvis",
-        className: "btn-sm",
-        columns: [ 1,2,3,4,5,6,7,8,9,10,11,12,13,14]
-      },
-      {
-        extend: "pageLength",
-        className: "btn-sm"
-      },
-      {
-        extend: "csv",
-        className: "btn-sm",
-        exportOptions: {
-            columns: ':visible'
-        }
-      },
-      {
-        extend: "excel",
-        className: "btn-sm",
-        exportOptions: {
-            columns: ':visible'
-        }
-      },
-      {
-        extend: "print",
-        className: "btn-sm",
-        exportOptions: {
-            columns: ':visible'
-        }
-      },
-    ]   
-});
-
-projectRevenue.draw();
-
-$('#new_revenue').click(function(){
-  var currentTime = new Date();
-
-  var html = '<tr>';
-  html += '<td contenteditable id="rev_year">'+currentTime.getFullYear()+'</td>';
-  html += '<td contenteditable id="rev_fpc"></td>';
-  html += '<td contenteditable id="rev_jan">0</td>';
-  html += '<td contenteditable id="rev_feb">0</td>';
-  html += '<td contenteditable id="rev_mar">0</td>';
-  html += '<td contenteditable id="rev_apr">0</td>';
-  html += '<td contenteditable id="rev_may">0</td>';
-  html += '<td contenteditable id="rev_jun">0</td>';
-  html += '<td contenteditable id="rev_jul">0</td>';
-  html += '<td contenteditable id="rev_aug">0</td>';
-  html += '<td contenteditable id="rev_sep">0</td>';
-  html += '<td contenteditable id="rev_oct">0</td>';
-  html += '<td contenteditable id="rev_nov">0</td>';
-  html += '<td contenteditable id="rev_dec">0</td>';
-  html += '<td><button type="button" name="rev_insert" id="rev_insert" class="btn btn-success btn-xs"><span class="glyphicon glyphicon-log-in"></span></button></td>';
-  html += '</tr>';
-  $('#projectRevenue tbody').prepend(html);
-  });
-
-});
-
-$(document).on('click', '#rev_insert', function(){
-   var rev_proj_id = {!! $project->id !!};
-   var rev_year = $('#rev_year').text();
-   var rev_fpc = $('#rev_fpc').text();
-   var rev_jan = $('#rev_jan').text();
-   var rev_feb = $('#rev_feb').text();
-   var rev_mar = $('#rev_mar').text();
-   var rev_apr = $('#rev_apr').text();
-   var rev_may = $('#rev_may').text();
-   var rev_jun = $('#rev_jun').text();
-   var rev_jul = $('#rev_jul').text();
-   var rev_aug = $('#rev_aug').text();
-   var rev_sep = $('#rev_sep').text();
-   var rev_oct = $('#rev_oct').text();
-   var rev_nov = $('#rev_nov').text();
-   var rev_dec = $('#rev_dec').text();
-
-   if(rev_year != '' && rev_fpc != '' && rev_jan != '' && rev_feb != '' && rev_mar != '' && rev_apr != '' && rev_may != '' && rev_jun != '' && rev_jul != '' && rev_aug != '' && rev_sep != '' && rev_oct != '' && rev_nov != '' && rev_dec != '')
-   {
-    $.ajax({
-          type: 'post',
-          url: "{!! route('ProjectsRevenueAddAjax') !!}",
-          data:{project_id:rev_proj_id, year:rev_year, product_code:rev_fpc, 
-                jan:rev_jan, feb:rev_feb, mar:rev_mar, apr:rev_apr, 
-                may:rev_may, jun:rev_jun, jul:rev_jul, aug:rev_aug,
-                sep:rev_sep, oct:rev_oct, nov:rev_nov, dec:rev_dec},
-          dataType: 'json',
-          success: function(data) {
-            console.log(data);
-            if (data.result == 'success'){
-                box_type = 'success';
-                message_type = 'success';
-            }
-            else {
-                box_type = 'danger';
-                message_type = 'error';
-            }
-
-            $('#flash-message').empty();
-            var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
-            $('#flash-message').append(box);
-            $('#delete-message').delay(2000).queue(function () {
-                $(this).addClass('animated flipOutX')
-            });
-            projectRevenue.ajax.reload();
-          }
-        });
-   }
-   else
-   {
-    alert("All Fields are required");
-   }
-  });
-
-  $(document).on('click', '.buttonRevenueDelete', function () {
-    record_id = this.id;
-    bootbox.confirm("Are you sure want to delete this record?", function(result) {
-      if (result){
-        $.ajax({
-          type: 'get',
-          url: "{!! route('projectRevenueDelete','') !!}/"+record_id,
-          dataType: 'json',
-          success: function(data) {
-            console.log(data);
-            if (data.result == 'success'){
-                box_type = 'success';
-                message_type = 'success';
-            }
-            else {
-                box_type = 'danger';
-                message_type = 'error';
-            }
-
-            $('#flash-message').empty();
-            var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
-            $('#flash-message').append(box);
-            $('#delete-message').delay(2000).queue(function () {
-                $(this).addClass('animated flipOutX')
-            });
-            projectRevenue.ajax.reload();
-          }
-        });
+    $.ajaxSetup({
+      headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       }
     });
-  } );
-
-  $(document).on('blur', '.rev_update', function(){
-    var id = $(this).data("id");
-    var column_name = $(this).data("column");
-    var value = $(this).text();
-    $.ajax({
-          type: 'post',
-          url: "{!! route('ProjectsRevenueUpdateAjax') !!}",
-          data:{id:id, column_name:column_name, value:value},
-          dataType: 'json',
-          success: function(data) {
-            console.log(data);
-            if (data.result == 'success'){
-                box_type = 'success';
-                message_type = 'success';
+    
+    projectRevenue = $('#projectRevenue').DataTable({
+        serverSide: true,
+        processing: true,
+        scrollX: true,
+        stateSave: true,
+        responsive: false,
+        ajax: {
+                url: "{!! route('listOfProjectsRevenueAjax',$project->id) !!}",
+                type: "GET",
+                dataType: "JSON"
+            },
+        columns: [
+            { name: 'id', data: 'id' , searchable: false , visible: false },
+            { name: 'year', data: 'year' , searchable: true , visible: true },
+            { name: 'product_code', data: 'product_code' , searchable: true , visible: true },
+            { name: 'jan', data: 'jan' , searchable: true , visible: true },
+            { name: 'feb', data: 'feb' , searchable: true , visible: true },
+            { name: 'mar', data: 'mar' , searchable: true , visible: true },
+            { name: 'apr', data: 'apr' , searchable: true , visible: true },
+            { name: 'may', data: 'may' , searchable: true , visible: true },
+            { name: 'jun', data: 'jun' , searchable: true , visible: true },
+            { name: 'jul', data: 'jul' , searchable: true , visible: true },
+            { name: 'aug', data: 'aug' , searchable: true , visible: true },
+            { name: 'sep', data: 'sep' , searchable: true , visible: true },
+            { name: 'oct', data: 'oct' , searchable: true , visible: true },
+            { name: 'nov', data: 'nov' , searchable: true , visible: true },
+            { name: 'dec', data: 'dec' , searchable: true , visible: true },
+            {
+                name: 'actions',
+                data: null,
+                sortable: false,
+                searchable: false,
+                render: function (data) {
+              var actions = '';
+              actions += '<div class="btn-group btn-group-xs">';
+              if (permissions['projectRevenue-delete']){
+                actions += '<button type="button" id="'+data.id+'" class="buttonRevenueDelete btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
+              };
+              actions += '</div>';
+              return actions;
+            },
+                width: '70px'
             }
-            else {
-                box_type = 'danger';
-                message_type = 'error';
+            ],
+        order: [[1, 'desc']],
+        lengthMenu: [
+            [ 10, 25, 50, -1 ],
+            [ '10 rows', '25 rows', '50 rows', 'Show all' ]
+        ],
+        dom: 'Bfrtip',
+        buttons: [
+          {
+            extend: "colvis",
+            className: "btn-sm",
+            columns: [ 1,2,3,4,5,6,7,8,9,10,11,12,13,14]
+          },
+          {
+            extend: "pageLength",
+            className: "btn-sm"
+          },
+          {
+            extend: "csv",
+            className: "btn-sm",
+            exportOptions: {
+                columns: ':visible'
             }
+          },
+          {
+            extend: "excel",
+            className: "btn-sm",
+            exportOptions: {
+                columns: ':visible'
+            }
+          },
+          {
+            extend: "print",
+            className: "btn-sm",
+            exportOptions: {
+                columns: ':visible'
+            }
+          },
+        ]   
+    });
 
-            $('#flash-message').empty();
-            var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
-            $('#flash-message').append(box);
-            $('#delete-message').delay(2000).queue(function () {
-                $(this).addClass('animated flipOutX')
+    projectRevenue.draw();
+
+    $('#new_revenue').click(function(){
+      var currentTime = new Date();
+
+      var html = '<tr>';
+      html += '<td contenteditable id="rev_year">'+currentTime.getFullYear()+'</td>';
+      html += '<td contenteditable id="rev_fpc"></td>';
+      html += '<td contenteditable id="rev_jan">0</td>';
+      html += '<td contenteditable id="rev_feb">0</td>';
+      html += '<td contenteditable id="rev_mar">0</td>';
+      html += '<td contenteditable id="rev_apr">0</td>';
+      html += '<td contenteditable id="rev_may">0</td>';
+      html += '<td contenteditable id="rev_jun">0</td>';
+      html += '<td contenteditable id="rev_jul">0</td>';
+      html += '<td contenteditable id="rev_aug">0</td>';
+      html += '<td contenteditable id="rev_sep">0</td>';
+      html += '<td contenteditable id="rev_oct">0</td>';
+      html += '<td contenteditable id="rev_nov">0</td>';
+      html += '<td contenteditable id="rev_dec">0</td>';
+      html += '<td><button type="button" name="rev_insert" id="rev_insert" class="btn btn-success btn-xs"><span class="glyphicon glyphicon-log-in"></span></button></td>';
+      html += '</tr>';
+      $('#projectRevenue tbody').prepend(html);
+    });
+
+    $(document).on('click', '#rev_insert', function(){
+      var rev_proj_id = {!! $project->id !!};
+      var rev_year = $('#rev_year').text();
+      var rev_fpc = $('#rev_fpc').text();
+      var rev_jan = $('#rev_jan').text();
+      var rev_feb = $('#rev_feb').text();
+      var rev_mar = $('#rev_mar').text();
+      var rev_apr = $('#rev_apr').text();
+      var rev_may = $('#rev_may').text();
+      var rev_jun = $('#rev_jun').text();
+      var rev_jul = $('#rev_jul').text();
+      var rev_aug = $('#rev_aug').text();
+      var rev_sep = $('#rev_sep').text();
+      var rev_oct = $('#rev_oct').text();
+      var rev_nov = $('#rev_nov').text();
+      var rev_dec = $('#rev_dec').text();
+
+      if(rev_year != '' && rev_fpc != '' && rev_jan != '' && rev_feb != '' && rev_mar != '' && rev_apr != '' && rev_may != '' && rev_jun != '' && rev_jul != '' && rev_aug != '' && rev_sep != '' && rev_oct != '' && rev_nov != '' && rev_dec != '')
+      {
+        $.ajax({
+              type: 'post',
+              url: "{!! route('ProjectsRevenueAddAjax') !!}",
+              data:{project_id:rev_proj_id, year:rev_year, product_code:rev_fpc, 
+                    jan:rev_jan, feb:rev_feb, mar:rev_mar, apr:rev_apr, 
+                    may:rev_may, jun:rev_jun, jul:rev_jul, aug:rev_aug,
+                    sep:rev_sep, oct:rev_oct, nov:rev_nov, dec:rev_dec},
+              dataType: 'json',
+              success: function(data) {
+                console.log(data);
+                if (data.result == 'success'){
+                    box_type = 'success';
+                    message_type = 'success';
+                }
+                else {
+                    box_type = 'danger';
+                    message_type = 'error';
+                }
+
+                $('#flash-message').empty();
+                var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+                $('#flash-message').append(box);
+                $('#delete-message').delay(2000).queue(function () {
+                    $(this).addClass('animated flipOutX')
+                });
+                projectRevenue.ajax.reload();
+              }
             });
-            projectRevenue.ajax.reload();
-          }
-        });
-  });
+      }
+      else
+      {
+        alert("All Fields are required");
+      }
+    });
 
-  // This part is to make sure that datatables can adjust the columns size when it is hidden because on non active tab when created
-  $('a[data-toggle="tab"]').on('shown.bs.tab', function(e){
-   $($.fn.dataTable.tables(true)).DataTable()
-      .columns.adjust();
-  });
+    $(document).on('click', '.buttonRevenueDelete', function () {
+      record_id = this.id;
+      bootbox.confirm("Are you sure want to delete this record?", function(result) {
+        if (result){
+          $.ajax({
+            type: 'get',
+            url: "{!! route('projectRevenueDelete','') !!}/"+record_id,
+            dataType: 'json',
+            success: function(data) {
+              console.log(data);
+              if (data.result == 'success'){
+                  box_type = 'success';
+                  message_type = 'success';
+              }
+              else {
+                  box_type = 'danger';
+                  message_type = 'error';
+              }
 
+              $('#flash-message').empty();
+              var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+              $('#flash-message').append(box);
+              $('#delete-message').delay(2000).queue(function () {
+                  $(this).addClass('animated flipOutX')
+              });
+              projectRevenue.ajax.reload();
+            }
+          });
+        }
+      });
+    } );
+
+    $(document).on('blur', '.rev_update', function(){
+      var id = $(this).data("id");
+      var column_name = $(this).data("column");
+      var value = $(this).text();
+      $.ajax({
+            type: 'post',
+            url: "{!! route('ProjectsRevenueUpdateAjax') !!}",
+            data:{id:id, column_name:column_name, value:value},
+            dataType: 'json',
+            success: function(data) {
+              console.log(data);
+              if (data.result == 'success'){
+                  box_type = 'success';
+                  message_type = 'success';
+              }
+              else {
+                  box_type = 'danger';
+                  message_type = 'error';
+              }
+
+              $('#flash-message').empty();
+              var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+              $('#flash-message').append(box);
+              $('#delete-message').delay(2000).queue(function () {
+                  $(this).addClass('animated flipOutX')
+              });
+              projectRevenue.ajax.reload();
+            }
+      });
+    });
+
+    // This part is to make sure that datatables can adjust the columns size when it is hidden because on non active tab when created
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function(e){
+      $($.fn.dataTable.tables(true)).DataTable()
+          .columns.adjust();
+    });
+
+  @endif
+
+});
 </script>
 
 

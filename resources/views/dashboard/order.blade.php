@@ -4,6 +4,14 @@
     <!-- CSS -->
     <!-- Select2 -->
     <link href="{{ asset('/plugins/select2/select2.min.css') }}" rel="stylesheet" type="text/css" />
+    <!-- DataTables -->
+    <link href="{{ asset('/plugins/gentelella/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('/plugins/gentelella/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('/plugins/gentelella/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('/plugins/gentelella/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css') }}" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ asset('/css/datatables.css') }}">
 
 @stop
 
@@ -13,13 +21,30 @@
     <script src="{{ asset('/plugins/select2/select2.full.min.js') }}" type="text/javascript"></script>
     <!-- Bootbox -->
     <script src="{{ asset('/plugins/bootbox/bootbox.min.js') }}"></script>
+    <!-- DataTables -->
+    <script src="{{ asset('/plugins/gentelella/vendors/datatables.net/js/jquery.dataTables.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/dataTables.buttons.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/buttons.colVis.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/buttons.flash.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/buttons.html5.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/buttons.print.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-keytable/js/dataTables.keyTable.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-responsive/js/dataTables.responsive.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-scroller/js/dataTables.scroller.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('/plugins/gentelella/vendors/jszip/dist/jszip.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('/plugins/gentelella/vendors/pdfmake/build/pdfmake.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('/plugins/gentelella/vendors/pdfmake/build/vfs_fonts.js') }}" type="text/javascript"></script>
 @stop
 
 @section('content')
 <!-- Page title -->
 <div class="page-title">
   <div class="title_left">
-    <h3>Cluster Board</h3>
+    <h3>Revenue dashboard</h3>
   </div>
 </div>
 <div class="clearfix"></div>
@@ -32,7 +57,7 @@
 
       <!-- Window title -->
       <div class="x_title">
-        <h2>Tools</small></h2>
+        <h2>Tools</h2>
         <ul class="nav navbar-right panel_toolbox">
           <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
         </ul>
@@ -57,27 +82,13 @@
               </select>
             </div>
             <div class="form-group col-xs-2">
-              <label for="customer_list" class="control-label">Customer</label>
-              <select class="form-control select2" style="width: 100%;" id="customer_list" name="customer_list" data-placeholder="Select a customer">
-                <option></option>
-                @foreach($customers_list as $key => $value)
+              <label for="manager" class="control-label">Manager</label>
+              <select class="form-control select2" style="width: 100%;" id="manager" name="manager" data-placeholder="Select a manager">
+                @foreach($authUsersForDataView->manager_list as $key => $value)
                 <option value="{{ $key }}"
-                  @if($key == $customer_id) selected
+                  @if($key == $user_id) selected
                   @endif>
-                  {{$value}}
-                </option>
-                @endforeach
-              </select>
-            </div>
-            <div class="form-group col-xs-2">
-              <label for="domain" class="control-label">Domain</label>
-              <select class="form-control select2" style="width: 100%;" id="domain" name="domain" data-placeholder="Select a domain">
-                <option></option>
-                @foreach(config('domains.domain-users') as $domain)
-                <option value="{{ $domain }}"
-                  @if($domain == $domain_selected) selected
-                  @endif>
-                  {{$domain}}
+                  {{ $value }}
                 </option>
                 @endforeach
               </select>
@@ -96,319 +107,428 @@
   <div class="col-md-12 col-sm-12 col-xs-12">
     <div class="x_panel">
 
-      <!-- Window title -->
-      <div class="x_title">
-        <h2>Top {{$top}} accounts per cluster</small></h2>
-        <button id="legendButton" class="btn btn-success btn-sm" style="margin-left: 10px;">info</button>
-        <ul class="nav navbar-right panel_toolbox">
-          <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
-        </ul>
-        <div class="clearfix"></div>
-      </div>
-      <!-- Window title -->
-
       <!-- Window content -->
       <div class="x_content">
-        <br />
-        <!-- start accordion -->
-        <div class="accordion" id="accordion" role="tablist" hide="true" aria-multiselectable="true">
-        <?php $customer_i = 0; $cluster_i = 0; ?>
-        @foreach($activities as $cluster => $customers)
-        
-          <div class="panel">
-            <a class="panel-heading" role="tab" id="heading{{$cluster_i}}" data-toggle="collapse" data-parent="#accordion" href="#collapse{{$cluster_i}}" aria-expanded="true" aria-controls="collapse{{$cluster_i}}">
-            <p><strong>
-            <h2 class="panel-title" align="center">{{$cluster}}</h2>
-            </strong></p>
-            </a>
+        <div class="row">
+          <div class="" role="tabpanel" data-example-id="togglable-tabs">
+            <!-- Tab titles -->
+            <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
+              <li role="presentation" class="active"><a href="#tab_content1" id="revenue-tab" role="tab" data-toggle="tab" aria-expanded="true">Revenue(€)</a>
+              </li>
+              <li role="presentation" class=""><a href="#tab_content2" id="missingRevenue-tab" role="tab" data-toggle="tab" aria-expanded="true">Projects missing revenue</a>
+              </li>
+            </ul>
+            <!-- Tab titles -->
 
-            <div id="collapse{{$cluster_i}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{$cluster_i}}">
-              <div class="panel-body">
-              
-                @foreach($customers as $customer => $users)
-                  <div class="row">
-                  <div class="col-md-6"><span style="font-size:24px;">{{$customer}}</span>
-                  @if(isset($grand_total[$customer]['div']))
-                    {{'(Average revenue per day:'.number_format($grand_total[$customer]['div'],0,'.','').')'}}
+            <!-- Tab content -->
+            <div id="myTabContent" class="tab-content">
+              <!-- Tab Revenue -->
+              <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="revenue-tab">
+                <table id="revenueTable" class="table table-striped table-hover table-bordered" width="100%">
+                  <thead>
+                    <tr>
+                      <th>Cluster</th>
+                      <th>Customer</th>
+                      <th>Project ID</th>
+                      <th>Project name</th>
+                      <th>Project type</th>
+                      <th>Project subtype</th>
+                      <th>Project status</th>
+                      <th>Gold Order</th>
+                      <th>Samba ID</th>
+                      <th>User ID</th>
+                      <th>User name</th>
+                      <th>FPC</th>
+                      <th>Win ratio (%)</th>
+                      <th>Jan</th>
+                      <th>Feb</th>
+                      <th>Mar</th>
+                      <th>Apr</th>
+                      <th>May</th>
+                      <th>Jun</th>
+                      <th>Jul</th>
+                      <th>Aug</th>
+                      <th>Sep</th>
+                      <th>Oct</th>
+                      <th>Nov</th>
+                      <th>Dec</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  @foreach($all_revenues as $key => $revenue)
+                    <tr>
+                      <td>{!! $revenue->cluster_owner !!}</td>
+                      <td>{!! $revenue->customer_name !!}</td>
+                      <td>{!! $revenue->project_id !!}</td>
+                      <td>{!! $revenue->project_name !!}</td>
+                      <td>{!! $revenue->project_type !!}</td>
+                      <td>{!! $revenue->project_subtype !!}</td>
+                      <td>{!! $revenue->project_status !!}</td>
+                      <td>{!! $revenue->gold_order !!}</td>
+                      <td>{!! $revenue->samba_id !!}</td>
+                      <td>{!! $revenue->user_id !!}</td>
+                      <td>{!! $revenue->user_name !!}</td>
+                      <td>{!! $revenue->product_code !!}</td>
+                      <td>{!! $revenue->win_ratio !!}</td>
+                      <td>{!! $revenue->jan !!}</td>
+                      <td>{!! $revenue->feb !!}</td>
+                      <td>{!! $revenue->mar !!}</td>
+                      <td>{!! $revenue->apr !!}</td>
+                      <td>{!! $revenue->may !!}</td>
+                      <td>{!! $revenue->jun !!}</td>
+                      <td>{!! $revenue->jul !!}</td>
+                      <td>{!! $revenue->aug !!}</td>
+                      <td>{!! $revenue->sep !!}</td>
+                      <td>{!! $revenue->oct !!}</td>
+                      <td>{!! $revenue->nov !!}</td>
+                      <td>{!! $revenue->dece !!}</td>
+                    </tr>
+                  @endforeach
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                    </tr>
+                  </tfoot>
+                </table>
+                </br></br>
+                <div style="font-size: 150%;" class="row">
+                  Grand Total: €{!! $grand_total !!} / 
+                  @if(isset($revenue_target))My revenue target: €{!! $revenue_target !!} / Diff: €{!! $revenue_target-$grand_total !!}
+                  @else My revenue target: - / Diff: - 
                   @endif
-                  <button type="button" id="customer_{{$customer_i}}" class="btn btn-success btn-xs btn-details">show details</button>
-                  </div>
-                  </div>
-                  <!-- total -->
-                  <div class="row">
-                  <table class="table table-bordered">
-                    <thead>
-                      <tr>
-                        <th style="width: 30%;"></th>
-                        <th style="width: 15%;"></th>
-                        <th>Jan</th>
-                        <th>Feb</th>
-                        <th>Mar</th>
-                        <th>Apr</th>
-                        <th>May</th>
-                        <th>Jun</th>
-                        <th>Jul</th>
-                        <th>Aug</th>
-                        <th>Sep</th>
-                        <th>Oct</th>
-                        <th>Nov</th>
-                        <th>Dec</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr class="table_customer_{{$customer_i}}" style="display:none;">
-                        <td><b>Revenue</b></td>
-                        <td><b>Product code</b></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                      </tr>
-                      @if(isset($revenues[$customer]))
-                      @foreach ($revenues[$customer] as $key => $revenue)
-                      <tr class="table_customer_{{$customer_i}}" style="display:none;">
-                        <td></td>
-                        <td>{{$revenue->product_code}}</td>
-                        <td>{{number_format($revenue->jan,0,'.','')}}</td>
-                        <td>{{number_format($revenue->feb,0,'.','')}}</td>
-                        <td>{{number_format($revenue->mar,0,'.','')}}</td>
-                        <td>{{number_format($revenue->apr,0,'.','')}}</td>
-                        <td>{{number_format($revenue->may,0,'.','')}}</td>
-                        <td>{{number_format($revenue->jun,0,'.','')}}</td>
-                        <td>{{number_format($revenue->jul,0,'.','')}}</td>
-                        <td>{{number_format($revenue->aug,0,'.','')}}</td>
-                        <td>{{number_format($revenue->sep,0,'.','')}}</td>
-                        <td>{{number_format($revenue->oct,0,'.','')}}</td>
-                        <td>{{number_format($revenue->nov,0,'.','')}}</td>
-                        <td>{{number_format($revenue->dec,0,'.','')}}</td>                        
-                      </tr>
-                      @endforeach
-                      @endif
-                      <!-- total revenue -->
-                      @if(isset($revenues_tot[$customer]))
-                      <tr>
-                        <td></td>
-                        <td><b>Total revenue</b></td>
-                        <td>{{number_format($revenues_tot[$customer]->jan,0,'.','')}}</td>
-                        <td>{{number_format($revenues_tot[$customer]->feb,0,'.','')}}</td>
-                        <td>{{number_format($revenues_tot[$customer]->mar,0,'.','')}}</td>
-                        <td>{{number_format($revenues_tot[$customer]->apr,0,'.','')}}</td>
-                        <td>{{number_format($revenues_tot[$customer]->may,0,'.','')}}</td>
-                        <td>{{number_format($revenues_tot[$customer]->jun,0,'.','')}}</td>
-                        <td>{{number_format($revenues_tot[$customer]->jul,0,'.','')}}</td>
-                        <td>{{number_format($revenues_tot[$customer]->aug,0,'.','')}}</td>
-                        <td>{{number_format($revenues_tot[$customer]->sep,0,'.','')}}</td>
-                        <td>{{number_format($revenues_tot[$customer]->oct,0,'.','')}}</td>
-                        <td>{{number_format($revenues_tot[$customer]->nov,0,'.','')}}</td>
-                        <td>{{number_format($revenues_tot[$customer]->dec,0,'.','')}}</td>                        
-                      </tr>
-                      @endif
-                      <!-- total revenue -->
-                      <tr class="table_customer_{{$customer_i}}" style="display:none;">
-                        <td><b>Consulting man days</b></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                      </tr>
-                      <tr class="table_customer_{{$customer_i}}" style="display:none;">
-                        <td><b>Project name</b></td>
-                        <td><b>Consultant</b></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                      </tr>
-                      @foreach ($users as $key => $activity)
-                      <tr class="table_customer_{{$customer_i}}" style="display:none;">
-                        <td>{{$activity->project_name}}</td>
-                        <td>{{$activity->user_name}}</td>
-                        <td>
-                          @if($activity->jan_com != 0){{$activity->jan_com}}@endif
-                        </td>
-                        <td>
-                          @if($activity->feb_com != 0){{$activity->feb_com}}@endif
-                        </td>
-                        <td>
-                          @if($activity->mar_com != 0){{$activity->mar_com}}@endif
-                        </td>
-                        <td>
-                          @if($activity->apr_com != 0){{$activity->apr_com}}@endif
-                        </td>
-                        <td>
-                          @if($activity->may_com != 0){{$activity->may_com}}@endif
-                        </td>
-                        <td>
-                          @if($activity->jun_com != 0){{$activity->jun_com}}@endif
-                        </td>
-                        <td>
-                          @if($activity->jul_com != 0){{$activity->jul_com}}@endif
-                        </td>
-                        <td>
-                          @if($activity->aug_com != 0){{$activity->aug_com}}@endif
-                        </td>
-                        <td>
-                          @if($activity->sep_com != 0){{$activity->sep_com}}@endif
-                        </td>
-                        <td>
-                          @if($activity->oct_com != 0){{$activity->oct_com}}@endif
-                        </td>
-                        <td>
-                          @if($activity->nov_com != 0){{$activity->nov_com}}@endif
-                        </td>
-                        <td>
-                          @if($activity->dec_com != 0){{$activity->dec_com}}@endif
-                        </td>
-                      </tr>
-                      @endforeach
-                      <!-- total activities -->
-                      @if(isset($activities_tot[$customer]))
-                      <tr>
-                        <td></td>
-                        <td><b>Total man days</b></td>
-                        <td>{{number_format($activities_tot[$customer]->jan_com,0,'.','')}}</td>
-                        <td>{{number_format($activities_tot[$customer]->feb_com,0,'.','')}}</td>
-                        <td>{{number_format($activities_tot[$customer]->mar_com,0,'.','')}}</td>
-                        <td>{{number_format($activities_tot[$customer]->apr_com,0,'.','')}}</td>
-                        <td>{{number_format($activities_tot[$customer]->may_com,0,'.','')}}</td>
-                        <td>{{number_format($activities_tot[$customer]->jun_com,0,'.','')}}</td>
-                        <td>{{number_format($activities_tot[$customer]->jul_com,0,'.','')}}</td>
-                        <td>{{number_format($activities_tot[$customer]->aug_com,0,'.','')}}</td>
-                        <td>{{number_format($activities_tot[$customer]->sep_com,0,'.','')}}</td>
-                        <td>{{number_format($activities_tot[$customer]->oct_com,0,'.','')}}</td>
-                        <td>{{number_format($activities_tot[$customer]->nov_com,0,'.','')}}</td>
-                        <td>{{number_format($activities_tot[$customer]->dec_com,0,'.','')}}</td>                        
-                      </tr>
-                      @endif
-                      <!-- total activities -->
-                    </tbody>
-                  </table>
-                  </div>
-                  <!-- total -->
-                  <?php $customer_i++; ?>
-                @endforeach
+                </div>
               </div>
-            </div>
-          </div>
-          <?php $cluster_i++; ?>
-        @endforeach
+              <!-- Tab Revenue -->
 
+              <!-- Tab Missing Revenue -->
+              <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="missingRevenue-tab">
+                <table id="revenueMissingTable" class="table table-striped table-hover table-bordered" width="100%">
+                  <thead>
+                    <tr>
+                      <th>Cluster</th>
+                      <th>Customer</th>
+                      <th>Project ID</th>
+                      <th>Project name</th>
+                      <th>Project type</th>
+                      <th>Project subtype</th>
+                      <th>Project status</th>
+                      <th>Gold Order</th>
+                      <th>Samba ID</th>
+                      <th>User ID</th>
+                      <th>User name</th>
+                      <th>Win ratio (%)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach($projects_without_revenue as $key => $revenueMissing)
+                      <tr>
+                        <td>{!! $revenueMissing->cluster_owner !!}</td>
+                        <td>{!! $revenueMissing->customer_name !!}</td>
+                        <td>{!! $revenueMissing->project_id !!}</td>
+                        <td>{!! $revenueMissing->project_name !!}</td>
+                        <td>{!! $revenueMissing->project_type !!}</td>
+                        <td>{!! $revenueMissing->project_subtype !!}</td>
+                        <td>{!! $revenueMissing->project_status !!}</td>
+                        <td>{!! $revenueMissing->gold_order !!}</td>
+                        <td>{!! $revenueMissing->samba_id !!}</td>
+                        <td>{!! $revenueMissing->user_id !!}</td>
+                        <td>{!! $revenueMissing->user_name !!}</td>
+                        <td>{!! $revenueMissing->win_ratio !!}</td>
+                      </tr>
+                    @endforeach
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+              <!-- Tab Missing Revenue -->
+            </div>
+            <!-- Tab content -->
+
+          </div>
         </div>
-        <!-- end accordion -->
-          
       </div>
       <!-- Window content -->
-
-      <!-- Modal -->
-<div class="modal fade" id="legendModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-          <!-- Modal Header -->
-          <div class="modal-header">
-              <button type="button" class="close" 
-                  data-dismiss="modal">
-                      <span aria-hidden="true">&times;</span>
-                      <span class="sr-only">Close</span>
-              </button>
-              <h4 class="modal-title" id="myModalLabel">
-                  Info
-              </h4>
-          </div>
-            
-          <!-- Modal Body -->
-          <div class="modal-body">
-          Those are the top {{$top}} accounts per cluster in number of hours spent for this year from consultants.</br>
-        Green means it has been validated by OTL.</br>
-        If you need to see more accounts per cluster, please click on your name (top right) and select profile.
-          </div>
-            
-          <!-- Modal Footer -->
-          <div class="modal-footer">
-              <button type="button" class="btn btn-default"
-                      data-dismiss="modal">
-                          Close
-              </button>
-          </div>
-        </div>
-    </div>
-</div>
-<!-- Modal -->
 
     </div>
   </div>
 </div>
 <!-- Window -->
-      </div>
-    </div>
-  </div>
 @stop
 
 @section('script')
 <script>
-$(document).ready(function() {
-  $('#collapse0').addClass('in');
-});
-$(document).on('click', '.btn-details', function () {
-  if ($(this).text() == 'show details') {
-    $(this).html('hide details');
-    $('.table_'+this.id).show();
-  } else {
-    $(this).html('show details');
-    $('.table_'+this.id).hide();
-  }
-});
+var month_col = [];
 
-$(document).on('click', '#legendButton', function () {
-    $('#legendModal').modal();
+// Remove the formatting to get integer data for summation
+var intVal = function ( i ) {
+  return typeof i === 'string' ?
+    i.replace(/[\$,]/g, '')*1 :
+    typeof i === 'number' ?
+        i : 0;
+};
+
+$(document).ready(function() {
+  //Init select2 boxes
+  $("#year").select2({
+    allowClear: false,
+    disabled: {{ $authUsersForDataView->year_select_disabled }}
+  });
+  $("#manager").select2({
+    allowClear: false,
+    disabled: {{ $authUsersForDataView->manager_select_disabled }}
   });
 
-//Init select2 boxes
-$("#year").select2({
-  allowClear: false
-});
-$("#customer_list").select2({
-  allowClear: true
-});
-$("#domain").select2({
-  allowClear: true
-});
+  $('#year,#manager').on('change', function() {
+    year = $('#year').val();
+    manager = $('#manager').val();
+    window.location.href = "{!! route('revenuedashboard') !!}/"+year+"/"+manager;
+  });
 
-$('#year,#customer_list,#domain').on('change', function() {
-  year = $('#year').val();
-  customer = $('#customer_list').val();
-  domain = $('#domain').val();
-  if (!customer) {
-    customer = '0';
-  }
-  if (!domain) {
-    domain = 'all';
-  }
-  window.location.href = "{!! route('clusterdashboard',['','']) !!}/"+year+"/"+customer+"/"+domain;
+  month_col = [13,14,15,16,17,18,19,20,21,22,23,24];
+
+  revenueTable = $('#revenueTable').DataTable({
+    scrollX: true,
+    stateSave: true,
+    order: [[0, 'asc']],
+    columns: [
+        { name: 'cluster_owner', data: 'cluster_owner' , searchable: true , visible: true},
+        { name: 'customer_name', data: 'customer_name' , searchable: true , visible: true},
+        { name: 'project_id', data: 'project_id' , searchable: false , visible: false},
+        { name: 'project_name', data: 'project_name' , searchable: true , visible: true},
+        { name: 'project_type', data: 'project_type' , searchable: true , visible: true},
+        { name: 'project_subtype', data: 'project_subtype' , searchable: true , visible: true},
+        { name: 'project_status', data: 'project_status' , searchable: true , visible: true},
+        { name: 'gold_order', data: 'gold_order' , searchable: true , visible: true},
+        { name: 'samba_id', data: 'samba_id' , searchable: true , visible: true},
+        { name: 'user_id', data: 'user_id' , searchable: false , visible: false},
+        { name: 'user_name', data: 'user_name' , searchable: true , visible: true},
+        { name: 'product_code', data: 'product_code' , searchable: true , visible: true},
+        { name: 'win_ratio', data: 'win_ratio' , searchable: true , visible: true},
+        { name: 'jan', data: 'jan' , searchable: true , visible: true},
+        { name: 'feb', data: 'feb' , searchable: true , visible: true},
+        { name: 'mar', data: 'mar' , searchable: true , visible: true},
+        { name: 'apr', data: 'apr' , searchable: true , visible: true},
+        { name: 'may', data: 'may' , searchable: true , visible: true},
+        { name: 'jun', data: 'jun' , searchable: true , visible: true},
+        { name: 'jul', data: 'jul' , searchable: true , visible: true},
+        { name: 'aug', data: 'aug' , searchable: true , visible: true},
+        { name: 'sep', data: 'sep' , searchable: true , visible: true},
+        { name: 'oct', data: 'oct' , searchable: true , visible: true},
+        { name: 'nov', data: 'nov' , searchable: true , visible: true},
+        { name: 'dec', data: 'dec' , searchable: true , visible: true}
+    ],
+    lengthMenu: [
+        [ 10, 25, 50, -1 ],
+        [ '10 rows', '25 rows', '50 rows', 'Show all' ]
+    ],
+    dom: 'Bfrtip',
+    buttons: [
+      {
+        extend: "colvis",
+        className: "btn-sm",
+        columns: [0,1,3,4,5,6,7,8,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
+      },
+      {
+        extend: "pageLength",
+        className: "btn-sm"
+      },
+      {
+        extend: "csv",
+        className: "btn-sm",
+        exportOptions: {
+            columns: ':visible'
+        }
+      },
+      {
+        extend: "excel",
+        className: "btn-sm",
+        exportOptions: {
+            columns: ':visible'
+        }
+      },
+      {
+        extend: "print",
+        className: "btn-sm",
+        exportOptions: {
+            columns: ':visible'
+        }
+      },
+    ],
+    footerCallback: function ( row, data, start, end, display ) {
+      var api = this.api(), data;
+
+      $.each(month_col, function( index, value ) {
+        // Total over all pages
+        total = api
+          .column( value )
+          .data()
+          .reduce( function (a, b) {
+              return intVal(a) + intVal(b);
+          }, 0 );
+
+        // Total over this page
+        pageTotal = api
+          .column( value, { page: 'current'} )
+          .data()
+          .reduce( function (a, b) {
+            return intVal(a) + intVal(b);
+          }, 0 );
+
+        // Update footer
+        $( api.column( value ).footer() ).html(
+            '<div style="font-size: 120%;">'+pageTotal+'('+total+')</div>'
+        );
+      });
+      
+    }
+
+  });
+
+  revenueMissingTable = $('#revenueMissingTable').DataTable({
+    scrollX: true,
+    stateSave: true,
+    order: [[0, 'asc']],
+    columns: [
+        { name: 'cluster_owner', data: 'cluster_owner' , searchable: true , visible: true},
+        { name: 'customer_name', data: 'customer_name' , searchable: true , visible: true},
+        { name: 'project_id', data: 'project_id' , searchable: false , visible: false},
+        { name: 'project_name', data: 'project_name' , searchable: true , visible: true},
+        { name: 'project_type', data: 'project_type' , searchable: true , visible: true},
+        { name: 'project_subtype', data: 'project_subtype' , searchable: true , visible: true},
+        { name: 'project_status', data: 'project_status' , searchable: true , visible: true},
+        { name: 'gold_order', data: 'gold_order' , searchable: true , visible: true},
+        { name: 'samba_id', data: 'samba_id' , searchable: true , visible: true},
+        { name: 'user_id', data: 'user_id' , searchable: true , visible: true},
+        { name: 'user_name', data: 'user_name' , searchable: true , visible: true},
+        { name: 'win_ratio', data: 'win_ratio' , searchable: true , visible: true}
+    ],
+    lengthMenu: [
+        [ 10, 25, 50, -1 ],
+        [ '10 rows', '25 rows', '50 rows', 'Show all' ]
+    ],
+    dom: 'Bfrtip',
+    buttons: [
+      {
+        extend: "colvis",
+        className: "btn-sm",
+        columns: [0,1,3,4,5,6,7,8,10,11]
+      },
+      {
+        extend: "pageLength",
+        className: "btn-sm"
+      },
+      {
+        extend: "csv",
+        className: "btn-sm",
+        exportOptions: {
+            columns: ':visible'
+        }
+      },
+      {
+        extend: "excel",
+        className: "btn-sm",
+        exportOptions: {
+            columns: ':visible'
+        }
+      },
+      {
+        extend: "print",
+        className: "btn-sm",
+        exportOptions: {
+            columns: ':visible'
+        }
+      },
+    ]
+  });
+
+  $('#revenueMissingTable').on('click', 'tbody td', function() {
+      var table = revenueMissingTable;
+      var tr = $(this).closest('tr');
+      var row = table.row(tr);
+      //get the initialization options
+      var columns = table.settings().init().columns;
+      //get the index of the clicked cell
+      var colIndex = table.cell(this).index().column;
+      //console.log('you clicked on the column with the name '+columns[colIndex].name);
+      //console.log('the user id is '+row.data().user_id);
+      //console.log('the project id is '+row.data().project_id);
+      // If we click on the name, then we create a new project
+      year = [];
+      $("#year option:selected").each(function()
+      {
+        // log the value and text of each option
+        year.push($(this).val());
+      });
+      window.location.href = "{!! route('toolsFormUpdate',['','','']) !!}/"+row.data().user_id+"/"+row.data().project_id+"/"+year[0];
+    });
+
+    $('#revenueTable').on('click', 'tbody td', function() {
+      var table = revenueTable;
+      var tr = $(this).closest('tr');
+      var row = table.row(tr);
+      //get the initialization options
+      var columns = table.settings().init().columns;
+      //get the index of the clicked cell
+      var colIndex = table.cell(this).index().column;
+      //console.log('you clicked on the column with the name '+columns[colIndex].name);
+      //console.log('the user id is '+row.data().user_id);
+      //console.log('the project id is '+row.data().project_id);
+      // If we click on the name, then we create a new project
+      year = [];
+      $("#year option:selected").each(function()
+      {
+        // log the value and text of each option
+        year.push($(this).val());
+      });
+      window.location.href = "{!! route('toolsFormUpdate',['','','']) !!}/"+row.data().user_id+"/"+row.data().project_id+"/"+year[0];
+    });
+
+    // This part is to make sure that datatables can adjust the columns size when it is hidden because on non active tab when created
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function(e){
+    $($.fn.dataTable.tables(true)).DataTable()
+        .columns.adjust();
+    });
+
 });
 
 

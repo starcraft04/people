@@ -161,7 +161,7 @@ class ToolsController extends Controller {
     $user_selected = '';
 
     $created_by_user_id = Auth::user()->id;
-
+    
     if (Entrust::can('tools-activity-all-view')){
       $user_list = $this->userRepository->getAllUsersList();
       $user_select_disabled = 'false';
