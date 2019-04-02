@@ -67,7 +67,7 @@ Route::group(['middleware' => ['auth']], function() {
       Route::post('passwordUpdate/{n}', ['uses'=>'UserController@passwordUpdate','as'=>'passwordUpdate']);
       Route::post('optionsUpdate/{id}', ['uses'=>'UserController@optionsUpdate','as'=>'optionsUpdate']);
       //  AJAX
-      Route::get('listOfUsersAjax', ['uses'=>'UserController@listOfUsers','as'=>'listOfUsersAjax','middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
+      Route::get('listOfUsersAjax/{exclude_contractors}', ['uses'=>'UserController@listOfUsers','as'=>'listOfUsersAjax','middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
 
       //ProfileToolsController
       Route::get('ajax_git_pull', ['uses'=>'ProfileToolsController@ajax_git_pull','as'=>'ajax_git_pull']);

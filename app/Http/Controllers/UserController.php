@@ -197,9 +197,9 @@ class UserController extends Controller {
 		return json_encode($result);
 	}
 
-  public function ListOfusers()
+  public function ListOfusers($exclude_contractors = null)
   {
-    return $this->userRepository->getListOfUsers();
+    return $this->userRepository->getListOfUsers($exclude_contractors);
   }
 
 }

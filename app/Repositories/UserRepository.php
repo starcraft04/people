@@ -129,7 +129,7 @@ class UserRepository
     return $user;
   }
 
-  public function getListOfUsers()
+  public function getListOfUsers($exclude_contractors)
   {
     /** We create here a SQL statement and the Datatables function will add the information it got from the AJAX request to have things like search or limit or show.
     *   So we need to have a proper SQL search that the ajax can use via get with parameters given to it.
@@ -147,6 +147,9 @@ class UserRepository
     }
     if (!Entrust::can('user-view-all')){
       $userList->where('users_users.manager_id','=',Auth::user()->id);
+    }
+    if ($exclude_contractors == "1") {
+      $userList->where('users.employee_type','!=','contractor');
     }
     $data = Datatables::of($userList)->make(true);
     return $data;

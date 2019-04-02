@@ -363,43 +363,25 @@ class DashboardController extends Controller {
     $orders->whereIn('users.id',$users_id);
     $orders->groupBy('projects.id');
     $all_orders = $orders->get();
-    dd($all_orders);
-    $projects_id = [];
-    $month_total['jan'] = 0;$month_total['feb'] = 0;$month_total['mar'] = 0;
-    $month_total['apr'] = 0;$month_total['may'] = 0;$month_total['jun'] = 0;
-    $month_total['jul'] = 0;$month_total['aug'] = 0;$month_total['sep'] = 0;
-    $month_total['oct'] = 0;$month_total['nov'] = 0;$month_total['dec'] = 0;
-    foreach ($all_revenues as $key => $revenue) {
-      $month_total['jan'] += $revenue->jan;$month_total['feb'] += $revenue->feb;$month_total['mar'] += $revenue->mar;
-      $month_total['apr'] += $revenue->apr;$month_total['may'] += $revenue->may;$month_total['jun'] += $revenue->jun;
-      $month_total['jul'] += $revenue->jul;$month_total['aug'] += $revenue->aug;$month_total['sep'] += $revenue->sep;
-      $month_total['oct'] += $revenue->oct;$month_total['nov'] += $revenue->nov;$month_total['dec'] += $revenue->dece;
-      if (!in_array($revenue->project_id,$projects_id)) {
-        array_push($projects_id,$revenue->project_id);
-      } 
+    //dd($all_orders);
+    $grand_total = [];
+    $grand_total_weighted = [];
+    $grand_total['revenue'] = 0;$grand_total['samba_consulting_product_tcv'] = 0;$grand_total['samba_pullthru_tcv'] = 0;
+    $grand_total_weighted['revenue'] = 0;$grand_total_weighted['samba_consulting_product_tcv'] = 0;$grand_total_weighted['samba_pullthru_tcv'] = 0;
+
+    foreach ($all_orders as $key => $order) {
+      $grand_total['revenue'] += $order->revenue;
+      $grand_total['samba_consulting_product_tcv'] += $order->samba_consulting_product_tcv;
+      $grand_total['samba_pullthru_tcv'] += $order->samba_pullthru_tcv;
+
+      $grand_total_weighted['revenue'] += $order->revenue*$order->win_ratio/100;
+      $grand_total_weighted['samba_consulting_product_tcv'] += $order->samba_consulting_product_tcv*$order->win_ratio/100;
+      $grand_total_weighted['samba_pullthru_tcv'] += $order->samba_pullthru_tcv*$order->win_ratio/100;
     }
-    //dd($month_total);
-    $grand_total = $month_total['jan']+$month_total['feb']+$month_total['mar']+$month_total['apr']+$month_total['may']+$month_total['jun']+
-                    $month_total['jul']+$month_total['aug']+$month_total['sep']+$month_total['oct']+$month_total['nov']+$month_total['dec'];
-    //dd($grand_total);
-    $projects = DB::table('projects');
-    $projects->select('users.id as user_id','users.name as user_name','projects.id as project_id','customers.name as customer_name','customers.cluster_owner as cluster_owner',
-                      'projects.project_name as project_name','projects.project_type as project_type','projects.project_subtype as project_subtype','projects.project_status as project_status',
-                      'projects.gold_order_number as gold_order','projects.samba_id as samba_id','projects.win_ratio as win_ratio'
-                    );
-    $projects->leftjoin('customers','projects.customer_id', '=' ,'customers.id');
-    $projects->leftjoin('activities','activities.project_id', '=' ,'projects.id');
-    $projects->leftjoin('users','activities.user_id', '=' ,'users.id');
-    $projects->where('projects.project_type','!=','Pre-sales');
-    $projects->where('activities.year','=',$year);
-    $projects->whereIn('users.id',$users_id);
-    $projects->whereNotIn('projects.id',$projects_id);
-    $projects->groupBy('projects.id');
-    $projects_without_revenue = $projects->get();
-    //dd($projects_without_revenue);
 
+    //dd($grand_total_weighted);
 
-    return view('dashboard/order', compact('authUsersForDataView','year','user_id','revenue_target','all_revenues','month_total','grand_total','projects_without_revenue'));
+    return view('dashboard/order', compact('authUsersForDataView','user_id','year','order_target','all_orders','grand_total','grand_total_weighted'));
   }
 
 }

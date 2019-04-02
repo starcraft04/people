@@ -44,7 +44,7 @@
 <!-- Page title -->
 <div class="page-title">
   <div class="title_left">
-    <h3>Revenue dashboard</h3>
+    <h3>Order dashboard</h3>
   </div>
 </div>
 <div class="clearfix"></div>
@@ -113,18 +113,16 @@
           <div class="" role="tabpanel" data-example-id="togglable-tabs">
             <!-- Tab titles -->
             <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-              <li role="presentation" class="active"><a href="#tab_content1" id="revenue-tab" role="tab" data-toggle="tab" aria-expanded="true">Revenue(€)</a>
-              </li>
-              <li role="presentation" class=""><a href="#tab_content2" id="missingRevenue-tab" role="tab" data-toggle="tab" aria-expanded="true">Projects missing revenue</a>
+              <li role="presentation" class="active"><a href="#tab_content1" id="order-tab" role="tab" data-toggle="tab" aria-expanded="true">Orders(€)</a>
               </li>
             </ul>
             <!-- Tab titles -->
 
             <!-- Tab content -->
             <div id="myTabContent" class="tab-content">
-              <!-- Tab Revenue -->
-              <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="revenue-tab">
-                <table id="revenueTable" class="table table-striped table-hover table-bordered" width="100%">
+              <!-- Tab order -->
+              <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="order-tab">
+                <table id="orderTable" class="table table-striped table-hover table-bordered" width="100%">
                   <thead>
                     <tr>
                       <th>Cluster</th>
@@ -136,52 +134,40 @@
                       <th>Project status</th>
                       <th>Gold Order</th>
                       <th>Samba ID</th>
+                      <th>Pull-thru Samba ID</th>
+                      <th>Samba opportunity owner</th>
                       <th>User ID</th>
                       <th>User name</th>
-                      <th>FPC</th>
                       <th>Win ratio (%)</th>
-                      <th>Jan</th>
-                      <th>Feb</th>
-                      <th>Mar</th>
-                      <th>Apr</th>
-                      <th>May</th>
-                      <th>Jun</th>
-                      <th>Jul</th>
-                      <th>Aug</th>
-                      <th>Sep</th>
-                      <th>Oct</th>
-                      <th>Nov</th>
-                      <th>Dec</th>
+                      <th>Samba lead domain</th>
+                      <th>Samba stage</th>
+                      <th>Order intake</th>
+                      <th>Consulting TCV</th>
+                      <th>Pull-Thru TCV</th>
                     </tr>
                   </thead>
                   <tbody>
-                  @foreach($all_revenues as $key => $revenue)
+                  @foreach($all_orders as $key => $order)
                     <tr>
-                      <td>{!! $revenue->cluster_owner !!}</td>
-                      <td>{!! $revenue->customer_name !!}</td>
-                      <td>{!! $revenue->project_id !!}</td>
-                      <td>{!! $revenue->project_name !!}</td>
-                      <td>{!! $revenue->project_type !!}</td>
-                      <td>{!! $revenue->project_subtype !!}</td>
-                      <td>{!! $revenue->project_status !!}</td>
-                      <td>{!! $revenue->gold_order !!}</td>
-                      <td>{!! $revenue->samba_id !!}</td>
-                      <td>{!! $revenue->user_id !!}</td>
-                      <td>{!! $revenue->user_name !!}</td>
-                      <td>{!! $revenue->product_code !!}</td>
-                      <td>{!! $revenue->win_ratio !!}</td>
-                      <td>{!! $revenue->jan !!}</td>
-                      <td>{!! $revenue->feb !!}</td>
-                      <td>{!! $revenue->mar !!}</td>
-                      <td>{!! $revenue->apr !!}</td>
-                      <td>{!! $revenue->may !!}</td>
-                      <td>{!! $revenue->jun !!}</td>
-                      <td>{!! $revenue->jul !!}</td>
-                      <td>{!! $revenue->aug !!}</td>
-                      <td>{!! $revenue->sep !!}</td>
-                      <td>{!! $revenue->oct !!}</td>
-                      <td>{!! $revenue->nov !!}</td>
-                      <td>{!! $revenue->dece !!}</td>
+                      <td>{!! $order->cluster_owner !!}</td>
+                      <td>{!! $order->customer_name !!}</td>
+                      <td>{!! $order->project_id !!}</td>
+                      <td>{!! $order->project_name !!}</td>
+                      <td>{!! $order->project_type !!}</td>
+                      <td>{!! $order->project_subtype !!}</td>
+                      <td>{!! $order->project_status !!}</td>
+                      <td>{!! $order->gold_order !!}</td>
+                      <td>{!! $order->samba_id !!}</td>
+                      <td>{!! $order->pullthru_samba_id !!}</td>
+                      <td>{!! $order->samba_opportunit_owner !!}</td>
+                      <td>{!! $order->user_id !!}</td>
+                      <td>{!! $order->user_name !!}</td>
+                      <td>{!! $order->win_ratio !!}</td>
+                      <td>{!! $order->samba_lead_domain !!}</td>
+                      <td>{!! $order->samba_stage !!}</td>
+                      <td>{!! $order->revenue !!}</td>
+                      <td>{!! $order->samba_consulting_product_tcv !!}</td>
+                      <td>{!! $order->samba_pullthru_tcv !!}</td>
                     </tr>
                   @endforeach
                   </tbody>
@@ -206,81 +192,34 @@
                       <th></th>
                       <th></th>
                       <th></th>
-                      <th></th>
-                      <th></th>
-                      <th></th>
-                      <th></th>
-                      <th></th>
-                      <th></th>
                     </tr>
                   </tfoot>
                 </table>
                 </br></br>
-                <div style="font-size: 150%;" class="row">
-                  Grand Total: €{!! $grand_total !!} / 
-                  @if(isset($revenue_target))My revenue target: €{!! $revenue_target !!} / Diff: €{!! $revenue_target-$grand_total !!}
-                  @else My revenue target: - / Diff: - 
-                  @endif
+                <div style="font-size: 150%;">
+                  Grand Total Full Value</br>
+                </div>
+                <div style="font-size: 100%;">
+                  Order Intake: €{!! $grand_total['revenue'] !!}</br>
+                  Consulting TCV: €{!! $grand_total['samba_consulting_product_tcv'] !!} / 
+                  @if(isset($order_target))My order target: €{!! $order_target !!} / Diff: €{!! $order_target-$grand_total['revenue'] !!}
+                  @else My order target: - / Diff: - 
+                  @endif</br>
+                  Pull-Thru TCV: €{!! $grand_total['samba_pullthru_tcv'] !!}</br>
+                </div>
+                <div style="font-size: 150%;">
+                  Grand Total Weighted Value</br>
+                </div>
+                <div style="font-size: 100%;">
+                    Order Intake: €{!! $grand_total_weighted['revenue'] !!}</br>
+                    Consulting TCV: €{!! $grand_total_weighted['samba_consulting_product_tcv'] !!} / 
+                    @if(isset($order_target))My order target: €{!! $order_target !!} / Diff: €{!! $order_target-$grand_total_weighted['revenue'] !!}
+                    @else My order target: - / Diff: - 
+                    @endif</br>
+                    Pull-Thru TCV: €{!! $grand_total_weighted['samba_pullthru_tcv'] !!}</br>
                 </div>
               </div>
-              <!-- Tab Revenue -->
-
-              <!-- Tab Missing Revenue -->
-              <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="missingRevenue-tab">
-                <table id="revenueMissingTable" class="table table-striped table-hover table-bordered" width="100%">
-                  <thead>
-                    <tr>
-                      <th>Cluster</th>
-                      <th>Customer</th>
-                      <th>Project ID</th>
-                      <th>Project name</th>
-                      <th>Project type</th>
-                      <th>Project subtype</th>
-                      <th>Project status</th>
-                      <th>Gold Order</th>
-                      <th>Samba ID</th>
-                      <th>User ID</th>
-                      <th>User name</th>
-                      <th>Win ratio (%)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @foreach($projects_without_revenue as $key => $revenueMissing)
-                      <tr>
-                        <td>{!! $revenueMissing->cluster_owner !!}</td>
-                        <td>{!! $revenueMissing->customer_name !!}</td>
-                        <td>{!! $revenueMissing->project_id !!}</td>
-                        <td>{!! $revenueMissing->project_name !!}</td>
-                        <td>{!! $revenueMissing->project_type !!}</td>
-                        <td>{!! $revenueMissing->project_subtype !!}</td>
-                        <td>{!! $revenueMissing->project_status !!}</td>
-                        <td>{!! $revenueMissing->gold_order !!}</td>
-                        <td>{!! $revenueMissing->samba_id !!}</td>
-                        <td>{!! $revenueMissing->user_id !!}</td>
-                        <td>{!! $revenueMissing->user_name !!}</td>
-                        <td>{!! $revenueMissing->win_ratio !!}</td>
-                      </tr>
-                    @endforeach
-                  </tbody>
-                  <tfoot>
-                    <tr>
-                      <th></th>
-                      <th></th>
-                      <th></th>
-                      <th></th>
-                      <th></th>
-                      <th></th>
-                      <th></th>
-                      <th></th>
-                      <th></th>
-                      <th></th>
-                      <th></th>
-                      <th></th>
-                    </tr>
-                  </tfoot>
-                </table>
-              </div>
-              <!-- Tab Missing Revenue -->
+              <!-- Tab order -->
             </div>
             <!-- Tab content -->
 
@@ -297,7 +236,6 @@
 
 @section('script')
 <script>
-var month_col = [];
 
 // Remove the formatting to get integer data for summation
 var intVal = function ( i ) {
@@ -321,12 +259,12 @@ $(document).ready(function() {
   $('#year,#manager').on('change', function() {
     year = $('#year').val();
     manager = $('#manager').val();
-    window.location.href = "{!! route('revenuedashboard') !!}/"+year+"/"+manager;
+    window.location.href = "{!! route('orderdashboard') !!}/"+year+"/"+manager;
   });
 
-  month_col = [13,14,15,16,17,18,19,20,21,22,23,24];
+  var sum_col = [16,17,18];
 
-  revenueTable = $('#revenueTable').DataTable({
+  orderTable = $('#orderTable').DataTable({
     scrollX: true,
     stateSave: true,
     order: [[0, 'asc']],
@@ -340,22 +278,16 @@ $(document).ready(function() {
         { name: 'project_status', data: 'project_status' , searchable: true , visible: true},
         { name: 'gold_order', data: 'gold_order' , searchable: true , visible: true},
         { name: 'samba_id', data: 'samba_id' , searchable: true , visible: true},
+        { name: 'pullthru_samba_id', data: 'pullthru_samba_id' , searchable: true , visible: true},
+        { name: 'samba_opportunit_owner', data: 'samba_opportunit_owner' , searchable: true , visible: true},
         { name: 'user_id', data: 'user_id' , searchable: false , visible: false},
         { name: 'user_name', data: 'user_name' , searchable: true , visible: true},
-        { name: 'product_code', data: 'product_code' , searchable: true , visible: true},
         { name: 'win_ratio', data: 'win_ratio' , searchable: true , visible: true},
-        { name: 'jan', data: 'jan' , searchable: true , visible: true},
-        { name: 'feb', data: 'feb' , searchable: true , visible: true},
-        { name: 'mar', data: 'mar' , searchable: true , visible: true},
-        { name: 'apr', data: 'apr' , searchable: true , visible: true},
-        { name: 'may', data: 'may' , searchable: true , visible: true},
-        { name: 'jun', data: 'jun' , searchable: true , visible: true},
-        { name: 'jul', data: 'jul' , searchable: true , visible: true},
-        { name: 'aug', data: 'aug' , searchable: true , visible: true},
-        { name: 'sep', data: 'sep' , searchable: true , visible: true},
-        { name: 'oct', data: 'oct' , searchable: true , visible: true},
-        { name: 'nov', data: 'nov' , searchable: true , visible: true},
-        { name: 'dec', data: 'dec' , searchable: true , visible: true}
+        { name: 'samba_lead_domain', data: 'samba_lead_domain' , searchable: true , visible: true},
+        { name: 'samba_stage', data: 'samba_stage' , searchable: true , visible: true},
+        { name: 'order', data: 'order' , searchable: true , visible: true},
+        { name: 'samba_consulting_product_tcv', data: 'samba_consulting_product_tcv' , searchable: true , visible: true},
+        { name: 'samba_pullthru_tcv', data: 'samba_pullthru_tcv' , searchable: true , visible: true}
     ],
     lengthMenu: [
         [ 10, 25, 50, -1 ],
@@ -366,7 +298,7 @@ $(document).ready(function() {
       {
         extend: "colvis",
         className: "btn-sm",
-        columns: [0,1,3,4,5,6,7,8,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
+        columns: [0,1,3,4,5,6,7,8,9,10,12,13,14,15,16,17,18]
       },
       {
         extend: "pageLength",
@@ -397,7 +329,7 @@ $(document).ready(function() {
     footerCallback: function ( row, data, start, end, display ) {
       var api = this.api(), data;
 
-      $.each(month_col, function( index, value ) {
+      $.each(sum_col, function( index, value ) {
         // Total over all pages
         total = api
           .column( value )
@@ -424,110 +356,32 @@ $(document).ready(function() {
 
   });
 
-  revenueMissingTable = $('#revenueMissingTable').DataTable({
-    scrollX: true,
-    stateSave: true,
-    order: [[0, 'asc']],
-    columns: [
-        { name: 'cluster_owner', data: 'cluster_owner' , searchable: true , visible: true},
-        { name: 'customer_name', data: 'customer_name' , searchable: true , visible: true},
-        { name: 'project_id', data: 'project_id' , searchable: false , visible: false},
-        { name: 'project_name', data: 'project_name' , searchable: true , visible: true},
-        { name: 'project_type', data: 'project_type' , searchable: true , visible: true},
-        { name: 'project_subtype', data: 'project_subtype' , searchable: true , visible: true},
-        { name: 'project_status', data: 'project_status' , searchable: true , visible: true},
-        { name: 'gold_order', data: 'gold_order' , searchable: true , visible: true},
-        { name: 'samba_id', data: 'samba_id' , searchable: true , visible: true},
-        { name: 'user_id', data: 'user_id' , searchable: true , visible: true},
-        { name: 'user_name', data: 'user_name' , searchable: true , visible: true},
-        { name: 'win_ratio', data: 'win_ratio' , searchable: true , visible: true}
-    ],
-    lengthMenu: [
-        [ 10, 25, 50, -1 ],
-        [ '10 rows', '25 rows', '50 rows', 'Show all' ]
-    ],
-    dom: 'Bfrtip',
-    buttons: [
-      {
-        extend: "colvis",
-        className: "btn-sm",
-        columns: [0,1,3,4,5,6,7,8,10,11]
-      },
-      {
-        extend: "pageLength",
-        className: "btn-sm"
-      },
-      {
-        extend: "csv",
-        className: "btn-sm",
-        exportOptions: {
-            columns: ':visible'
-        }
-      },
-      {
-        extend: "excel",
-        className: "btn-sm",
-        exportOptions: {
-            columns: ':visible'
-        }
-      },
-      {
-        extend: "print",
-        className: "btn-sm",
-        exportOptions: {
-            columns: ':visible'
-        }
-      },
-    ]
+  $('#orderTable').on('click', 'tbody td', function() {
+    var table = orderTable;
+    var tr = $(this).closest('tr');
+    var row = table.row(tr);
+    //get the initialization options
+    var columns = table.settings().init().columns;
+    //get the index of the clicked cell
+    var colIndex = table.cell(this).index().column;
+    //console.log('you clicked on the column with the name '+columns[colIndex].name);
+    //console.log('the user id is '+row.data().user_id);
+    //console.log('the project id is '+row.data().project_id);
+    // If we click on the name, then we create a new project
+    year = [];
+    $("#year option:selected").each(function()
+    {
+      // log the value and text of each option
+      year.push($(this).val());
+    });
+    window.location.href = "{!! route('toolsFormUpdate',['','','']) !!}/"+row.data().user_id+"/"+row.data().project_id+"/"+year[0];
   });
 
-  $('#revenueMissingTable').on('click', 'tbody td', function() {
-      var table = revenueMissingTable;
-      var tr = $(this).closest('tr');
-      var row = table.row(tr);
-      //get the initialization options
-      var columns = table.settings().init().columns;
-      //get the index of the clicked cell
-      var colIndex = table.cell(this).index().column;
-      //console.log('you clicked on the column with the name '+columns[colIndex].name);
-      //console.log('the user id is '+row.data().user_id);
-      //console.log('the project id is '+row.data().project_id);
-      // If we click on the name, then we create a new project
-      year = [];
-      $("#year option:selected").each(function()
-      {
-        // log the value and text of each option
-        year.push($(this).val());
-      });
-      window.location.href = "{!! route('toolsFormUpdate',['','','']) !!}/"+row.data().user_id+"/"+row.data().project_id+"/"+year[0];
-    });
-
-    $('#revenueTable').on('click', 'tbody td', function() {
-      var table = revenueTable;
-      var tr = $(this).closest('tr');
-      var row = table.row(tr);
-      //get the initialization options
-      var columns = table.settings().init().columns;
-      //get the index of the clicked cell
-      var colIndex = table.cell(this).index().column;
-      //console.log('you clicked on the column with the name '+columns[colIndex].name);
-      //console.log('the user id is '+row.data().user_id);
-      //console.log('the project id is '+row.data().project_id);
-      // If we click on the name, then we create a new project
-      year = [];
-      $("#year option:selected").each(function()
-      {
-        // log the value and text of each option
-        year.push($(this).val());
-      });
-      window.location.href = "{!! route('toolsFormUpdate',['','','']) !!}/"+row.data().user_id+"/"+row.data().project_id+"/"+year[0];
-    });
-
-    // This part is to make sure that datatables can adjust the columns size when it is hidden because on non active tab when created
-    $('a[data-toggle="tab"]').on('shown.bs.tab', function(e){
-    $($.fn.dataTable.tables(true)).DataTable()
-        .columns.adjust();
-    });
+  // This part is to make sure that datatables can adjust the columns size when it is hidden because on non active tab when created
+  $('a[data-toggle="tab"]').on('shown.bs.tab', function(e){
+  $($.fn.dataTable.tables(true)).DataTable()
+      .columns.adjust();
+  });
 
 });
 

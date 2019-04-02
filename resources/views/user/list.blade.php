@@ -8,7 +8,8 @@
     <link href="{{ asset('/plugins/gentelella/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('/plugins/gentelella/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('/plugins/gentelella/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css') }}" rel="stylesheet">
-
+    <!-- Switchery -->
+    <link href="{{ asset('/plugins/gentelella/vendors/switchery/dist/switchery.min.css') }}" rel="stylesheet">
 @stop
 
 @section('scriptsrc')
@@ -30,9 +31,10 @@
     <script src="{{ asset('/plugins/gentelella/vendors/jszip/dist/jszip.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('/plugins/gentelella/vendors/pdfmake/build/pdfmake.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('/plugins/gentelella/vendors/pdfmake/build/vfs_fonts.js') }}" type="text/javascript"></script>
-
     <!-- Bootbox -->
     <script src="{{ asset('/plugins/bootbox/bootbox.min.js') }}"></script>
+    <!-- Switchery -->
+    <script src="{{ asset('/plugins/gentelella/vendors/switchery/dist/switchery.min.js') }}" type="text/javascript"></script>
 @stop
 
 @section('content')
@@ -53,7 +55,8 @@
 
       <!-- Window title -->
       <div class="x_title">
-        <h2>List</small></h2>
+        <div class="col-sm-1"><h2>List</small></h2></div>
+        <div class="col-sm-2">Exclude contractors  <input name="exclude_contractors" type="checkbox" id="exclude_contractors" class="form-group js-switch-small" /></div>
         <ul class="nav navbar-right panel_toolbox">
           <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
         </ul>
@@ -66,7 +69,6 @@
             <table id="userTable" class="table table-striped table-hover table-bordered" width="100%">
                 <thead>
                     <tr>
-
                         <th>ID</th>
                         <th>Name</th>
                         <th>Manager name</th>
@@ -91,7 +93,6 @@
                 </thead>
                 <tfoot>
                     <tr>
-
                         <th>ID</th>
                         <th>Name</th>
                         <th>Manager name</th>
@@ -126,6 +127,11 @@
     <script>
         var userTable;
         var record_id;
+        var exclude_contractors;
+
+        // switchery
+        var small = document.querySelector('.js-switch-small');
+        var switchery = new Switchery(small, { size: 'small' });
 
         // Here we are going to get from PHP the list of roles and their value for the logged in user
 
@@ -139,7 +145,29 @@
         ?>
         // Roles check finished.
 
+
+
         //console.log(permissions);
+
+        // exclude contractors
+        // Init
+        if ($('#exclude_contractors').is(':checked')) {
+          exclude_contractors = 1;
+        } else {
+          exclude_contractors = 0;
+        }
+        //console.log(exclude_contractors);
+
+        // Change
+        $('#exclude_contractors').on('change', function() {
+          if ($(this).is(':checked')) {
+            exclude_contractors = 1;
+          } else {
+            exclude_contractors = 0;
+          }
+          //console.log("{!! route('listOfUsersAjax','') !!}/"+exclude_contractors);
+          userTable.ajax.url("{!! route('listOfUsersAjax','') !!}/"+exclude_contractors).load();
+        });
 
 
         $(document).ready(function() {
@@ -156,7 +184,7 @@
                 scrollX: true,
                 stateSave: true,
                 ajax: {
-                        url: "{!! route('listOfUsersAjax') !!}",
+                        url: "{!! route('listOfUsersAjax','') !!}/"+exclude_contractors,
                         type: "GET",
                         dataSrc: function ( json ) {
                           //console.log(json);;
