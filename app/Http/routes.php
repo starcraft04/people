@@ -43,6 +43,7 @@ Route::group(['middleware' => ['auth']], function() {
 
       //OTL
       Route::get('otlupload', ['uses'=>'OtlUploadController@getForm','as'=>'otluploadform','middleware' => ['permission:otl-upload']]);
+      Route::get('otlupload_help', ['uses'=>'OtlUploadController@help','as'=>'otluploadhelp','middleware' => ['permission:otl-upload']]);
       Route::post('otlupload', ['uses'=>'OtlUploadController@postForm','middleware' => ['permission:otl-upload']]);
 
       //Revenue

@@ -36,7 +36,8 @@
               </div>
               <div class="col-md-10">
                 Download 
-                <a href="{{ asset('/Samples/otl_upload_sample.xls') }}">this file</a> to get the structure needed. The file needs to be named with the following convention:year_whateveryouwant.xls so for example for 2017, you need the file 2017_whateveryouwant.xls
+                <a href="{{ asset('/Samples/otl_upload_sample.xls') }}" style="text-decoration: underline;">this file</a> to get the structure needed. Click
+                <a href="{{route('otluploadhelp')}}" style="text-decoration: underline;">here</a> for help.
               </div>
             </div>
           </div>
