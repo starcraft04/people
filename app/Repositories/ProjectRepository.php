@@ -43,6 +43,14 @@ class ProjectRepository
 	{
 		return $this->project->where('otl_project_code', $otl_project_code)->where('meta_activity', $meta_activity)->count();
   }
+  public function getByNameCustomernum($project_name,$customer_id)
+	{
+		return $this->project->where('project_name', $project_name)->where('customer_id', $customer_id)->count();
+  }
+  public function getByNameCustomer($project_name,$customer_id)
+	{
+		return $this->project->where('project_name', $project_name)->where('customer_id', $customer_id)->first();
+  }
   public function getBySambaID($samba_id)
 	{
 		return $this->project->where('samba_id', $samba_id)->get();
@@ -62,42 +70,42 @@ class ProjectRepository
 	private function save(Project $project, Array $inputs)
 	{
     // Required fields
-    $project->project_name = $inputs['project_name'];
-    $project->customer_id = $inputs['customer_id'];
+    if (isset($inputs['project_name'])) {$project->project_name = $inputs['project_name'];}
+    if (isset($inputs['customer_id'])) {$project->customer_id = $inputs['customer_id'];}
 
     // OTL project code and meta activity can be empty and then it needs to be entered as null
 
-    $project->meta_activity = $inputs['meta_activity'];
-    $project->otl_project_code = $inputs['otl_project_code'];
+    if (isset($inputs['meta_activity'])) {$project->meta_activity = $inputs['meta_activity'];}
+    if (isset($inputs['otl_project_code'])) {$project->otl_project_code = $inputs['otl_project_code'];}
 
     // Nullable
-    $project->project_type = $inputs['project_type'];
-    $project->activity_type = $inputs['activity_type'];
-    $project->region = $inputs['region'];
-    $project->country = $inputs['country'];
-    $project->customer_location = $inputs['customer_location'];
-    $project->comments = $inputs['comments'];
-    $project->description = $inputs['description'];
-    $project->technology = $inputs['technology'];
-    $project->estimated_start_date = $inputs['estimated_start_date'];
-    $project->estimated_end_date = $inputs['estimated_end_date'];
-    $project->LoE_onshore = $inputs['LoE_onshore'];
-    $project->LoE_nearshore = $inputs['LoE_nearshore'];
-    $project->LoE_offshore = $inputs['LoE_offshore'];
-    $project->LoE_contractor = $inputs['LoE_contractor'];
-    $project->gold_order_number = $inputs['gold_order_number'];
-    $project->product_code = $inputs['product_code'];
-    $project->revenue = $inputs['revenue'];
-    $project->samba_consulting_product_tcv = $inputs['samba_consulting_product_tcv'];
-    $project->samba_pullthru_tcv = $inputs['samba_pullthru_tcv'];
-    $project->project_status = $inputs['project_status'];
-    $project->pullthru_samba_id = $inputs['pullthru_samba_id'];
-    $project->samba_id = $inputs['samba_id'];
-    $project->samba_opportunit_owner = $inputs['samba_opportunit_owner'];
-    $project->samba_lead_domain = $inputs['samba_lead_domain'];
-    $project->project_subtype = $inputs['project_subtype'];
-    $project->samba_stage = $inputs['samba_stage'];
-    $project->win_ratio = $inputs['win_ratio'];
+    if (isset($inputs['project_type'])) {$project->project_type = $inputs['project_type'];}
+    if (isset($inputs['activity_type'])) {$project->activity_type = $inputs['activity_type'];}
+    if (isset($inputs['region'])) {$project->region = $inputs['region'];}
+    if (isset($inputs['country'])) {$project->country = $inputs['country'];}
+    if (isset($inputs['customer_location'])) {$project->customer_location = $inputs['customer_location'];}
+    if (isset($inputs['comments'])) {$project->comments = $inputs['comments'];}
+    if (isset($inputs['description'])) {$project->description = $inputs['description'];}
+    if (isset($inputs['technology'])) {$project->technology = $inputs['technology'];}
+    if (isset($inputs['estimated_start_date'])) {$project->estimated_start_date = $inputs['estimated_start_date'];}
+    if (isset($inputs['estimated_end_date'])) {$project->estimated_end_date = $inputs['estimated_end_date'];}
+    if (isset($inputs['LoE_onshore'])) {$project->LoE_onshore = $inputs['LoE_onshore'];}
+    if (isset($inputs['LoE_nearshore'])) {$project->LoE_nearshore = $inputs['LoE_nearshore'];}
+    if (isset($inputs['LoE_offshore'])) {$project->LoE_offshore = $inputs['LoE_offshore'];}
+    if (isset($inputs['LoE_contractor'])) {$project->LoE_contractor = $inputs['LoE_contractor'];}
+    if (isset($inputs['gold_order_number'])) {$project->gold_order_number = $inputs['gold_order_number'];}
+    if (isset($inputs['product_code'])) {$project->product_code = $inputs['product_code'];}
+    if (isset($inputs['revenue'])) {$project->revenue = $inputs['revenue'];}
+    if (isset($inputs['samba_consulting_product_tcv'])) {$project->samba_consulting_product_tcv = $inputs['samba_consulting_product_tcv'];}
+    if (isset($inputs['samba_pullthru_tcv'])) {$project->samba_pullthru_tcv = $inputs['samba_pullthru_tcv'];}
+    if (isset($inputs['project_status'])) {$project->project_status = $inputs['project_status'];}
+    if (isset($inputs['pullthru_samba_id'])) {$project->pullthru_samba_id = $inputs['pullthru_samba_id'];}
+    if (isset($inputs['samba_id'])) {$project->samba_id = $inputs['samba_id'];}
+    if (isset($inputs['samba_opportunit_owner'])) {$project->samba_opportunit_owner = $inputs['samba_opportunit_owner'];}
+    if (isset($inputs['samba_lead_domain'])) {$project->samba_lead_domain = $inputs['samba_lead_domain'];}
+    if (isset($inputs['project_subtype'])) {$project->project_subtype = $inputs['project_subtype'];}
+    if (isset($inputs['samba_stage'])) {$project->samba_stage = $inputs['samba_stage'];}
+    if (isset($inputs['win_ratio'])) {$project->win_ratio = $inputs['win_ratio'];}
     if (isset($inputs['created_by_user_id'])) {$project->created_by_user_id = $inputs['created_by_user_id'];}
 
     // Boolean

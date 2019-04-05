@@ -309,11 +309,11 @@
           });
 
           var parameters = {
-            "data[]": array_of_data,
+            "data": JSON.stringify(array_of_data),
             "year":year
           };
 
-          console.log(parameters);
+          //console.log(parameters);
 
           $.ajax({
             type: 'post',
@@ -339,6 +339,8 @@
               });
             }
           });
+
+          array_of_data = [];
           
         });
       });

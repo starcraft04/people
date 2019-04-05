@@ -49,6 +49,15 @@ class ActivityRepository
     return $this->activity->where('year', $year)->where('user_id', $user_id)->where('project_id', $project_id)->count();
   }
 
+  public function getByYMPUnum($year,$month,$project_id,$user_id)
+	{
+		return $this->activity->where('year', $year)->where('month', $month)->where('project_id', $project_id)->where('user_id', $user_id)->count();
+  }
+  public function getByYMPU($year,$month,$project_id,$user_id)
+	{
+		return $this->activity->where('year', $year)->where('month', $month)->where('project_id', $project_id)->where('user_id', $user_id)->first();
+  }
+
   public function create(Array $inputs)
   {
     $activity = new $this->activity;
