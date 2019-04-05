@@ -338,6 +338,7 @@ class DashboardController extends Controller {
     //dd($year);
     //First we need to get all employees for this manager
     $all_users = $userRepository->getAllUsersFromManager($user_id);
+    //dd($all_users);
     $user = User::find($user_id);
     $order_target = $user->order_target;
     //dd($order_target);

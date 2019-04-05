@@ -42,6 +42,10 @@ class ProjectRepository
   public function getByOTLnum($otl_project_code,$meta_activity)
 	{
 		return $this->project->where('otl_project_code', $otl_project_code)->where('meta_activity', $meta_activity)->count();
+  }
+  public function getBySambaID($samba_id)
+	{
+		return $this->project->where('samba_id', $samba_id)->get();
 	}
   public function create(Array $inputs)
   {

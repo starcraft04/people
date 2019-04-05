@@ -50,6 +50,11 @@ Route::group(['middleware' => ['auth']], function() {
       Route::get('revenueupload', ['uses'=>'RevenueUploadController@getForm','as'=>'revenueuploadform','middleware' => ['permission:otl-upload']]);
       Route::post('revenueupload', ['uses'=>'RevenueUploadController@postForm','middleware' => ['permission:otl-upload']]);
 
+      //Samba
+      Route::get('sambaupload', ['uses'=>'SambaUploadController@getForm','as'=>'sambauploadform','middleware' => ['permission:samba-upload']]);
+      Route::post('sambaupload', ['uses'=>'SambaUploadController@postForm','as'=>'sambauploadPOST','middleware' => ['permission:samba-upload']]);
+      Route::post('sambauploadcreate', ['uses'=>'SambaUploadController@postFormCreate','as'=>'sambauploadcreatePOST','middleware' => ['permission:samba-upload']]);
+
       //User
       //  Main user list
       Route::get('userList', ['uses'=>'UserController@getList','as'=>'userList','middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
