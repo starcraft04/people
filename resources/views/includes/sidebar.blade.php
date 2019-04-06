@@ -11,7 +11,7 @@
           @permission(['samba-upload'])
             <li><a href="{!!route('sambauploadform')!!}">Samba upload</a></li>
           @endpermission
-          @permission(['otl-upload'])
+          @permission(['revenue-upload'])
             <li><a href="{!!route('revenueuploadform')!!}">Revenue upload</a></li>
           @endpermission
         </ul>

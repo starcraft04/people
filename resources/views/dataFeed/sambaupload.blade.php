@@ -86,66 +86,6 @@
 <!-- Window -->
 
 <!-- Window -->
-@if (isset($messages))
-<div class="row">
-  <div class="col-md-12 col-sm-12 col-xs-12">
-    <div class="x_panel">
-
-      <!-- Window title -->
-      <div class="x_title">
-        <h2>Results
-          <small>
-            @if(isset($create_records) && $create_records)
-              Create new records activated, please minimize this window to access the selection for creation
-            @endif
-          </small>
-        </h2>
-
-        <ul class="nav navbar-right panel_toolbox">
-          <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
-        </ul>
-        <div class="clearfix"></div>
-      </div>
-      <!-- Window title -->
-
-      <!-- Window content -->
-      <div class="x_content">
-        <br />
-          <div class="text-danger"><H2>Errors</H2></div>
-          </BR>
-          @foreach($messages_only_errors as $m)
-          <div class="row">
-            <div class="col-md-1 text-danger">
-              {!! $m['status'] !!}
-            </div>
-            <div class="col-md-offset-1 col-md-10 {!! isset($color[$m['status']]) ? $color[$m['status']] : '' !!}">
-              {!! isset($m['msg']) ? $m['msg'] : '' !!}
-            </div>
-          </div>
-          @endforeach
-          </BR></BR></BR>
-          <div class="text-info"><H2>Full result</H2></div>
-          </BR>
-          @foreach($messages as $m)
-          <div class="row">
-            <div class="col-md-1 {!! isset($color[$m['status']]) ? $color[$m['status']] : '' !!}">
-              {!! $m['status'] !!}
-            </div>
-            <div class="col-md-offset-1 col-md-10 {!! isset($color[$m['status']]) ? $color[$m['status']] : '' !!}">
-              {!! isset($m['msg']) ? $m['msg'] : '' !!}
-            </div>
-          </div>
-          @endforeach
-      </div>
-      <!-- Window content -->
-
-    </div>
-  </div>
-</div>
-@endif
-<!-- Window -->
-
-<!-- Window -->
 @if (isset($create_records) && $create_records)
 <div class="row">
   <div class="col-md-12 col-sm-12 col-xs-12">
@@ -242,6 +182,48 @@
 @endif
 <!-- Window -->
 
+<!-- Window -->
+@if (isset($messages))
+<div class="row">
+  <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="x_panel">
+
+      <!-- Window title -->
+      <div class="x_title">
+        <h2>Results
+        </h2>
+
+        <ul class="nav navbar-right panel_toolbox">
+          <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+        </ul>
+        <div class="clearfix"></div>
+      </div>
+      <!-- Window title -->
+
+      <!-- Window content -->
+      <div class="x_content">
+        <br />
+          <div class="text-danger"><H2>Errors</H2></div>
+          </BR>
+          @foreach($messages_only_errors as $m)
+          <div class="row">
+            <div class="col-md-1 text-danger">
+              {!! $m['status'] !!}
+            </div>
+            <div class="col-md-offset-1 col-md-10 {!! isset($color[$m['status']]) ? $color[$m['status']] : '' !!}">
+              {!! isset($m['msg']) ? $m['msg'] : '' !!}
+            </div>
+          </div>
+          @endforeach
+      </div>
+      <!-- Window content -->
+
+    </div>
+  </div>
+</div>
+@endif
+<!-- Window -->
+
 @stop
 
 @section('script')
@@ -249,6 +231,7 @@
     // switchery
     var small = document.querySelector('.js-switch-small');
     var switchery = new Switchery(small, { size: 'small' });
+
     var year;
     var samba_lead_domain;
     var customer_samba;

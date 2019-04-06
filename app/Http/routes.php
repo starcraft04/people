@@ -45,10 +45,11 @@ Route::group(['middleware' => ['auth']], function() {
       Route::get('otlupload', ['uses'=>'OtlUploadController@getForm','as'=>'otluploadform','middleware' => ['permission:otl-upload']]);
       Route::get('otlupload_help', ['uses'=>'OtlUploadController@help','as'=>'otluploadhelp','middleware' => ['permission:otl-upload']]);
       Route::post('otlupload', ['uses'=>'OtlUploadController@postForm','middleware' => ['permission:otl-upload']]);
+      Route::post('otluploadcreate', ['uses'=>'OtlUploadController@postFormCreate','as'=>'otluploadcreatePOST','middleware' => ['permission:otl-upload']]);
 
       //Revenue
-      Route::get('revenueupload', ['uses'=>'RevenueUploadController@getForm','as'=>'revenueuploadform','middleware' => ['permission:otl-upload']]);
-      Route::post('revenueupload', ['uses'=>'RevenueUploadController@postForm','middleware' => ['permission:otl-upload']]);
+      Route::get('revenueupload', ['uses'=>'RevenueUploadController@getForm','as'=>'revenueuploadform','middleware' => ['permission:revenue-upload']]);
+      Route::post('revenueupload', ['uses'=>'RevenueUploadController@postForm','middleware' => ['permission:revenue-upload']]);
 
       //Samba
       Route::get('sambaupload', ['uses'=>'SambaUploadController@getForm','as'=>'sambauploadform','middleware' => ['permission:samba-upload']]);
