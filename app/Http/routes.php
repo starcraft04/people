@@ -55,6 +55,10 @@ Route::group(['middleware' => ['auth']], function() {
       Route::post('sambaupload', ['uses'=>'SambaUploadController@postForm','as'=>'sambauploadPOST','middleware' => ['permission:samba-upload']]);
       Route::post('sambauploadcreate', ['uses'=>'SambaUploadController@postFormCreate','as'=>'sambauploadcreatePOST','middleware' => ['permission:samba-upload']]);
 
+      //Customer upload
+      Route::get('customerupload', ['uses'=>'CustomerUploadController@getForm','as'=>'customeruploadform','middleware' => ['permission:customer-upload']]);
+      Route::post('customerupload', ['uses'=>'CustomerUploadController@postForm','middleware' => ['permission:customer-upload']]);
+
       //User
       //  Main user list
       Route::get('userList', ['uses'=>'UserController@getList','as'=>'userList','middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
@@ -146,7 +150,7 @@ Route::group(['middleware' => ['auth']], function() {
       //Tools
       Route::get('toolsActivities', ['uses'=>'ToolsController@activities','as'=>'toolsActivities','middleware' => ['permission:tools-activity-view']]);
       Route::get('toolsProjectsAll', ['uses'=>'ToolsController@projectsAll','as'=>'projectsAll','middleware' => ['permission:tools-all_projects-view']]);
-      Route::get('toolsProjectsLost', ['uses'=>'ToolsController@projectsLost','as'=>'projectsLost','middleware' => ['permission:tools-all_projects-view']]);
+      Route::get('toolsProjectsLost', ['uses'=>'ToolsController@projectsLost','as'=>'projectsLost','middleware' => ['permission:projects-lost']]);
       Route::get('toolsProjectsAssignedAndNot', ['uses'=>'ToolsController@projectsAssignedAndNot','as'=>'projectsAssignedAndNot','middleware' => ['permission:tools-unassigned-view']]);
       Route::get('toolsProjectsMissingInfo', ['uses'=>'ToolsController@projectsMissingInfo','as'=>'projectsMissingInfo','middleware' => ['permission:tools-missing_info-view']]);
       Route::get('toolsProjectsMissingOTL', ['uses'=>'ToolsController@projectsMissingOTL','as'=>'projectsMissingOTL','middleware' => ['permission:tools-missing_info-view']]);

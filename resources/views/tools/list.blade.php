@@ -154,9 +154,12 @@
                   <th>Manager name</th>
                   <th>User ID</th>
                   <th>User name</th>
+                  <th>User domain</th>
                   <th>User country</th>
                   <th>Employee type</th>
                   <th>Customer name</th>
+                  <th>Customer cluster</th>
+                  <th>Customer country</th>
                   <th>Project ID</th>
                   <th>Project name</th>
                   <th>Project type</th>
@@ -215,6 +218,9 @@
               </thead>
               <tfoot>
                 <tr>
+                  <th></th>
+                  <th></th>
+                  <th></th>
                   <th></th>
                   <th></th>
                   <th></th>
@@ -504,9 +510,12 @@
         { name: 'm.name', data: 'manager_name', width: '150px' },
         { name: 'temp_a.user_id', data: 'user_id' , searchable: false , visible: false},
         { name: 'u.name', data: 'user_name' , width: '150px'},
+        { name: 'u.domain', data: 'user_domain' , searchable: true, visible: false},
         { name: 'u.country', data: 'user_country' , searchable: true , visible: false},
         { name: 'u.employee_type', data: 'user_employee_type' , searchable: true , visible: false},
         { name: 'c.name', data: 'customer_name' , width: '200px'},
+        { name: 'c.cluster_owner', data: 'customer_cluster_owner' , searchable: true , visible: false},
+        { name: 'c.country_owner', data: 'customer_country_owner' , searchable: true , visible: false},
         { name: 'temp_a.project_id', data: 'project_id' , searchable: false , visible: false},
         { name: 'p.project_name', data: 'project_name', width: '200px'},
         { name: 'p.project_type', data: 'project_type', visible: false},
@@ -706,7 +715,7 @@
         {
           extend: "colvis",
           className: "btn-sm",
-          columns: [ 1, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13, 17,21,25,29,33,37,41,45,49,53,57 ]
+          columns: [ 1, 3, 4, 5, 6,7,8,9, 11, 12, 13, 14, 15, 16, 20,24,28,32,36,40,44,48,52,56,60 ]
         },
         {
           extend: "pageLength",

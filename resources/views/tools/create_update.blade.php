@@ -125,8 +125,10 @@
               </li>
               @endpermission
             @endif
+            @permission('tools-projects-comments')
             <li role="presentation" class=""><a href="#tab_content3" id="comments-tab" role="tab" data-toggle="tab" aria-expanded="false">Comments (<span id="num_of_comments">{{ $num_of_comments }}</span>)</a>
             </li>
+            @endpermission
           </ul>
 
           <div id="myTabContent" class="tab-content">
@@ -541,7 +543,7 @@
                         {!! Form::label('samba_id', 'Samba ID', ['class' => 'control-label', 'id' => 'samba_id_text']) !!}
                       </div>
                       <div class="col-md-9">
-                        {!! Form::text('samba_id', (isset($project)) ? $project->samba_id : '', ['class' => 'form-control', 'placeholder' => 'Samba ID']) !!}
+                        {!! Form::text('samba_id', (isset($project)) ? $project->samba_id : '', ['class' => 'form-control', 'placeholder' => 'Samba ID',$samba_options_disabled]) !!}
                         {!! $errors->first('samba_id', '<small class="help-block">:message</small>') !!}
                       </div>
                     </div>
@@ -552,7 +554,7 @@
                         {!! Form::label('pullthru_samba_id', 'Pull-Thru Samba ID', ['class' => 'control-label', 'id' => 'pullthru_samba_id_text']) !!}
                       </div>
                       <div class="col-md-9">
-                        {!! Form::text('pullthru_samba_id', (isset($project)) ? $project->pullthru_samba_id : '', ['class' => 'form-control', 'placeholder' => 'Pull-Thru Samba ID']) !!}
+                        {!! Form::text('pullthru_samba_id', (isset($project)) ? $project->pullthru_samba_id : '', ['class' => 'form-control', 'placeholder' => 'Pull-Thru Samba ID',$samba_options_disabled]) !!}
                         {!! $errors->first('pullthru_samba_id', '<small class="help-block">:message</small>') !!}
                       </div>
                     </div>
@@ -563,7 +565,7 @@
                         {!! Form::label('samba_opportunit_owner', 'Samba opportunity owner', ['class' => 'control-label', 'id' => 'samba_opportunit_owner_text']) !!}
                       </div>
                       <div class="col-md-9">
-                        {!! Form::text('samba_opportunit_owner', (isset($project)) ? $project->samba_opportunit_owner : '', ['class' => 'form-control', 'placeholder' => 'Samba opportunity owner']) !!}
+                        {!! Form::text('samba_opportunit_owner', (isset($project)) ? $project->samba_opportunit_owner : '', ['class' => 'form-control', 'placeholder' => 'Samba opportunity owner',$samba_options_disabled]) !!}
                         {!! $errors->first('samba_opportunit_owner', '<small class="help-block">:message</small>') !!}
                       </div>
                     </div>
@@ -574,7 +576,7 @@
                         {!! Form::label('samba_lead_domain', 'Samba lead domain', ['class' => 'control-label', 'id' => 'samba_lead_domain_text']) !!}
                       </div>
                       <div class="col-md-9">
-                        {!! Form::text('samba_lead_domain', (isset($project)) ? $project->samba_lead_domain : '', ['class' => 'form-control', 'placeholder' => 'Samba lead domain']) !!}
+                        {!! Form::text('samba_lead_domain', (isset($project)) ? $project->samba_lead_domain : '', ['class' => 'form-control', 'placeholder' => 'Samba lead domain',$samba_options_disabled]) !!}
                         {!! $errors->first('samba_lead_domain', '<small class="help-block">:message</small>') !!}
                       </div>
                     </div>
@@ -628,7 +630,7 @@
                         {!! Form::label('samba_consulting_product_tcv', 'Samba consulting TCV (€)', ['class' => 'control-label', 'id' => 'samba_consulting_product_tcv_text']) !!}
                       </div>
                       <div class="col-md-9">
-                        {!! Form::text('samba_consulting_product_tcv', (isset($project)) ? $project->samba_consulting_product_tcv : '', ['class' => 'form-control', 'placeholder' => 'Samba consulting TCV (€)']) !!}
+                        {!! Form::text('samba_consulting_product_tcv', (isset($project)) ? $project->samba_consulting_product_tcv : '', ['class' => 'form-control', 'placeholder' => 'Samba consulting TCV (€)',$samba_options_disabled]) !!}
                         {!! $errors->first('samba_consulting_product_tcv', '<small class="help-block">:message</small>') !!}
                       </div>
                     </div>
@@ -639,7 +641,7 @@
                         {!! Form::label('samba_pullthru_tcv', 'Samba Pull-Thru TCV (€)', ['class' => 'control-label', 'id' => 'samba_pullthru_tcv_text']) !!}
                       </div>
                       <div class="col-md-9">
-                        {!! Form::text('samba_pullthru_tcv', (isset($project)) ? $project->samba_pullthru_tcv : '', ['class' => 'form-control', 'placeholder' => 'Samba Pull-Thru TCV (€)']) !!}
+                        {!! Form::text('samba_pullthru_tcv', (isset($project)) ? $project->samba_pullthru_tcv : '', ['class' => 'form-control', 'placeholder' => 'Samba Pull-Thru TCV (€)',$samba_options_disabled]) !!}
                         {!! $errors->first('samba_pullthru_tcv', '<small class="help-block">:message</small>') !!}
                       </div>
                     </div>
@@ -696,8 +698,10 @@
                 </div>
                 </div>
               </div>
+              <!-- Revenues -->
               @endpermission
             @endif
+            @permission('tools-projects-comments')
             <!-- Comments -->
             <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="comments-tab">
               <div class="row">
@@ -731,6 +735,8 @@
               @endif
               </div>
             </div>
+            <!-- Comments -->
+            @endpermission
           </div>
         </div>
         {!! Form::close() !!}
@@ -743,6 +749,7 @@
 <!-- Window -->
 
 @if($action == 'update')
+@permission('tools-projects-comments')
 <!-- Modal -->
 <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -787,6 +794,7 @@
     </div>
 </div>
 <!-- Modal -->
+@endpermission
 @endif
 @stop
 

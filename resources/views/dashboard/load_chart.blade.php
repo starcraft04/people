@@ -417,7 +417,7 @@
          datasets: [
           {
             type: 'line',
-             label: 'DSC vs Total capacity',
+             label: 'ASC vs Total capacity',
              yAxisID: "y-axis-2",
              borderColor: window.chartColors.orange,
              borderWidth: 3,
@@ -436,7 +436,7 @@
          },
           {
           type: 'bar',
-           label: 'DSC',
+           label: 'ASC',
            yAxisID: "y-axis-1",
            stack: 'Stack 1',
            backgroundColor: color(window.chartColors.blue_light).alpha(0.7).rgbString(),

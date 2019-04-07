@@ -14,6 +14,9 @@
           @permission(['revenue-upload'])
             <li><a href="{!!route('revenueuploadform')!!}">Revenue upload</a></li>
           @endpermission
+          @permission(['customer-upload'])
+            <li><a href="{!!route('customeruploadform')!!}">Customer upload</a></li>
+          @endpermission
         </ul>
       </li>
     </ul>
@@ -61,7 +64,7 @@
             @permission(['dashboard-view'])
             <li><a href="{!!route('dashboardLoad')!!}">Users load</a></li>
             <li><a href="{!!route('dashboardLoadChart')!!}">Users load Chart</a></li>
-            <li><a href="{!!route('dashboarddscisc')!!}/{{date('Y')}}">DSC vs ISC</a></li>
+            <li><a href="{!!route('dashboarddscisc')!!}/{{date('Y')}}">ASC vs ISC</a></li>
             @endpermission
             @permission(['cluster-view'])
             <li><a href="{!!route('clusterdashboard')!!}/{{date('Y')}}/0/all">Cluster Dashboard</a></li>
@@ -77,7 +80,7 @@
       </ul>
       @endpermission
 
-      @permission(['tools-activity-view','tools-all_projects-view','tools-usersskills'])
+      @permission(['tools-activity-view','tools-all_projects-view','tools-usersskills','projects-lost'])
       <ul class="nav side-menu">
         <li><a><i class="fa fa-wrench"></i>Tools<span class="fa fa-chevron-down"></span></a>
           <ul class="nav child_menu">
@@ -87,7 +90,7 @@
             @permission(['tools-all_projects-view'])
             <li><a href="{!!route('projectsAll')!!}">Project list</a></li>
             @endpermission
-            @permission(['tools-all_projects-view'])
+            @permission(['projects-lost'])
             <li><a href="{!!route('projectsLost')!!}">Projects lost</a></li>
             @endpermission
             @permission(['tools-usersskills'])

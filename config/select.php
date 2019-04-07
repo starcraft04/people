@@ -1,9 +1,7 @@
 <?php
 return [
     'employee_type' => [
-        'onshore' => 'onshore',
-        'nearshore' => 'nearshore',
-        'offshore' => 'offshore',
+        'employee' => 'employee',
         'contractor' => 'contractor'
     ],
     'region' => [
@@ -15,8 +13,7 @@ return [
     ],
     'job_role' => [
         'ASC' => 'ASC',
-        'ISC' => 'ISC',
-        'Cairo' => 'Cairo'
+        'ISC' => 'ISC'
     ],
     'domain-users' => [
         '' => '',
@@ -125,5 +122,11 @@ return [
     'activity_status' => [
         'active' => 'active',
         'inactive' => 'inactive'
+    ],
+    'users-mc' => [
+        'DLP30' => 'DLP30',
+        'DPS22' => 'DPS22',
+        'DMR03' => 'DMR03',
+        'DPS26' => 'DPS26'
     ]
 ];

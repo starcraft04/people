@@ -18,7 +18,7 @@
 <!-- Page title -->
 <div class="page-title">
   <div class="title_left">
-    <h3>DSC vs ISC</h3>
+    <h3>ASC vs ISC</h3>
   </div>
 </div>
 <div class="clearfix"></div>
@@ -86,7 +86,7 @@
           @foreach($employee as $employee_name => $activities)
           <div class="col-md-12"><span style="font-size:16px;">{{$employee_name}}</span></div>
           <div class="col-md-6">
-            <span style="font-size:12px;">DSC - {{round($activities['totaldscdays'],2)}}%</span>
+            <span style="font-size:12px;">ASC - {{round($activities['totaldscdays'],2)}}%</span>
             <table class="table table-bordered">
               <thead>
                 <tr>

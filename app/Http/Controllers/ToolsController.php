@@ -287,6 +287,7 @@ class ToolsController extends Controller {
     $LoE_offshore_disabled = 'disabled';
     $LoE_contractor_disabled = 'disabled';
     $gold_order_disabled = 'disabled';
+    $samba_options_disabled = 'disabled';
     $product_code_disabled = 'disabled';
     $revenue_disabled = 'disabled';
     $win_ratio_disabled = 'disabled';
@@ -316,6 +317,7 @@ class ToolsController extends Controller {
       $LoE_offshore_disabled = '';
       $LoE_contractor_disabled = '';
       $gold_order_disabled = '';
+      $samba_options_disabled = '';
       $product_code_disabled = '';
       $revenue_disabled = '';
       $win_ratio_disabled = '';
@@ -446,6 +448,7 @@ class ToolsController extends Controller {
     'LoE_offshore_disabled',
     'LoE_contractor_disabled',
     'gold_order_disabled',
+    'samba_options_disabled',
     'product_code_disabled',
     'revenue_disabled',
     'win_ratio_disabled',
