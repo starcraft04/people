@@ -15,20 +15,5 @@ class UsersTableSeeder extends Seeder {
 				'password' => bcrypt('***Change your Password here***'),
 				'is_manager' => 0
 			));
-		// John
-		User::create(array(
-				'id' => '2',
-				'name' => 'Dauphinais,John',
-				'email' => 'john.dauphinais@orange.com',
-				'password' => bcrypt('***Change your Password here***'),
-				'is_manager' => 1,
-				'region' => 'Europe',
-				'domain' => 'Hybrid',
-				'country' => 'Belgium',
-				'management_code' => 'DPS22',
-				'job_role' => 'DSC',
-				'employee_type' => 'onshore'
-			));
-
 	}
 }

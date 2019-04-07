@@ -77,7 +77,7 @@
       </ul>
       @endpermission
 
-      @permission(['tools-activity-view','tools-all_projects-view'])
+      @permission(['tools-activity-view','tools-all_projects-view','tools-usersskills'])
       <ul class="nav side-menu">
         <li><a><i class="fa fa-wrench"></i>Tools<span class="fa fa-chevron-down"></span></a>
           <ul class="nav child_menu">

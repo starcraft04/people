@@ -59,6 +59,7 @@ class ProjectRepository
   {
     $project = new $this->project;
     $inputs['created_by_user_id'] = Auth::user()->id;
+    //dd($inputs);
     return $this->save($project, $inputs);
   }
 

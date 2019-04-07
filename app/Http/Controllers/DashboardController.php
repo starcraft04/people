@@ -88,7 +88,7 @@ class DashboardController extends Controller {
           ->leftjoin('projects', 'projects.id', '=', 'activities.project_id')
           ->where('year',$year)
           ->where('activities.user_id',$employee_id)
-          ->where('projects.activity_type','DSC')
+          ->where('projects.activity_type','ASC')
           ->first()->sum_task*100/$totalworkdays;
         $dscvsisc[$manager_name][$employee_name]['totaldscdays'] = $totaldscdays;
         $dsclist = DB::table('activities')
@@ -97,7 +97,7 @@ class DashboardController extends Controller {
           ->leftjoin('customers', 'projects.customer_id', '=', 'customers.id')
           ->where('year',$year)
           ->where('activities.user_id',$employee_id)
-          ->where('projects.activity_type','DSC')
+          ->where('projects.activity_type','ASC')
           ->groupBy('customers.name','projects.activity_type')
           ->get();
         $dscvsisc[$manager_name][$employee_name]['dsclist'] = $dsclist;

@@ -107,7 +107,7 @@ class ActivityController extends Controller {
 
     $temp_table = new ProjectTableRepository('temp_a');
 
-    $dsc = $this->activityRepository->getListOfLoadPerUserChart('temp_a',$inputs,'project_type != "Pre-sales" and activity_type = "DSC"');
+    $dsc = $this->activityRepository->getListOfLoadPerUserChart('temp_a',$inputs,'project_type != "Pre-sales" and activity_type = "ASC"');
     $isc = $this->activityRepository->getListOfLoadPerUserChart('temp_a',$inputs,'project_type != "Pre-sales" and activity_type = "ISC"');
     $orange = $this->activityRepository->getListOfLoadPerUserChart('temp_a',$inputs,'project_type = "Orange absence or other"');
     $presales = $this->activityRepository->getListOfLoadPerUserChart('temp_a',$inputs,'project_type = "Pre-sales"');

@@ -14,7 +14,7 @@ return [
         'APAC' => 'APAC'
     ],
     'job_role' => [
-        'DSC' => 'DSC',
+        'ASC' => 'ASC',
         'ISC' => 'ISC',
         'Cairo' => 'Cairo'
     ],
@@ -69,7 +69,6 @@ return [
     ],
     'activity_type' => [
         'ISC' => 'ISC',
-        'DSC' => 'DSC',
         'ASC' => 'ASC'
     ],
     'year' => [
