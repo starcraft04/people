@@ -316,6 +316,7 @@ class DashboardController extends Controller {
     $projects->leftjoin('users','activities.user_id', '=' ,'users.id');
     $projects->where('projects.project_type','!=','Pre-sales');
     $projects->where('activities.year','=',$year);
+    $projects->where('customers.name','!=','Orange Business Services');
     $projects->whereIn('users.id',$users_id);
     $projects->whereNotIn('projects.id',$projects_id);
     $projects->groupBy('projects.id');
@@ -361,6 +362,7 @@ class DashboardController extends Controller {
     $orders->leftjoin('users','activities.user_id', '=' ,'users.id');
     $orders->where('activities.year','=',$year);
     $orders->where('projects.project_type','=','Pre-sales');
+    $orders->where('customers.name','!=','Orange Business Services');
     $orders->whereIn('users.id',$users_id);
     $orders->groupBy('projects.id');
     $all_orders = $orders->get();
