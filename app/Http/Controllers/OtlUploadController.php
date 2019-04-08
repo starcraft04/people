@@ -134,6 +134,14 @@ class OtlUploadController extends Controller
           continue;
         }
 
+        if ($row['converted_time'] == 0) {
+          continue;
+        }
+
+        if ($row['unit'] != 'days') {
+          continue;
+        }
+
         //dd($projectInDBnum);
 
         // Checking if the project is in DB
