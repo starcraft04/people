@@ -170,18 +170,18 @@
                       <td>{!! $revenue->user_name !!}</td>
                       <td>{!! $revenue->product_code !!}</td>
                       <td>{!! $revenue->win_ratio !!}</td>
-                      <td>{!! $revenue->jan !!}</td>
-                      <td>{!! $revenue->feb !!}</td>
-                      <td>{!! $revenue->mar !!}</td>
-                      <td>{!! $revenue->apr !!}</td>
-                      <td>{!! $revenue->may !!}</td>
-                      <td>{!! $revenue->jun !!}</td>
-                      <td>{!! $revenue->jul !!}</td>
-                      <td>{!! $revenue->aug !!}</td>
-                      <td>{!! $revenue->sep !!}</td>
-                      <td>{!! $revenue->oct !!}</td>
-                      <td>{!! $revenue->nov !!}</td>
-                      <td>{!! $revenue->dece !!}</td>
+                      <td>{!! number_format($revenue->jan, 1, '.', ',') !!}</td>
+                      <td>{!! number_format($revenue->feb, 1, '.', ',') !!}</td>
+                      <td>{!! number_format($revenue->mar, 1, '.', ',') !!}</td>
+                      <td>{!! number_format($revenue->apr, 1, '.', ',') !!}</td>
+                      <td>{!! number_format($revenue->may, 1, '.', ',') !!}</td>
+                      <td>{!! number_format($revenue->jun, 1, '.', ',') !!}</td>
+                      <td>{!! number_format($revenue->jul, 1, '.', ',') !!}</td>
+                      <td>{!! number_format($revenue->aug, 1, '.', ',') !!}</td>
+                      <td>{!! number_format($revenue->sep, 1, '.', ',') !!}</td>
+                      <td>{!! number_format($revenue->oct, 1, '.', ',') !!}</td>
+                      <td>{!! number_format($revenue->nov, 1, '.', ',') !!}</td>
+                      <td>{!! number_format($revenue->dece, 1, '.', ',') !!}</td>
                     </tr>
                   @endforeach
                   </tbody>
@@ -217,8 +217,8 @@
                 </table>
                 </br></br>
                 <div style="font-size: 150%;" class="row">
-                  Grand Total: €{!! $grand_total !!} / 
-                  @if(isset($revenue_target))My revenue target: €{!! $revenue_target !!} / Diff: €{!! $revenue_target-$grand_total !!}
+                  Grand Total: €{!! number_format($grand_total, 1, '.', ',') !!} / 
+                  @if(isset($revenue_target))My revenue target: €{!! number_format($revenue_target, 1, '.', ',') !!} / Diff: €{!! number_format($revenue_target-$grand_total, 1, '.', ',') !!}
                   @else My revenue target: - / Diff: - 
                   @endif
                 </div>

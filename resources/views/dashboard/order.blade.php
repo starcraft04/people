@@ -165,9 +165,9 @@
                       <td>{!! $order->win_ratio !!}</td>
                       <td>{!! $order->samba_lead_domain !!}</td>
                       <td>{!! $order->samba_stage !!}</td>
-                      <td>{!! $order->revenue !!}</td>
-                      <td>{!! $order->samba_consulting_product_tcv !!}</td>
-                      <td>{!! $order->samba_pullthru_tcv !!}</td>
+                      <td>{!! number_format($order->revenue, 1, '.', ',') !!}</td>
+                      <td>{!! number_format($order->samba_consulting_product_tcv, 1, '.', ',') !!}</td>
+                      <td>{!! number_format($order->samba_pullthru_tcv, 1, '.', ',') !!}</td>
                     </tr>
                   @endforeach
                   </tbody>
@@ -200,23 +200,23 @@
                   Grand Total Full Value</br>
                 </div>
                 <div style="font-size: 100%;">
-                  Order Intake: €{!! $grand_total['revenue'] !!}</br>
-                  Consulting TCV: €{!! $grand_total['samba_consulting_product_tcv'] !!} / 
-                  @if(isset($order_target))My order target: €{!! $order_target !!} / Diff: €{!! $order_target-$grand_total['revenue'] !!}
+                  Order Intake: €{!! number_format($grand_total['revenue'], 1, '.', ',') !!}</br>
+                  Consulting TCV: €{!! number_format($grand_total['samba_consulting_product_tcv'], 1, '.', ',') !!} / 
+                  @if(isset($order_target))My order target: €{!! number_format($order_target, 1, '.', ',') !!} / Diff: €{!! number_format($order_target-$grand_total['revenue'], 1, '.', ',') !!}
                   @else My order target: - / Diff: - 
                   @endif</br>
-                  Pull-Thru TCV: €{!! $grand_total['samba_pullthru_tcv'] !!}</br>
+                  Pull-Thru TCV: €{!! number_format($grand_total['samba_pullthru_tcv']) !!}</br>
                 </div>
                 <div style="font-size: 150%;">
                   Grand Total Weighted Value</br>
                 </div>
                 <div style="font-size: 100%;">
-                    Order Intake: €{!! $grand_total_weighted['revenue'] !!}</br>
-                    Consulting TCV: €{!! $grand_total_weighted['samba_consulting_product_tcv'] !!} / 
-                    @if(isset($order_target))My order target: €{!! $order_target !!} / Diff: €{!! $order_target-$grand_total_weighted['revenue'] !!}
+                    Order Intake: €{!! number_format($grand_total_weighted['revenue'], 1, '.', ',') !!}</br>
+                    Consulting TCV: €{!! number_format($grand_total_weighted['samba_consulting_product_tcv'], 1, '.', ',') !!} / 
+                    @if(isset($order_target))My order target: €{!! number_format($order_target, 1, '.', ',') !!} / Diff: €{!! number_format($order_target-$grand_total_weighted['revenue'], 1, '.', ',') !!}
                     @else My order target: - / Diff: - 
                     @endif</br>
-                    Pull-Thru TCV: €{!! $grand_total_weighted['samba_pullthru_tcv'] !!}</br>
+                    Pull-Thru TCV: €{!! number_format($grand_total_weighted['samba_pullthru_tcv'], 1, '.', ',') !!}</br>
                 </div>
               </div>
               <!-- Tab order -->
