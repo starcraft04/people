@@ -17,7 +17,7 @@
   <!-- Font Awesome -->
   <link href="{{ asset('/plugins/gentelella/vendors/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
   <!-- Custom Theme Style -->
-  <link href="{{ asset('/plugins/gentelella/build/css/custom.min.css') }}" rel="stylesheet">
+  <link href="{{ asset('/plugins/gentelella/build/css/custom.css') }}" rel="stylesheet">
   <link href="{{ asset('/css/animate.css') }}" rel="stylesheet">
   <link href="{{ asset('/css/alert.css') }}" rel="stylesheet">
   @yield('style')

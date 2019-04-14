@@ -47,7 +47,7 @@
 <!-- Page title -->
 <div class="page-title">
   <div class="title_left">
-    <h3>Activities</h3>
+    <h3>Activities <small>(in days)</small></h3><button id="legendButton" class="btn btn-success btn-sm">legend</button>
   </div>
 </div>
 <div class="clearfix"></div>
@@ -58,233 +58,207 @@
   <div class="col-md-12 col-sm-12 col-xs-12">
     <div class="x_panel">
 
-      <!-- Window title -->
-      <div class="x_title">
-        <h2>Tools</small></h2>
-        <ul class="nav navbar-right panel_toolbox">
-          <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
-        </ul>
-        <div class="clearfix"></div>
-      </div>
-      <!-- Window title -->
-
       <!-- Window content -->
       <div class="x_content">
-        <br />
-          <div class="row">
-            <div class="form-group col-xs-2">
-              <label for="month" class="control-label">Year</label>
-              <select class="form-control select2" style="width: 100%;" id="year" name="year" data-placeholder="Select a year">
-                @foreach($authUsersForDataView->year_list as $key => $value)
-                <option value="{{ $key }}"
-                  @if(isset($authUsersForDataView->year_selected) && $key == $authUsersForDataView->year_selected) selected
-                  @endif>
-                  {{ $value }}
-                </option>
-                @endforeach
-              </select>
-            </div>
-            <div class="form-group col-xs-2">
-              <label for="manager" class="control-label">Manager</label>
-              <select class="form-control select2" style="width: 100%;" id="manager" name="manager" data-placeholder="Select a manager" multiple="multiple">
-                @foreach($authUsersForDataView->manager_list as $key => $value)
-                <option value="{{ $key }}"
-                  @if(isset($authUsersForDataView->manager_selected) && $key == $authUsersForDataView->manager_selected) selected
-                  @endif>
-                  {{ $value }}
-                </option>
-                @endforeach
-              </select>
-            </div>
-            <div class="form-group col-xs-2">
-              <label for="user" class="control-label">User</label>
-              <select class="form-control select2" style="width: 100%;" id="user" name="user" data-placeholder="Select a user" multiple="multiple">
-                @foreach($authUsersForDataView->user_list as $key => $value)
-                <option value="{{ $key }}"
-                  @if(isset($authUsersForDataView->user_selected) && $key == $authUsersForDataView->user_selected) selected
-                  @endif>
-                  {{ $value }}
-                </option>
-                @endforeach
-              </select>
-            </div>
-            <div class="form-group col-xs-1">
-              <label for="closed" class="control-label">Hide closed</label>
-              <input name="closed" type="checkbox" id="closed" class="form-group js-switch" checked /> 
-            </div>
+
+        <!-- Selections for the table -->
+
+        <div class="form-group row">
+          <div class="col-xs-2">
+            <label for="month" class="control-label">Year</label>
+            <select class="form-control select2" id="year" name="year" data-placeholder="Select a year">
+              @foreach($authUsersForDataView->year_list as $key => $value)
+              <option value="{{ $key }}"
+                @if(isset($authUsersForDataView->year_selected) && $key == $authUsersForDataView->year_selected) selected
+                @endif>
+                {{ $value }}
+              </option>
+              @endforeach
+            </select>
           </div>
-      </div>
-      <!-- Window content -->
-
-    </div>
-  </div>
-</div>
-<!-- Window -->
-
-<!-- Window -->
-<div class="row">
-  <div class="col-md-12 col-sm-12 col-xs-12">
-    <div class="x_panel">
-
-      <!-- Window title -->
-      <div class="x_title">
-        <h2>List (activities in days)</small></h2>
-        <button id="legendButton" class="btn btn-success btn-sm" style="margin-left: 10px;">legend</button>
-        <ul class="nav navbar-right panel_toolbox">
-          <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
-        </ul>
-        <div class="clearfix"></div>
-      </div>
-      <!-- Window title -->
-
-      <!-- Window content -->
-      <div class="x_content">
-          @permission('tools-activity-new')
-          <div class="row button_in_row">
-            <div class="col-md-12">
-              <button id="new_project" class="btn btn-info btn-xs" align="right"><span class="glyphicon glyphicon-plus"> New Project</span></button>
-            </div>
+          <div class="col-xs-2">
+            <label for="manager" class="control-label">Manager</label>
+            <select class="form-control select2" id="manager" name="manager" data-placeholder="Select a manager" multiple="multiple">
+              @foreach($authUsersForDataView->manager_list as $key => $value)
+              <option value="{{ $key }}"
+                @if(isset($authUsersForDataView->manager_selected) && $key == $authUsersForDataView->manager_selected) selected
+                @endif>
+                {{ $value }}
+              </option>
+              @endforeach
+            </select>
           </div>
-          @endpermission
+          <div class="col-xs-2">
+            <label for="user" class="control-label">User</label>
+            <select class="form-control select2" id="user" name="user" data-placeholder="Select a user" multiple="multiple">
+              @foreach($authUsersForDataView->user_list as $key => $value)
+              <option value="{{ $key }}"
+                @if(isset($authUsersForDataView->user_selected) && $key == $authUsersForDataView->user_selected) selected
+                @endif>
+                {{ $value }}
+              </option>
+              @endforeach
+            </select>
+          </div>
+          <div class="col-xs-2">
+            <label for="closed" class="control-label">Hide closed</label>
+            <input name="closed" type="checkbox" id="closed" class="form-group js-switch-small" checked /> 
+          </div>
+        </div>
 
-          <table id="activitiesTable" class="table table-striped table-hover table-bordered" width="100%">
-              <thead>
-                <tr>
-                  <th>Manager ID</th>
-                  <th>Manager name</th>
-                  <th>User ID</th>
-                  <th>User name</th>
-                  <th>User domain</th>
-                  <th>User country</th>
-                  <th>Employee type</th>
-                  <th>Customer name</th>
-                  <th>Customer cluster</th>
-                  <th>Customer country</th>
-                  <th>Project ID</th>
-                  <th>Project name</th>
-                  <th>Project type</th>
-                  <th>Activity type</th>
-                  <th>Project status</th>
-                  <th>Year</th>
-                  <th>Jan</th>
-                  <th>Jan user</th>
-                  <th>Jan otl</th>
-                  <th>OTL</th>
-                  <th>Feb</th>
-                  <th>Feb user</th>
-                  <th>Feb otl</th>
-                  <th>OTL</th>
-                  <th>Mar</th>
-                  <th>Mar user</th>
-                  <th>Mar otl</th>
-                  <th>OTL</th>
-                  <th>Apr</th>
-                  <th>Apr user</th>
-                  <th>Apr otl</th>
-                  <th>OTL</th>
-                  <th>May</th>
-                  <th>May user</th>
-                  <th>May otl</th>
-                  <th>OTL</th>
-                  <th>Jun</th>
-                  <th>Jun user</th>
-                  <th>Jun otl</th>
-                  <th>OTL</th>
-                  <th>Jul</th>
-                  <th>Jul user</th>
-                  <th>Jul otl</th>
-                  <th>OTL</th>
-                  <th>Aug</th>
-                  <th>Aug user</th>
-                  <th>Aug otl</th>
-                  <th>OTL</th>
-                  <th>Sep</th>
-                  <th>Sep user</th>
-                  <th>Sep otl</th>
-                  <th>OTL</th>
-                  <th>Oct</th>
-                  <th>Oct user</th>
-                  <th>Oct otl</th>
-                  <th>OTL</th>
-                  <th>Nov</th>
-                  <th>Nov user</th>
-                  <th>Nov otl</th>
-                  <th>OTL</th>
-                  <th>Dec</th>
-                  <th>Dec user</th>
-                  <th>Dec otl</th>
-                  <th>OTL</th>
-                </tr>
-              </thead>
-              <tfoot>
-                <tr>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                </tr>
-              </tfoot>
-            </table>
+        <!-- Selections for the table -->
+
+        <!-- Create new button -->
+        @permission('tools-activity-new')
+        <div class="row button_in_row">
+          <div class="col-md-12">
+            <button id="new_project" class="btn btn-info btn-xs" align="right"><span class="glyphicon glyphicon-plus"> New Project</span></button>
+          </div>
+        </div>
+        @endpermission
+        <!-- Create new button -->
+
+        <!-- Main table -->
+        <table id="activitiesTable" class="table table-striped table-hover table-bordered" width="100%">
+          <thead>
+            <tr>
+              <th>Manager ID</th>
+              <th>Manager name</th>
+              <th>User ID</th>
+              <th>User name</th>
+              <th>User domain</th>
+              <th>User country</th>
+              <th>Employee type</th>
+              <th>Customer name</th>
+              <th>Customer cluster</th>
+              <th>Customer country</th>
+              <th>Project ID</th>
+              <th>Project name</th>
+              <th>Project type</th>
+              <th>Activity type</th>
+              <th>Project status</th>
+              <th>Year</th>
+              <th>Jan</th>
+              <th>Jan user</th>
+              <th>Jan otl</th>
+              <th>OTL</th>
+              <th>Feb</th>
+              <th>Feb user</th>
+              <th>Feb otl</th>
+              <th>OTL</th>
+              <th>Mar</th>
+              <th>Mar user</th>
+              <th>Mar otl</th>
+              <th>OTL</th>
+              <th>Apr</th>
+              <th>Apr user</th>
+              <th>Apr otl</th>
+              <th>OTL</th>
+              <th>May</th>
+              <th>May user</th>
+              <th>May otl</th>
+              <th>OTL</th>
+              <th>Jun</th>
+              <th>Jun user</th>
+              <th>Jun otl</th>
+              <th>OTL</th>
+              <th>Jul</th>
+              <th>Jul user</th>
+              <th>Jul otl</th>
+              <th>OTL</th>
+              <th>Aug</th>
+              <th>Aug user</th>
+              <th>Aug otl</th>
+              <th>OTL</th>
+              <th>Sep</th>
+              <th>Sep user</th>
+              <th>Sep otl</th>
+              <th>OTL</th>
+              <th>Oct</th>
+              <th>Oct user</th>
+              <th>Oct otl</th>
+              <th>OTL</th>
+              <th>Nov</th>
+              <th>Nov user</th>
+              <th>Nov otl</th>
+              <th>OTL</th>
+              <th>Dec</th>
+              <th>Dec user</th>
+              <th>Dec otl</th>
+              <th>OTL</th>
+            </tr>
+          </thead>
+          <tfoot>
+            <tr>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+          </tfoot>
+        </table>
+        <!-- Main table -->
+
       </div>
       <!-- Window content -->
 
@@ -345,6 +319,10 @@
   var manager = [];
   var user = [];
   var checkbox_closed = 1;
+
+  // switchery
+  var small = document.querySelector('.js-switch-small');
+  var switchery = new Switchery(small, { size: 'small' });
 
   function ajaxData(){
     var obj = {
@@ -494,6 +472,8 @@
 
     activitiesTable = $('#activitiesTable').DataTable({
       scrollX: true,
+      scrollY: '50vh',
+      scrollCollapse: true,
       serverSide: true,
       processing: true,
       stateSave: true,

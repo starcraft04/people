@@ -205,7 +205,7 @@
                   @if(isset($order_target))My order target: €{!! number_format($order_target, 1, '.', ',') !!} / Diff: €{!! number_format($order_target-$grand_total['revenue'], 1, '.', ',') !!}
                   @else My order target: - / Diff: - 
                   @endif</br>
-                  Pull-Thru TCV: €{!! number_format($grand_total['samba_pullthru_tcv']) !!}</br>
+                  Pull-Thru TCV: €{!! number_format($grand_total['samba_pullthru_tcv'], 1, '.', ',') !!}</br>
                 </div>
                 <div style="font-size: 150%;">
                   Grand Total Weighted Value</br>
