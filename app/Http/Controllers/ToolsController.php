@@ -41,8 +41,9 @@ class ToolsController extends Controller {
 	{
     $authUsersForDataView->userCanView('tools-activity-all-view');
     Session::put('url','toolsActivities');
+    $table_height = Auth::user()->table_height;
 
-		return view('tools/list', compact('authUsersForDataView'));
+		return view('tools/list', compact('authUsersForDataView','table_height'));
 	}
 
   public function projectsAssignedAndNot()

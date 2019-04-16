@@ -26,7 +26,8 @@ class OptionsUpdateRequest extends Request
 
         return [
 
-      'clusterboard_top' => 'required|integer|min:0'
+      'clusterboard_top' => 'required|integer|min:0',
+      'table_height' => 'integer|min:10|max:200'
 
         ];
     }

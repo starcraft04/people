@@ -17,7 +17,7 @@
   <!-- Font Awesome -->
   <link href="{{ asset('/plugins/gentelella/vendors/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
   <!-- Custom Theme Style -->
-  <link href="{{ asset('/plugins/gentelella/build/css/custom.css') }}" rel="stylesheet">
+  <link href="{{ asset('/plugins/gentelella/build/css/custom.min.css') }}" rel="stylesheet">
   <link href="{{ asset('/css/animate.css') }}" rel="stylesheet">
   <link href="{{ asset('/css/alert.css') }}" rel="stylesheet">
   @yield('style')
@@ -36,7 +36,7 @@
 </head>
 
 
-<body id="main_body" class="@if(isset($_COOKIE['left_menu_minimized']) && $_COOKIE['left_menu_minimized'] == 1) nav-sm @else nav-md @endif footer_fixed">
+<body class="nav-md footer_fixed">
     <div class="container body">
       <div class="main_container">
 
@@ -153,16 +153,6 @@
             Cookies.remove('manager');
             Cookies.remove('user');
             window.location.href = "{{ route('auth.logout') }}";
-        });
-
-        // This is to remember if the left menu is minimized or not
-        $('#menu_toggle').on('click', function () {
-          body_class = $('#main_body').attr('class');
-          if (body_class.search('nav-md') == -1) {
-            Cookies.set('left_menu_minimized', '1');
-          } else {
-            Cookies.set('left_menu_minimized', '0');
-          }
         });
       });
     </script>

@@ -121,7 +121,7 @@
           </div>
         </div>
         </br>
-        <table id="projects_table" class="table table-striped table-hover table-bordered" width="100%">
+        <table id="projects_table" class="table table-striped table-hover table-bordered mytable" width="100%">
           <thead>
             <tr>
               <th>Samba lead domain</th>

@@ -669,7 +669,7 @@
               <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="revenue-tab">
                 <div class="row">
                 <div class="table-responsive">
-                  <table class="table table-striped table-hover table-bordered" width="100%" id="projectRevenue">
+                  <table class="table table-striped table-hover table-bordered mytable" width="100%" id="projectRevenue">
                     <thead>
                       <tr>
                         <th>ID</th>

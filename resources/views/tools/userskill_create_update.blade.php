@@ -105,7 +105,7 @@
                     </table>
                 </div>
                 <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="certification-tab">
-                    <table id="certificationTable" class="table table-striped table-hover table-bordered" width="100%">
+                    <table id="certificationTable" class="table table-striped table-hover table-bordered mytable" width="100%">
                         <thead>
                             <tr>
                                 <th>Skill ID</th>

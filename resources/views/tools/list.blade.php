@@ -64,7 +64,7 @@
         <!-- Selections for the table -->
 
         <div class="form-group row">
-          <div class="col-xs-2">
+          <div class="col-xs-3">
             <label for="month" class="control-label">Year</label>
             <select class="form-control select2" id="year" name="year" data-placeholder="Select a year">
               @foreach($authUsersForDataView->year_list as $key => $value)
@@ -76,7 +76,7 @@
               @endforeach
             </select>
           </div>
-          <div class="col-xs-2">
+          <div class="col-xs-3">
             <label for="manager" class="control-label">Manager</label>
             <select class="form-control select2" id="manager" name="manager" data-placeholder="Select a manager" multiple="multiple">
               @foreach($authUsersForDataView->manager_list as $key => $value)
@@ -88,7 +88,7 @@
               @endforeach
             </select>
           </div>
-          <div class="col-xs-2">
+          <div class="col-xs-3">
             <label for="user" class="control-label">User</label>
             <select class="form-control select2" id="user" name="user" data-placeholder="Select a user" multiple="multiple">
               @foreach($authUsersForDataView->user_list as $key => $value)
@@ -100,7 +100,7 @@
               @endforeach
             </select>
           </div>
-          <div class="col-xs-2">
+          <div class="col-xs-3">
             <label for="closed" class="control-label">Hide closed</label>
             <input name="closed" type="checkbox" id="closed" class="form-group js-switch-small" checked /> 
           </div>
@@ -119,7 +119,7 @@
         <!-- Create new button -->
 
         <!-- Main table -->
-        <table id="activitiesTable" class="table table-striped table-hover table-bordered" width="100%">
+        <table id="activitiesTable" class="table table-striped table-hover table-bordered mytable" width="100%">
           <thead>
             <tr>
               <th>Manager ID</th>
@@ -472,8 +472,10 @@
 
     activitiesTable = $('#activitiesTable').DataTable({
       scrollX: true,
-      scrollY: '50vh',
+      @if(isset($table_height))
+      scrollY: '{!! $table_height !!}vh',
       scrollCollapse: true,
+      @endif
       serverSide: true,
       processing: true,
       stateSave: true,
@@ -487,21 +489,21 @@
       },
       columns: [
         { name: 'uu.manager_id', data: 'manager_id' , searchable: false , visible: false},
-        { name: 'm.name', data: 'manager_name', width: '150px' },
+        { name: 'm.name', data: 'manager_name' , className: "dt-nowrap"},
         { name: 'temp_a.user_id', data: 'user_id' , searchable: false , visible: false},
-        { name: 'u.name', data: 'user_name' , width: '150px'},
-        { name: 'u.domain', data: 'user_domain' , searchable: true, visible: false},
-        { name: 'u.country', data: 'user_country' , searchable: true , visible: false},
-        { name: 'u.employee_type', data: 'user_employee_type' , searchable: true , visible: false},
-        { name: 'c.name', data: 'customer_name' , width: '200px'},
-        { name: 'c.cluster_owner', data: 'customer_cluster_owner' , searchable: true , visible: false},
-        { name: 'c.country_owner', data: 'customer_country_owner' , searchable: true , visible: false},
+        { name: 'u.name', data: 'user_name' , className: "dt-nowrap"},
+        { name: 'u.domain', data: 'user_domain' , searchable: true, visible: false, className: "dt-nowrap"},
+        { name: 'u.country', data: 'user_country' , searchable: true , visible: false, className: "dt-nowrap"},
+        { name: 'u.employee_type', data: 'user_employee_type' , searchable: true , visible: false, className: "dt-nowrap"},
+        { name: 'c.name', data: 'customer_name' , className: "dt-nowrap"},
+        { name: 'c.cluster_owner', data: 'customer_cluster_owner' , searchable: true , visible: false, className: "dt-nowrap"},
+        { name: 'c.country_owner', data: 'customer_country_owner' , searchable: true , visible: false, className: "dt-nowrap"},
         { name: 'temp_a.project_id', data: 'project_id' , searchable: false , visible: false},
-        { name: 'p.project_name', data: 'project_name', width: '200px'},
-        { name: 'p.project_type', data: 'project_type', visible: false},
-        { name: 'p.activity_type', data: 'activity_type', visible: false},
-        { name: 'p.project_status', data: 'project_status' , visible: false},
-        { name: 'temp_a.year', data: 'year' , searchable: false , visible: false},
+        { name: 'p.project_name', data: 'project_name', className: "dt-nowrap"},
+        { name: 'p.project_type', data: 'project_type', visible: false, className: "dt-nowrap"},
+        { name: 'p.activity_type', data: 'activity_type', visible: false, className: "dt-nowrap"},
+        { name: 'p.project_status', data: 'project_status' , visible: false, className: "dt-nowrap"},
+        { name: 'temp_a.year', data: 'year' , searchable: false , visible: false, className: "dt-nowrap"},
         { data: function ( row, type, val, meta ) {
           if (row.jan_from_otl == 1){return row.jan_otl;}else{return row.jan_user;}
             }, 

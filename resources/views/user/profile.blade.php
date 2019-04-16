@@ -137,6 +137,18 @@
           </div>
 
           <div class="row">
+              <div class="form-group {!! $errors->has('table_height') ? 'has-error' : '' !!} col-md-12">
+                  <div class="col-md-2">
+                      {!! Form::label('table_height', 'Table height (between 10 and 200)', ['class' => 'control-label']) !!}
+                  </div>
+                  <div class="col-md-10">
+                  {!! Form::text('table_height', (isset(Auth::user()->table_height)) ? Auth::user()->table_height : '', ['class' => 'form-control', 'placeholder' => 'Table height']) !!}
+                  {!! $errors->first('table_height', '<small class="help-block">:message</small>') !!}
+                  </div>
+              </div>
+          </div>
+
+          <div class="row">
               <div class="col-md-offset-11 col-md-1">
                 {!! Form::submit('Update', ['class' => 'btn btn-primary']) !!}
               </div>

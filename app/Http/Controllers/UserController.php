@@ -72,6 +72,7 @@ class UserController extends Controller {
     $user->revenue_product_codes = $inputs['revenue_product_codes'];
     $user->revenue_target = $inputs['revenue_target'];
     $user->order_target = $inputs['order_target'];
+    $user->table_height = $inputs['table_height'];
     $user->save();
     return redirect('profile/'.$id)->with('success','Options updated successfully');
   }

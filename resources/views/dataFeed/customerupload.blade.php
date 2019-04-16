@@ -94,7 +94,7 @@
 
       <!-- Window content -->
       <div class="x_content">
-          <table id="error_table" class="table table-striped table-hover table-bordered" width="100%">
+          <table id="error_table" class="table table-striped table-hover table-bordered mytable" width="100%">
             <thead>
               <tr>
                 <th>Message</th>

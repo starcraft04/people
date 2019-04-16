@@ -66,7 +66,7 @@
 
       <!-- Window content -->
       <div class="x_content">
-            <table id="userTable" class="table table-striped table-hover table-bordered" width="100%">
+            <table id="userTable" class="table table-striped table-hover table-bordered mytable" width="100%">
                 <thead>
                     <tr>
                         <th>ID</th>

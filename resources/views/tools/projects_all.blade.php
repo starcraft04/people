@@ -75,7 +75,7 @@
               </div>
             </div>
             @endpermission
-            <table id="projectTable" class="table table-striped table-hover table-bordered" width="100%">
+            <table id="projectTable" class="table table-striped table-hover table-bordered mytable" width="100%">
                 <thead>
                     <tr>
                       <th>ID</th>

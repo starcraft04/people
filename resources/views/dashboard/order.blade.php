@@ -55,60 +55,35 @@
   <div class="col-md-12 col-sm-12 col-xs-12">
     <div class="x_panel">
 
-      <!-- Window title -->
-      <div class="x_title">
-        <h2>Tools</h2>
-        <ul class="nav navbar-right panel_toolbox">
-          <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
-        </ul>
-        <div class="clearfix"></div>
-      </div>
-      <!-- Window title -->
-
       <!-- Window content -->
       <div class="x_content">
-        <br />
-          <div class="row">
-            <div class="form-group col-xs-2">
-              <label for="year" class="control-label">Year</label>
-              <select class="form-control select2" style="width: 100%;" id="year" name="year" data-placeholder="Select a year">
-                @foreach($authUsersForDataView->year_list as $key => $value)
-                <option value="{{ $key }}"
-                  @if($key == $year) selected
-                  @endif>
-                  {{ $value }}
-                </option>
-                @endforeach
-              </select>
-            </div>
-            <div class="form-group col-xs-2">
-              <label for="manager" class="control-label">Manager</label>
-              <select class="form-control select2" style="width: 100%;" id="manager" name="manager" data-placeholder="Select a manager">
-                @foreach($authUsersForDataView->manager_list as $key => $value)
-                <option value="{{ $key }}"
-                  @if($key == $user_id) selected
-                  @endif>
-                  {{ $value }}
-                </option>
-                @endforeach
-              </select>
-            </div>
+
+        <div class="form-group row">
+          <div class="col-xs-6">
+            <label for="year" class="control-label">Year</label>
+            <select class="form-control select2" style="width: 100%;" id="year" name="year" data-placeholder="Select a year">
+              @foreach($authUsersForDataView->year_list as $key => $value)
+              <option value="{{ $key }}"
+                @if($key == $year) selected
+                @endif>
+                {{ $value }}
+              </option>
+              @endforeach
+            </select>
           </div>
-      </div>
-      <!-- Window content -->
-
-    </div>
-  </div>
-</div>
-<!-- Window -->
-
-<!-- Window -->
-<div class="row">
-  <div class="col-md-12 col-sm-12 col-xs-12">
-    <div class="x_panel">
-
-      <!-- Window content -->
-      <div class="x_content">
+          <div class="col-xs-6">
+            <label for="manager" class="control-label">Manager</label>
+            <select class="form-control select2" style="width: 100%;" id="manager" name="manager" data-placeholder="Select a manager">
+              @foreach($authUsersForDataView->manager_list as $key => $value)
+              <option value="{{ $key }}"
+                @if($key == $user_id) selected
+                @endif>
+                {{ $value }}
+              </option>
+              @endforeach
+            </select>
+          </div>
+        </div>
         <div class="row">
           <div class="" role="tabpanel" data-example-id="togglable-tabs">
             <!-- Tab titles -->
@@ -122,7 +97,7 @@
             <div id="myTabContent" class="tab-content">
               <!-- Tab order -->
               <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="order-tab">
-                <table id="orderTable" class="table table-striped table-hover table-bordered" width="100%">
+                <table id="orderTable" class="table table-striped table-hover table-bordered mytable" width="100%">
                   <thead>
                     <tr>
                       <th>Cluster</th>
@@ -266,28 +241,32 @@ $(document).ready(function() {
 
   orderTable = $('#orderTable').DataTable({
     scrollX: true,
+    @if(isset($table_height))
+    scrollY: '{!! $table_height !!}vh',
+    scrollCollapse: true,
+    @endif
     stateSave: true,
     order: [[0, 'asc']],
     columns: [
-        { name: 'cluster_owner', data: 'cluster_owner' , searchable: true , visible: true},
-        { name: 'customer_name', data: 'customer_name' , searchable: true , visible: true},
+        { name: 'cluster_owner', data: 'cluster_owner' , searchable: true , visible: true, className: "dt-nowrap"},
+        { name: 'customer_name', data: 'customer_name' , searchable: true , visible: true, className: "dt-nowrap"},
         { name: 'project_id', data: 'project_id' , searchable: false , visible: false},
-        { name: 'project_name', data: 'project_name' , searchable: true , visible: true},
-        { name: 'project_type', data: 'project_type' , searchable: true , visible: true},
-        { name: 'project_subtype', data: 'project_subtype' , searchable: true , visible: true},
-        { name: 'project_status', data: 'project_status' , searchable: true , visible: true},
-        { name: 'gold_order', data: 'gold_order' , searchable: true , visible: true},
-        { name: 'samba_id', data: 'samba_id' , searchable: true , visible: true},
-        { name: 'pullthru_samba_id', data: 'pullthru_samba_id' , searchable: true , visible: true},
-        { name: 'samba_opportunit_owner', data: 'samba_opportunit_owner' , searchable: true , visible: true},
-        { name: 'user_id', data: 'user_id' , searchable: false , visible: false},
-        { name: 'user_name', data: 'user_name' , searchable: true , visible: true},
-        { name: 'win_ratio', data: 'win_ratio' , searchable: true , visible: true},
-        { name: 'samba_lead_domain', data: 'samba_lead_domain' , searchable: true , visible: true},
-        { name: 'samba_stage', data: 'samba_stage' , searchable: true , visible: true},
-        { name: 'order', data: 'order' , searchable: true , visible: true},
-        { name: 'samba_consulting_product_tcv', data: 'samba_consulting_product_tcv' , searchable: true , visible: true},
-        { name: 'samba_pullthru_tcv', data: 'samba_pullthru_tcv' , searchable: true , visible: true}
+        { name: 'project_name', data: 'project_name' , searchable: true , visible: true, className: "dt-nowrap"},
+        { name: 'project_type', data: 'project_type' , searchable: true , visible: true, className: "dt-nowrap"},
+        { name: 'project_subtype', data: 'project_subtype' , searchable: true , visible: true, className: "dt-nowrap"},
+        { name: 'project_status', data: 'project_status' , searchable: true , visible: true, className: "dt-nowrap"},
+        { name: 'gold_order', data: 'gold_order' , searchable: true , visible: true, className: "dt-nowrap"},
+        { name: 'samba_id', data: 'samba_id' , searchable: true , visible: true, className: "dt-nowrap"},
+        { name: 'pullthru_samba_id', data: 'pullthru_samba_id' , searchable: true , visible: true, className: "dt-nowrap"},
+        { name: 'samba_opportunit_owner', data: 'samba_opportunit_owner' , searchable: true , visible: true, className: "dt-nowrap"},
+        { name: 'user_id', data: 'user_id' , searchable: false , visible: false, className: "dt-nowrap"},
+        { name: 'user_name', data: 'user_name' , searchable: true , visible: true, className: "dt-nowrap"},
+        { name: 'win_ratio', data: 'win_ratio' , searchable: true , visible: true, className: "dt-nowrap"},
+        { name: 'samba_lead_domain', data: 'samba_lead_domain' , searchable: true , visible: true, className: "dt-nowrap"},
+        { name: 'samba_stage', data: 'samba_stage' , searchable: true , visible: true, className: "dt-nowrap"},
+        { name: 'order', data: 'order' , searchable: true , visible: true, className: "dt-nowrap"},
+        { name: 'samba_consulting_product_tcv', data: 'samba_consulting_product_tcv' , searchable: true , visible: true, className: "dt-nowrap"},
+        { name: 'samba_pullthru_tcv', data: 'samba_pullthru_tcv' , searchable: true , visible: true, className: "dt-nowrap"}
     ],
     lengthMenu: [
         [ 10, 25, 50, -1 ],

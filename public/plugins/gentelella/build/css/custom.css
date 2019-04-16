@@ -4255,3 +4255,24 @@ table thead .checkbox.radio { margin-top:-7px;margin-top:-21px; }
     background-color: #ffff !important;
 }
 /** /bootstrap-datetimepicker **/
+
+/** No wrap for cells with class dt-nowrap **/
+td.dt-nowrap {
+    white-space: nowrap;
+}
+
+/** Change default padding of bootstrap tables **/
+.mytable>tbody>tr>td, .mytable>tbody>tr>th, .mytable>tfoot>tr>td, .mytable>tfoot>tr>th {
+    padding-left: 6px;
+    padding-right: 8px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+/** Change default padding of bootstrap tables **/
+.mytable>thead>tr>td, .mytable>thead>tr>th {
+    padding-left: 6px;
+    padding-right: 8px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}

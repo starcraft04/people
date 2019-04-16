@@ -236,6 +236,9 @@ class DashboardController extends Controller {
   public function revenue(AuthUsersForDataView $authUsersForDataView,UserRepository $userRepository,$year = null,$user_id = null)
   {
     $authUsersForDataView->userCanView('tools-activity-all-view');
+    $table_height = Auth::user()->table_height;
+    Session::put('url','revenuedashboard');
+
     if ($year == null) {
       $year = date('Y');
     }
@@ -324,12 +327,13 @@ class DashboardController extends Controller {
     //dd($projects_without_revenue);
 
 
-    return view('dashboard/revenue', compact('authUsersForDataView','year','user_id','revenue_target','all_revenues','month_total','grand_total','projects_without_revenue'));
+    return view('dashboard/revenue', compact('authUsersForDataView','year','user_id','revenue_target','all_revenues','month_total','grand_total','projects_without_revenue','table_height'));
   }
 
   public function order(AuthUsersForDataView $authUsersForDataView,UserRepository $userRepository,$year = null,$user_id = null)
   {
     $authUsersForDataView->userCanView('tools-activity-all-view');
+    $table_height = Auth::user()->table_height;
     if ($year == null) {
       $year = date('Y');
     }
@@ -384,7 +388,7 @@ class DashboardController extends Controller {
 
     //dd($grand_total_weighted);
 
-    return view('dashboard/order', compact('authUsersForDataView','user_id','year','order_target','all_orders','grand_total','grand_total_weighted'));
+    return view('dashboard/order', compact('authUsersForDataView','user_id','year','order_target','all_orders','grand_total','grand_total_weighted','table_height'));
   }
 
 }
