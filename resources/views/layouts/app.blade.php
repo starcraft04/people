@@ -36,7 +36,7 @@
 </head>
 
 
-<body class="nav-md footer_fixed">
+<body id="main_body" class="@if(isset($_COOKIE['left_menu_minimized']) && $_COOKIE['left_menu_minimized'] == 1) nav-sm @else nav-md @endif footer_fixed">
     <div class="container body">
       <div class="main_container">
 
@@ -154,6 +154,17 @@
             Cookies.remove('user');
             window.location.href = "{{ route('auth.logout') }}";
         });
+
+        // This is to remember if the left menu is minimized or not
+        $('#menu_toggle').on('click', function () {
+          body_class = $('#main_body').attr('class');
+          if (body_class.search('nav-md') == -1) {
+            Cookies.set('left_menu_minimized', '1');
+          } else {
+            Cookies.set('left_menu_minimized', '0');
+          }
+        });
+        
       });
     </script>
     <!-- END All scripts -->
