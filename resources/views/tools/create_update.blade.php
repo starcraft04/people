@@ -953,7 +953,7 @@ $(document).ready(function() {
   });
 
   $("#customer_id").select2({
-    allowClear: true,
+    allowClear: false,
     disabled: {{ $customer_id_select_disabled }}
   });
 

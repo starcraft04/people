@@ -4276,3 +4276,7 @@ td.dt-nowrap {
     padding-top: 8px;
     padding-bottom: 8px;
 }
+
+.select2{
+    width:100% !important;
+}

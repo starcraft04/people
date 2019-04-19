@@ -76,41 +76,41 @@ class ProjectRepository
 
     // OTL project code and meta activity can be empty and then it needs to be entered as null
 
-    if (isset($inputs['meta_activity'])) {$project->meta_activity = $inputs['meta_activity'];}
-    if (isset($inputs['otl_project_code'])) {$project->otl_project_code = $inputs['otl_project_code'];}
+    if (array_key_exists('meta_activity',$inputs)) {$project->meta_activity = $inputs['meta_activity'];}
+    if (array_key_exists('otl_project_code',$inputs)) {$project->otl_project_code = $inputs['otl_project_code'];}
 
     // Nullable
-    if (isset($inputs['project_type'])) {$project->project_type = $inputs['project_type'];}
-    if (isset($inputs['activity_type'])) {$project->activity_type = $inputs['activity_type'];}
-    if (isset($inputs['region'])) {$project->region = $inputs['region'];}
-    if (isset($inputs['country'])) {$project->country = $inputs['country'];}
-    if (isset($inputs['customer_location'])) {$project->customer_location = $inputs['customer_location'];}
-    if (isset($inputs['comments'])) {$project->comments = $inputs['comments'];}
-    if (isset($inputs['description'])) {$project->description = $inputs['description'];}
-    if (isset($inputs['technology'])) {$project->technology = $inputs['technology'];}
-    if (isset($inputs['estimated_start_date'])) {$project->estimated_start_date = $inputs['estimated_start_date'];}
-    if (isset($inputs['estimated_end_date'])) {$project->estimated_end_date = $inputs['estimated_end_date'];}
-    if (isset($inputs['LoE_onshore'])) {$project->LoE_onshore = $inputs['LoE_onshore'];}
-    if (isset($inputs['LoE_nearshore'])) {$project->LoE_nearshore = $inputs['LoE_nearshore'];}
-    if (isset($inputs['LoE_offshore'])) {$project->LoE_offshore = $inputs['LoE_offshore'];}
-    if (isset($inputs['LoE_contractor'])) {$project->LoE_contractor = $inputs['LoE_contractor'];}
-    if (isset($inputs['gold_order_number'])) {$project->gold_order_number = $inputs['gold_order_number'];}
-    if (isset($inputs['product_code'])) {$project->product_code = $inputs['product_code'];}
-    if (isset($inputs['revenue'])) {$project->revenue = $inputs['revenue'];}
-    if (isset($inputs['samba_consulting_product_tcv'])) {$project->samba_consulting_product_tcv = $inputs['samba_consulting_product_tcv'];}
-    if (isset($inputs['samba_pullthru_tcv'])) {$project->samba_pullthru_tcv = $inputs['samba_pullthru_tcv'];}
-    if (isset($inputs['project_status'])) {$project->project_status = $inputs['project_status'];}
-    if (isset($inputs['pullthru_samba_id'])) {$project->pullthru_samba_id = $inputs['pullthru_samba_id'];}
-    if (isset($inputs['samba_id'])) {$project->samba_id = $inputs['samba_id'];}
-    if (isset($inputs['samba_opportunit_owner'])) {$project->samba_opportunit_owner = $inputs['samba_opportunit_owner'];}
-    if (isset($inputs['samba_lead_domain'])) {$project->samba_lead_domain = $inputs['samba_lead_domain'];}
-    if (isset($inputs['project_subtype'])) {$project->project_subtype = $inputs['project_subtype'];}
-    if (isset($inputs['samba_stage'])) {$project->samba_stage = $inputs['samba_stage'];}
-    if (isset($inputs['win_ratio'])) {$project->win_ratio = $inputs['win_ratio'];}
-    if (isset($inputs['created_by_user_id'])) {$project->created_by_user_id = $inputs['created_by_user_id'];}
+    if (array_key_exists('project_type',$inputs)) {$project->project_type = $inputs['project_type'];}
+    if (array_key_exists('activity_type',$inputs)) {$project->activity_type = $inputs['activity_type'];}
+    if (array_key_exists('region',$inputs)) {$project->region = $inputs['region'];}
+    if (array_key_exists('country',$inputs)) {$project->country = $inputs['country'];}
+    if (array_key_exists('customer_location',$inputs)) {$project->customer_location = $inputs['customer_location'];}
+    if (array_key_exists('comments',$inputs)) {$project->comments = $inputs['comments'];}
+    if (array_key_exists('description',$inputs)) {$project->description = $inputs['description'];}
+    if (array_key_exists('technology',$inputs)) {$project->technology = $inputs['technology'];}
+    if (array_key_exists('estimated_start_date',$inputs)) {$project->estimated_start_date = $inputs['estimated_start_date'];}
+    if (array_key_exists('estimated_end_date',$inputs)) {$project->estimated_end_date = $inputs['estimated_end_date'];}
+    if (array_key_exists('LoE_onshore',$inputs)) {$project->LoE_onshore = $inputs['LoE_onshore'];}
+    if (array_key_exists('LoE_nearshore',$inputs)) {$project->LoE_nearshore = $inputs['LoE_nearshore'];}
+    if (array_key_exists('LoE_offshore',$inputs)) {$project->LoE_offshore = $inputs['LoE_offshore'];}
+    if (array_key_exists('LoE_contractor',$inputs)) {$project->LoE_contractor = $inputs['LoE_contractor'];}
+    if (array_key_exists('gold_order_number',$inputs)) {$project->gold_order_number = $inputs['gold_order_number'];}
+    if (array_key_exists('product_code',$inputs)) {$project->product_code = $inputs['product_code'];}
+    if (array_key_exists('revenue',$inputs)) {$project->revenue = $inputs['revenue'];}
+    if (array_key_exists('samba_consulting_product_tcv',$inputs)) {$project->samba_consulting_product_tcv = $inputs['samba_consulting_product_tcv'];}
+    if (array_key_exists('samba_pullthru_tcv',$inputs)) {$project->samba_pullthru_tcv = $inputs['samba_pullthru_tcv'];}
+    if (array_key_exists('project_status',$inputs)) {$project->project_status = $inputs['project_status'];}
+    if (array_key_exists('pullthru_samba_id',$inputs)) {$project->pullthru_samba_id = $inputs['pullthru_samba_id'];}
+    if (array_key_exists('samba_id',$inputs)) {$project->samba_id = $inputs['samba_id'];}
+    if (array_key_exists('samba_opportunit_owner',$inputs)) {$project->samba_opportunit_owner = $inputs['samba_opportunit_owner'];}
+    if (array_key_exists('samba_lead_domain',$inputs)) {$project->samba_lead_domain = $inputs['samba_lead_domain'];}
+    if (array_key_exists('project_subtype',$inputs)) {$project->project_subtype = $inputs['project_subtype'];}
+    if (array_key_exists('samba_stage',$inputs)) {$project->samba_stage = $inputs['samba_stage'];}
+    if (array_key_exists('win_ratio',$inputs)) {$project->win_ratio = $inputs['win_ratio'];}
+    if (array_key_exists('created_by_user_id',$inputs)) {$project->created_by_user_id = $inputs['created_by_user_id'];}
 
     // Boolean
-    if (isset($inputs['otl_validated'])) {$project->otl_validated = $inputs['otl_validated'];}
+    if (array_key_exists('otl_validated',$inputs)) {$project->otl_validated = $inputs['otl_validated'];}
 
     $project->save();
 
