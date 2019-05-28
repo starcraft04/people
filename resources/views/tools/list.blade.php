@@ -489,7 +489,7 @@
       },
       columns: [
         { name: 'uu.manager_id', data: 'manager_id' , searchable: false , visible: false},
-        { name: 'm.name', data: 'manager_name' , className: "dt-nowrap"},
+        { name: 'm.name', data: 'manager_name' , className: "dt-nowrap", visible: false},
         { name: 'temp_a.user_id', data: 'user_id' , searchable: false , visible: false},
         { name: 'u.name', data: 'user_name' , className: "dt-nowrap"},
         { name: 'u.domain', data: 'user_domain' , searchable: true, visible: false, className: "dt-nowrap"},
@@ -500,9 +500,9 @@
         { name: 'c.country_owner', data: 'customer_country_owner' , searchable: true , visible: false, className: "dt-nowrap"},
         { name: 'temp_a.project_id', data: 'project_id' , searchable: false , visible: false},
         { name: 'p.project_name', data: 'project_name', className: "dt-nowrap"},
-        { name: 'p.project_type', data: 'project_type', visible: false, className: "dt-nowrap"},
+        { name: 'p.project_type', data: 'project_type', visible: true, className: "dt-nowrap"},
         { name: 'p.activity_type', data: 'activity_type', visible: false, className: "dt-nowrap"},
-        { name: 'p.project_status', data: 'project_status' , visible: false, className: "dt-nowrap"},
+        { name: 'p.project_status', data: 'project_status' , visible: true, className: "dt-nowrap"},
         { name: 'temp_a.year', data: 'year' , searchable: false , visible: false, className: "dt-nowrap"},
         { data: function ( row, type, val, meta ) {
           if (row.jan_from_otl == 1){return row.jan_otl;}else{return row.jan_user;}
@@ -686,7 +686,7 @@
         { name: 'dec_otl', data: 'dec_otl', width: '10px', searchable: false , visible: false},
         { name: 'dec_from_otl', data: 'dec_from_otl', width: '10px', searchable: false , visible: false}
       ],
-      order: [[1, 'asc'],[3, 'asc'],[4, 'asc'],[6, 'asc']],
+      order: [[1, 'asc'],[3, 'asc'],[7, 'asc'],[12, 'asc']],
 
       lengthMenu: [
           [ 10, 25, 50, -1 ],
@@ -698,6 +698,19 @@
           extend: "colvis",
           className: "btn-sm",
           columns: [ 1, 3, 4, 5, 6,7,8,9, 11, 12, 13, 14, 15, 16, 20,24,28,32,36,40,44,48,52,56,60 ]
+        },
+        {
+          extend: 'collection',
+          className: "btn-sm",
+          text: 'Views',
+          buttons: [
+              {
+                text: 'Cluster',
+                extend: 'colvisGroup',
+                show: [ 3,4,7,8,11,12,14,16, 20,24,28,32,36,40,44,48,52,56,60 ],
+                hide: [ 1,2,5,6,9,10,13,15 ]
+              }
+          ]
         },
         {
           extend: "pageLength",
