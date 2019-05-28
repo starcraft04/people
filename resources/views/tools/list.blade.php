@@ -709,6 +709,37 @@
                 extend: 'colvisGroup',
                 show: [ 3,4,7,8,11,12,14,16, 20,24,28,32,36,40,44,48,52,56,60 ],
                 hide: [ 1,2,5,6,9,10,13,15 ]
+              },
+              {
+                text: 'Team member',
+                extend: 'colvisGroup',
+                show: [ 3,7,11,12,14,16, 20,24,28,32,36,40,44,48,52,56,60 ],
+                hide: [ 1,2,4,5,6,8,9,10,13,15 ]
+              }
+          ]
+        },
+        {
+          extend: 'collection',
+          className: "btn-sm",
+          text: 'Selection',
+          buttons: [
+              {
+                text: 'Security',
+                action: function ( e, dt, node, config ) {
+                  $('input', activitiesTable.column(4).footer()).val("Security");
+                  activitiesTable.column(4).search("Security").draw();
+                  activitiesTable.columns([ 3,4,7,8,11,12,14,16, 20,24,28,32,36,40,44,48,52,56,60 ]).visible(true);
+                  activitiesTable.columns([ 1,2,5,6,9,10,13,15 ]).visible(false);
+                }
+              },
+              {
+                text: 'APM',
+                action: function ( e, dt, node, config ) {
+                  $('input', activitiesTable.column(4).footer()).val("APM");
+                  activitiesTable.column(4).search("APM").draw();
+                  activitiesTable.columns([ 3,4,7,8,11,12,14,16, 20,24,28,32,36,40,44,48,52,56,60 ]).visible(true);
+                  activitiesTable.columns([ 1,2,5,6,9,10,13,15 ]).visible(false);
+                }
               }
           ]
         },
