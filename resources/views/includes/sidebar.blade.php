@@ -6,7 +6,7 @@
       <li><a><i class="fa fa-home"></i>DB Feed <span class="fa fa-chevron-down"></span></a>
         <ul class="nav child_menu">
           @permission(['otl-upload'])
-            <li><a href="{!!route('otluploadform')!!}">OTL upload</a></li>
+            <li><a href="{!!route('otluploadform')!!}">Prime upload</a></li>
           @endpermission
           @permission(['samba-upload'])
             <li><a href="{!!route('sambauploadform')!!}">Samba upload</a></li>
