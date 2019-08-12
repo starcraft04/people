@@ -355,7 +355,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="row">
+                  <div id="project_status_row" class="row">
                     <div class="form-group {!! $errors->has('project_status') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
                         {!! Form::label('project_status', 'Project status', ['class' => 'control-label']) !!}

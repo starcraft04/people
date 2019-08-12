@@ -137,6 +137,22 @@
               <th>Project type</th>
               <th>Activity type</th>
               <th>Project status</th>
+              <th>Prime code</th>
+              <th>Meta activity</th>
+              <th>Project subtype</th>
+              <th>Technology</th>
+              <th>Samba ID</th>
+              <th>Pullthru Samba ID</th>
+              <th>Order intake inc. CS</th>
+              <th>Consulting TCV</th>
+              <th>Pullthru TCV</th>
+              <th>Samba Owner</th>
+              <th>Samba lead domain</th>
+              <th>Samba stage</th>
+              <th>Start date</th>
+              <th>End date</th>
+              <th>Gold order</th>
+              <th>Win ratio (%)</th>
               <th>Year</th>
               <th>Jan</th>
               <th>Jan user</th>
@@ -190,6 +206,22 @@
           </thead>
           <tfoot>
             <tr>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
               <th></th>
               <th></th>
               <th></th>
@@ -503,6 +535,22 @@
         { name: 'p.project_type', data: 'project_type', visible: true, className: "dt-nowrap"},
         { name: 'p.activity_type', data: 'activity_type', visible: false, className: "dt-nowrap"},
         { name: 'p.project_status', data: 'project_status' , visible: true, className: "dt-nowrap"},
+        { name: 'p.otl_project_code', data: 'otl_project_code' , searchable: true , visible: false, className: "dt-nowrap"},
+        { name: 'p.meta_activity', data: 'meta_activity' , searchable: true , visible: false, className: "dt-nowrap"},
+        { name: 'p.project_subtype', data: 'project_subtype' , searchable: true , visible: false, className: "dt-nowrap"},
+        { name: 'p.technology', data: 'technology' , searchable: true , visible: false, className: "dt-nowrap"},
+        { name: 'p.samba_id', data: 'samba_id' , searchable: true , visible: false, className: "dt-nowrap"},
+        { name: 'p.pullthru_samba_id', data: 'pullthru_samba_id' , searchable: true , visible: false, className: "dt-nowrap"},
+        { name: 'p.revenue', data: 'project_revenue' , searchable: true , visible: false, className: "dt-nowrap"},
+        { name: 'p.samba_consulting_product_tcv', data: 'samba_consulting_product_tcv' , searchable: true , visible: false, className: "dt-nowrap"},
+        { name: 'p.samba_pullthru_tcv', data: 'samba_pullthru_tcv' , searchable: true , visible: false, className: "dt-nowrap"},
+        { name: 'p.samba_opportunit_owner', data: 'samba_opportunit_owner' , searchable: true , visible: false, className: "dt-nowrap"},
+        { name: 'p.samba_lead_domain', data: 'samba_lead_domain' , searchable: true , visible: false, className: "dt-nowrap"},
+        { name: 'p.samba_stage', data: 'samba_stage' , searchable: true , visible: false, className: "dt-nowrap"},
+        { name: 'p.estimated_start_date', data: 'estimated_start_date' , searchable: true , visible: false, className: "dt-nowrap"},
+        { name: 'p.estimated_end_date', data: 'estimated_end_date' , searchable: true , visible: false, className: "dt-nowrap"},
+        { name: 'p.gold_order_number', data: 'gold_order_number' , searchable: true , visible: false, className: "dt-nowrap"},
+        { name: 'p.win_ratio', data: 'win_ratio' , searchable: true , visible: false, className: "dt-nowrap"},
         { name: 'temp_a.year', data: 'year' , searchable: false , visible: false, className: "dt-nowrap"},
         { data: function ( row, type, val, meta ) {
           if (row.jan_from_otl == 1){return row.jan_otl;}else{return row.jan_user;}
@@ -697,7 +745,8 @@
         {
           extend: "colvis",
           className: "btn-sm",
-          columns: [ 1, 3, 4, 5, 6,7,8,9, 11, 12, 13, 14, 15, 16, 20,24,28,32,36,40,44,48,52,56,60 ]
+          collectionLayout: "fixed three-column",
+          columns: [ 1, 3, 4, 5, 6,7,8,9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,32,36,40,44,48,52,56,60,64,68,72,76 ]
         },
         {
           extend: 'collection',
@@ -707,14 +756,14 @@
               {
                 text: 'Cluster',
                 extend: 'colvisGroup',
-                show: [ 3,4,7,8,11,12,14,16, 20,24,28,32,36,40,44,48,52,56,60 ],
-                hide: [ 1,2,5,6,9,10,13,15 ]
+                show: [ 3,4,7,8,11,12,14,32,36,40,44,48,52,56,60,64,68,72,76 ],
+                hide: [ 1,5,6,9,10,13,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31 ]
               },
               {
                 text: 'Team member',
                 extend: 'colvisGroup',
-                show: [ 3,7,11,12,14,16, 20,24,28,32,36,40,44,48,52,56,60 ],
-                hide: [ 1,2,4,5,6,8,9,10,13,15 ]
+                show: [ 3,7,11,12,14,32,36,40,44,48,52,56,60,64,68,72,76 ],
+                hide: [ 1,4,5,6,8,9,10,13,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31 ]
               }
           ]
         },
@@ -728,8 +777,17 @@
                 action: function ( e, dt, node, config ) {
                   $('input', activitiesTable.column(4).footer()).val("Security");
                   activitiesTable.column(4).search("Security").draw();
-                  activitiesTable.columns([ 3,4,7,8,11,12,14,16, 20,24,28,32,36,40,44,48,52,56,60 ]).visible(true);
-                  activitiesTable.columns([ 1,2,5,6,9,10,13,15 ]).visible(false);
+                  activitiesTable.columns([ 3,4,7,8,11,12,14,32,36,40,44,48,52,56,60,64,68,72,76 ]).visible(true);
+                  activitiesTable.columns([ 1,5,6,9,10,13,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31 ]).visible(false);
+                }
+              },
+              {
+                text: 'PullThru',
+                action: function ( e, dt, node, config ) {
+                  $('input', activitiesTable.column(12).footer()).val("Pre-sales");
+                  activitiesTable.column(12).search("Pre-sales").draw();
+                  activitiesTable.columns([ 3,7,9,11,13,16,18,19,20,23,24,26,27,30 ]).visible(true);
+                  activitiesTable.columns([ 1,4,5,6,8,10,12,14,15,17,21,22,25,28,29,31,32,36,40,44,48,52,56,60,64,68,72,76 ]).visible(false);
                 }
               },
               {
@@ -737,8 +795,8 @@
                 action: function ( e, dt, node, config ) {
                   $('input', activitiesTable.column(4).footer()).val("APM");
                   activitiesTable.column(4).search("APM").draw();
-                  activitiesTable.columns([ 3,4,7,8,11,12,14,16, 20,24,28,32,36,40,44,48,52,56,60 ]).visible(true);
-                  activitiesTable.columns([ 1,2,5,6,9,10,13,15 ]).visible(false);
+                  activitiesTable.columns([ 3,4,7,8,11,12,14,32,36,40,44,48,52,56,60,64,68,72,76 ]).visible(true);
+                  activitiesTable.columns([ 1,5,6,9,10,13,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31 ]).visible(false);
                 }
               }
           ]
