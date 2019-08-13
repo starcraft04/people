@@ -53,7 +53,7 @@
               </div>
               <div class="col-md-3">
                 Download 
-                <a href="{{ asset('/Samples/samba_upload_sample.xlsx') }}" style="text-decoration: underline;">this file</a> to get the structure needed.
+                <a href="{{ asset('/Samples/samba_upload_sample.xls') }}" style="text-decoration: underline;">this file</a> to get the structure needed.
               </div>
               <div class="col-md-5"><input name="create_in_db" type="checkbox" id="create_in_db" class="form-group js-switch-small" /> Create new record in DB if no Samba ID found</div>
             </div>
@@ -124,6 +124,7 @@
         <table id="projects_table" class="table table-striped table-hover table-bordered mytable" width="100%">
           <thead>
             <tr>
+              <th>Cluster</th>
               <th>Samba lead domain</th>
               <th>Customer (samba)</th>
               <th>Customer (Dolphin)</th>
@@ -141,6 +142,7 @@
           <tbody>
           @foreach($messages_only_errors as $key => $project)
             <tr class="item">
+              <td>{!! $project['owners_sales_cluster'] !!}</td>
               <td>{!! $project['opportunity_domain'] !!}</td>
               <td>{!! $project['account_name'] !!}</td>
               <td>
@@ -183,7 +185,7 @@
 <!-- Window -->
 
 <!-- Window -->
-@if (isset($messages))
+@if (isset($messages) && !isset($create_records))
 <div class="row">
   <div class="col-md-12 col-sm-12 col-xs-12">
     <div class="x_panel">

@@ -53,7 +53,7 @@ class ProjectRepository
   }
   public function getBySambaID($samba_id)
 	{
-		return $this->project->where('samba_id', $samba_id)->get();
+		return $this->project->where('samba_id', $samba_id)->where('project_type', 'Pre-sales')->get();
 	}
   public function create(Array $inputs)
   {

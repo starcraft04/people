@@ -786,8 +786,8 @@
                 action: function ( e, dt, node, config ) {
                   $('input', activitiesTable.column(12).footer()).val("Pre-sales");
                   activitiesTable.column(12).search("Pre-sales").draw();
-                  activitiesTable.columns([ 3,7,9,11,13,16,18,19,20,23,24,26,27,30 ]).visible(true);
-                  activitiesTable.columns([ 1,4,5,6,8,10,12,14,15,17,21,22,25,28,29,31,32,36,40,44,48,52,56,60,64,68,72,76 ]).visible(false);
+                  activitiesTable.columns([ 3,7,9,11,13,16,17,18,19,20,23,24,26,27,30 ]).visible(true);
+                  activitiesTable.columns([ 1,4,5,6,8,10,12,14,15,21,22,25,28,29,31,32,36,40,44,48,52,56,60,64,68,72,76 ]).visible(false);
                 }
               },
               {

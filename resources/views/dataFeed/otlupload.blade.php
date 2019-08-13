@@ -44,7 +44,7 @@
 <!-- Page title -->
 <div class="page-title">
   <div class="title_left">
-    <h3>OTL upload</h3>
+    <h3>Prime upload</h3>
   </div>
 </div>
 <div class="clearfix"></div>
@@ -85,7 +85,7 @@
           <div class="row">
             <div class="form-group {!! $errors->has('uploadfile') ? 'has-error' : '' !!} col-md-12">
               <div class="col-md-2">
-                {!! Form::label('uploadfile', 'OTL excel file', ['class' => 'control-label']) !!}
+                {!! Form::label('uploadfile', 'Prime excel file', ['class' => 'control-label']) !!}
               </div>
               <div class="col-md-10">
                 {!! Form::file('uploadfile', ['class' => 'form-control']) !!}

@@ -27,7 +27,6 @@ class SambaUploadController extends Controller
 
   public function postForm(SambaUploadRequest $request)
   {
-    $create_records = FALSE;
     $color = [
       'error' => 'text-danger',
       'info' => 'text-info',
@@ -62,13 +61,25 @@ class SambaUploadController extends Controller
 
       // Now we need to check we have the right columns
       $headerRow = $sheet->first()->keys()->toArray();
-      $columns_needed = ["opportunity_domain","account_name","public_opportunity_id","opportunity_name","opportunity_owner","created_date","close_date","stage","probability","amount_tcv"];
+      $columns_needed = [
+        "owners_sales_cluster",
+        "opportunity_domain",
+        "account_name",
+        "opportunity_name",
+        "public_opportunity_id",
+        "opportunity_owner",
+        "created_date",
+        "close_date",
+        "stage",
+        "probability",
+        "amount_tcv_converted_currency",
+        "amount_tcv_converted"];
 
       //print_r($headerRow);echo "</BR>";print_r($columns_needed);die();
       //dd($headerRow);
 
       // If the columns are not all present then we have an error and go back
-      if (array_intersect($headerRow,$columns_needed) != $columns_needed) {
+      if (count(array_intersect($headerRow,$columns_needed)) != count($columns_needed)) {
         array_push($messages,['status'=>'error','msg'=>'Some columns are required but not present in the file, please see the sample file and upload again.']);
         $messages_only_errors = $messages;
         return view('dataFeed/sambaupload',  compact('messages_only_errors','messages','color'));
@@ -83,6 +94,7 @@ class SambaUploadController extends Controller
 
       // $i corresponds to the line in the excel file and because the column title is on line 1, we start with $i = 2
       $i = 2;
+      $ids = [];
       foreach ($result as $row){
         // Each row will be as follow:
         /* array:10 [▼
@@ -95,7 +107,13 @@ class SambaUploadController extends Controller
         "close_date" => "12/31/2019"
         "stage" => "1 Pre-qualification"
         "probability" => 0.0
-        "amount_tcv" => 1000000.0 */
+        ... */
+
+        if ($row['public_opportunity_id'] == "" or in_array($row['public_opportunity_id'],$ids)) {
+          continue;
+        }
+
+        array_push($ids,$row['public_opportunity_id']);
 
         array_push($messages,['status'=>'info','msg'=>'---BEGIN LINE '.$i]);
         $projectInDB = $this->projectRepository->getBySambaID($row['public_opportunity_id']);
@@ -117,7 +135,8 @@ class SambaUploadController extends Controller
           $win_ratio = intval($row['probability']*100);
 
           array_push($messages,['status'=>'error',
-              'msg'=>'LINE '.$i.': '.' <b>Customer</b>: <u>'.$row['account_name'].'</u> / <b>Opportunity</b>: <u>'.$row['opportunity_name'].'</u> / <b>Samba ID</b>: <u>'.$row['public_opportunity_id'].'</u>'.' -> this Samba ID is not found in the DB.',
+              'msg'=>'LINE '.$i.': '.' <b>Customer</b>: <u>'.$row['account_name'].'</u> / <b>Opportunity</b>: <u>'.$row['opportunity_name'].'</u> / <b>Samba ID</b>: <u>'.$row['public_opportunity_id'].'</u>'.' -> this Samba ID is not found in the DB or it is associated to a project that is not a project type set as Pre-sales.',
+              'owners_sales_cluster' => $row['owners_sales_cluster'],
               'opportunity_domain' => $row['opportunity_domain'],
               'account_name' => $row['account_name'],
               'public_opportunity_id' => $row['public_opportunity_id'],
@@ -127,7 +146,7 @@ class SambaUploadController extends Controller
               'close_date' => $close_date,
               'stage' => $row['stage'],
               'probability' => $win_ratio,
-              'amount_tcv' => $row['amount_tcv'],
+              'amount_tcv' => $row['amount_tcv_converted'],
               ]);
           $i += 1;
           continue;
@@ -159,7 +178,7 @@ class SambaUploadController extends Controller
 
           $project->samba_stage = $row['stage'];
           $project->win_ratio = intval($row['probability']*100);
-          $project->revenue = $row['amount_tcv'];
+          $project->revenue = $row['amount_tcv_converted'];
           $project->save();
         }
         // END check project
