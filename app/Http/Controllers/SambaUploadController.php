@@ -132,7 +132,7 @@ class SambaUploadController extends Controller
             $close_date = $myDateTime->format('Y-m-d');
           }
 
-          $win_ratio = intval($row['probability']*100);
+          $win_ratio = intval($row['probability']);
 
           array_push($messages,['status'=>'error',
               'msg'=>'LINE '.$i.': '.' <b>Customer</b>: <u>'.$row['account_name'].'</u> / <b>Opportunity</b>: <u>'.$row['opportunity_name'].'</u> / <b>Samba ID</b>: <u>'.$row['public_opportunity_id'].'</u>'.' -> this Samba ID is not found in the DB or it is associated to a project that is not a project type set as Pre-sales.',
