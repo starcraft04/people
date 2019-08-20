@@ -133,7 +133,7 @@ class SambaUploadController extends Controller
           }
 
           $win_ratio = intval($row['probability']);
-
+          //dd($win_ratio);
           array_push($messages,['status'=>'error',
               'msg'=>'LINE '.$i.': '.' <b>Customer</b>: <u>'.$row['account_name'].'</u> / <b>Opportunity</b>: <u>'.$row['opportunity_name'].'</u> / <b>Samba ID</b>: <u>'.$row['public_opportunity_id'].'</u>'.' -> this Samba ID is not found in the DB or it is associated to a project that is not a project type set as Pre-sales.',
               'owners_sales_cluster' => $row['owners_sales_cluster'],
@@ -177,7 +177,7 @@ class SambaUploadController extends Controller
           }
 
           $project->samba_stage = $row['stage'];
-          $project->win_ratio = intval($row['probability']*100);
+          $project->win_ratio = intval($row['probability']);
           $project->revenue = $row['amount_tcv_converted'];
           $project->save();
         }
