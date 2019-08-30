@@ -53,7 +53,7 @@
               </div>
               <div class="col-md-3">
                 Download 
-                <a href="{{ asset('/Samples/samba_upload_sample.xls') }}" style="text-decoration: underline;">this file</a> to get the structure needed.
+                <a href="{{ asset('/Samples/samba_upload_sample.csv') }}" style="text-decoration: underline;">this file</a> to get the structure needed.
               </div>
               <div class="col-md-5"><input name="create_in_db" type="checkbox" id="create_in_db" class="form-group js-switch-small" /> Create new record in DB if no Samba ID found</div>
             </div>
@@ -137,41 +137,45 @@
               <th>Samba stage</th>
               <th>Win ratio (%)</th>
               <th>Order Intake (€)</th>
+              <th>Consulting (€)</th>
             </tr>
           </thead>
           <tbody>
-          @foreach($messages_only_errors as $key => $project)
-            <tr class="item">
-              <td>{!! $project['owners_sales_cluster'] !!}</td>
-              <td>{!! $project['opportunity_domain'] !!}</td>
-              <td>{!! $project['account_name'] !!}</td>
-              <td>
-                <select class="customers select2" style="width: 100%;" data-placeholder="Select a customer name">
-                  @foreach($customers_list as $key => $value)
-                  <option value="{{ $key }}" @if ($value == $project['account_name']) selected @endif>
-                    {{ $value }}
-                  </option>
-                  @endforeach
-                </select>
-              </td>
-              <td><div contenteditable>{!! $project['opportunity_name'] !!}</div></td>
-              <td style="width: 200px;">
-                <select class="users select2" style="width: 100%;" data-placeholder="Select a user name">
-                  @foreach($users_select as $key => $value)
-                  <option value="{{ $key }}">
-                    {{ $value }}
-                  </option>
-                  @endforeach
-                </select>
-              </td>
-              <td>{!! $project['public_opportunity_id'] !!}</td>
-              <td>{!! $project['opportunity_owner'] !!}</td>
-              <td>{!! $project['created_date'] !!}</td>
-              <td>{!! $project['close_date'] !!}</td>
-              <td>{!! $project['stage'] !!}</td>
-              <td>{!! $project['probability'] !!}</td>
-              <td>{!! $project['amount_tcv'] !!}</td>
-            </tr>
+          @foreach($ids as $key => $project)
+            @if(!$project['in_db'])
+              <tr class="item">
+                <td>{!! $project['owners_sales_cluster'] !!}</td>
+                <td>{!! $project['opportunity_domain'] !!}</td>
+                <td>{!! $project['account_name'] !!}</td>
+                <td>
+                  <select class="customers select2" style="width: 100%;" data-placeholder="Select a customer name">
+                    @foreach($customers_list as $key => $value)
+                    <option value="{{ $key }}" @if ($value == $project['account_name']) selected @endif>
+                      {{ $value }}
+                    </option>
+                    @endforeach
+                  </select>
+                </td>
+                <td><div contenteditable>{!! $project['opportunity_name'] !!}</div></td>
+                <td style="width: 200px;">
+                  <select class="users select2" style="width: 100%;" data-placeholder="Select a user name">
+                    @foreach($users_select as $key => $value)
+                    <option value="{{ $key }}">
+                      {{ $value }}
+                    </option>
+                    @endforeach
+                  </select>
+                </td>
+                <td>{!! $project['public_opportunity_id'] !!}</td>
+                <td>{!! $project['opportunity_owner'] !!}</td>
+                <td>{!! $project['created_date'] !!}</td>
+                <td>{!! $project['close_date'] !!}</td>
+                <td>{!! $project['stage'] !!}</td>
+                <td>{!! $project['probability'] !!}</td>
+                <td>{!! $project['amount_tcv'] !!}</td>
+                <td>{!! $project['consulting_tcv'] !!}</td>
+              </tr>
+            @endif
           @endforeach
           </tbody>
         </table>
@@ -235,6 +239,7 @@
     var switchery = new Switchery(small, { size: 'small' });
 
     var year;
+    var cluster;
     var samba_lead_domain;
     var customer_samba;
     var customer_dolphin;
@@ -242,11 +247,12 @@
     var assigned_user;
     var samba_id;
     var opportunity_owner;
-    var creat_date;
+    var create_date;
     var close_date;
     var samba_stage;
     var win_ratio;
     var order_intake;
+    var consulting_tcv;
     var array_of_data = [];
 
     @if (isset($create_records) && $create_records)
@@ -272,24 +278,26 @@
         $("#create_project_button").click(function() {
           year = $("#year option:selected").val();
           $("#projects_table tr.item").each(function() {
-            samba_lead_domain = $(this).find('td:eq(0)').text();
-            customer_samba = $(this).find('td:eq(1)').text();
-            customer_dolphin = $(this).find('td:eq(2) option:selected').val();
-            project_name = $(this).find('td:eq(3)').text();
-            assigned_user = $(this).find('td:eq(4) option:selected').val();
-            samba_id = $(this).find('td:eq(5)').text();
-            opportunity_owner = $(this).find('td:eq(6)').text();
-            creat_date = $(this).find('td:eq(7)').text();
-            close_date = $(this).find('td:eq(8)').text();
-            samba_stage = $(this).find('td:eq(9)').text();
-            win_ratio = $(this).find('td:eq(10)').text();
-            order_intake = $(this).find('td:eq(11)').text();
-            
+            cluster = $(this).find('td:eq(0)').text();
+            samba_lead_domain = $(this).find('td:eq(1)').text();
+            customer_samba = $(this).find('td:eq(2)').text();
+            customer_dolphin = $(this).find('td:eq(3) option:selected').val();
+            project_name = $(this).find('td:eq(4)').text();
+            assigned_user = $(this).find('td:eq(5) option:selected').val();
+            samba_id = $(this).find('td:eq(6)').text();
+            opportunity_owner = $(this).find('td:eq(7)').text();
+            create_date = $(this).find('td:eq(8)').text();
+            close_date = $(this).find('td:eq(9)').text();
+            samba_stage = $(this).find('td:eq(10)').text();
+            win_ratio = $(this).find('td:eq(11)').text();
+            order_intake = $(this).find('td:eq(12)').text();
+            consulting_tcv = $(this).find('td:eq(13)').text();
+            console.log(customer_dolphin);
             if (customer_dolphin != '' && assigned_user != null) {
               array_of_data.push({'samba_lead_domain':samba_lead_domain,'customer_samba':customer_samba,'customer_dolphin':customer_dolphin,
                 'project_name':project_name,'assigned_user':assigned_user,'samba_id':samba_id,
-                'order_intake':order_intake,'opportunity_owner':opportunity_owner,'creat_date':creat_date,
-                'close_date':close_date,'samba_stage':samba_stage,'win_ratio':win_ratio});
+                'order_intake':order_intake,'opportunity_owner':opportunity_owner,'create_date':create_date,
+                'close_date':close_date,'samba_stage':samba_stage,'win_ratio':win_ratio,'consulting_tcv':consulting_tcv});
             }
           });
 
@@ -298,7 +306,7 @@
             "year":year
           };
 
-          //console.log(parameters);
+          console.log(parameters);
 
           $.ajax({
             type: 'post',

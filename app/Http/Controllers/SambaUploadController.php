@@ -55,7 +55,11 @@ class SambaUploadController extends Controller
     {
       $filename = $file->getClientOriginalName();
       $fileextension = $file->getClientOriginalExtension();
-
+      if ($fileextension != 'csv') {
+        array_push($messages,['status'=>'error','msg'=>'The only extension authorized is CSV']);
+        $messages_only_errors = $messages;
+        return view('dataFeed/sambaupload',  compact('messages_only_errors','messages','color'));
+      }
       $sheet = \Excel::selectSheetsByIndex(0)
       ->load($file);
 
@@ -89,100 +93,116 @@ class SambaUploadController extends Controller
       //$sheet->dd();
 
       $result = $sheet->toArray();
+      //dd($result);
+      // First we need to modify the dates so that they will be understandable by MySQL
+      foreach ($result as &$row){
+        $myDateTime = DateTime::createFromFormat('m/d/Y', $row['created_date']);
+        if (is_object($myDateTime)) {
+          $row['created_date'] = $myDateTime->format('Y-m-d');
+
+        }
+
+        $myDateTime = DateTime::createFromFormat('m/d/Y', $row['close_date']);
+        if (is_object($myDateTime)) {
+          $row['close_date'] = $myDateTime->format('Y-m-d');
+        }
+
+        $row['probability'] = intval($row['probability']);
+      }
+
+      unset($row);
 
       //dd($result);
 
       // $i corresponds to the line in the excel file and because the column title is on line 1, we start with $i = 2
       $i = 2;
-      $ids = [];
-      foreach ($result as $row){
-        // Each row will be as follow:
-        /* array:10 [▼
-        "opportunity_domain" => "Security"
-        "account_name" => "xxx"
-        "public_opportunity_id" => "1111111"
-        "opportunity_name" => "xxx"
-        "opportunity_owner" => "xxx"
-        "created_date" => "6/29/2018"
-        "close_date" => "12/31/2019"
-        "stage" => "1 Pre-qualification"
-        "probability" => 0.0
-        ... */
 
-        if ($row['public_opportunity_id'] == "" or in_array($row['public_opportunity_id'],$ids)) {
+      $ids = [];
+
+      foreach ($result as $row){
+        // First we check if the Samba opp id is empty and if yes, we don't need to execute the script for this line
+        if ($row['public_opportunity_id'] == "") {
           continue;
         }
 
-        array_push($ids,$row['public_opportunity_id']);
-
-        array_push($messages,['status'=>'info','msg'=>'---BEGIN LINE '.$i]);
         $projectInDB = $this->projectRepository->getBySambaID($row['public_opportunity_id']);
 
         //dd(count($projectInDB));
 
         // Checking if the project is in DB
         if (count($projectInDB) < 1){
-          $myDateTime = DateTime::createFromFormat('m/d/Y', $row['created_date']);
-          if (is_object($myDateTime)) {
-            $created_date = $myDateTime->format('Y-m-d');
-          }
-
-          $myDateTime = DateTime::createFromFormat('m/d/Y', $row['close_date']);
-          if (is_object($myDateTime)) {
-            $close_date = $myDateTime->format('Y-m-d');
-          }
-
-          $win_ratio = intval($row['probability']);
-          //dd($win_ratio);
+          // Samba ID not found in DB
           array_push($messages,['status'=>'error',
-              'msg'=>'LINE '.$i.': '.' <b>Customer</b>: <u>'.$row['account_name'].'</u> / <b>Opportunity</b>: <u>'.$row['opportunity_name'].'</u> / <b>Samba ID</b>: <u>'.$row['public_opportunity_id'].'</u>'.' -> this Samba ID is not found in the DB or it is associated to a project that is not a project type set as Pre-sales.',
-              'owners_sales_cluster' => $row['owners_sales_cluster'],
-              'opportunity_domain' => $row['opportunity_domain'],
-              'account_name' => $row['account_name'],
-              'public_opportunity_id' => $row['public_opportunity_id'],
-              'opportunity_name' => $row['opportunity_name'],
-              'opportunity_owner' => $row['opportunity_owner'],
-              'created_date' => $created_date,
-              'close_date' => $close_date,
-              'stage' => $row['stage'],
-              'probability' => $win_ratio,
-              'amount_tcv' => $row['amount_tcv_converted'],
-              ]);
-          $i += 1;
-          continue;
+          'msg'=>'LINE '.$i.': '.' <b>Customer</b>: <u>'.$row['account_name'].'</u> / <b>Opportunity</b>: <u>'.$row['opportunity_name'].'</u> / <b>Samba ID</b>: <u>'.$row['public_opportunity_id'].'</u>'.' -> this Samba ID is not found in the DB or it is associated to a project that is not a project type set as Pre-sales.'
+          ]);
+          $in_db = False;
+
+        } else {
+          // Samba ID found in DB
+          array_push($messages,['status'=>'info',
+          'msg'=>'LINE '.$i.': Found '.count($projectInDB).' instance of Samba ID:'.$row['public_opportunity_id']]);
+          $in_db = True;
         }
-
-        array_push($messages,['status'=>'info','msg'=>'LINE '.$i.': Found '.count($projectInDB).' instance of Samba ID:'.$row['public_opportunity_id']]);
-
-        // Now we need to go through all the projects that have this samba id and update them with the new information
-        foreach ($projectInDB as $key => $project) {
-          $customer = $project->customer()->first();
-          //dd($row['probability']);
-          array_push($messages,['status'=>'update',
-          'msg'=>'LINE '.$i.': '.
-              ' <b>Customer</b>: <u>'.$customer->name.'</u> / <b>Opportunity</b>: <u>'.$project->project_name.'</u> / <b>Samba ID</b>: <u>'.$row['public_opportunity_id'].'</u>'.' -> project updated in the DB.']);
-          $project->samba_lead_domain = $row['opportunity_domain'];
-          $project->samba_opportunit_owner = $row['opportunity_owner'];
-
-          $myDateTime = DateTime::createFromFormat('m/d/Y', $row['created_date']);
-          if (is_object($myDateTime)) {
-            $created_date = $myDateTime->format('Y-m-d');
-            $project->estimated_start_date = $created_date;
-          }
-
-          $myDateTime = DateTime::createFromFormat('m/d/Y', $row['close_date']);
-          if (is_object($myDateTime)) {
-            $close_date = $myDateTime->format('Y-m-d');
-            $project->estimated_end_date = $close_date;
-          }
-
-          $project->samba_stage = $row['stage'];
-          $project->win_ratio = intval($row['probability']);
-          $project->revenue = $row['amount_tcv_converted'];
-          $project->save();
-        }
-        // END check project
         $i += 1;
+
+        // Now we need to check if this is consulting revenue or not
+        if (isset($row['product_tcv_converted']) && isset($row['product_name'])) {
+          if( strpos( $row['product_name'], 'Consulting' ) !== false || strpos( $row['product_name'], 'consulting' ) !== false) {
+            $consulting_tcv = $row['product_tcv_converted'];
+          } else {
+            $consulting_tcv = 0;
+          }
+        } else {
+          $consulting_tcv = NULL;
+        }
+        
+        if (in_array($row['public_opportunity_id'],array_column($ids, 'public_opportunity_id'))) {
+          $key = array_search($row['public_opportunity_id'], array_column($ids, 'public_opportunity_id'));
+          if ($consulting_tcv != NULL) {
+            $ids[$key]['consulting_tcv'] = $ids[$key]['consulting_tcv'] + $consulting_tcv;
+          }
+          continue;
+        } else {
+          array_push($ids,[
+            'owners_sales_cluster' => $row['owners_sales_cluster'],
+            'opportunity_domain' => $row['opportunity_domain'],
+            'account_name' => $row['account_name'],
+            'public_opportunity_id' => $row['public_opportunity_id'],
+            'opportunity_name' => $row['opportunity_name'],
+            'opportunity_owner' => $row['opportunity_owner'],
+            'created_date' => $row['created_date'],
+            'close_date' => $row['close_date'],
+            'stage' => $row['stage'],
+            'probability' => $row['probability'],
+            'amount_tcv' => $row['amount_tcv_converted'],
+            'consulting_tcv' => $consulting_tcv,
+            'in_db' => $in_db
+          ]);
+        }
+      }
+      //dd($ids);
+      foreach ($ids as $row) {
+        if ($row['in_db']) {
+          $projectInDB = $this->projectRepository->getBySambaID($row['public_opportunity_id']);
+          foreach ($projectInDB as $key => $project) {
+            $customer = $project->customer()->first();
+            //dd($row['probability']);
+            array_push($messages,['status'=>'update',
+            'msg'=>'LINE '.$i.': '.
+                ' <b>Customer</b>: <u>'.$customer->name.'</u> / <b>Opportunity</b>: <u>'.$project->project_name.'</u> / <b>Samba ID</b>: <u>'.$row['public_opportunity_id'].'</u>'.' -> project updated in the DB.']);
+            $project->samba_lead_domain = $row['opportunity_domain'];
+            $project->samba_opportunit_owner = $row['opportunity_owner'];
+            $project->samba_stage = $row['stage'];
+            $project->win_ratio = intval($row['probability']);
+            $project->revenue = $row['amount_tcv'];
+            $project->estimated_start_date = $row['created_date'];
+            $project->estimated_end_date = $row['close_date'];
+            if ($row['consulting_tcv'] != NULL) {
+              $project->samba_consulting_product_tcv = $row['consulting_tcv'];
+            }
+            $project->save();
+          }
+        }
       }
     }
     
@@ -200,7 +220,7 @@ class SambaUploadController extends Controller
     $customers_list = Customer::orderBy('name')->lists('name','id');
     $customers_list->prepend('', '');
 
-    return view('dataFeed/sambaupload',  compact('messages_only_errors','messages','color','create_records','customers_list','users_select'));
+    return view('dataFeed/sambaupload',  compact('messages_only_errors','messages','color','create_records','customers_list','users_select','ids'));
   }
 
   public function postFormCreate(Request $request)
@@ -237,6 +257,9 @@ class SambaUploadController extends Controller
 
     // Now we will loop through the datas
     // First we need to check if the projects already exists
+
+    //dd($datas);
+
     foreach ($datas as $key => $data) {
       // Let's assign the right column names
       $project_inputs = [];
@@ -245,8 +268,11 @@ class SambaUploadController extends Controller
       $project_inputs['project_name'] = trim($data->project_name);
       $project_inputs['samba_id'] = trim($data->samba_id);
       $project_inputs['revenue'] = $data->order_intake;
+      if ($data->consulting_tcv != "") {
+        $project_inputs['samba_consulting_product_tcv'] = $data->consulting_tcv;
+      }
       $project_inputs['samba_opportunit_owner'] = trim($data->opportunity_owner);
-      $project_inputs['estimated_start_date'] = $data->creat_date;
+      $project_inputs['estimated_start_date'] = $data->create_date;
       $project_inputs['estimated_end_date'] = $data->close_date;
       $project_inputs['samba_stage'] = trim($data->samba_stage);
       $project_inputs['win_ratio'] = $data->win_ratio;
@@ -261,6 +287,9 @@ class SambaUploadController extends Controller
         $project_inputs_update['samba_lead_domain'] = $project_inputs['samba_lead_domain'];
         $project_inputs_update['samba_id'] = $project_inputs['samba_id'];
         $project_inputs_update['revenue'] = $project_inputs['revenue'];
+        if ($data->consulting_tcv != "") {
+          $project_inputs_update['samba_consulting_product_tcv'] = $project_inputs['samba_consulting_product_tcv'];
+        }
         $project_inputs_update['samba_opportunit_owner'] = $project_inputs['samba_opportunit_owner'];
         $project_inputs_update['estimated_start_date'] = $project_inputs['estimated_start_date'];
         $project_inputs_update['estimated_end_date'] = $project_inputs['estimated_end_date'];
