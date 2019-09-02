@@ -220,7 +220,9 @@ class SambaUploadController extends Controller
     $customers_list = Customer::orderBy('name')->lists('name','id');
     $customers_list->prepend('', '');
 
-    return view('dataFeed/sambaupload',  compact('messages_only_errors','messages','color','create_records','customers_list','users_select','ids'));
+    $table_height = Auth::user()->table_height;
+
+    return view('dataFeed/sambaupload',  compact('messages_only_errors','messages','color','create_records','customers_list','users_select','ids','table_height'));
   }
 
   public function postFormCreate(Request $request)

@@ -7,10 +7,35 @@
 <!-- Select2 -->
 <link href="{{ asset('/plugins/select2/select2.min.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('/css/forms.css') }}" rel="stylesheet" />
+<!-- DataTables -->
+<link href="{{ asset('/plugins/gentelella/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ asset('/plugins/gentelella/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ asset('/plugins/gentelella/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ asset('/plugins/gentelella/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css') }}" rel="stylesheet">
+
+  <link rel="stylesheet" href="{{ asset('/css/datatables.css') }}">
 @stop
 
 @section('scriptsrc')
 <!-- JS -->
+<!-- DataTables -->
+<script src="{{ asset('/plugins/gentelella/vendors/datatables.net/js/jquery.dataTables.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/gentelella/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/dataTables.buttons.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/buttons.colVis.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/buttons.flash.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/buttons.html5.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons/js/buttons.print.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/gentelella/vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/gentelella/vendors/datatables.net-keytable/js/dataTables.keyTable.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/gentelella/vendors/datatables.net-responsive/js/dataTables.responsive.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/gentelella/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/gentelella/vendors/datatables.net-scroller/js/dataTables.scroller.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/gentelella/vendors/jszip/dist/jszip.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/gentelella/vendors/pdfmake/build/pdfmake.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/gentelella/vendors/pdfmake/build/vfs_fonts.js') }}" type="text/javascript"></script>
 <!-- Switchery -->
 <script src="{{ asset('/plugins/gentelella/vendors/switchery/dist/switchery.min.js') }}" type="text/javascript"></script>
 <!-- Select2 -->
@@ -116,14 +141,12 @@
               @endforeach
             </select>
           </div>
-          <div class="col-xs-1 text-right">
-            <button type="button" id="create_project_button" class="text-right btn btn-info btn-xs">Create</button>
-          </div>
         </div>
         </br>
-        <table id="projects_table" class="table table-striped table-hover table-bordered mytable" width="100%">
+        <table id="samba_table" class="table table-striped table-hover table-bordered mytable" width="100%">
           <thead>
             <tr>
+              <th>Action</th>
               <th>Cluster</th>
               <th>Samba lead domain</th>
               <th>Customer (samba)</th>
@@ -144,11 +167,12 @@
           @foreach($ids as $key => $project)
             @if(!$project['in_db'])
               <tr class="item">
-                <td>{!! $project['owners_sales_cluster'] !!}</td>
-                <td>{!! $project['opportunity_domain'] !!}</td>
-                <td>{!! $project['account_name'] !!}</td>
-                <td>
-                  <select class="customers select2" style="width: 100%;" data-placeholder="Select a customer name">
+                <td><button type="button" class="btn btn-info btn-xs add_samba"><span class="glyphicon glyphicon-plus"></span></button></td>
+                <td class="owners_sales_cluster">{!! $project['owners_sales_cluster'] !!}</td>
+                <td class="opportunity_domain">{!! $project['opportunity_domain'] !!}</td>
+                <td class="account_name">{!! $project['account_name'] !!}</td>
+                <td class="customer_name">
+                  <select class="customers dt-select2" style="width: 100%;" data-placeholder="Select a customer name">
                     @foreach($customers_list as $key => $value)
                     <option value="{{ $key }}" @if ($value == $project['account_name']) selected @endif>
                       {{ $value }}
@@ -156,9 +180,9 @@
                     @endforeach
                   </select>
                 </td>
-                <td><div contenteditable>{!! $project['opportunity_name'] !!}</div></td>
-                <td style="width: 200px;">
-                  <select class="users select2" style="width: 100%;" data-placeholder="Select a user name">
+                <td class="opportunity_name"><div contenteditable>{!! $project['opportunity_name'] !!}</div></td>
+                <td class="users_name" style="width: 200px;">
+                  <select class="users dt-select2" style="width: 100%;" data-placeholder="Select a user name">
                     @foreach($users_select as $key => $value)
                     <option value="{{ $key }}">
                       {{ $value }}
@@ -166,18 +190,35 @@
                     @endforeach
                   </select>
                 </td>
-                <td>{!! $project['public_opportunity_id'] !!}</td>
-                <td>{!! $project['opportunity_owner'] !!}</td>
-                <td>{!! $project['created_date'] !!}</td>
-                <td>{!! $project['close_date'] !!}</td>
-                <td>{!! $project['stage'] !!}</td>
-                <td>{!! $project['probability'] !!}</td>
-                <td>{!! $project['amount_tcv'] !!}</td>
-                <td>{!! $project['consulting_tcv'] !!}</td>
+                <td class="public_opportunity_id">{!! $project['public_opportunity_id'] !!}</td>
+                <td class="opportunity_owner">{!! $project['opportunity_owner'] !!}</td>
+                <td class="created_date">{!! $project['created_date'] !!}</td>
+                <td class="close_date">{!! $project['close_date'] !!}</td>
+                <td class="stage">{!! $project['stage'] !!}</td>
+                <td class="probability">{!! $project['probability'] !!}</td>
+                <td class="amount_tcv">{!! $project['amount_tcv'] !!}</td>
+                <td class="consulting_tcv">{!! $project['consulting_tcv'] !!}</td>
               </tr>
             @endif
           @endforeach
           </tbody>
+          <tfoot>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tfoot>
         </table>
       </div>
       <!-- Window content -->
@@ -254,6 +295,7 @@
     var order_intake;
     var consulting_tcv;
     var array_of_data = [];
+    var samba_table;
 
     @if (isset($create_records) && $create_records)
 
@@ -264,48 +306,148 @@
       });
 
       $(document).ready(function() {
-        $(".customers").select2({
-                  allowClear: true
-        });
-        $(".users").select2({
-          allowClear: true
-        });
+
         $("#year").select2({
           allowClear: false
         });
-        $('.users').val(null).trigger('change');
 
-        $("#create_project_button").click(function() {
+        samba_table = $('#samba_table').DataTable({
+          scrollX: true,
+          @if(isset($table_height))
+          scrollY: '{!! $table_height !!}vh',
+          scrollCollapse: true,
+          @endif
+          stateSave: true,
+          order: [[0, 'asc']],
+          columns: [
+              { name: 'action', data: 'null' , searchable: true , visible: true, className: "dt-nowrap"},
+              { name: 'owners_sales_cluster', data: 'owners_sales_cluster' , searchable: true , visible: true, className: "dt-nowrap"},
+              { name: 'opportunity_domain', data: 'opportunity_domain' , searchable: true , visible: false},
+              { name: 'account_name', data: 'account_name' , searchable: true , visible: true, className: "dt-nowrap"},
+              { name: 'customer_name', data: 'customer_name' , searchable: false , visible: true, className: "dt-nowrap"},
+              { name: 'opportunity_name', data: 'opportunity_name' , searchable: true , visible: true, className: "dt-nowrap"},
+              { name: 'users_name', data: 'users_name' , searchable: false , visible: true, className: "dt-nowrap"},
+              { name: 'public_opportunity_id', data: 'public_opportunity_id' , searchable: true , visible: true, className: "dt-nowrap"},
+              { name: 'opportunity_owner', data: 'opportunity_owner' , searchable: true , visible: true, className: "dt-nowrap"},
+              { name: 'created_date', data: 'created_date' , searchable: true , visible: false, className: "dt-nowrap"},
+              { name: 'close_date', data: 'close_date' , searchable: true , visible: false, className: "dt-nowrap"},
+              { name: 'stage', data: 'stage' , searchable: true , visible: false, className: "dt-nowrap"},
+              { name: 'probability', data: 'probability' , searchable: true , visible: true, className: "dt-nowrap"},
+              { name: 'amount_tcv', data: 'amount_tcv' , searchable: true , visible: true, className: "dt-nowrap"},
+              { name: 'consulting_tcv', data: 'consulting_tcv' , searchable: true , visible: true, className: "dt-nowrap"},
+            ],
+          lengthMenu: [
+              [ 10, 25, 50, -1 ],
+              [ '10 rows', '25 rows', '50 rows', 'Show all' ]
+          ],
+          dom: 'Bfrtip',
+          buttons: [
+            {
+              extend: "colvis",
+              className: "btn-sm",
+              columns: [1,2,3,5,7,8,9,10,11,12,13,14]
+            },
+            {
+              extend: "pageLength",
+              className: "btn-sm"
+            },
+            {
+              extend: "csv",
+              className: "btn-sm",
+              exportOptions: {
+                  columns: ':visible'
+              }
+            },
+            {
+              extend: "excel",
+              className: "btn-sm",
+              exportOptions: {
+                  columns: ':visible'
+              }
+            },
+            {
+              extend: "print",
+              className: "btn-sm",
+              exportOptions: {
+                  columns: ':visible'
+              }
+            },
+          ],
+          drawCallback: function() {
+            $('.dt-select2').select2({
+              allowClear: true
+            });
+            $('.users').val(null).trigger('change');
+          },
+          initComplete: function () {
+            var columns = this.api().init().columns;
+            this.api().columns().every(function () {
+              var column = this;
+              // this will get us the index of the column
+              index = column[0][0];
+              //console.log(columns[index].searchable);
+
+              // Now we need to skip the column if it is not searchable and we return true, meaning we go to next iteration
+              if (columns[index].searchable == false) {
+                return true;
+              }
+              else {
+                var input = document.createElement("input");
+                $(input).appendTo($(column.footer()).empty())
+                .on('keyup change', function () {
+                  column.search($(this).val(), false, false, true).draw();
+                });
+              };
+            });
+          }
+        });
+
+        $(".add_samba").click(function() {
+          var array_of_data = [];
           year = $("#year option:selected").val();
-          $("#projects_table tr.item").each(function() {
-            cluster = $(this).find('td:eq(0)').text();
-            samba_lead_domain = $(this).find('td:eq(1)').text();
-            customer_samba = $(this).find('td:eq(2)').text();
-            customer_dolphin = $(this).find('td:eq(3) option:selected').val();
-            project_name = $(this).find('td:eq(4)').text();
-            assigned_user = $(this).find('td:eq(5) option:selected').val();
-            samba_id = $(this).find('td:eq(6)').text();
-            opportunity_owner = $(this).find('td:eq(7)').text();
-            create_date = $(this).find('td:eq(8)').text();
-            close_date = $(this).find('td:eq(9)').text();
-            samba_stage = $(this).find('td:eq(10)').text();
-            win_ratio = $(this).find('td:eq(11)').text();
-            order_intake = $(this).find('td:eq(12)').text();
-            consulting_tcv = $(this).find('td:eq(13)').text();
-            console.log(customer_dolphin);
-            if (customer_dolphin != '' && assigned_user != null) {
-              array_of_data.push({'samba_lead_domain':samba_lead_domain,'customer_samba':customer_samba,'customer_dolphin':customer_dolphin,
-                'project_name':project_name,'assigned_user':assigned_user,'samba_id':samba_id,
-                'order_intake':order_intake,'opportunity_owner':opportunity_owner,'create_date':create_date,
-                'close_date':close_date,'samba_stage':samba_stage,'win_ratio':win_ratio,'consulting_tcv':consulting_tcv});
-            }
-          });
+
+          var $row = $(this).closest("tr");
+
+          cluster = $row.find('.owners_sales_cluster').text();
+          samba_lead_domain = $row.find('.opportunity_domain').text();
+          customer_samba = $row.find('.account_name').text();
+          customer_dolphin = $row.find('.customer_name option:selected').val();
+          project_name = $row.find('.opportunity_name').text();
+          assigned_user = $row.find('.users_name option:selected').val();
+          samba_id = $row.find('.public_opportunity_id').text();
+          opportunity_owner = $row.find('.opportunity_owner').text();
+          create_date = $row.find('.created_date').text();
+          close_date = $row.find('.close_date').text();
+          samba_stage = $row.find('.stage').text();
+          win_ratio = $row.find('.probability').text();
+          order_intake = $row.find('.amount_tcv').text();
+          consulting_tcv = $row.find('.consulting_tcv').text();
+
+          if (customer_dolphin != '' && assigned_user != null) {
+            array_of_data.push({'samba_lead_domain':samba_lead_domain,'customer_samba':customer_samba,'customer_dolphin':customer_dolphin,
+              'project_name':project_name,'assigned_user':assigned_user,'samba_id':samba_id,
+              'order_intake':order_intake,'opportunity_owner':opportunity_owner,'create_date':create_date,
+              'close_date':close_date,'samba_stage':samba_stage,'win_ratio':win_ratio,'consulting_tcv':consulting_tcv});
+          } else {
+            box_type = 'danger';
+            message_type = 'error';
+            msg = '<b>Customer (Dolphin)</b> and <b>Assigned User</b> missing'
+            $('#flash-message').empty();
+            var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+msg+'</div>');
+            $('#flash-message').append(box);
+            $('#delete-message').delay(2000).queue(function () {
+                $(this).addClass('animated flipOutX')
+            });
+            return;
+          }
+
 
           var parameters = {
             "data": JSON.stringify(array_of_data),
             "year":year
           };
 
+          
           console.log(parameters);
 
           $.ajax({
@@ -318,6 +460,7 @@
               if (data.result == 'success'){
                   box_type = 'success';
                   message_type = 'success';
+                  $row.remove();
               }
               else {
                   box_type = 'danger';
