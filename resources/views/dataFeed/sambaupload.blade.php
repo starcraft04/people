@@ -9,12 +9,14 @@
 <link href="{{ asset('/css/forms.css') }}" rel="stylesheet" />
 <!-- DataTables -->
 <link href="{{ asset('/plugins/gentelella/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css') }}" rel="stylesheet">
-  <link href="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css') }}" rel="stylesheet">
-  <link href="{{ asset('/plugins/gentelella/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css') }}" rel="stylesheet">
-  <link href="{{ asset('/plugins/gentelella/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css') }}" rel="stylesheet">
-  <link href="{{ asset('/plugins/gentelella/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css') }}" rel="stylesheet">
+<link href="{{ asset('/plugins/gentelella/vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css') }}" rel="stylesheet">
+<link href="{{ asset('/plugins/gentelella/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css') }}" rel="stylesheet">
+<link href="{{ asset('/plugins/gentelella/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css') }}" rel="stylesheet">
+<link href="{{ asset('/plugins/gentelella/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css') }}" rel="stylesheet">
 
-  <link rel="stylesheet" href="{{ asset('/css/datatables.css') }}">
+<link rel="stylesheet" href="{{ asset('/css/datatables.css') }}">
+<!-- Loader -->
+<link href="{{ asset('/css/loader.css') }}" rel="stylesheet">
 @stop
 
 @section('scriptsrc')
@@ -128,7 +130,13 @@
 
       <!-- Window content -->
       <div class="x_content">
-        <div class="row">
+        <div class="loader" id="loader-6">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <div id="year_select" class="row" style="display: none;">
           <div class="col-xs-11">
             <label for="year" class="control-label">Year</label>
             <select style="width: 100px;" class="select2" id="year" name="year" data-placeholder="Select a year">
@@ -143,7 +151,7 @@
           </div>
         </div>
         </br>
-        <table id="samba_table" class="table table-striped table-hover table-bordered mytable" width="100%">
+        <table id="samba_table" class="table table-striped table-hover table-bordered mytable" width="100%" style="display: none;">
           <thead>
             <tr>
               <th>Action</th>
@@ -163,7 +171,7 @@
               <th>Consulting (€)</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="table_content">
           @foreach($ids as $key => $project)
             @if(!$project['in_db'])
               <tr class="item">
@@ -305,7 +313,11 @@
                   }
       });
 
-      $(document).ready(function() {
+      $(window).load(function(){
+
+        $('#year_select').show();
+        $('#samba_table').show();
+        $('#loader-6').hide();
 
         $("#year").select2({
           allowClear: false
