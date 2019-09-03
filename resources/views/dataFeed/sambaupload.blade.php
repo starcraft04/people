@@ -174,7 +174,7 @@
                 <td class="customer_name">
                   <select class="customers dt-select2" style="width: 100%;" data-placeholder="Select a customer name">
                     @foreach($customers_list as $key => $value)
-                    <option value="{{ $key }}" @if ($value == $project['account_name']) selected @endif>
+                    <option value="{{ $key }}" @if ($value == $project['account_name_modified']) selected @endif>
                       {{ $value }}
                     </option>
                     @endforeach
@@ -320,21 +320,21 @@
           stateSave: true,
           order: [[0, 'asc']],
           columns: [
-              { name: 'action', data: 'null' , searchable: true , visible: true, className: "dt-nowrap"},
-              { name: 'owners_sales_cluster', data: 'owners_sales_cluster' , searchable: true , visible: true, className: "dt-nowrap"},
+              { name: 'action', data: 'null' , searchable: true , visible: true},
+              { name: 'owners_sales_cluster', data: 'owners_sales_cluster' , searchable: true , visible: true},
               { name: 'opportunity_domain', data: 'opportunity_domain' , searchable: true , visible: false},
-              { name: 'account_name', data: 'account_name' , searchable: true , visible: true, className: "dt-nowrap"},
-              { name: 'customer_name', data: 'customer_name' , searchable: false , visible: true, className: "dt-nowrap"},
-              { name: 'opportunity_name', data: 'opportunity_name' , searchable: true , visible: true, className: "dt-nowrap"},
-              { name: 'users_name', data: 'users_name' , searchable: false , visible: true, className: "dt-nowrap"},
-              { name: 'public_opportunity_id', data: 'public_opportunity_id' , searchable: true , visible: true, className: "dt-nowrap"},
-              { name: 'opportunity_owner', data: 'opportunity_owner' , searchable: true , visible: true, className: "dt-nowrap"},
-              { name: 'created_date', data: 'created_date' , searchable: true , visible: false, className: "dt-nowrap"},
-              { name: 'close_date', data: 'close_date' , searchable: true , visible: false, className: "dt-nowrap"},
-              { name: 'stage', data: 'stage' , searchable: true , visible: false, className: "dt-nowrap"},
-              { name: 'probability', data: 'probability' , searchable: true , visible: true, className: "dt-nowrap"},
-              { name: 'amount_tcv', data: 'amount_tcv' , searchable: true , visible: true, className: "dt-nowrap"},
-              { name: 'consulting_tcv', data: 'consulting_tcv' , searchable: true , visible: true, className: "dt-nowrap"},
+              { name: 'account_name', data: 'account_name' , searchable: true , visible: true},
+              { name: 'customer_name', data: 'customer_name' , searchable: false , visible: true},
+              { name: 'opportunity_name', data: 'opportunity_name' , searchable: true , visible: true},
+              { name: 'users_name', data: 'users_name' , searchable: false , visible: true},
+              { name: 'public_opportunity_id', data: 'public_opportunity_id' , searchable: true , visible: true},
+              { name: 'opportunity_owner', data: 'opportunity_owner' , searchable: true , visible: true},
+              { name: 'created_date', data: 'created_date' , searchable: true , visible: false},
+              { name: 'close_date', data: 'close_date' , searchable: true , visible: false},
+              { name: 'stage', data: 'stage' , searchable: true , visible: false},
+              { name: 'probability', data: 'probability' , searchable: true , visible: true},
+              { name: 'amount_tcv', data: 'amount_tcv' , searchable: true , visible: true},
+              { name: 'consulting_tcv', data: 'consulting_tcv' , searchable: true , visible: true},
             ],
           lengthMenu: [
               [ 10, 25, 50, -1 ],

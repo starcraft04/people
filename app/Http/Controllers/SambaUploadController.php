@@ -11,6 +11,7 @@ use App\Repositories\UserRepository;
 use App\Repositories\ProjectRepository;
 use App\Repositories\ActivityRepository;
 use App\Customer;
+use App\SambaName;
 class SambaUploadController extends Controller
 {
   protected $userRepository;
@@ -167,6 +168,7 @@ class SambaUploadController extends Controller
             'owners_sales_cluster' => $row['owners_sales_cluster'],
             'opportunity_domain' => $row['opportunity_domain'],
             'account_name' => $row['account_name'],
+            'account_name_modified' => $row['account_name'],
             'public_opportunity_id' => $row['public_opportunity_id'],
             'opportunity_name' => $row['opportunity_name'],
             'opportunity_owner' => $row['opportunity_owner'],
@@ -181,7 +183,7 @@ class SambaUploadController extends Controller
         }
       }
       //dd($ids);
-      foreach ($ids as $row) {
+      foreach ($ids as &$row) {
         if ($row['in_db']) {
           $projectInDB = $this->projectRepository->getBySambaID($row['public_opportunity_id']);
           foreach ($projectInDB as $key => $project) {
@@ -203,7 +205,16 @@ class SambaUploadController extends Controller
             $project->save();
           }
         }
+        else {
+          $name = SambaName::where('samba_name', $row['account_name'])->first();
+          if ($name != null) {
+            $row['account_name_modified'] = $name->dolphin_name;
+          } 
+        }
       }
+      unset($row);
+
+      //dd($ids);
     }
     
     foreach ($messages as $message){
@@ -263,6 +274,16 @@ class SambaUploadController extends Controller
     //dd($datas);
 
     foreach ($datas as $key => $data) {
+      // Let's look if we need to update the database for the relation between the samba names and dolphin names
+      $name = SambaName::where('samba_name', $data->customer_samba)->first();
+      if ($name == null) {
+        $dolphin_name = Customer::find($data->customer_dolphin);
+        $name = new SambaName;
+        $name->samba_name = $data->customer_samba;
+        $name->dolphin_name = $dolphin_name->name;
+        $name->save();
+      }
+
       // Let's assign the right column names
       $project_inputs = [];
       $project_inputs['samba_lead_domain'] = trim($data->samba_lead_domain);
