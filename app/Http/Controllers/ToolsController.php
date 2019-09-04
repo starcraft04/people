@@ -475,7 +475,7 @@ class ToolsController extends Controller {
     // Now we need to check if the user has been flagged for remove from project
     if ($inputs['action'] == 'Remove') {
       if (Entrust::can('tools-user_assigned-remove')) {
-        $activity = $this->activityRepository->removeUserFromProject($inputs['user_id'],$inputs['project_id']);
+        $activity = $this->activityRepository->removeUserFromProject($inputs['user_id'],$inputs['project_id'],$inputs['year']);
         return redirect($redirect)->with('success','User removed from project successfully');
       }
       return redirect($redirect)->with('error','You do not have permission to remove a user');

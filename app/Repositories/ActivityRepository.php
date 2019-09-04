@@ -108,11 +108,12 @@ class ActivityRepository
     return $this->save($activity, $inputs);
   }
 
-  public function removeUserFromProject($user_id,$project_id)
+  public function removeUserFromProject($user_id,$project_id,$year)
   {
     $activity = $this->activity
             ->where('project_id', $project_id)
             ->where('user_id', $user_id)
+            ->where('year', $year)
             ->delete();
 
     return $activity;

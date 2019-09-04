@@ -134,6 +134,7 @@
 <script>
 var projectTable;
 var record_id;
+var unassigned = 'no_use';
 
 // Here we are going to get from PHP the list of roles and their value for the logged in project
 
@@ -150,7 +151,7 @@ var record_id;
 //console.log(permissions);
 function ajaxData(){
   var obj = {
-    'unassigned': 'no_use'
+    'unassigned': unassigned
   };
   return obj;
 }
@@ -253,6 +254,37 @@ $(document).ready(function() {
           columns: [ 1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]
         }
       },
+      {
+          extend: 'collection',
+          className: "btn-sm",
+          text: 'Selection',
+          buttons: [
+            {
+              text: 'All',
+              className: "btn-sm",
+              action: function ( e, dt, node, config ) {
+                unassigned = 'no_use';
+                projectTable.ajax.reload();
+                      }
+            },
+            {
+              text: 'In use',
+              className: "btn-sm",
+              action: function ( e, dt, node, config ) {
+                unassigned = false;
+                projectTable.ajax.reload();
+                      }
+            },
+            {
+              text: 'Not in use',
+              className: "btn-sm",
+              action: function ( e, dt, node, config ) {
+                unassigned = true;
+                projectTable.ajax.reload();
+                      }
+            },
+          ]
+        },
     ],
     order: [[2, 'asc']],
     initComplete: function () {
