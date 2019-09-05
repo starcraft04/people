@@ -682,6 +682,19 @@ class ToolsController extends Controller {
 		$userskill->update($inputs);
 
     return redirect('toolsUsersSkills')->with('success','Record updated successfully');
-	}
+  }
+  
+  public function userSummary(AuthUsersForDataView $authUsersForDataView)
+	{
+    $authUsersForDataView->userCanView('tools-activity-all-view');
+    Session::put('url','toolsUserSummary');
+    $table_height = Auth::user()->table_height;
+    $user_id = Auth::user()->id;
+    $user_name = Auth::user()->name;
+    $extra_info_display = "display:none;";
+    //$extra_info_display = "";
+
+		return view('tools/userSummary', compact('authUsersForDataView','extra_info_display','table_height','user_id','user_name'));
+  }
 
 }

@@ -80,12 +80,15 @@
       </ul>
       @endpermission
 
-      @permission(['tools-activity-view','tools-all_projects-view','tools-usersskills','projects-lost'])
+      @permission(['tools-activity-view','tools-all_projects-view','tools-usersskills','projects-lost','tools-user-summary'])
       <ul class="nav side-menu">
         <li><a><i class="fa fa-wrench"></i>Tools<span class="fa fa-chevron-down"></span></a>
           <ul class="nav child_menu">
             @permission(['tools-activity-view'])
             <li><a href="{!!route('toolsActivities')!!}">Activity list per project</a></li>
+            @endpermission
+            @permission(['tools-user-summary'])
+            <li><a href="{!!route('toolsUserSummary')!!}">User Summary</a></li>
             @endpermission
             @permission(['tools-all_projects-view'])
             <li><a href="{!!route('projectsAll')!!}">Project list</a></li>

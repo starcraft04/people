@@ -352,8 +352,12 @@ class ActivityRepository
     $activityList->groupBy('manager_id','user_id','year','m.name','u.name');
 
     //dd($activityList->get());
-
-    $data = Datatables::of($activityList)->make(true);
+    
+    if (isset($where['datatablesUse']) && !$where['datatablesUse']) {
+      $data = $activityList->get();
+    } else {
+      $data = Datatables::of($activityList)->make(true);
+    }
 
     unset($temp_table);
 

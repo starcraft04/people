@@ -128,5 +128,15 @@ return [
         'DPS22' => 'DPS22',
         'DMR03' => 'DMR03',
         'DPS26' => 'DPS26'
+    ],
+    'action_status' => [
+        'open' => 'open',
+        'closed' => 'closed'
+    ],
+    'action_severity' => [
+        'low' => 'low',
+        'medium' => 'medium',
+        'high' => 'high'
     ]
+    
 ];
