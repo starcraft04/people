@@ -11,6 +11,7 @@ use App\Comment;
 use App\Activity;
 use App\Skill;
 use App\UserSkill;
+use App\ProjectRevenue;
 use App\Http\Controllers\Controller;
 use DB;
 use Entrust;
@@ -697,4 +698,14 @@ class ToolsController extends Controller {
 		return view('tools/userSummary', compact('authUsersForDataView','extra_info_display','table_height','user_id','user_name'));
   }
 
+  public function userSummaryProjects(Request $request)
+	{
+    $inputs = $request->all();
+    $activities = $this->activityRepository->getListOfActivitiesPerUser($inputs);
+    foreach ($activities as $key => $activity) {
+      $revenue = ProjectRevenue::where('project_id',$activity->project_id)->where('year',$activity->year)->get();
+      $activity->revenue_forecast = $revenue;
+    }
+		return $activities;
+  }
 }

@@ -206,6 +206,49 @@ class ActivityRepository
             });
         }
 
+    // Removing customers
+    if (!empty($where['except_customers']))
+        {
+            $activityList->where(function ($query) use ($where) {
+                foreach ($where['except_customers'] as $w)
+                {
+                    $query->where('c.name','!=',$w);
+                }
+            });
+        }
+    // Only customers
+    if (!empty($where['only_customers']))
+        {
+            $activityList->where(function ($query) use ($where) {
+                foreach ($where['only_customers'] as $w)
+                {
+                    $query->orWhere('c.name',$w);
+                }
+            });
+        }
+
+    // Project type
+    if (!empty($where['project_type']))
+        {
+            $activityList->where(function ($query) use ($where) {
+                foreach ($where['project_type'] as $w)
+                {
+                    $query->orWhere('p.project_type',$w);
+                }
+            });
+        }
+
+    // Except project status
+    if (!empty($where['except_project_status']))
+        {
+            $activityList->where(function ($query) use ($where) {
+                foreach ($where['except_project_status'] as $w)
+                {
+                    $query->where('p.project_status','!=',$w);
+                }
+            });
+        }
+    
     if (!empty($where['checkbox_closed']) && $where['checkbox_closed'] == 1)
     {
         $activityList->where(function($query) {
@@ -261,8 +304,12 @@ class ActivityRepository
     }
 
     //$activityList->groupBy('manager_id','manager_name','user_id','user_name','project_id','project_name','year');
-
-    $data = Datatables::of($activityList)->make(true);
+    if (isset($where['no_datatables']) && $where['no_datatables']) {
+      $data = $activityList->get();
+    } else {
+      $data = Datatables::of($activityList)->make(true);
+    }
+    
 
     // Destroying the object so it will remove the 2 temp tables created
     unset($temp_table);

@@ -153,6 +153,7 @@ Route::group(['middleware' => ['auth']], function() {
       Route::post('actionList', ['uses'=>'ActionController@actionList','as'=>'actionList','middleware' => ['permission:tools-user-summary']]);
       Route::post('actionInsertUpdate', ['uses'=>'ActionController@actionInsertUpdate','as'=>'actionInsertUpdate','middleware' => ['permission:action-create']]);
       Route::post('actionDelete', ['uses'=>'ActionController@actionDelete','as'=>'actionDelete','middleware' => ['permission:action-delete']]);
+      Route::post('userSummaryProjects', ['uses'=>'ToolsController@userSummaryProjects','as'=>'userSummaryProjects','middleware' => ['permission:tools-activity-view']]);
       Route::get('toolsProjectsAll', ['uses'=>'ToolsController@projectsAll','as'=>'projectsAll','middleware' => ['permission:tools-all_projects-view']]);
       Route::get('toolsProjectsLost', ['uses'=>'ToolsController@projectsLost','as'=>'projectsLost','middleware' => ['permission:projects-lost']]);
       Route::get('toolsProjectsAssignedAndNot', ['uses'=>'ToolsController@projectsAssignedAndNot','as'=>'projectsAssignedAndNot','middleware' => ['permission:tools-unassigned-view']]);

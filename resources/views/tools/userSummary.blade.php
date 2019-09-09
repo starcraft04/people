@@ -10,6 +10,8 @@
 <link href="{{ asset('/plugins/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" />
 <!-- Switchery -->
 <link href="{{ asset('/plugins/gentelella/vendors/switchery/dist/switchery.min.css') }}" rel="stylesheet">
+<!-- Prime info -->
+<link rel="stylesheet" href="{{ asset('/css/datatables.css') }}">
 @stop
 
 @section('scriptsrc')
@@ -26,7 +28,7 @@
 @section('content')
 <!-- Selections -->
   <div class="form-group row">
-    <div class="col-xs-3">
+    <div class="col-xs-2">
       <h3>User <small>summary</small></h3>
     </div>
     <div class="col-xs-3">
@@ -53,14 +55,15 @@
         @endforeach
       </select>
     </div>
-    <div class="col-xs-3">
+    <div class="col-xs-2">
       <label for="closed" class="control-label">Hide closed actions</label>
       <input name="closed" type="checkbox" id="switch_actions_closed" class="form-group js-switch-small" checked /> 
+      <label for="projects_closed" class="control-label">Hide closed projects</label>
+      <input name="projects_closed" type="checkbox" id="switch_projects_closed" class="form-group js-switch-small2" checked /> 
     </div>
   </div>
 <!-- Selections -->
 <div class="clearfix"></div>
-<!-- Page title -->
 
 <!-- Window -->
 <div class="row">
@@ -95,44 +98,101 @@
         </div>
         <div class="row">
           <h4>Actions</h4>
-          <table id="general" data-project_id="" class="table table-striped table-hover table-bordered mytable actions" width="100%">
-            <thead>
-              <tr>
-                <th style="{{ $extra_info_display }}">Action ID</th>
-                <th style="{{ $extra_info_display }}">Created by ID</th>
-                <th>Created by</th>
-                <th style="{{ $extra_info_display }}">Assigned to ID</th>
-                <th style="{{ $extra_info_display }}">Assigned to</th>
-                <th>Name</th>
-                <th style="{{ $extra_info_display }}">Section</th>
-                <th style="{{ $extra_info_display }}">Project ID</th>
-                <th style="{{ $extra_info_display }}">Project Name</th>
-                <th>Status</th>
-                <th>Severity</th>
-                <th>Description</th>
-                <th>Start</th>
-                <th>End</th>
-                <th>
+            <div id="actions_general" class="action">
+              <table id="general" data-project_id="" data-section="general" class="table table-striped table-hover table-bordered mytable action" width="100%">
+                <thead>
+                  <tr>
+                  <th style="{{ $extra_info_display }}">Action ID</th>
+                  <th style="{{ $extra_info_display }}">Created by ID</th>
+                  <th>Created by</th>
+                  <th style="{{ $extra_info_display }}">Assigned to ID</th>
+                  <th style="{{ $extra_info_display }}">Assigned to</th>
+                  <th>Name</th>
+                  <th style="{{ $extra_info_display }}">Section</th>
+                  <th style="{{ $extra_info_display }}">Project ID</th>
+                  <th style="{{ $extra_info_display }}">Project Name</th>
+                  <th>Status</th>
+                  <th>Severity</th>
+                  <th>Description</th>
+                  <th>Start</th>
+                  <th>End</th>
+                  <th>
                   @permission('action-create')
                     <button type="button" class="btn btn-info btn-xs new_action"><span class="glyphicon glyphicon-plus"></span></button>
                   @endpermission
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-            </tbody>
-          </table>
+                  </th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+          </div>
         </div>
         <!-- Load -->
 
       </div>
       <!-- Window content -->
-
     </div>
   </div>
 </div>
 <!-- Window -->
 
+<!-- Window -->
+<div class="row">
+  <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="x_panel">
+      <!-- Window content -->
+      <div class="x_content">
+        <!-- Projects -->
+        <div class="row">
+          <h3>Projects <small>Delivery</small></h3>
+          <div id="projects_delivery"></div>
+        </div>
+        <!-- Projects -->
+      </div>
+      <!-- Window content -->
+    </div>
+  </div>
+</div>
+<!-- Window -->
+
+<!-- Window -->
+<div class="row">
+  <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="x_panel">
+      <!-- Window content -->
+      <div class="x_content">
+        <!-- Projects -->
+        <div class="row">
+          <h3>Projects <small>Pipeline</small></h3>
+          <div id="projects_pipeline"></div>
+        </div>
+        <!-- Projects -->
+      </div>
+      <!-- Window content -->
+    </div>
+  </div>
+</div>
+<!-- Window -->
+
+<!-- Window -->
+<div class="row">
+  <div class="col-md-12 col-sm-12 col-xs-12">
+    <div class="x_panel">
+      <!-- Window content -->
+      <div class="x_content">
+        <!-- Projects -->
+        <div class="row">
+          <h3>Projects <small>Pre-sales</small></h3>
+          <div id="projects_pre-sales"></div>
+        </div>
+        <!-- Projects -->
+      </div>
+      <!-- Window content -->
+    </div>
+  </div>
+</div>
+<!-- Window -->
   @stop
 
   @section('script')
@@ -142,9 +202,12 @@
   var datatablesUse = false;
   var load;
   var load_months = ['jan_com','feb_com','mar_com','apr_com','may_com','jun_com','jul_com','aug_com','sep_com','oct_com','nov_com','dec_com'];
+  var project_months_title = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var project_months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
   var user_id = {{ $user_id }};
   var loadActionsTable;
   var hide_closed = true;
+  var hide_projects_closed = 1;
 
   // Here we are going to get from PHP the list of roles and their value for the logged in customer
   // Roles check
@@ -199,6 +262,9 @@
     var small = document.querySelector('.js-switch-small');
     var switchery = new Switchery(small, { size: 'small' });
 
+    var small2 = document.querySelector('.js-switch-small2');
+    var switchery2 = new Switchery(small2, { size: 'small' });
+
     // SELECTIONS START
     // ________________
     // First we define the select2 boxes
@@ -219,8 +285,6 @@
     year = fill_select('year');
     user = fill_select('user');
 
-    //alert($.fn.dataTable.version);
-
     // Then we define what happens when the selection changes
 
     $('#year').on('change', function() {
@@ -231,6 +295,7 @@
         // log the value and text of each option
         year.push($(this).val());
         load();
+        loadProjects();
       });
     });
 
@@ -242,7 +307,7 @@
         // log the value and text of each option
         user.push($(this).val());
         load();
-        loadActions();
+        loadProjects();
       });
     });
 
@@ -270,94 +335,87 @@
           $("#loadTable tbody").append(markup);
         }
       });
-    }
-
-    load();
+    };
 
     // LOAD DATA
 
     // LOAD ACTIONS
 
-    function loadActions(table) {
-      section = $("#"+table).attr('id');
-      project_id = $("#"+table).attr('data-project_id');
-      // console.log(project_id);
-
+    function loadActions() {
       $.ajax({
         url: "{!! route('actionList') !!}",
         type: "POST",
-        data: {'user[]': user,'section': section,'project_id': project_id,'hide_closed':hide_closed},
+        data: {'user[]': user,'hide_closed':hide_closed},
         dataType: "JSON",
         success:function(data){
-          var markup = "";
           //console.log(data);
-          data.forEach(function (item, index) 
-            { 
-              if (item['action_estimated_start_date'] == null) {
-                item['action_estimated_start_date'] = '';
-              }
-              if (item['action_estimated_end_date'] == null) {
-                item['action_estimated_end_date'] = '';
-              }
-              markup += '<tr>';
-              markup += '<td name="action_id" style="{{ $extra_info_display }}">'+item['action_id']+'</td>';
-              markup += '<td name="created_by_id" style="{{ $extra_info_display }}">'+item['created_by_id']+'</td>';
-              markup += '<td name="created_by_name">'+item['created_by_name']+'</td>';
-              markup += '<td name="assigned_to_id" style="{{ $extra_info_display }}">'+item['assigned_to_id']+'</td>';
-              markup += '<td name="assigned_to_name" style="{{ $extra_info_display }}">'+item['assigned_to_name']+'</td>';
-              markup += '<td name="action_name">'+item['action_name']+'</td>';
-              markup += '<td name="action_section" style="{{ $extra_info_display }}">'+item['action_section']+'</td>';
-              markup += '<td name="action_project_id" style="{{ $extra_info_display }}">'+item['project_id']+'</td>';
-              markup += '<td name="action_project_name" style="{{ $extra_info_display }}">'+item['project_name']+'</td>';
-              markup += '<td name="action_status">'+item['action_status']+'</td>';
-              markup += '<td name="action_severity">'+item['action_severity']+'</td>';
-              markup += '<td name="action_description">'+item['action_description']+'</td>';
-              markup += '<td name="action_estimated_start_date">'+item['action_estimated_start_date']+'</td>';
-              markup += '<td name="action_estimated_end_date">'+item['action_estimated_end_date']+'</td>';
-              markup += '<td>';
-              delete_permission = false;
-              edit_permission = false;
-              if (permissions['action-delete'] && item['created_by_id'] == {!! $user_id !!}) {
-                delete_permission = true;
-              }
-              if (permissions['action-edit'] && item['created_by_id'] == {!! $user_id !!}) {
-                edit_permission = true;
-              }
-              if (permissions['action-all']) {
-                delete_permission = true;
-                edit_permission = true;
-              }
-              
-              if (edit_permission) {
-                markup += '<button type="button" class="buttonActionEdit btn btn-success btn-xs"><span class="glyphicon glyphicon-pencil"></span></button>';
-              }
-              if (delete_permission) {
-                markup += '<button type="button" class="buttonActionDelete btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
-              }
-              markup += '</td>';
-              markup += '</tr>';
-            });
-          
-          $("#"+table+" tbody").empty();
-          $("#"+table+" tbody").append(markup);
+          $("table.action").each(function(){
+            $(this).find("tbody").empty();
+          });
+          data.forEach(function (item, index) { 
+            var markup = "";
+            if (item['action_estimated_start_date'] == null) {
+              item['action_estimated_start_date'] = '';
+            }
+            if (item['action_estimated_end_date'] == null) {
+              item['action_estimated_end_date'] = '';
+            }
+            markup += '<tr>';
+            markup += '<td name="action_id" style="{{ $extra_info_display }}">'+item['action_id']+'</td>';
+            markup += '<td name="created_by_id" style="{{ $extra_info_display }}">'+item['created_by_id']+'</td>';
+            markup += '<td name="created_by_name">'+item['created_by_name']+'</td>';
+            markup += '<td name="assigned_to_id" style="{{ $extra_info_display }}">'+item['assigned_to_id']+'</td>';
+            markup += '<td name="assigned_to_name" style="{{ $extra_info_display }}">'+item['assigned_to_name']+'</td>';
+            markup += '<td name="action_name">'+item['action_name']+'</td>';
+            markup += '<td name="action_section" style="{{ $extra_info_display }}">'+item['action_section']+'</td>';
+            markup += '<td name="action_project_id" style="{{ $extra_info_display }}">'+item['project_id']+'</td>';
+            markup += '<td name="action_project_name" style="{{ $extra_info_display }}">'+item['project_name']+'</td>';
+            markup += '<td name="action_status">'+item['action_status']+'</td>';
+            markup += '<td name="action_severity">'+item['action_severity']+'</td>';
+            markup += '<td name="action_description">'+item['action_description']+'</td>';
+            markup += '<td name="action_estimated_start_date">'+item['action_estimated_start_date']+'</td>';
+            markup += '<td name="action_estimated_end_date">'+item['action_estimated_end_date']+'</td>';
+            markup += '<td>';
+            delete_permission = false;
+            edit_permission = false;
+            if (permissions['action-delete'] && item['created_by_id'] == {!! $user_id !!}) {
+              delete_permission = true;
+            }
+            if (permissions['action-edit'] && item['created_by_id'] == {!! $user_id !!}) {
+              edit_permission = true;
+            }
+            if (permissions['action-all']) {
+              delete_permission = true;
+              edit_permission = true;
+            }
+            
+            if (edit_permission) {
+              markup += '<button type="button" class="buttonActionEdit btn btn-success btn-xs"><span class="glyphicon glyphicon-pencil"></span></button>';
+            }
+            if (delete_permission) {
+              markup += '<button type="button" class="buttonActionDelete btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
+            }
+            markup += '</td>';
+            markup += '</tr>';
+            
+            if (item['action_section'] != 'project') {
+              $("#"+item['action_section']).find("tbody").append(markup);
+            } else {
+              $("#"+item['action_section']+"_"+item['project_id']).find("tbody").append(markup);
+            }
+          });
         }
       });
-    }
+    };
 
-    // We go through all the tables with class actions and load them with ajax data
-    $("table.actions").each(function (index, value) {
-        loadActions($(this).attr('id'));
-    });
-
-    
-
-    $('.new_action').click(function(){
+    $(document).on('click', '.new_action', function(){
       var table = $(this).closest('table').attr('id');
+      var section = $(this).closest('table').attr('data-section');
       var project_id = $(this).closest('table').attr('data-project_id');
       var project_name = $(this).closest('table').attr('data-project_name');
       var assigned_id = $('#user option:selected').val();
       var assigned_name = $('#user option:selected').text();
-      //console.log(table);
+      //console.log(project_id);
       $(this).hide();
       var html = '<tr>';
       html += '<td style="{{ $extra_info_display }}"></td>';
@@ -366,7 +424,7 @@
       html += '<td name="assigned_user_id" style="{{ $extra_info_display }}">'+assigned_id+'</td>';
       html += '<td name="assigned_user_name" style="{{ $extra_info_display }}">'+assigned_name+'</td>';
       html += '<td><input type="text" name="action_name"></td>';
-      html += '<td name="section" style="{{ $extra_info_display }}">'+table+'</td>';
+      html += '<td name="section" style="{{ $extra_info_display }}">'+section+'</td>';
       html += '<td name="project_id" style="{{ $extra_info_display }}">'+project_id+'</td>';
       html += '<td name="project_name" style="{{ $extra_info_display }}">'+project_name+'</td>';
       html += '<td>';
@@ -416,10 +474,10 @@
     });
 
     $(document).on('click', '.action_insert_cancel', function(){
-      var table = $(this).closest('table').attr('id');
-      button = $('#'+table).find('.new_action');
+      var table_id = $(this).closest('table').attr('id');
+      button = $('#'+table_id).find('.new_action');
       button.show();
-      loadActions(table);
+      $("#"+table_id+" > tbody > tr:first-child").remove();
     });
 
     $(document).on('click', '.action_insert', function(){
@@ -438,6 +496,10 @@
       var description = $row.find('textarea[name="action_description"]').val();
       var action_start_date = $row.find('input[name="action_start_date"]').val();
       var action_end_date = $row.find('input[name="action_end_date"]').val();
+      var table_id = $(this).closest('table').attr('id');
+      var table_section = $(this).closest('table').attr('data-section');
+      var table_project_id = $(this).closest('table').attr('data-project_id');
+      var div_id = $(this).closest('div.action').attr('id');
 
       $.ajax({
         url: "{!! route('actionInsertUpdate') !!}",
@@ -448,9 +510,10 @@
         dataType: "JSON",
         success:function(data){
           //console.log(data);
-          button = $('#'+section).find('.new_action');
+          
+          button = $('#'+table_id).find('.new_action');
           button.show();
-          loadActions(section);
+          loadActions();
 
           // Flash message
           $('#flash-message').empty();
@@ -469,6 +532,10 @@
       var $row = $(this).closest("tr");
       var id = $row.find('td[name="action_id"]').text();
       var table = $(this).closest('table').attr('id');
+      var table_id = $(this).closest('table').attr('id');
+      var table_section = $(this).closest('table').attr('data-section');
+      var table_project_id = $(this).closest('table').attr('data-project_id');
+      var div_id = $(this).closest('div.action').attr('id');
 
       $.ajax({
         url: "{!! route('actionDelete') !!}",
@@ -477,7 +544,7 @@
         dataType: "JSON",
         success:function(data){
           //console.log(data);
-          loadActions(table);
+          loadActions();
 
           // Flash message
           $('#flash-message').empty();
@@ -507,6 +574,7 @@
       var description = $row.find('td[name="action_description"]').text();
       var action_start_date = $row.find('td[name="action_estimated_start_date"]').text();
       var action_end_date = $row.find('td[name="action_estimated_end_date"]').text();
+      
 
       var html = '';
       html += '<td name="action_id" style="{{ $extra_info_display }}">'+id+'</td>';
@@ -565,6 +633,13 @@
       });
     });
 
+    $(document).on('click', '.buttonProjectEdit', function(){
+      user_id_edit = user[0];
+      year_edit = year[0];
+      project_id_edit = $(this).attr('data-project_id');
+      window.location.href = "{!! route('toolsFormUpdate',['','','']) !!}/"+user_id_edit+"/"+project_id_edit+"/"+year_edit;
+    });
+
 
     // LOAD ACTIONS
 
@@ -578,11 +653,190 @@
         hide_closed = false;
       }
       //console.log(hide_closed);
-      $("table.actions").each(function (index, value) {
-        loadActions($(this).attr('id'));
-      });
+      loadProjects();
+    });
+
+    $('#switch_projects_closed').on('change', function() {
+      if ($(this).is(':checked')) {
+        hide_projects_closed = 1;
+      } else {
+        hide_projects_closed = 0;
+      }
+      //console.log(hide_closed);
+      loadProjects();
     });
     // Hide closed
+    
+
+    // LOAD PROJECTS
+    // DELIVERY
+
+    function loadProjects(except_customers = ['Orange Business Services']) {
+      $.ajax({
+        url: "{!! route('userSummaryProjects') !!}",
+        type: "POST",
+        data: {'year[]': year,'user[]': user,'no_datatables': true,'except_customers':except_customers,'checkbox_closed':hide_projects_closed},
+        dataType: "JSON",
+        success:function(data){
+          console.log(data);
+          $("#projects_delivery").empty();
+          $("#projects_pipeline").empty();
+          $("#projects_pre-sales").empty();
+          
+          data.forEach(function (item, index) { 
+            var markup = '';
+            if (item['gold_order_number'] == null) {
+              item['gold_order_number'] = 'not set';
+            }
+            if (item['samba_id'] == null) {
+              item['samba_id'] = 'not set';
+            }
+            markup += '<div class="row project_info">';
+            markup += '<div class="col-xs-4">';
+            markup += '<button type="button" data-project_id="'+item['project_id']+'" class="buttonProjectEdit btn btn-success btn-xs"><span class="glyphicon glyphicon-pencil"></span></button>';
+            markup += 'Customer: '+item['customer_name']+'</div>';
+            markup += '<div class="col-xs-5">';
+              markup += 'Project: '+item['project_name'];
+            markup += '</div>';
+            
+            if ((item['project_type'] == 'Project' || item['project_type'] == 'Baseline')) {
+              markup += '<div class="col-xs-3">';
+              markup += 'GO: '+item['gold_order_number'];
+              markup += '</div>';
+              markup += '</div>';
+            } else if (item['project_type'] == 'Pre-sales') {
+              markup += '<div class="col-xs-3">';
+              markup += 'Samba ID: '+item['samba_id'];
+              markup += '</div>';
+              markup += '</div>';
+              markup += '<div class="row">';
+              markup += '<div class="col-xs-4">';
+              markup += 'Owner: '+item['samba_opportunit_owner']+'</div>';
+              markup += '<div class="col-xs-8">';
+                markup += 'Stage: '+item['samba_stage'];
+              markup += '</div>';
+              markup += '</div>';
+              markup += '<div class="row">';
+              markup += '<div class="col-xs-4">';
+                markup += 'Order intake: '+item['project_revenue'];
+              markup += '</div>';
+              markup += '<div class="col-xs-4">';
+                markup += 'Cons. rev.: '+item['samba_consulting_product_tcv'];
+              markup += '</div>';
+              markup += '<div class="col-xs-4">';
+                markup += 'PullThru rev.: '+item['samba_pullthru_tcv'];
+              markup += '</div>';
+              markup += '</div>';
+            }
+            
+            markup += '<div class="row">';
+            markup += '<table class="table table-striped table-hover table-bordered mytable work" width="100%">';
+            markup += '<thead>';
+              markup += '<th></th>';
+              markup += '<th></th>';
+              project_months_title.forEach(function (month, index) 
+                { 
+                  markup += '<th>'+month+'</th>';
+                });
+            markup += '</thead>';
+            markup += '<tbody>';
+              // Working days
+              markup += '<tr>';
+              markup += '<td>Working days</td>';
+              markup += '<td></td>';
+              project_months.forEach(function (month, index) 
+                { 
+                  if (item[month+'_from_otl'] == 1) {
+                    markup += '<td class = "otl">'+item[month+'_otl']+'</td>';
+                  } else {
+                    markup += '<td class = "forecast">'+item[month+'_user']+'</td>';
+                  }
+                });
+              markup += '</tr>';
+
+              // Revenue forecast
+              if ((item['project_type'] == 'Project' || item['project_type'] == 'Baseline')) {
+                if (item['revenue_forecast'].length > 0) {
+                  
+                  item['revenue_forecast'].forEach(function (rev, index) 
+                  { 
+                    markup += '<tr>';
+                    markup += '<td>Revenue</td>';
+                    markup += '<td>'+rev['product_code']+'</td>';
+                    project_months.forEach(function (month, index) 
+                      { 
+                        markup += '<td>'+rev[month]+'</td>';
+                      });
+                    markup += '</tr>';
+                  });
+                } else {
+                  markup += '<tr>';
+                    markup += '<td>Revenue</td>';
+                    markup += '<td></td>';
+                    project_months.forEach(function (month, index) 
+                      { 
+                        markup += '<td></td>';
+                      });
+                    markup += '</tr>';
+                }
+              }
+            markup += '</tbody>';
+            markup += '</table>';
+            markup += '</div>';
+            markup += '<div class="row">';
+            markup += '<h4>Actions</h4>';
+            markup += '<div id="actions_project_'+item['project_id']+'" data-project_id="'+item['project_id']+'" class="action">';
+            markup += '<table id="project_'+item['project_id']+'" data-project_id="'+item['project_id']+'" data-section="project" class="table table-striped table-hover table-bordered mytable action" width="100%">';
+            markup += '<thead>';
+            markup += '<tr>';
+            markup += '<th style="{{ $extra_info_display }}">Action ID</th>';
+            markup += '<th style="{{ $extra_info_display }}">Created by ID</th>';
+            markup += '<th>Created by</th>';
+            markup += '<th style="{{ $extra_info_display }}">Assigned to ID</th>';
+            markup += '<th style="{{ $extra_info_display }}">Assigned to</th>';
+            markup += '<th>Name</th>';
+            markup += '<th style="{{ $extra_info_display }}">Section</th>';
+            markup += '<th style="{{ $extra_info_display }}">Project ID</th>';
+            markup += '<th style="{{ $extra_info_display }}">Project Name</th>';
+            markup += '<th>Status</th>';
+            markup += '<th>Severity</th>';
+            markup += '<th>Description</th>';
+            markup += '<th>Start</th>';
+            markup += '<th>End</th>';
+            markup += '<th>';
+            @permission('action-create')
+              markup += '<button type="button" class="btn btn-info btn-xs new_action"><span class="glyphicon glyphicon-plus"></span></button>';
+            @endpermission
+            markup += '</th>';
+            markup += '</tr>';
+            markup += '</thead>';
+            markup += '<tbody>';
+            markup += '</tbody>';
+            markup += '</table>';
+            markup += '</div>';
+            markup += '</div>';
+            markup += '<hr>';
+            if ((item['project_type'] == 'Project' || item['project_type'] == 'Baseline') && item['project_status'] == 'Started') {
+              $("#projects_delivery").append(markup);
+            } else if ((item['project_type'] == 'Project' || item['project_type'] == 'Baseline') && item['project_status'] == 'Pipeline') {
+              $("#projects_pipeline").append(markup);
+            }  else if (item['project_type'] == 'Pre-sales') {
+              $("#projects_pre-sales").append(markup);
+            }
+          });
+          loadActions();
+        }
+      });
+    };
+
+    // DELIVERY
+
+    // LOAD PROJECTS
+
+    // INIT
+    load();
+    loadProjects();
+    // INIT
 
   } );
   </script>
