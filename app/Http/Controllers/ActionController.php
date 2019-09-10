@@ -70,7 +70,7 @@ class ActionController extends Controller {
     }
 
     if (!isset($id)) {
-      $insert_result = Action::insert($inputs);
+      $insert_result = Action::create($inputs);
       if ($insert_result != null) {
         $result->result = 'success';
         $result->box_type = 'success';

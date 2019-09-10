@@ -150,6 +150,8 @@ Route::group(['middleware' => ['auth']], function() {
       //Tools
       Route::get('toolsActivities', ['uses'=>'ToolsController@activities','as'=>'toolsActivities','middleware' => ['permission:tools-activity-view']]);
       Route::get('toolsUserSummary', ['uses'=>'ToolsController@userSummary','as'=>'toolsUserSummary','middleware' => ['permission:tools-user-summary']]);
+      Route::post('commentList', ['uses'=>'CommentController@commentList','as'=>'commentList','middleware' => ['permission:tools-projects-comments']]);
+      Route::post('commentInsert', ['uses'=>'CommentController@commentInsert','as'=>'commentInsert','middleware' => ['permission:tools-projects-comments']]);
       Route::post('actionList', ['uses'=>'ActionController@actionList','as'=>'actionList','middleware' => ['permission:tools-user-summary']]);
       Route::post('actionInsertUpdate', ['uses'=>'ActionController@actionInsertUpdate','as'=>'actionInsertUpdate','middleware' => ['permission:action-create']]);
       Route::post('actionDelete', ['uses'=>'ActionController@actionDelete','as'=>'actionDelete','middleware' => ['permission:action-delete']]);

@@ -21,6 +21,32 @@ class CommentController extends Controller {
             return 'error';
         }
     }
+    public function commentList(Request $request)
+    {
+        $inputs = $request->all();
+        //dd($inputs);
+        return Comment::whereIn('project_id', $inputs['project_ids'])->with('user_summary')->orderBy('created_at','desc')->get();
+    }
+
+    public function commentInsert(Request $request)
+	{
+        $inputs = $request->all();
+        $result = new \stdClass();
+        $insert_result = Comment::create($inputs);
+        if ($insert_result != null) {
+            $result->result = 'success';
+            $result->box_type = 'success';
+            $result->message_type = 'success';
+            $result->msg = 'Record added successfully';
+        } else {
+            $result->result = 'error';
+            $result->box_type = 'danger';
+            $result->message_type = 'error';
+            $result->msg = 'Record issue';
+        }
+        
+        return json_encode($result);
+    }
 
     public function getList($project_id)
     {
@@ -59,10 +85,14 @@ class CommentController extends Controller {
             $comment->comment = $inputs['comment'];
             $comment->save();
             $result->result = 'success';
+            $result->box_type = 'success';
+            $result->message_type = 'success';
             $result->msg = 'Message deleted successfully';
         } else {
             $result->result = 'error';
-            $result->msg = 'Message cannot be deleted by you';
+            $result->box_type = 'danger';
+            $result->message_type = 'error';
+            $result->msg = 'Message cannot be edited by you';
         }
         return json_encode($result);
     }
@@ -75,9 +105,13 @@ class CommentController extends Controller {
         if ($comment->user_id == Auth::user()->id || Auth::user()->id == 1) {
             Comment::destroy($id);
             $result->result = 'success';
+            $result->box_type = 'success';
+            $result->message_type = 'success';
             $result->msg = 'Message deleted successfully';
         } else {
             $result->result = 'error';
+            $result->box_type = 'danger';
+            $result->message_type = 'error';
             $result->msg = 'Message cannot be deleted by you';
         }
         return json_encode($result);

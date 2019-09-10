@@ -303,6 +303,9 @@ class ActivityRepository
       $activityList->where('temp_a.user_id','=',Auth::user()->id);
     }
 
+    $activityList->orderBy('c.name', 'asc');
+    $activityList->orderBy('p.project_name', 'asc');
+
     //$activityList->groupBy('manager_id','manager_name','user_id','user_name','project_id','project_name','year');
     if (isset($where['no_datatables']) && $where['no_datatables']) {
       $data = $activityList->get();

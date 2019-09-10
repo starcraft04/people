@@ -414,7 +414,8 @@
           }
         });
 
-        $(".add_samba").click(function() {
+        $(document).on('click', '.add_samba', function(){
+          
           var array_of_data = [];
           year = $("#year option:selected").val();
 
@@ -487,9 +488,7 @@
               });
             }
           });
-
           array_of_data = [];
-          
         });
       });
     @endif

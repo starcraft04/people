@@ -23,6 +23,8 @@
 <script src="{{ asset('/plugins/gentelella/vendors/bootstrap-daterangepicker/daterangepicker.js') }}" type="text/javascript"></script>
 <script src="{{ asset('/plugins/sweetalert2/sweetalert2.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('/plugins/gentelella/vendors/switchery/dist/switchery.min.js') }}" type="text/javascript"></script>
+<!-- Some functions made by John -->
+<script src="{{ asset('/js/people_general_functions.js') }}" type="text/javascript"></script>
 @stop
 
 @section('content')
@@ -71,122 +73,107 @@
     <div class="x_panel">
       <!-- Window content -->
       <div class="x_content">
-        <!-- Load -->
-        <div class="row">
-          <h3>General</h3>
-          <h4>Load</h4>
-          <table id="loadTable" class="table table-striped table-hover table-bordered mytable" width="100%">
-            <thead>
-              <tr>
-                <th>Jan</th>
-                <th>Feb</th>
-                <th>Mar</th>
-                <th>Apr</th>
-                <th>May</th>
-                <th>Jun</th>
-                <th>Jul</th>
-                <th>Aug</th>
-                <th>Sep</th>
-                <th>Oct</th>
-                <th>Nov</th>
-                <th>Dec</th>
-              </tr>
-            </thead>
-            <tbody>
-            </tbody>
-          </table>
-        </div>
-        <div class="row">
-          <h4>Actions</h4>
-            <div id="actions_general" class="action">
-              <table id="general" data-project_id="" data-section="general" class="table table-striped table-hover table-bordered mytable action" width="100%">
-                <thead>
-                  <tr>
-                  <th style="{{ $extra_info_display }}">Action ID</th>
-                  <th style="{{ $extra_info_display }}">Created by ID</th>
-                  <th>Created by</th>
-                  <th style="{{ $extra_info_display }}">Assigned to ID</th>
-                  <th style="{{ $extra_info_display }}">Assigned to</th>
-                  <th>Name</th>
-                  <th style="{{ $extra_info_display }}">Section</th>
-                  <th style="{{ $extra_info_display }}">Project ID</th>
-                  <th style="{{ $extra_info_display }}">Project Name</th>
-                  <th>Status</th>
-                  <th>Severity</th>
-                  <th>Description</th>
-                  <th>Start</th>
-                  <th>End</th>
-                  <th>
-                  @permission('action-create')
-                    <button type="button" class="btn btn-info btn-xs new_action"><span class="glyphicon glyphicon-plus"></span></button>
-                  @endpermission
-                  </th>
-                  </tr>
-                </thead>
-                <tbody>
-                </tbody>
-              </table>
+        <!-- Tab pannels -->
+        <div class="" role="tabpanel" data-example-id="togglable-tabs">
+          <!-- Tab titles -->
+          <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
+          <li role="presentation" class="active"> <a href="#tab_content1" id="general-tab" role="tab" data-toggle="tab" aria-expanded="true">General</a>
+          </li>
+          <li role="presentation" class="">       <a href="#tab_content2" id="delivery-tab" role="tab" data-toggle="tab" aria-expanded="false">Projects <small>Delivery</small></a>
+          </li>
+          <li role="presentation" class="">       <a href="#tab_content3" id="pipeline-tab" role="tab" data-toggle="tab" aria-expanded="false">Projects <small>Pipeline</small></a>
+          </li>
+          <li role="presentation" class="">       <a href="#tab_content4" id="presales-tab" role="tab" data-toggle="tab" aria-expanded="false">Projects <small>Pre-sales</small></a>
+          </li>
+          </ul>
+          <!-- Tab titles -->
+          <!-- Tab content -->
+          <div id="myTabContent" class="tab-content">
+            <!-- Tab General -->
+            <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="general-tab">
+              <div class="row">
+                <h3>General</h3>
+                <h4>Load</h4>
+                <table id="loadTable" class="table table-striped table-hover table-bordered" width="100%">
+                  <thead>
+                    <tr>
+                      <th>Jan</th>
+                      <th>Feb</th>
+                      <th>Mar</th>
+                      <th>Apr</th>
+                      <th>May</th>
+                      <th>Jun</th>
+                      <th>Jul</th>
+                      <th>Aug</th>
+                      <th>Sep</th>
+                      <th>Oct</th>
+                      <th>Nov</th>
+                      <th>Dec</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
+              </div>
+              <div class="row">
+                <h4>Actions</h4>
+                  <div id="actions_general" class="action">
+                    <table id="general" data-project_id="" data-section="general" class="table table-striped table-hover table-bordered action" width="100%">
+                      <thead>
+                        <tr>
+                        <th style="{{ $extra_info_display }}">Action ID</th>
+                        <th style="{{ $extra_info_display }}">Created by ID</th>
+                        <th>Created by</th>
+                        <th style="{{ $extra_info_display }}">Assigned to ID</th>
+                        <th style="{{ $extra_info_display }}">Assigned to</th>
+                        <th>Name</th>
+                        <th style="{{ $extra_info_display }}">Section</th>
+                        <th style="{{ $extra_info_display }}">Project ID</th>
+                        <th style="{{ $extra_info_display }}">Project Name</th>
+                        <th>Status</th>
+                        <th>Severity</th>
+                        <th>Description</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>
+                        @permission('action-create')
+                          <button type="button" class="btn btn-info btn-xs new_action"><span class="glyphicon glyphicon-plus"></span></button>
+                        @endpermission
+                        </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      </tbody>
+                    </table>
+                </div>
+              </div>
+            </div>
+            <!-- Tab General -->
+            <!-- Tab Delivery -->
+            <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="delivery-tab">
+              <div class="row">
+                <div id="projects_delivery"></div>
+              </div>
+            </div>
+            <!-- Tab Delivery -->
+            <!-- Tab Pipeline -->
+            <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="pipeline-tab">
+              <div class="row">
+                <div id="projects_pipeline"></div>
+              </div>
+            </div>
+            <!-- Tab Pipeline -->
+            <!-- Tab Pre-sales -->
+            <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="presales-tab">
+              <div class="row">
+                <div id="projects_pre-sales"></div>
+              </div>
+            </div>
+            <!-- Tab Pre-sales -->
           </div>
+          <!-- Tab content -->
         </div>
-        <!-- Load -->
-
-      </div>
-      <!-- Window content -->
-    </div>
-  </div>
-</div>
-<!-- Window -->
-
-<!-- Window -->
-<div class="row">
-  <div class="col-md-12 col-sm-12 col-xs-12">
-    <div class="x_panel">
-      <!-- Window content -->
-      <div class="x_content">
-        <!-- Projects -->
-        <div class="row">
-          <h3>Projects <small>Delivery</small></h3>
-          <div id="projects_delivery"></div>
-        </div>
-        <!-- Projects -->
-      </div>
-      <!-- Window content -->
-    </div>
-  </div>
-</div>
-<!-- Window -->
-
-<!-- Window -->
-<div class="row">
-  <div class="col-md-12 col-sm-12 col-xs-12">
-    <div class="x_panel">
-      <!-- Window content -->
-      <div class="x_content">
-        <!-- Projects -->
-        <div class="row">
-          <h3>Projects <small>Pipeline</small></h3>
-          <div id="projects_pipeline"></div>
-        </div>
-        <!-- Projects -->
-      </div>
-      <!-- Window content -->
-    </div>
-  </div>
-</div>
-<!-- Window -->
-
-<!-- Window -->
-<div class="row">
-  <div class="col-md-12 col-sm-12 col-xs-12">
-    <div class="x_panel">
-      <!-- Window content -->
-      <div class="x_content">
-        <!-- Projects -->
-        <div class="row">
-          <h3>Projects <small>Pre-sales</small></h3>
-          <div id="projects_pre-sales"></div>
-        </div>
-        <!-- Projects -->
+        <!-- Tab pannels -->
       </div>
       <!-- Window content -->
     </div>
@@ -208,6 +195,7 @@
   var loadActionsTable;
   var hide_closed = true;
   var hide_projects_closed = 1;
+  var project_ids = [];
 
   // Here we are going to get from PHP the list of roles and their value for the logged in customer
   // Roles check
@@ -640,8 +628,137 @@
       window.location.href = "{!! route('toolsFormUpdate',['','','']) !!}/"+user_id_edit+"/"+project_id_edit+"/"+year_edit;
     });
 
-
     // LOAD ACTIONS
+
+    // COMMENTS
+
+    function loadComments() {
+      $.ajax({
+        url: "{!! route('commentList') !!}",
+        type: "POST",
+        data: {'project_ids[]': project_ids},
+        dataType: "JSON",
+        success:function(data){
+          console.log(data);
+          $("table.comment").each(function(){
+            $(this).find("tbody").empty();
+          });
+          data.forEach(function (item, index) { 
+            var markup = "";
+            markup += '<tr>';
+            markup += '<td name="created">'+item['created_at']+'</td>';
+            markup += '<td name="created_by">'+item['user_summary']['name']+'</td>';
+            markup += '<td name="comment_id" style="{{ $extra_info_display }}">'+item['id']+'</td>';
+            markup += '<td name="user_id" style="{{ $extra_info_display }}">'+item['user_summary']['id']+'</td>';
+            markup += '<td name="project_id" style="{{ $extra_info_display }}">'+item['project_id']+'</td>';
+            markup += '<td name="comment">'+item['comment']+'</td>';
+            markup += '<td>';
+            markup += '<button type="button" class="buttonCommentEdit btn btn-success btn-xs"><span class="glyphicon glyphicon-pencil"></span></button>';
+            markup += '<button type="button" class="buttonCommentDelete btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
+            markup += '</td>';
+            markup += '</tr>';
+            $("#comments_project_"+item['project_id']).find("tbody").append(markup);
+          });
+        }
+      });
+    };
+
+    $(document).on('click', '.new_comment', function(){
+      var table = $(this).closest('table').attr('id');
+      var project_id = $(this).closest('table').attr('data-project_id');
+      //console.log(project_id);
+      $(this).hide();
+      var today = new Date();
+      var dd = String(today.getDate()).padStart(2, '0');
+      var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+      var yyyy = today.getFullYear();
+
+      today = yyyy + '-' + mm + '-' + dd;
+      var markup = "";
+      markup += '<tr>';
+      markup += '<td name="created">'+today+'</td>';
+      markup += '<td name="created_by">{{ $user_name }}</td>';
+      markup += '<td name="comment_id" style="{{ $extra_info_display }}"></td>';
+      markup += '<td name="user_id" style="{{ $extra_info_display }}">{{ $user_id }}</td>';
+      markup += '<td name="project_id" style="{{ $extra_info_display }}">'+project_id+'</td>';
+      markup += '<td><textarea rows="4" name="comment"></textarea></td>';
+      markup += '<td>';
+      markup += '<button type="button" class="btn btn-success btn-xs comment_insert"><span class="glyphicon glyphicon-log-in"></span></button>';
+      markup += '<button type="button" class="btn btn-success btn-xs comment_insert_cancel"><span class="glyphicon glyphicon-remove"></span></button>';
+      markup += '</td>';
+      markup += '</tr>';
+      
+      $('#'+table+' tbody').prepend(markup);
+
+    });
+
+    $(document).on('click', '.comment_insert_cancel', function(){
+      var table_id = $(this).closest('table').attr('id');
+      button = $('#'+table_id).find('.new_comment');
+      button.show();
+      $("#"+table_id+" > tbody > tr:first-child").remove();
+    });
+
+    $(document).on('click', '.comment_insert', function(){
+      var table_id = $(this).closest('table').attr('id');
+      var button = $('#'+table_id).find('.new_comment');
+      var user_id = {{ $user_id }}
+      var $row = $(this).closest("tr");
+      var project_id = Number($row.find('td[name="project_id"]').text());
+      var comment = $row.find('textarea[name="comment"]').val();
+
+      values = {'id':null,'user_id':user_id,'project_id':project_id,'comment':comment};
+      //console.log(values);
+
+      $.ajax({
+        url: "{!! route('commentInsert') !!}",
+        type: "POST",
+        data: values,
+        dataType: "JSON",
+        success:function(data){
+          //console.log(data);
+          button.show();
+          loadComments();
+
+          // Flash message
+          $('#flash-message').empty();
+          var box = $('<div id="delete-message" class="alert alert-'+data.box_type+' alert-dismissible flash-'+data.message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+          $('#flash-message').append(box);
+          $('#delete-message').delay(2000).queue(function () {
+              $(this).addClass('animated flipOutX')
+          });
+          // Flash message
+        }
+      });
+
+    });
+
+    $(document).on('click', '.buttonCommentDelete', function(){
+      var $row = $(this).closest("tr");
+      var comment_id = $row.find('td[name="comment_id"]').text();
+      var table = $(this).closest('table').attr('id');
+
+      $.ajax({
+        url: "{!! route('comment_delete','') !!}/"+comment_id,
+        type: "GET",
+        dataType: "JSON",
+        success:function(data){
+          //console.log(data);
+          loadComments();
+
+          // Flash message
+          $('#flash-message').empty();
+          var box = $('<div id="delete-message" class="alert alert-'+data.box_type+' alert-dismissible flash-'+data.message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+          $('#flash-message').append(box);
+          $('#delete-message').delay(2000).queue(function () {
+              $(this).addClass('animated flipOutX')
+          });
+          // Flash message
+        }
+      });
+    });
+
+    // COMMENTS
 
     // LOAD
 
@@ -678,59 +795,55 @@
         data: {'year[]': year,'user[]': user,'no_datatables': true,'except_customers':except_customers,'checkbox_closed':hide_projects_closed},
         dataType: "JSON",
         success:function(data){
-          console.log(data);
+          //console.log(data);
           $("#projects_delivery").empty();
           $("#projects_pipeline").empty();
           $("#projects_pre-sales").empty();
           
           data.forEach(function (item, index) { 
+            project_ids.push(item['project_id']);
             var markup = '';
-            if (item['gold_order_number'] == null) {
-              item['gold_order_number'] = 'not set';
-            }
-            if (item['samba_id'] == null) {
-              item['samba_id'] = 'not set';
-            }
-            markup += '<div class="row project_info">';
-            markup += '<div class="col-xs-4">';
-            markup += '<button type="button" data-project_id="'+item['project_id']+'" class="buttonProjectEdit btn btn-success btn-xs"><span class="glyphicon glyphicon-pencil"></span></button>';
-            markup += 'Customer: '+item['customer_name']+'</div>';
-            markup += '<div class="col-xs-5">';
-              markup += 'Project: '+item['project_name'];
+            markup += '<div class="row">';
+              markup += '<div class="col-xs-12">';
+              markup += '<h3>';
+              markup += '<button type="button" data-project_id="'+item['project_id']+'" class="buttonProjectEdit btn btn-success btn-xs"><span class="glyphicon glyphicon-pencil"></span></button>';
+              markup += item['customer_name']+' / <small>'+item['project_name']+'</small>';
+              markup += '</h3></div>';
             markup += '</div>';
-            
+
             if ((item['project_type'] == 'Project' || item['project_type'] == 'Baseline')) {
-              markup += '<div class="col-xs-3">';
-              markup += 'GO: '+item['gold_order_number'];
-              markup += '</div>';
+              markup += '<div class="row">';
+                markup += '<div class="col-xs-4">';
+                markup += 'GO: '+print_null(item['gold_order_number']);
+                markup += '</div>';
               markup += '</div>';
             } else if (item['project_type'] == 'Pre-sales') {
-              markup += '<div class="col-xs-3">';
-              markup += 'Samba ID: '+item['samba_id'];
-              markup += '</div>';
+              markup += '<div class="row">';
+                markup += '<div class="col-xs-4">';
+                  markup += 'Samba ID: '+print_null(item['samba_id']);
+                markup += '</div>';
+                markup += '<div class="col-xs-4">';
+                  markup += 'Owner: '+print_null(item['samba_opportunit_owner']);
+                markup += '</div>';
+                markup += '<div class="col-xs-4">';
+                  markup += 'Stage: '+print_null(item['samba_stage']);
+                markup += '</div>';
               markup += '</div>';
               markup += '<div class="row">';
-              markup += '<div class="col-xs-4">';
-              markup += 'Owner: '+item['samba_opportunit_owner']+'</div>';
-              markup += '<div class="col-xs-8">';
-                markup += 'Stage: '+item['samba_stage'];
-              markup += '</div>';
-              markup += '</div>';
-              markup += '<div class="row">';
-              markup += '<div class="col-xs-4">';
-                markup += 'Order intake: '+item['project_revenue'];
-              markup += '</div>';
-              markup += '<div class="col-xs-4">';
-                markup += 'Cons. rev.: '+item['samba_consulting_product_tcv'];
-              markup += '</div>';
-              markup += '<div class="col-xs-4">';
-                markup += 'PullThru rev.: '+item['samba_pullthru_tcv'];
-              markup += '</div>';
+                markup += '<div class="col-xs-4">';
+                  markup += 'Order intake: '+toCurrency(item['project_revenue']);
+                markup += '</div>';
+                markup += '<div class="col-xs-4">';
+                  markup += 'Cons. rev.: '+toCurrency(item['samba_consulting_product_tcv']);
+                markup += '</div>';
+                markup += '<div class="col-xs-4">';
+                  markup += 'PullThru rev.: '+toCurrency(item['samba_pullthru_tcv']);
+                markup += '</div>';
               markup += '</div>';
             }
             
             markup += '<div class="row">';
-            markup += '<table class="table table-striped table-hover table-bordered mytable work" width="100%">';
+            markup += '<table class="table table-striped table-hover table-bordered work" width="100%">';
             markup += '<thead>';
               markup += '<th></th>';
               markup += '<th></th>';
@@ -765,7 +878,7 @@
                     markup += '<td>'+rev['product_code']+'</td>';
                     project_months.forEach(function (month, index) 
                       { 
-                        markup += '<td>'+rev[month]+'</td>';
+                        markup += '<td>'+toCurrency(rev[month])+'</td>';
                       });
                     markup += '</tr>';
                   });
@@ -783,10 +896,39 @@
             markup += '</tbody>';
             markup += '</table>';
             markup += '</div>';
+
+            // Comments
+            @permission('tools-projects-comments')
+            markup += '<div class="row">';
+            markup += '<h4>Comments</h4>';
+            markup += '<div id="comments_project_'+item['project_id']+'" data-project_id="'+item['project_id']+'" class="comment">';
+            markup += '<table id="comments_project_'+item['project_id']+'" data-project_id="'+item['project_id']+'" class="table table-striped table-hover table-bordered comment" width="100%">';
+            markup += '<thead>';
+            markup += '<tr>';
+            markup += '<th>Created</th>';
+            markup += '<th>Created by</th>';
+            markup += '<th style="{{ $extra_info_display }}">Comment ID</th>';
+            markup += '<th style="{{ $extra_info_display }}">User ID</th>';
+            markup += '<th style="{{ $extra_info_display }}">Project ID</th>';
+            markup += '<th>Comment</th>';
+            markup += '<th>';
+            markup += '<button type="button" class="btn btn-info btn-xs new_comment"><span class="glyphicon glyphicon-plus"></span></button>';
+            markup += '</th>';
+            markup += '</tr>';
+            markup += '</thead>';
+            markup += '<tbody>';
+            markup += '</tbody>';
+            markup += '</table>';
+            markup += '</div>';
+            markup += '</div>';
+            @endpermission
+            // Comments
+
+            // Actions
             markup += '<div class="row">';
             markup += '<h4>Actions</h4>';
             markup += '<div id="actions_project_'+item['project_id']+'" data-project_id="'+item['project_id']+'" class="action">';
-            markup += '<table id="project_'+item['project_id']+'" data-project_id="'+item['project_id']+'" data-section="project" class="table table-striped table-hover table-bordered mytable action" width="100%">';
+            markup += '<table id="project_'+item['project_id']+'" data-project_id="'+item['project_id']+'" data-section="project" class="table table-striped table-hover table-bordered action" width="100%">';
             markup += '<thead>';
             markup += '<tr>';
             markup += '<th style="{{ $extra_info_display }}">Action ID</th>';
@@ -815,6 +957,8 @@
             markup += '</table>';
             markup += '</div>';
             markup += '</div>';
+            // Actions
+
             markup += '<hr>';
             if ((item['project_type'] == 'Project' || item['project_type'] == 'Baseline') && item['project_status'] == 'Started') {
               $("#projects_delivery").append(markup);
@@ -824,6 +968,8 @@
               $("#projects_pre-sales").append(markup);
             }
           });
+          //console.log(project_ids);
+          loadComments();
           loadActions();
         }
       });
