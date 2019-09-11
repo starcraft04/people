@@ -59,9 +59,7 @@
     </div>
     <div class="col-xs-2">
       <label for="closed" class="control-label">Hide closed actions</label>
-      <input name="closed" type="checkbox" id="switch_actions_closed" class="form-group js-switch-small" checked /> 
-      <label for="projects_closed" class="control-label">Hide closed projects</label>
-      <input name="projects_closed" type="checkbox" id="switch_projects_closed" class="form-group js-switch-small2" checked /> 
+      <input name="closed" type="checkbox" id="switch_actions_closed" class="form-group js-switch-small" checked />
     </div>
   </div>
 <!-- Selections -->
@@ -84,6 +82,10 @@
           <li role="presentation" class="">       <a href="#tab_content3" id="pipeline-tab" role="tab" data-toggle="tab" aria-expanded="false">Projects <small>Pipeline</small></a>
           </li>
           <li role="presentation" class="">       <a href="#tab_content4" id="presales-tab" role="tab" data-toggle="tab" aria-expanded="false">Projects <small>Pre-sales</small></a>
+          </li>
+          <li role="presentation" class="">       <a href="#tab_content5" id="orange-tab" role="tab" data-toggle="tab" aria-expanded="false">Projects <small>Orange</small></a>
+          </li>
+          <li role="presentation" class="">       <a href="#tab_content6" id="closed-tab" role="tab" data-toggle="tab" aria-expanded="false">Projects <small>Closed</small></a>
           </li>
           </ul>
           <!-- Tab titles -->
@@ -115,6 +117,7 @@
                   </tbody>
                 </table>
               </div>
+              @permission('action-view')
               <div class="row">
                 <h4>Actions</h4>
                   <div id="actions_general" class="action">
@@ -147,6 +150,7 @@
                     </table>
                 </div>
               </div>
+              @endpermission
             </div>
             <!-- Tab General -->
             <!-- Tab Delivery -->
@@ -170,6 +174,20 @@
               </div>
             </div>
             <!-- Tab Pre-sales -->
+            <!-- Tab Orange -->
+            <div role="tabpanel" class="tab-pane fade" id="tab_content5" aria-labelledby="orange-tab">
+              <div class="row">
+                <div id="projects_orange"></div>
+              </div>
+            </div>
+            <!-- Tab Orange -->
+            <!-- Tab Closed -->
+            <div role="tabpanel" class="tab-pane fade" id="tab_content6" aria-labelledby="closed-tab">
+              <div class="row">
+                <div id="projects_closed"></div>
+              </div>
+            </div>
+            <!-- Tab Closed -->
           </div>
           <!-- Tab content -->
         </div>
@@ -194,17 +212,17 @@
   var user_id = {{ $user_id }};
   var loadActionsTable;
   var hide_closed = true;
-  var hide_projects_closed = 1;
   var project_ids = [];
 
   // Here we are going to get from PHP the list of roles and their value for the logged in customer
   // Roles check
   <?php
+          // Permissions for actions
           $options = array(
               'validate_all' => true,
               'return_type' => 'both'
           );
-          list($validate, $allValidations) = Entrust::ability(null,array('action-create','action-edit','action-delete','action-all'),$options);
+          list($validate, $allValidations) = Entrust::ability(null,array('action-create','action-edit','action-delete','action-all','comment-create','comment-edit','comment-delete','comment-all'),$options);
           echo "var permissions = jQuery.parseJSON('".json_encode($allValidations['permissions'])."');";
   ?>
   //console.log(permissions);
@@ -249,9 +267,6 @@
     // switchery
     var small = document.querySelector('.js-switch-small');
     var switchery = new Switchery(small, { size: 'small' });
-
-    var small2 = document.querySelector('.js-switch-small2');
-    var switchery2 = new Switchery(small2, { size: 'small' });
 
     // SELECTIONS START
     // ________________
@@ -547,6 +562,10 @@
     });
 
     $(document).on('click', '.buttonActionEdit', function(){
+      var table_id = $(this).closest('table').attr('id');
+      button = $('#'+table_id).find('.new_action');
+      button.hide();
+
       var $row = $(this).closest("tr");
       var id = $row.find('td[name="action_id"]').text();
       var created_user_id = $row.find('td[name="created_by_id"]').text();
@@ -639,7 +658,7 @@
         data: {'project_ids[]': project_ids},
         dataType: "JSON",
         success:function(data){
-          console.log(data);
+          //console.log(data);
           $("table.comment").each(function(){
             $(this).find("tbody").empty();
           });
@@ -653,8 +672,25 @@
             markup += '<td name="project_id" style="{{ $extra_info_display }}">'+item['project_id']+'</td>';
             markup += '<td name="comment">'+item['comment']+'</td>';
             markup += '<td>';
-            markup += '<button type="button" class="buttonCommentEdit btn btn-success btn-xs"><span class="glyphicon glyphicon-pencil"></span></button>';
-            markup += '<button type="button" class="buttonCommentDelete btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
+            delete_permission = false;
+            edit_permission = false;
+            if (permissions['comment-delete'] && item['user_id'] == {!! $user_id !!}) {
+              delete_permission = true;
+            }
+            if (permissions['comment-edit'] && item['user_id'] == {!! $user_id !!}) {
+              edit_permission = true;
+            }
+            if (permissions['comment-all']) {
+              delete_permission = true;
+              edit_permission = true;
+            }
+            
+            if (edit_permission) {
+              markup += '<button type="button" class="buttonCommentEdit btn btn-success btn-xs"><span class="glyphicon glyphicon-pencil"></span></button>';
+            }
+            if (delete_permission) {
+              markup += '<button type="button" class="buttonCommentDelete btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
+            }
             markup += '</td>';
             markup += '</tr>';
             $("#comments_project_"+item['project_id']).find("tbody").append(markup);
@@ -699,6 +735,13 @@
       $("#"+table_id+" > tbody > tr:first-child").remove();
     });
 
+    $(document).on('click', '.comment_update_cancel', function(){
+      var table_id = $(this).closest('table').attr('id');
+      button = $('#'+table_id).find('.new_comment');
+      button.show();
+      loadComments();
+    });
+
     $(document).on('click', '.comment_insert', function(){
       var table_id = $(this).closest('table').attr('id');
       var button = $('#'+table_id).find('.new_comment');
@@ -712,6 +755,40 @@
 
       $.ajax({
         url: "{!! route('commentInsert') !!}",
+        type: "POST",
+        data: values,
+        dataType: "JSON",
+        success:function(data){
+          //console.log(data);
+          button.show();
+          loadComments();
+
+          // Flash message
+          $('#flash-message').empty();
+          var box = $('<div id="delete-message" class="alert alert-'+data.box_type+' alert-dismissible flash-'+data.message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+          $('#flash-message').append(box);
+          $('#delete-message').delay(2000).queue(function () {
+              $(this).addClass('animated flipOutX')
+          });
+          // Flash message
+        }
+      });
+
+    });
+
+    $(document).on('click', '.comment_update', function(){
+      var table_id = $(this).closest('table').attr('id');
+      var button = $('#'+table_id).find('.new_comment');
+
+      var $row = $(this).closest("tr");
+      var id = $row.find('td[name="comment_id"]').text();
+      var comment = $row.find('textarea[name="comment"]').val();
+
+      values = {'comment':comment};
+      //console.log(values);
+
+      $.ajax({
+        url: "{!! route('comment_edit','') !!}/"+id,
         type: "POST",
         data: values,
         dataType: "JSON",
@@ -758,6 +835,36 @@
       });
     });
 
+    $(document).on('click', '.buttonCommentEdit', function(){
+      var table_id = $(this).closest('table').attr('id');
+      button = $('#'+table_id).find('.new_comment');
+      button.hide();
+
+      var $row = $(this).closest("tr");
+      var id = $row.find('td[name="comment_id"]').text();
+      var created_at = $row.find('td[name="created"]').text();
+      var created_by = $row.find('td[name="created_by"]').text();
+      var comment_user_id = $row.find('td[name="user_id"]').text();
+      var project_id = $row.find('td[name="project_id"]').text();
+      var comment = $row.find('td[name="comment"]').text();
+      
+
+      var markup = "";
+      markup += '<td name="created">'+created_at+'</td>';
+      markup += '<td name="created_by">'+created_by+'</td>';
+      markup += '<td name="comment_id" style="{{ $extra_info_display }}">'+id+'</td>';
+      markup += '<td name="user_id" style="{{ $extra_info_display }}">'+comment_user_id+'</td>';
+      markup += '<td name="project_id" style="{{ $extra_info_display }}">'+project_id+'</td>';
+      markup += '<td><textarea rows="4" name="comment">'+comment+'</textarea></td>';
+      markup += '<td>';
+      markup += '<button type="button" class="btn btn-success btn-xs comment_update"><span class="glyphicon glyphicon-log-in"></span></button>';
+      markup += '<button type="button" class="btn btn-success btn-xs comment_update_cancel"><span class="glyphicon glyphicon-remove"></span></button>';
+      markup += '</td>';
+
+      $row.empty();
+      $row.append(markup);
+    });
+
     // COMMENTS
 
     // LOAD
@@ -773,26 +880,17 @@
       loadProjects();
     });
 
-    $('#switch_projects_closed').on('change', function() {
-      if ($(this).is(':checked')) {
-        hide_projects_closed = 1;
-      } else {
-        hide_projects_closed = 0;
-      }
-      //console.log(hide_closed);
-      loadProjects();
-    });
     // Hide closed
     
 
     // LOAD PROJECTS
     // DELIVERY
 
-    function loadProjects(except_customers = ['Orange Business Services']) {
+    function loadProjects() {
       $.ajax({
         url: "{!! route('userSummaryProjects') !!}",
         type: "POST",
-        data: {'year[]': year,'user[]': user,'no_datatables': true,'except_customers':except_customers,'checkbox_closed':hide_projects_closed},
+        data: {'year[]': year,'user[]': user,'no_datatables': true},
         dataType: "JSON",
         success:function(data){
           //console.log(data);
@@ -912,7 +1010,9 @@
             markup += '<th style="{{ $extra_info_display }}">Project ID</th>';
             markup += '<th>Comment</th>';
             markup += '<th>';
-            markup += '<button type="button" class="btn btn-info btn-xs new_comment"><span class="glyphicon glyphicon-plus"></span></button>';
+            @permission('comment-create')
+              markup += '<button type="button" class="btn btn-info btn-xs new_comment"><span class="glyphicon glyphicon-plus"></span></button>';
+            @endpermission
             markup += '</th>';
             markup += '</tr>';
             markup += '</thead>';
@@ -925,6 +1025,7 @@
             // Comments
 
             // Actions
+            @permission('action-view')
             markup += '<div class="row">';
             markup += '<h4>Actions</h4>';
             markup += '<div id="actions_project_'+item['project_id']+'" data-project_id="'+item['project_id']+'" class="action">';
@@ -957,10 +1058,15 @@
             markup += '</table>';
             markup += '</div>';
             markup += '</div>';
+            @endpermission
             // Actions
 
             markup += '<hr>';
-            if ((item['project_type'] == 'Project' || item['project_type'] == 'Baseline') && item['project_status'] == 'Started') {
+            if (item['project_status'] == 'Closed') {
+              $("#projects_closed").append(markup);
+            } else if (item['customer_name'] == 'Orange Business Services') {
+              $("#projects_orange").append(markup);
+            } else if ((item['project_type'] == 'Project' || item['project_type'] == 'Baseline') && item['project_status'] == 'Started') {
               $("#projects_delivery").append(markup);
             } else if ((item['project_type'] == 'Project' || item['project_type'] == 'Baseline') && item['project_status'] == 'Pipeline') {
               $("#projects_pipeline").append(markup);
@@ -969,8 +1075,12 @@
             }
           });
           //console.log(project_ids);
-          loadComments();
-          loadActions();
+          @permission('tools-projects-comments')
+            loadComments();
+          @endpermission
+          @permission('action-view')
+            loadActions();
+          @endpermission
         }
       });
     };

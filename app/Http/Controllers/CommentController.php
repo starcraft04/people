@@ -8,6 +8,7 @@ use App\Comment;
 use Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
+use Entrust;
 
 class CommentController extends Controller {
 
@@ -81,7 +82,7 @@ class CommentController extends Controller {
         $inputs = $request->all();
         //dd($inputs);
         $comment = Comment::find($id);
-        if ($comment->user_id == Auth::user()->id || Auth::user()->id == 1) {
+        if ($comment->user_id == Auth::user()->id || Entrust::can('comment-all')) {
             $comment->comment = $inputs['comment'];
             $comment->save();
             $result->result = 'success';
@@ -102,7 +103,7 @@ class CommentController extends Controller {
         // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
         $result = new \stdClass();
         $comment = Comment::find($id);
-        if ($comment->user_id == Auth::user()->id || Auth::user()->id == 1) {
+        if ($comment->user_id == Auth::user()->id || Entrust::can('comment-all')) {
             Comment::destroy($id);
             $result->result = 'success';
             $result->box_type = 'success';
