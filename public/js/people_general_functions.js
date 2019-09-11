@@ -1,5 +1,6 @@
 function toCurrency(num) {
     if (num != null) {
+        num  = parseFloat(num);
         if (num % 1 == 0) {
             result = num
                 .toFixed(0) // always 0 decimal digits
