@@ -59,6 +59,21 @@ class OtlUploadController extends Controller
       "dec" => 12
     ];
 
+    $months_prime = [
+      1 => "jan",
+      2 => "feb",
+      3 => "mar",
+      4 => "apr",
+      5 => "may",
+      6 => "jun",
+      7 => "jul",
+      8 => "aug",
+      9 => "sep",
+      10 => "oct",
+      11 => "nov",
+      12 => "dec"
+    ];
+
 
     //First we need to get all employees for this manager
     $all_users = $this->userRepository->getAllUsersFromManager(Auth::user()->id);
@@ -80,22 +95,70 @@ class OtlUploadController extends Controller
 
       // Now we need to check we have the right columns
       $headerRow = $sheet->first()->keys()->toArray();
-      $columns_needed = ["customer_name","project_name","meta_activity","employee_name","year","month","converted_time","unit"];
-
-      // If the columns are not all present then we have an error and go back
-      if ($headerRow != $columns_needed) {
-        array_push($messages,['status'=>'error',
-          'user' =>'',
-          'msg'=>'Some columns are required but not present in the file, please see the sample file and upload again.']);
-        return view('dataFeed/otlupload',  compact('messages','color'));
-      }
-
+      //dd($headerRow);
+      
       // This command helps getting a view on what we get from $sheet
       //$sheet->dd();
 
       $result = $sheet->toArray();
 
       //dd($result);
+
+      $columns_needed_CTV = ["customer_name","project_name","meta_activity","employee_name","year","month","converted_time","unit"];
+      $columns_needed_PRIME = ["project_name","billable_task","name","year","month","time_entered_in_days"];
+
+      // If the columns are not all present then we have an error and go back
+      if (!array_diff($columns_needed_CTV, $headerRow)) {
+
+      } elseif (!array_diff($columns_needed_PRIME, $headerRow)) {
+        $header_already_used = [];
+        $new_result = [];
+        foreach ($result as $r) {
+          $composite = $r["project_name"]."_".$r["billable_task"]."_".$r["name"]."_".$r["year"]."_".$r["month"];
+          if (in_array($composite,$header_already_used)) {
+            continue;
+          } else {
+            array_push($header_already_used,$composite);
+            $value = [];
+            $value["customer_name"] = '?';
+            $value["project_name"] = $r["project_name"];
+            if ($r["billable_task"] == "Y") {
+              $value["meta_activity"] = "BILLABLE";
+            } else {
+              $value["meta_activity"] = "OTHER";
+            }
+            $value["employee_name"] = str_replace(", ", ",", $r["name"]);
+            $value["year"] = intval($r["year"]);
+            $value["month"] = $months_prime[intval($r["month"])];
+
+            $var1 = $r["project_name"];
+            $var2 = $r["billable_task"];
+            $var3 = $r["name"];
+            $var4 = $r["year"];
+            $var5 = $r["month"];
+            $filtered_array = array_filter($result, function($val) use ($var1, $var2, $var3, $var4, $var5) {
+                          return ($val['project_name']==$var1 and $val['billable_task']==$var2 and $val['name']==$var3 and $val['year']==$var4 and $val['month']==$var5);
+                    });
+            /* if ($r["month"] == '9') {
+              dd($filtered_array);
+            } */
+            $value["converted_time"] = 0;
+            foreach ($filtered_array as $row) {
+              $value["converted_time"] += floatval(str_replace(",", ".", $row["time_entered_in_days"]));
+            }
+            $value["unit"] = "days";
+            array_push($new_result,$value);
+          }
+        }
+        $result = $new_result;
+        
+        //dd($result);
+      } else {
+        array_push($messages,['status'=>'error',
+          'user' =>'',
+          'msg'=>'Some columns are required but not present in the file, please see the sample file and upload again.']);
+        return view('dataFeed/otlupload',  compact('messages','color'));
+      }
 
       foreach ($result as $row){
         $userInDB = $this->userRepository->getByName($row['employee_name']);

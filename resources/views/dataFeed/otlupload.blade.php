@@ -75,8 +75,8 @@
                 {!! Form::label('sample', 'Sample file', ['class' => 'control-label']) !!}
               </div>
               <div class="col-md-8">
-                Download 
-                <a href="{{ asset('/Samples/otl_upload_sample.xls') }}" style="text-decoration: underline;">this file</a> to get the structure needed. Click
+                Download <a href="{{ asset('/Samples/otl_upload_sample.xls') }}" style="text-decoration: underline;">this file (.xls)</a> to get the structure needed for CTV.</br>
+                Download <a href="{{ asset('/Samples/prime_upload_sample.csv') }}" style="text-decoration: underline;">this file (.csv)</a> to get the structure needed for Prime.</br> Click
                 <a href="{{route('otluploadhelp')}}" style="text-decoration: underline;">here</a> for help.
               </div>
             </div>

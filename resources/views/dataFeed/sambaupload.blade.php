@@ -82,7 +82,7 @@
                 Download 
                 <a href="{{ asset('/Samples/samba_upload_sample.csv') }}" style="text-decoration: underline;">this file</a> to get the structure needed.
               </div>
-              <div class="col-md-5"><input name="create_in_db" type="checkbox" id="create_in_db" class="form-group js-switch-small" /> Create new record in DB if no Samba ID found</div>
+              <div class="col-md-5"><input name="create_in_db" type="checkbox" id="create_in_db" class="form-group js-switch-small" checked /> Create new record in DB if no Samba ID found</div>
             </div>
           </div>
 
@@ -174,7 +174,7 @@
           <tbody id="table_content">
           @foreach($ids as $key => $project)
             @if(!$project['in_db'])
-              <tr class="item">
+              <tr class="item {!! $project['color'] !!}">
                 <td><button type="button" class="btn btn-info btn-xs add_samba"><span class="glyphicon glyphicon-plus"></span></button></td>
                 <td class="owners_sales_cluster">{!! $project['owners_sales_cluster'] !!}</td>
                 <td class="opportunity_domain">{!! $project['opportunity_domain'] !!}</td>
@@ -332,7 +332,7 @@
           stateSave: true,
           order: [[0, 'asc']],
           columns: [
-              { name: 'action', data: 'null' , searchable: true , visible: true},
+              { name: 'action', data: 'null' , searchable: false , visible: true},
               { name: 'owners_sales_cluster', data: 'owners_sales_cluster' , searchable: true , visible: true},
               { name: 'opportunity_domain', data: 'opportunity_domain' , searchable: true , visible: false},
               { name: 'account_name', data: 'account_name' , searchable: true , visible: true},
@@ -343,8 +343,8 @@
               { name: 'opportunity_owner', data: 'opportunity_owner' , searchable: true , visible: true},
               { name: 'created_date', data: 'created_date' , searchable: true , visible: false},
               { name: 'close_date', data: 'close_date' , searchable: true , visible: false},
-              { name: 'stage', data: 'stage' , searchable: true , visible: false},
-              { name: 'probability', data: 'probability' , searchable: true , visible: true},
+              { name: 'stage', data: 'stage' , searchable: true , visible: true},
+              { name: 'probability', data: 'probability' , searchable: true , visible: false},
               { name: 'amount_tcv', data: 'amount_tcv' , searchable: true , visible: true},
               { name: 'consulting_tcv', data: 'consulting_tcv' , searchable: true , visible: true},
             ],

@@ -924,7 +924,15 @@
                   markup += 'Owner: '+print_null(item['samba_opportunit_owner']);
                 markup += '</div>';
                 markup += '<div class="col-xs-4">';
+                if (item['samba_stage'] == 'Closed Lost') {
+                  markup += 'Stage: <button type="button" class="btn btn-round btn-danger btn-xs">'+print_null(item['samba_stage'])+'</button>';
+                } else if (item['samba_stage'] == 'Closed Won') {
+                  markup += 'Stage: <button type="button" class="btn btn-round btn-success btn-xs">'+print_null(item['samba_stage'])+'</button>';
+                } else if (item['samba_stage'] == null) {
                   markup += 'Stage: '+print_null(item['samba_stage']);
+                } else {
+                  markup += 'Stage: <button type="button" class="btn btn-round btn-default btn-xs">'+print_null(item['samba_stage'])+'</button>';
+                }
                 markup += '</div>';
               markup += '</div>';
               markup += '<div class="row">';

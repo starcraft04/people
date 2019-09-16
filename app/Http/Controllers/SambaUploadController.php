@@ -164,6 +164,13 @@ class SambaUploadController extends Controller
           }
           continue;
         } else {
+          if ($row['stage'] == 'Closed Won') {
+            $color = 'success';
+          } elseif ($row['stage'] == 'Closed Lost') {
+            $color = 'danger';
+          } else {
+            $color = '';
+          }
           array_push($ids,[
             'owners_sales_cluster' => $row['owners_sales_cluster'],
             'opportunity_domain' => $row['opportunity_domain'],
@@ -178,7 +185,8 @@ class SambaUploadController extends Controller
             'probability' => $row['probability'],
             'amount_tcv' => $row['amount_tcv_converted'],
             'consulting_tcv' => $consulting_tcv,
-            'in_db' => $in_db
+            'in_db' => $in_db,
+            'color' => $color
           ]);
         }
       }
