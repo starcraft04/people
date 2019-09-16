@@ -327,7 +327,7 @@ class ToolsController extends Controller {
       $win_ratio_disabled = '';
     }
 
-    if ($project->otl_validated == 1) {
+    if ($project->otl_validated == 1 && !Entrust::can('tools-update-existing_prime_code')) {
       $otl_name_disabled = 'disabled';
       $meta_activity_select_disabled = 'true';
     }
