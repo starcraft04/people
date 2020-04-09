@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Project;
 use App\Customer;
 use App\Role;
+use App\Loe;
 use App\ProjectRevenue;
 use App\Repositories\ProjectRepository;
 use App\Http\Controllers\Controller;
@@ -170,6 +171,134 @@ class ProjectController extends Controller {
     }
 
     return $data;
+  }
+
+  public function listOfProjectsLoe($id)
+  {
+    $project_loes = DB::table('project_loe')
+      ->leftjoin('projects', 'projects.id', '=', 'project_loe.project_id')
+      ->leftjoin('customers', 'customers.id', '=', 'projects.customer_id')
+      ->leftjoin('users', 'users.id', '=', 'project_loe.user_id')
+      ->select('project_loe.id AS loe_id','project_loe.project_id AS p_id','projects.project_name','customers.name AS customer_name','users.name AS user_name','project_loe.start_date',
+                'project_loe.end_date','project_loe.domain','project_loe.type','project_loe.location','project_loe.mandays','project_loe.description','project_loe.history','project_loe.signoff',
+                'project_loe.created_at','project_loe.updated_at')
+      ->where('project_id',$id);
+
+    $data = Datatables::of($project_loes)->make(true);
+
+    return $data;
+  }
+
+  public function listOfAllProjectsLoe($year)
+  {
+    $project_loes = DB::table('project_loe')
+      ->leftjoin('projects', 'projects.id', '=', 'project_loe.project_id')
+      ->leftjoin('customers', 'customers.id', '=', 'projects.customer_id')
+      ->leftjoin('users', 'users.id', '=', 'project_loe.user_id')
+      ->select('project_loe.id AS loe_id','project_loe.project_id AS p_id','projects.project_name','customers.name AS customer_name','users.name AS user_name','project_loe.start_date',
+                'project_loe.end_date','project_loe.domain','project_loe.type','project_loe.location','project_loe.mandays','project_loe.description','project_loe.history','project_loe.signoff',
+                'project_loe.created_at','project_loe.updated_at')
+      ->where('project_loe.created_at','like','%'.$year.'%')
+      ;
+
+    $data = Datatables::of($project_loes)->make(true);
+
+    return $data;
+  }
+
+  public function deleteLoe($id)
+	{
+    // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
+    $result = new \stdClass();
+    $loe_result = Loe::find($id);
+    if ($loe_result->user_id == Auth::user()->id || Entrust::can('projectLoe-deleteAll')) {
+      $loe_result->delete();
+      $result->result = 'success';
+      $result->box_type = 'success';
+      $result->message_type = 'success';
+      $result->msg = 'Record deleted successfully';
+    } else {
+      $result->result = 'error';
+      $result->box_type = 'danger';
+      $result->message_type = 'error';
+      $result->msg = 'No permission to delete record';
+    }
+		return json_encode($result);
+  }
+  
+  public function addLoe(Request $request)
+	{
+    // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
+    $result = new \stdClass();
+    $inputs = $request->all();
+    $Loe = new Loe;
+    $startdate = explode(" - ",$inputs['date'])[0];
+    $enddate = explode(" - ",$inputs['date'])[1];
+    if ($inputs['signoff'] == "true") {$signoff = 1;} else {$signoff = 0;};
+
+    $Loe->project_id = $inputs['project_id'];
+    $Loe->user_id = Auth::user()->id;
+    $Loe->start_date = $startdate;
+    $Loe->end_date = $enddate;
+    $Loe->domain = $inputs['domain'];
+    $Loe->type = $inputs['type'];
+    $Loe->location = $inputs['location'];
+    $Loe->mandays = $inputs['mandays'];
+    $Loe->description = $inputs['description'];
+    $Loe->signoff = $signoff;
+
+    $Loe->save();
+
+
+    $result->result = 'success';
+    $result->msg = 'Record added successfully';
+
+    return json_encode($result);
+  }
+
+  public function updateLoe(Request $request)
+	{
+    // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
+    $result = new \stdClass();
+    $inputs = $request->all();
+    $Loe = Loe::find($inputs["loe_id"]);
+    
+    if ($Loe->user_id == Auth::user()->id || Entrust::can('projectLoe-editAll')) {
+
+      $startdate = explode(" - ",$inputs['date'])[0];
+      $enddate = explode(" - ",$inputs['date'])[1];
+      if ($inputs['signoff'] == "true") {$signoff = 1;} else {$signoff = 0;};
+  
+      if (!empty($Loe->history)) {
+        $history = $Loe->history.' **/** ';
+      } else {
+        $history = '';
+      }
+      $Loe->history = $history.'Changed by:'.Auth::user()->name.' _ Previous date:'.$Loe->updated_at.' _ Previous MD:'.$Loe->mandays.' _ New MD:'.$inputs['mandays'];
+
+      $Loe->start_date = $startdate;
+      $Loe->end_date = $enddate;
+      $Loe->domain = $inputs['domain'];
+      $Loe->type = $inputs['type'];
+      $Loe->location = $inputs['location'];
+      $Loe->mandays = $inputs['mandays'];
+      $Loe->description = $inputs['description'];
+      $Loe->signoff = $signoff;
+  
+      $Loe->save();
+
+      $result->result = 'success';
+      $result->box_type = 'success';
+      $result->message_type = 'success';
+      $result->msg = 'Record edited successfully';
+    } else {
+      $result->result = 'error';
+      $result->box_type = 'danger';
+      $result->message_type = 'error';
+      $result->msg = 'No permission to edit record';
+    }
+    
+    return json_encode($result);
   }
 
   public function listOfProjectsMissingInfo(Request $request)

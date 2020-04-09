@@ -20,6 +20,11 @@ class Project extends Model
         return $this->hasMany('App\ProjectRevenue', 'project_id');
     }
 
+    public function loes()
+    {
+        return $this->hasMany('App\Loe', 'project_id');
+    }
+
     public function created_by_user()
     {
         return $this->belongsTo('App\User', 'created_by_user_id');

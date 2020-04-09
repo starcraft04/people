@@ -48,6 +48,8 @@
 <script src="{{ asset('/plugins/gentelella/vendors/jszip/dist/jszip.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('/plugins/gentelella/vendors/pdfmake/build/pdfmake.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('/plugins/gentelella/vendors/pdfmake/build/vfs_fonts.js') }}" type="text/javascript"></script>
+<!-- Switchery -->
+<script src="{{ asset('/plugins/gentelella/vendors/switchery/dist/switchery.min.js') }}" type="text/javascript"></script>
 @stop
 
 @section('content')
@@ -122,6 +124,10 @@
             @if($action == 'update')
               @permission(['projectRevenue-create'])
               <li role="presentation" class="" id="tab_revenue"><a href="#tab_content2" id="revenue-tab" role="tab" data-toggle="tab" aria-expanded="true">Revenue</a>
+              </li>
+              @endpermission
+              @permission(['projectLoe-view'])
+              <li role="presentation" class="" id="tab_loe"><a href="#tab_content4" id="loe-tab" role="tab" data-toggle="tab" aria-expanded="true">LoE</a>
               </li>
               @endpermission
             @endif
@@ -700,6 +706,137 @@
               </div>
               <!-- Revenues -->
               @endpermission
+              @permission(['projectLoe-view'])
+              <!-- LoE -->
+              <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="loe-tab">
+                <div class="row">
+                <div class="table-responsive">
+                  <table class="table table-striped table-hover table-bordered mytable" width="100%" id="projectLoe">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Project ID</th>
+                        <th>Customer</th>
+                        <th>Project</th>
+                        <th>Created by</th>
+                        <th>Start date</th>
+                        <th>End date</th>
+                        <th>Domain</th>
+                        <th>Type</th>
+                        <th>Location</th>
+                        <th>Man days</th>
+                        <th>Description</th>
+                        <th>History</th>
+                        <th>Signoff</th>
+                        <th>Created at</th>
+                        <th>Updated at</th>
+                        <th>
+                          @permission('projectLoe-create')
+                            <button type="button" id="new_loe" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span></button>
+                          @endpermission
+                        </th>
+                      </tr>
+                    </thead>
+                  </table>
+                </div>
+                </div>
+              </div>
+
+              <!-- Modal -->
+              <div class="modal fade" id="loeModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                      <div class="modal-content">
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title" id="loe_title_modal"></h4>
+                        </div>
+                          
+                        <!-- Modal Body -->
+                        <div class="modal-body">
+                          <form id="form_loe_modal" role="form" method="POST" action="">
+                            <div class="form-group">
+                                <label  class="control-label" for="domain_loe_modal">Domain</label>
+                                <div>
+                                  <select class="form-control select2" style="width: 100%;" id="domain_loe_modal" name="domain_loe_modal" data-placeholder="Select a domain">
+                                    <option value="" ></option>
+                                    @foreach(config('select.domain-users') as $key => $value)
+                                    <option value="{{ $key }}">
+                                      {{ $value }}
+                                    </option>
+                                    @endforeach
+                                  </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label  class="control-label" for="type_loe_modal">Type</label>
+                                <div>
+                                  <select class="form-control select2" style="width: 100%;" id="type_loe_modal" name="type_loe_modal" data-placeholder="Select a resource type">
+                                      <option value="" ></option>
+                                      @foreach(config('select.loe_type') as $key => $value)
+                                      <option value="{{ $key }}">
+                                        {{ $value }}
+                                      </option>
+                                      @endforeach
+                                  </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label  class="control-label" for="location_loe_modal">Location</label>
+                                <div>
+                                  <select class="form-control select2" style="width: 100%;" id="location_loe_modal" name="location_loe_modal" data-placeholder="Select a location">
+                                      <option value="" ></option>
+                                      @foreach(config('countries.country') as $key => $value)
+                                      <option value="{{ $key }}">
+                                        {{ $value }}
+                                      </option>
+                                      @endforeach
+                                  </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label  class="control-label" for="mandays_loe_modal">Mandays</label>
+                                <div>
+                                    <input type="text" name="mandays_loe_modal" class="form-control" placeholder="Mandays"></input>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label  class="control-label" for="description_loe_modal">Description</label>
+                                <div>
+                                    <textarea type="text" name="description_loe_modal" class="form-control" placeholder="Enter a description" rows="4"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label  class="control-label" for="signoff_loe_modal">Signoff</label>
+                                <div>
+                                    <input type="checkbox" id="signoff_loe_modal" name="signoff_loe_modal" class="form-control js-switch-small"></input>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label  class="control-label" for="date_loe_modal">Start to end date</label>
+                                <div>
+                                    <input type="text" id="date_loe_modal" name="date_loe_modal" class="form-control"></input>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div id="loe_hidden"></div>
+                            </div>
+                          </form>
+                        </div>
+                          
+                        <!-- Modal Footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" id="loe_create_update_button_modal" class="btn btn-success">Update</button>
+                        </div>
+                      </form> 
+                      </div>
+                  </div>
+              </div>
+              <!-- Modal -->
+
+              <!-- LoE -->
+              @endpermission
             @endif
             @permission('tools-projects-comments')
             <!-- Comments -->
@@ -807,7 +944,7 @@ var revenues;
 var projectRevenue;
 
 <?php
-  list($validate, $allValidations) = Entrust::ability(null,array('projectRevenue-delete'),['validate_all' => true,'return_type' => 'both']);
+  list($validate, $allValidations) = Entrust::ability(null,array('projectRevenue-delete','projectLoe-edit','projectLoe-delete','projectLoe-editAll','projectLoe-deleteAll'),['validate_all' => true,'return_type' => 'both']);
   echo "var permissions = jQuery.parseJSON('".json_encode($allValidations['permissions'])."');";
 ?>
 
@@ -846,6 +983,7 @@ $(document).ready(function() {
       $("#samba_pullthru_tcv_row").show();
       $("#win_ratio_row").show();
       $("#tab_revenue").hide();
+      $("#tab_loe").show();
     }
     else {
       $('#estimated_date_text').text("Estimated Start to End date");
@@ -866,6 +1004,7 @@ $(document).ready(function() {
       $("#samba_consulting_product_tcv_row").hide();
       $("#samba_pullthru_tcv_row").hide();
       $("#tab_revenue").show();
+      $("#tab_loe").hide();
     }
   }
 
@@ -924,6 +1063,10 @@ $(document).ready(function() {
     }
   });
 
+  // switchery
+  var small = document.querySelector('.js-switch-small');
+  var switchery = new Switchery(small, { size: 'small' });
+
   // init DateRange picker
   $('#estimated_date').daterangepicker({
     locale: {
@@ -940,6 +1083,16 @@ $(document).ready(function() {
     startDate: '{{ $project->estimated_start_date }}',
     endDate: '{{ $project->estimated_end_date }}'
     @endif
+  });
+
+  $('#date_loe_modal').daterangepicker({
+    locale: {
+    format: 'YYYY-MM-DD'
+    },
+    showISOWeekNumbers: true,
+    showDropdowns: true,
+    autoApply: true,
+    disabled: true,
   });
 
   //Init select2 boxes
@@ -996,6 +1149,19 @@ $(document).ready(function() {
     allowClear: true,
     disabled: {{ $country_select_disabled }}
   });
+
+  $("#domain_loe_modal").select2({
+    allowClear: true
+  });
+
+  $("#type_loe_modal").select2({
+    allowClear: true
+  });
+
+  $("#location_loe_modal").select2({
+    allowClear: true
+  });
+
 
   @if($action == 'update')
     $('#year').on('change', function() {
@@ -1186,6 +1352,8 @@ $(document).ready(function() {
           'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       }
     });
+
+    // Revenue
     
     projectRevenue = $('#projectRevenue').DataTable({
         serverSide: true,
@@ -1412,6 +1580,248 @@ $(document).ready(function() {
             }
       });
     });
+
+    // Revenue
+
+    // Loe
+
+    projectLoe = $('#projectLoe').DataTable({
+        serverSide: true,
+        processing: true,
+        scrollX: true,
+        stateSave: true,
+        responsive: false,
+        ajax: {
+                url: "{!! route('listOfProjectsLoeAjax',$project->id) !!}",
+                type: "GET",
+                dataType: "JSON"
+            },
+        columns: [
+            { name: 'project_loe.id', data: 'loe_id' , searchable: false , visible: false },
+            { name: 'project_loe.project_id', data: 'p_id' , searchable: false , visible: false },
+            { name: 'customers.name', data: 'customer_name' , searchable: true , visible: false },
+            { name: 'projects.project_name', data: 'project_name' , searchable: true , visible: false },
+            { name: 'users.name', data: 'user_name' , searchable: true , visible: true },
+            { name: 'project_loe.start_date', data: 'start_date' , searchable: true , visible: true },
+            { name: 'project_loe.end_date', data: 'end_date' , searchable: true , visible: true },
+            { name: 'project_loe.domain', data: 'domain' , searchable: true , visible: true },
+            { name: 'project_loe.type', data: 'type' , searchable: true , visible: true },
+            { name: 'project_loe.location', data: 'location' , searchable: true , visible: true },
+            { name: 'project_loe.mandays', data: 'mandays' , searchable: true , visible: true },
+            { name: 'project_loe.description', data: 'description' , searchable: true , visible: true },
+            { name: 'project_loe.history', data: 'history' , searchable: true , visible: false },
+            { name: 'project_loe.signoff', data: 'signoff' , searchable: true , visible: true },
+            { name: 'project_loe.created_at', data: 'created_at' , searchable: true , visible: false },
+            { name: 'project_loe.updated_at', data: 'updated_at' , searchable: true , visible: false },
+            {
+                name: 'actions',
+                data: null,
+                sortable: false,
+                searchable: false,
+                render: function (data) {
+              var actions = '';
+              actions += '<div class="btn-group btn-group-xs">';
+              if (permissions['projectLoe-edit'] || permissions['projectLoe-editAll']){
+                actions += '<button type="button" data-id="'+data.loe_id+'" class="buttonLoeEdit btn btn-success"><span class="glyphicon glyphicon-pencil"></span></button>';
+              };
+              if (permissions['projectLoe-delete'] || permissions['projectLoe-deleteAll']){
+                actions += '<button type="button" data-id="'+data.loe_id+'" class="buttonLoeDelete btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
+              };
+              actions += '</div>';
+              return actions;
+            },
+                width: '70px'
+            }
+            ],
+        order: [[2, 'desc']],
+        lengthMenu: [
+            [ 10, 25, 50, -1 ],
+            [ '10 rows', '25 rows', '50 rows', 'Show all' ]
+        ],
+        dom: 'Bfrtip',
+        buttons: [
+          {
+            extend: "colvis",
+            className: "btn-sm",
+            columns: [ 2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+          },
+          {
+            extend: "pageLength",
+            className: "btn-sm"
+          },
+          {
+            extend: "csv",
+            className: "btn-sm",
+            exportOptions: {
+                columns: ':visible'
+            }
+          },
+          {
+            extend: "excel",
+            className: "btn-sm",
+            exportOptions: {
+                columns: ':visible'
+            }
+          },
+          {
+            extend: "print",
+            className: "btn-sm",
+            exportOptions: {
+                columns: ':visible'
+            }
+          },
+        ]   
+    });
+
+    projectLoe.draw();
+
+    $(document).on('click', '#new_loe', function () {
+      $('#loe_title_modal').text('Create LoE');
+      $('#loe_create_update_button_modal').text('Create');
+      $('#loe_hidden').empty();
+      var hidden = '';
+      hidden += '<input class="form-control" id="project_id_loe_modal" name="project_id_loe_modal" type="hidden" value="'+{{ $project->id }}+'">';
+      hidden += '<input class="form-control" id="action_loe_modal" name="action_loe_modal" type="hidden" value="create">';
+      $('#loe_hidden').append(hidden);
+      $('#loeModal').modal();
+    });
+
+    $(document).on('click', '.buttonLoeEdit', function () {
+      $('#loe_title_modal').text('Update LoE');
+      $('#loe_create_update_button_modal').text('Update');
+
+      var table = projectLoe;
+      var tr = $(this).closest('tr');
+      var row = table.row(tr);
+      //console.log('the loe id is '+row.data().loe_id);
+
+      $('#loe_hidden').empty();
+      var hidden = '';
+      hidden += '<input class="form-control" id="project_id_loe_modal" name="project_id_loe_modal" type="hidden" value="'+{{ $project->id }}+'">';
+      hidden += '<input class="form-control" id="action_loe_modal" name="action_loe_modal" type="hidden" value="update">';
+      hidden += '<input class="form-control" id="loe_id" name="loe_id" type="hidden" value="'+row.data().loe_id+'">';
+      $('#loe_hidden').append(hidden);
+      
+      $('input[name="mandays_loe_modal"]').val(row.data().mandays);
+      $('textarea[name="description_loe_modal"]').val(row.data().description);
+      $('input[name="date_loe_modal"]').val(row.data().start_date+" - "+row.data().end_date);
+
+      if (row.data().signoff == '1') {
+        if (!$('input[name="signoff_loe_modal"]').is(":checked")) {
+          $('input[name="signoff_loe_modal"]').parent().find(".switchery").trigger("click")
+        }
+      } else {
+        if ($('input[name="signoff_loe_modal"]').is(":checked")) {
+          $('input[name="signoff_loe_modal"]').parent().find(".switchery").trigger("click")
+        }
+      }
+
+      $('select[name="domain_loe_modal"]').val(row.data().domain);
+      $('select[name="domain_loe_modal"]').select2().trigger('change');
+
+      $('select[name="type_loe_modal"]').val(row.data().type);
+      $('select[name="type_loe_modal"]').select2().trigger('change');
+
+      $('select[name="location_loe_modal"]').val(row.data().location);
+      $('select[name="location_loe_modal"]').select2().trigger('change');
+
+      $('#loeModal').modal();
+    });
+
+    $(document).on('click', '#loe_create_update_button_modal', function () {
+      // hidden input
+      var action_loe_modal = $('input#action_loe_modal').val();
+      var project_id_loe_modal = $('input#project_id_loe_modal').val();
+      if (action_loe_modal == "update") {
+        var loe_id = $('input#loe_id').val();
+      }
+
+      // filled in
+      var domain_loe_modal = $('select[name="domain_loe_modal"]').children("option:selected").val();
+      var type_loe_modal = $('select[name="type_loe_modal"]').children("option:selected").val();
+      var location_loe_modal = $('select[name="location_loe_modal"]').children("option:selected").val();
+      var mandays_loe_modal = $('input[name="mandays_loe_modal"]').val();
+      var description_loe_modal = $('textarea[name="description_loe_modal"]').val();
+      var date_loe_modal = $('input[name="date_loe_modal"]').val();
+      var signoff_loe_modal = $('input[name="signoff_loe_modal"]').is(":checked");
+      if (action_loe_modal == "update") {
+        var data = {'action':action_loe_modal,'project_id':project_id_loe_modal,'domain':domain_loe_modal,
+          'type':type_loe_modal,'location':location_loe_modal,'mandays':mandays_loe_modal,'description':description_loe_modal,
+          'date':date_loe_modal,'signoff':signoff_loe_modal,'loe_id':loe_id
+          };
+        var loe_create_update_route = "{!! route('ProjectsLoeUpdateAjax') !!}";
+      } else {
+        var data = {'action':action_loe_modal,'project_id':project_id_loe_modal,'domain':domain_loe_modal,
+          'type':type_loe_modal,'location':location_loe_modal,'mandays':mandays_loe_modal,'description':description_loe_modal,
+          'date':date_loe_modal,'signoff':signoff_loe_modal
+          };
+        var loe_create_update_route = "{!! route('ProjectsLoeAddAjax') !!}";
+      }
+      
+      $.ajax({
+            type: 'post',
+            url: loe_create_update_route,
+            data:data,
+            dataType: 'json',
+            success: function(data) {
+              console.log(data);
+              if (data.result == 'success'){
+                  box_type = 'success';
+                  message_type = 'success';
+              }
+              else {
+                  box_type = 'danger';
+                  message_type = 'error';
+              }
+
+              $('#flash-message').empty();
+              var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+              $('#flash-message').append(box);
+              $('#delete-message').delay(2000).queue(function () {
+                  $(this).addClass('animated flipOutX')
+              });
+              projectLoe.ajax.reload();
+            }
+          });
+
+      $('#loeModal').modal('hide');
+
+    });
+
+    $(document).on('click', '.buttonLoeDelete', function () {
+      record_id = $(this).attr('data-id');
+
+      bootbox.confirm("Are you sure want to delete this record?", function(result) {
+        if (result){
+          $.ajax({
+            type: 'get',
+            url: "{!! route('projectLoeDelete','') !!}/"+record_id,
+            dataType: 'json',
+            success: function(data) {
+              console.log(data);
+              if (data.result == 'success'){
+                  box_type = 'success';
+                  message_type = 'success';
+              }
+              else {
+                  box_type = 'danger';
+                  message_type = 'error';
+              }
+
+              $('#flash-message').empty();
+              var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+              $('#flash-message').append(box);
+              $('#delete-message').delay(2000).queue(function () {
+                  $(this).addClass('animated flipOutX')
+              });
+              projectLoe.ajax.reload();
+            }
+          });
+        }
+      });
+    } );
+
+    // Loe
 
     // This part is to make sure that datatables can adjust the columns size when it is hidden because on non active tab when created
     $('a[data-toggle="tab"]').on('shown.bs.tab', function(e){

@@ -4,6 +4,14 @@ return [
         'employee' => 'employee',
         'contractor' => 'contractor'
     ],
+    'loe_type' => [
+        'Junior' => 'Junior',
+        'Normal' => 'Normal',
+        'Senior' => 'Senior',
+        'Nearshore' => 'Nearshore',
+        'Offshore' => 'Offshore',
+        'Contractor' => 'Contractor'
+    ],
     'region' => [
         'Europe' => 'Europe',
         'MEA' => 'MEA',
@@ -20,7 +28,9 @@ return [
         'APM' => 'APM',
         'Security' => 'Security',
         'Network' => 'Network',
-        'UC' => 'UC'
+        'UC' => 'UC',
+        'CC' => 'CC',
+        'WAN' => 'WAN'
     ],
     'domain-projects' => [
         'Hybrid Security' => 'Hybrid Security',

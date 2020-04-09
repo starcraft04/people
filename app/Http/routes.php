@@ -181,6 +181,11 @@ Route::group(['middleware' => ['auth']], function() {
       Route::post('ProjectsRevenueAddAjax', ['uses'=>'ProjectController@addRevenue','as'=>'ProjectsRevenueAddAjax','middleware' => ['permission:projectRevenue-create']]);
       Route::post('ProjectsRevenueUpdateAjax', ['uses'=>'ProjectController@updateRevenue','as'=>'ProjectsRevenueUpdateAjax','middleware' => ['permission:projectRevenue-edit']]);
       Route::get('projectRevenueDelete/{n}', ['uses'=>'ProjectController@deleteRevenue','as'=>'projectRevenueDelete','middleware' => ['permission:projectRevenue-delete']]);
+      Route::get('ProjectsLoeAjax/{id}', ['uses'=>'ProjectController@listOfProjectsLoe','as'=>'listOfProjectsLoeAjax','middleware' => ['permission:projectLoe-view']]);
+      Route::get('AllProjectsLoeAjax/{year}', ['uses'=>'ProjectController@listOfAllProjectsLoe','as'=>'listOfAllProjectsLoeAjax','middleware' => ['permission:projectLoe-view']]);
+      Route::post('ProjectsLoeAddAjax', ['uses'=>'ProjectController@addLoe','as'=>'ProjectsLoeAddAjax','middleware' => ['permission:projectLoe-create']]);
+      Route::post('ProjectsLoeUpdateAjax', ['uses'=>'ProjectController@updateLoe','as'=>'ProjectsLoeUpdateAjax','middleware' => ['permission:projectLoe-edit|projectLoe-editAll']]);
+      Route::get('projectLoeDelete/{n}', ['uses'=>'ProjectController@deleteLoe','as'=>'projectLoeDelete','middleware' => ['permission:projectLoe-delete|projectLoe-deleteAll']]);
       Route::post('listOfActivitiesPerUserAjax', ['uses'=>'ActivityController@listOfActivitiesPerUser','as'=>'listOfActivitiesPerUserAjax','middleware' => ['permission:tools-activity-view']]);
       Route::get('listOfProjectsMissingInfoAjax', ['uses'=>'ProjectController@listOfProjectsMissingInfo','as'=>'listOfProjectsMissingInfoAjax','middleware' => ['permission:tools-missing_info-view']]);
       Route::get('listOfProjectsMissingOTLAjax', ['uses'=>'ProjectController@listOfProjectsMissingOTL','as'=>'listOfProjectsMissingOTLAjax','middleware' => ['permission:tools-missing_info-view']]);
@@ -197,6 +202,7 @@ Route::group(['middleware' => ['auth']], function() {
       Route::get('dashboarddscisc/{year?}', ['uses'=>'DashboardController@dscisc','as'=>'dashboarddscisc','middleware' => ['permission:dashboard-view']]);
       Route::get('revenuedashboard/{year?}/{user_id?}', ['uses'=>'DashboardController@revenue','as'=>'revenuedashboard','middleware' => ['permission:dashboardRevenue-view']]);
       Route::get('orderdashboard/{year?}/{user_id?}', ['uses'=>'DashboardController@order','as'=>'orderdashboard','middleware' => ['permission:dashboardOrder-view']]);
+      Route::get('loedashboard/{year?}', ['uses'=>'DashboardController@loe','as'=>'loedashboard','middleware' => ['permission:projectLoe-view']]);
       //  AJAX
       Route::post('listOfLoadPerUserAjax', ['uses'=>'ActivityController@listOfLoadPerUserAjax','as'=>'listOfLoadPerUserAjax','middleware' => ['permission:dashboard-view']]);
       Route::post('listOfLoadPerUserChartAjax', ['uses'=>'ActivityController@listOfLoadPerUserChartAjax','as'=>'listOfLoadPerUserChartAjax','middleware' => ['permission:dashboard-view']]);
