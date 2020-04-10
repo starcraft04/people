@@ -744,14 +744,14 @@
 
               <!-- Modal -->
               <div class="modal fade" id="loeModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                  <div class="modal-dialog">
+                  <div class="modal-dialog modal-dialog-centered" style="display:table;">
                       <div class="modal-content">
                         <!-- Modal Header -->
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                             <h4 class="modal-title" id="loe_title_modal"></h4>
                         </div>
-                          
+                      
                         <!-- Modal Body -->
                         <div class="modal-body">
                           <form id="form_loe_modal" role="form" method="POST" action="">
@@ -962,6 +962,25 @@ $(document).ready(function() {
       backgroundColor: '#666',
       color: '#fff'
     } 
+  });
+
+  // This code will make any modal window draggable
+  $(".modal-header").on("mousedown", function(mousedownEvt) {
+    var $draggable = $(this);
+    var x = mousedownEvt.pageX - $draggable.offset().left,
+        y = mousedownEvt.pageY - $draggable.offset().top;
+    $("body").on("mousemove.draggable", function(mousemoveEvt) {
+        $draggable.closest(".modal-dialog").offset({
+            "left": mousemoveEvt.pageX - x,
+            "top": mousemoveEvt.pageY - y
+        });
+    });
+    $("body").one("mouseup", function() {
+        $("body").off("mousemove.draggable");
+    });
+    $draggable.closest(".modal").one("bs.modal.hide", function() {
+        $("body").off("mousemove.draggable");
+    });
   });
 
   // In case this is baseline, project or pre-sales, we will have different text to be selected
@@ -1439,8 +1458,6 @@ $(document).ready(function() {
         ]   
     });
 
-    projectRevenue.draw();
-
     $('#new_revenue').click(function(){
       var currentTime = new Date();
 
@@ -1673,8 +1690,6 @@ $(document).ready(function() {
         ]   
     });
 
-    projectLoe.draw();
-
     $(document).on('click', '#new_loe', function () {
       $('#loe_title_modal').text('Create LoE');
       $('#loe_create_update_button_modal').text('Create');
@@ -1683,7 +1698,7 @@ $(document).ready(function() {
       hidden += '<input class="form-control" id="project_id_loe_modal" name="project_id_loe_modal" type="hidden" value="'+{{ $project->id }}+'">';
       hidden += '<input class="form-control" id="action_loe_modal" name="action_loe_modal" type="hidden" value="create">';
       $('#loe_hidden').append(hidden);
-      $('#loeModal').modal();
+      $('#loeModal').modal("show");
     });
 
     $(document).on('click', '.buttonLoeEdit', function () {
@@ -1725,7 +1740,7 @@ $(document).ready(function() {
       $('select[name="location_loe_modal"]').val(row.data().location);
       $('select[name="location_loe_modal"]').select2().trigger('change');
 
-      $('#loeModal').modal();
+      $('#loeModal').modal("show");
     });
 
     $(document).on('click', '#loe_create_update_button_modal', function () {
