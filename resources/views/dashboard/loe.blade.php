@@ -90,8 +90,11 @@
                       <tr>
                         <th>ID</th>
                         <th>Project ID</th>
+                        <th>Cluster</th>
                         <th>Customer</th>
                         <th>Project</th>
+                        <th>CL ID</th>
+                        <th>Manager</th>
                         <th>Created by</th>
                         <th>Start date</th>
                         <th>End date</th>
@@ -108,6 +111,9 @@
                   </thead>
                   <tfoot>
                     <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
                         <th></th>
                         <th></th>
                         <th></th>
@@ -146,6 +152,11 @@
 @section('script')
 <script>
 
+<?php
+  list($validate, $allValidations) = Entrust::ability(null,array('projectLoe-signoff'),['validate_all' => true,'return_type' => 'both']);
+  echo "var permissions = jQuery.parseJSON('".json_encode($allValidations['permissions'])."');";
+?>
+
 $(document).ready(function() {
   var year = "{!! $year !!}";
 
@@ -166,7 +177,7 @@ $(document).ready(function() {
     window.location.href = "{!! route('loedashboard') !!}/"+year;
   });
 
-  projectLoe = $('#loeTable').DataTable({
+  var projectLoe = $('#loeTable').DataTable({
         serverSide: true,
         processing: true,
         scrollX: true,
@@ -180,8 +191,11 @@ $(document).ready(function() {
         columns: [
             { name: 'project_loe.id', data: 'loe_id' , searchable: false , visible: false },
             { name: 'project_loe.project_id', data: 'p_id' , searchable: false , visible: false },
+            { name: 'customers.cluster_owner', data: 'cluster_owner' , searchable: true , visible: true },
             { name: 'customers.name', data: 'customer_name' , searchable: true , visible: true },
             { name: 'projects.project_name', data: 'project_name' , searchable: true , visible: true },
+            { name: 'projects.samba_id', data: 'samba_id' , searchable: true , visible: true },
+            { name: 'm.name', data: 'manager_name' , searchable: true , visible: true },
             { name: 'users.name', data: 'user_name' , searchable: true , visible: true },
             { name: 'project_loe.start_date', data: 'start_date' , searchable: true , visible: true },
             { name: 'project_loe.end_date', data: 'end_date' , searchable: true , visible: true },
@@ -191,7 +205,29 @@ $(document).ready(function() {
             { name: 'project_loe.mandays', data: 'mandays' , searchable: true , visible: true },
             { name: 'project_loe.description', data: 'description' , searchable: true , visible: true },
             { name: 'project_loe.history', data: 'history' , searchable: false , visible: false },
-            { name: 'project_loe.signoff', data: 'signoff' , searchable: true , visible: true },
+            { 
+              name: 'project_loe.signoff',
+              data: 'signoff',
+              sortable: true,
+              searchable: true,
+              visible: true,
+              render: function (data, type, row) {
+                  var actions = '';
+                  // Getting the status of signoff for the color
+                  if (data == 1) {
+                    signoff_button_icon = 'ok';
+                    signoff_button_color = 'success';
+                  } else {
+                    signoff_button_icon = 'remove';
+                    signoff_button_color = 'danger';
+                  }
+                  actions += '<div class="btn-group btn-group-xs">';
+                  actions += '<button type="button" data-id="'+data.loe_id+'" class="buttonLoeSignoff btn btn-'+signoff_button_color+'"><span class="glyphicon glyphicon-'+signoff_button_icon+'"></span></button>';
+                  actions += '</div>';
+                  return type === 'export' ? data : actions;
+                },
+                width: '70px'
+            },
             { name: 'project_loe.created_at', data: 'created_at' , searchable: true , visible: false },
             { name: 'project_loe.updated_at', data: 'updated_at' , searchable: true , visible: false }
             ],
@@ -205,7 +241,7 @@ $(document).ready(function() {
           {
             extend: "colvis",
             className: "btn-sm",
-            columns: [ 2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+            columns: [ 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]
           },
           {
             extend: "pageLength",
@@ -215,7 +251,8 @@ $(document).ready(function() {
             extend: "csv",
             className: "btn-sm",
             exportOptions: {
-                columns: ':visible'
+                columns: ':visible',
+                orthogonal: 'export'
             }
           },
           {
@@ -268,22 +305,61 @@ $(document).ready(function() {
     });
 
 
+  // Click on the project name to open the project in edit mode
   $('#loeTable').on('click', 'tbody td', function() {
-    var table = loeTable;
+    year = $('#year').val();
+    var table = projectLoe;
     var tr = $(this).closest('tr');
     var row = table.row(tr);
     //get the initialization options
     var columns = table.settings().init().columns;
     //get the index of the clicked cell
     var colIndex = table.cell(this).index().column;
-    year = [];
-    $("#year option:selected").each(function()
-    {
-      // log the value and text of each option
-      year.push($(this).val());
-    });
-    //window.location.href = "{!! route('toolsFormUpdate',['','','']) !!}/"+"0"+"/"+row.data().project_id+"/"+year[0];
+    columns_can_forward = [4]
+
+    if (columns_can_forward.includes(colIndex)) {
+      window.location.href = "{!! route('toolsFormUpdate',['','','','']) !!}/"+"0"+"/"+row.data().p_id+"/"+year+"/"+'tab_loe';
+    }
   });
+
+
+  // Click on the signoff button to change its status
+  $(document).on('click', '.buttonLoeSignoff', function () {
+      var table = projectLoe;
+      var tr = $(this).closest('tr');
+      var row = table.row(tr);
+      var loe_id = row.data().loe_id;
+      // console.log('the loe id is '+row.data().loe_id);
+      //console.log(permissions['projectLoe-signoff']);
+      if (permissions['projectLoe-signoff']) {
+        data = {};
+        $.ajax({
+            type: 'get',
+            url: "{!! route('listOfProjectsLoeSignoffAjax',['']) !!}/"+loe_id,
+            data:data,
+            dataType: 'json',
+            success: function(data) {
+              console.log(data);
+              if (data.result == 'success'){
+                  box_type = 'success';
+                  message_type = 'success';
+              }
+              else {
+                  box_type = 'danger';
+                  message_type = 'error';
+              }
+
+              $('#flash-message').empty();
+              var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+              $('#flash-message').append(box);
+              $('#delete-message').delay(2000).queue(function () {
+                  $(this).addClass('animated flipOutX')
+              });
+              projectLoe.ajax.reload();
+            }
+        });
+      }
+    });
 
   // This part is to make sure that datatables can adjust the columns size when it is hidden because on non active tab when created
   $('a[data-toggle="tab"]').on('shown.bs.tab', function(e){

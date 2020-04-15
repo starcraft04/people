@@ -7,10 +7,7 @@ return [
     'loe_type' => [
         'Junior' => 'Junior',
         'Normal' => 'Normal',
-        'Senior' => 'Senior',
-        'Nearshore' => 'Nearshore',
-        'Offshore' => 'Offshore',
-        'Contractor' => 'Contractor'
+        'Senior' => 'Senior'
     ],
     'region' => [
         'Europe' => 'Europe',

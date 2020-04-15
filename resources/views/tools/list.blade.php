@@ -351,6 +351,7 @@
   var manager = [];
   var user = [];
   var checkbox_closed = 1;
+  var month_col = [];
 
   // switchery
   var small = document.querySelector('.js-switch-small');
@@ -501,6 +502,9 @@
     });
 
     // SELECTIONS END
+
+    month_col = [32,36,40,44,48,52,56,60,64,68,72,76];
+  
 
     activitiesTable = $('#activitiesTable').DataTable({
       scrollX: true,
@@ -827,6 +831,24 @@
           }
         },
       ],
+      footerCallback: function ( row, data, start, end, display ) {
+        var api = this.api(), data;
+
+        $.each(month_col, function( index, value ) {
+          // Total over this page
+          pageTotal = api
+            .column( value, { page: 'current'} )
+            .data()
+            .reduce( function (a, b) {
+              return a+b;
+            }, 0 );
+
+          // Update footer
+          $( api.column( value ).footer() ).html(
+              '<div style="font-size: 120%;">'+pageTotal.toFixed(0)+'</div>'
+          );
+        });
+      },
       initComplete: function () {
         var columns = this.api().init().columns;
         this.api().columns().every(function () {

@@ -195,9 +195,11 @@ class ProjectController extends Controller {
       ->leftjoin('projects', 'projects.id', '=', 'project_loe.project_id')
       ->leftjoin('customers', 'customers.id', '=', 'projects.customer_id')
       ->leftjoin('users', 'users.id', '=', 'project_loe.user_id')
+      ->leftjoin('users_users AS uu', 'users.id', '=', 'uu.user_id')
+      ->leftjoin('users AS m', 'm.id', '=', 'uu.manager_id')
       ->select('project_loe.id AS loe_id','project_loe.project_id AS p_id','projects.project_name','customers.name AS customer_name','users.name AS user_name','project_loe.start_date',
                 'project_loe.end_date','project_loe.domain','project_loe.type','project_loe.location','project_loe.mandays','project_loe.description','project_loe.history','project_loe.signoff',
-                'project_loe.created_at','project_loe.updated_at')
+                'project_loe.created_at','project_loe.updated_at','projects.samba_id','customers.cluster_owner','m.name AS manager_name')
       ->where('project_loe.created_at','like','%'.$year.'%')
       ;
 
@@ -234,7 +236,7 @@ class ProjectController extends Controller {
     $Loe = new Loe;
     $startdate = explode(" - ",$inputs['date'])[0];
     $enddate = explode(" - ",$inputs['date'])[1];
-    if ($inputs['signoff'] == "true") {$signoff = 1;} else {$signoff = 0;};
+    if (Auth::user()->is_manager == 1) {$signoff = 1;} else {$signoff = 0;};
 
     $Loe->project_id = $inputs['project_id'];
     $Loe->user_id = Auth::user()->id;
@@ -261,20 +263,22 @@ class ProjectController extends Controller {
     // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
     $result = new \stdClass();
     $inputs = $request->all();
+    $today = date("Y-m-d H:i:s");
     $Loe = Loe::find($inputs["loe_id"]);
     
     if ($Loe->user_id == Auth::user()->id || Entrust::can('projectLoe-editAll')) {
 
       $startdate = explode(" - ",$inputs['date'])[0];
       $enddate = explode(" - ",$inputs['date'])[1];
-      if ($inputs['signoff'] == "true") {$signoff = 1;} else {$signoff = 0;};
+
+      if (Auth::user()->is_manager == 1) {$signoff = 1;$history_signoff = 'Date of change: '.$today.'</BR>-- Changed by: '.Auth::user()->name.'</BR>-- MANAGER SIGNOFF</BR>';} else {$signoff = 0;$history_signoff = '';};
   
       if (!empty($Loe->history)) {
-        $history = $Loe->history.' **/** ';
+        $history = $Loe->history;
       } else {
         $history = '';
       }
-      $Loe->history = $history.'Changed by:'.Auth::user()->name.' _ Previous date:'.$Loe->updated_at.' _ Previous MD:'.$Loe->mandays.' _ New MD:'.$inputs['mandays'];
+      $Loe->history = $history.'Date of change: '.$today.'</BR>-- Changed by: '.Auth::user()->name.'</BR>-- Mandays: '.$Loe->mandays.' to '.$inputs['mandays'].'</BR>'.$history_signoff;
 
       $Loe->start_date = $startdate;
       $Loe->end_date = $enddate;
@@ -287,6 +291,42 @@ class ProjectController extends Controller {
   
       $Loe->save();
 
+      $result->result = 'success';
+      $result->box_type = 'success';
+      $result->message_type = 'success';
+      $result->msg = 'Record edited successfully';
+    } else {
+      $result->result = 'error';
+      $result->box_type = 'danger';
+      $result->message_type = 'error';
+      $result->msg = 'No permission to edit record';
+    }
+    
+    return json_encode($result);
+  }
+
+  public function listOfProjectsLoeSignoff($loe_id)
+	{
+    // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
+    $result = new \stdClass();
+    $today = date("Y-m-d H:i:s");
+    $Loe = Loe::find($loe_id);
+
+    if (($Loe->user_id == Auth::user()->id || Entrust::can('projectLoe-editAll')) && Entrust::can('projectLoe-signoff')) {
+      if (!empty($Loe->history)) {
+        $history = $Loe->history;
+      } else {
+        $history = '';
+      }
+      if ($Loe->signoff == 0) {
+        $Loe->signoff = 1;
+        $Loe->history = $history.'Date of change: '.$today.'</BR>-- Changed by: '.Auth::user()->name.'</BR>-- MANAGER SIGNOFF</BR>';
+      } else {
+        $Loe->signoff = 0;
+        $Loe->history = $history.'Date of change: '.$today.'</BR>-- Changed by: '.Auth::user()->name.'</BR>-- MANAGER  REMOVED SIGNOFF</BR>';
+      }
+      $Loe->save();
+  
       $result->result = 'success';
       $result->box_type = 'success';
       $result->message_type = 'success';

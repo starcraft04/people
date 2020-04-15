@@ -119,27 +119,23 @@
 
         <div class="" role="tabpanel" data-example-id="togglable-tabs">
           <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-            <li role="presentation" class="active"><a href="#tab_content1" id="project-tab" role="tab" data-toggle="tab" aria-expanded="true">Project</a>
-            </li>
+            <li role="presentation" class="active"><a href="#tab_content1" id="tab_main" role="tab" data-toggle="tab" aria-expanded="true">Project</a></li>
             @if($action == 'update')
               @permission(['projectRevenue-create'])
-              <li role="presentation" class="" id="tab_revenue"><a href="#tab_content2" id="revenue-tab" role="tab" data-toggle="tab" aria-expanded="true">Revenue</a>
-              </li>
+              <li role="presentation"><a href="#tab_content2" id="tab_revenue" role="tab" data-toggle="tab" aria-expanded="true">Revenue</a></li>
               @endpermission
               @permission(['projectLoe-view'])
-              <li role="presentation" class="" id="tab_loe"><a href="#tab_content4" id="loe-tab" role="tab" data-toggle="tab" aria-expanded="true">LoE</a>
-              </li>
+              <li role="presentation"><a href="#tab_content4" id="tab_loe" role="tab" data-toggle="tab" aria-expanded="true">LoE</a></li>
               @endpermission
             @endif
             @permission('tools-projects-comments')
-            <li role="presentation" class=""><a href="#tab_content3" id="comments-tab" role="tab" data-toggle="tab" aria-expanded="false">Comments (<span id="num_of_comments">{{ $num_of_comments }}</span>)</a>
-            </li>
+            <li role="presentation"><a href="#tab_content3" id="tab_comment" role="tab" data-toggle="tab" aria-expanded="true">Comments (<span id="num_of_comments">{{ $num_of_comments }}</span>)</a></li>
             @endpermission
           </ul>
 
           <div id="myTabContent" class="tab-content">
             <!-- Project -->
-            <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="project-tab">
+            <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="tab_main">
               
               <div class="row">
                 <div class="col-md-6">
@@ -672,7 +668,7 @@
             @if($action == 'update')
               @permission(['projectRevenue-create'])
               <!-- Revenues -->
-              <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="revenue-tab">
+              <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="tab_revenue">
                 <div class="row">
                 <div class="table-responsive">
                   <table class="table table-striped table-hover table-bordered mytable" width="100%" id="projectRevenue">
@@ -708,7 +704,7 @@
               @endpermission
               @permission(['projectLoe-view'])
               <!-- LoE -->
-              <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="loe-tab">
+              <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="tab_loe">
                 <div class="row">
                 <div class="table-responsive">
                   <table class="table table-striped table-hover table-bordered mytable" width="100%" id="projectLoe">
@@ -727,9 +723,9 @@
                         <th>Man days</th>
                         <th>Description</th>
                         <th>History</th>
-                        <th>Signoff</th>
                         <th>Created at</th>
                         <th>Updated at</th>
+                        <th>Manager signoff</th>
                         <th>
                           @permission('projectLoe-create')
                             <button type="button" id="new_loe" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span></button>
@@ -807,12 +803,6 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label  class="control-label" for="signoff_loe_modal">Signoff</label>
-                                <div>
-                                    <input type="checkbox" id="signoff_loe_modal" name="signoff_loe_modal" class="form-control js-switch-small"></input>
-                                </div>
-                            </div>
-                            <div class="form-group">
                                 <label  class="control-label" for="date_loe_modal">Start to end date</label>
                                 <div>
                                     <input type="text" id="date_loe_modal" name="date_loe_modal" class="form-control"></input>
@@ -840,7 +830,7 @@
             @endif
             @permission('tools-projects-comments')
             <!-- Comments -->
-            <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="comments-tab">
+            <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="tab_comment">
               <div class="row">
                 <div class="form-group {!! $errors->has('project_comment') ? 'has-error' : '' !!} col-md-12">
                   <div class="col-md-1">
@@ -872,6 +862,52 @@
               @endif
               </div>
             </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                      <form id="comment_form" class="form-horizontal" role="form">
+                      <!-- Modal Header -->
+                      <div class="modal-header">
+                          <button type="button" class="close" 
+                              data-dismiss="modal">
+                                  <span aria-hidden="true">&times;</span>
+                                  <span class="sr-only">Close</span>
+                          </button>
+                          <h4 class="modal-title" id="myModalLabel">
+                              Edit comment
+                          </h4>
+                      </div>
+                        
+                      <!-- Modal Body -->
+                      <div class="modal-body">
+                          
+                            <div class="form-group">
+                              <label  class="col-sm-2 control-label" for="project_comment_modal">Comment</label>
+                              <div class="col-sm-10">
+                                  <textarea name="project_comment_modal" id="project_comment_modal" class="form-control" placeholder="Have something to say?" rows="3"></textarea>
+                              </div>
+                              <div id="comment_hidden">
+                              </div>
+                            </div>
+                          
+                      </div>
+                        
+                      <!-- Modal Footer -->
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-default"
+                                  data-dismiss="modal">
+                                      Close
+                          </button>
+                          <button type="submit" form="comment_form" value="Submit" class="btn btn-primary">Update</button>
+                      </div>
+                    </form> 
+                    </div>
+                </div>
+            </div>
+            <!-- Modal -->
+
             <!-- Comments -->
             @endpermission
           </div>
@@ -884,55 +920,6 @@
   </div>
 </div>
 <!-- Window -->
-
-@if($action == 'update')
-@permission('tools-projects-comments')
-<!-- Modal -->
-<div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-          <form id="comment_form" class="form-horizontal" role="form">
-          <!-- Modal Header -->
-          <div class="modal-header">
-              <button type="button" class="close" 
-                  data-dismiss="modal">
-                      <span aria-hidden="true">&times;</span>
-                      <span class="sr-only">Close</span>
-              </button>
-              <h4 class="modal-title" id="myModalLabel">
-                  Edit comment
-              </h4>
-          </div>
-            
-          <!-- Modal Body -->
-          <div class="modal-body">
-              
-                <div class="form-group">
-                  <label  class="col-sm-2 control-label" for="project_comment_modal">Comment</label>
-                  <div class="col-sm-10">
-                      <textarea name="project_comment_modal" id="project_comment_modal" class="form-control" placeholder="Have something to say?" rows="3"></textarea>
-                  </div>
-                  <div id="comment_hidden">
-                  </div>
-                </div>
-              
-          </div>
-            
-          <!-- Modal Footer -->
-          <div class="modal-footer">
-              <button type="button" class="btn btn-default"
-                      data-dismiss="modal">
-                          Close
-              </button>
-              <button type="submit" form="comment_form" value="Submit" class="btn btn-primary">Update</button>
-          </div>
-        </form> 
-        </div>
-    </div>
-</div>
-<!-- Modal -->
-@endpermission
-@endif
 @stop
 
 @section('script')
@@ -942,6 +929,8 @@
 var year;
 var revenues;
 var projectRevenue;
+// If we set up the tab to be selected in the url it will be in variable tab_origin
+var tab_origin = "{{ $tab }}";
 
 <?php
   list($validate, $allValidations) = Entrust::ability(null,array('projectRevenue-delete','projectLoe-edit','projectLoe-delete','projectLoe-editAll','projectLoe-deleteAll'),['validate_all' => true,'return_type' => 'both']);
@@ -963,6 +952,11 @@ $(document).ready(function() {
       color: '#fff'
     } 
   });
+
+  // Change the tab on screen with the one selected from the url
+  if (tab_origin != 'tab_main') {
+    $('#'+tab_origin).trigger('click');
+  }
 
   // This code will make any modal window draggable
   $(".modal-header").on("mousedown", function(mousedownEvt) {
@@ -1063,28 +1057,21 @@ $(document).ready(function() {
   @endif
 
   if($('#user_id').val()===""){
-    console.log('empty');
     $('.user_selected').hide();
   }
   else {
-    console.log('not empty');
     $('.user_selected').show();
   }
 
   $('#user_id').change(function() {
     if($(this).val()===""){
-      console.log('empty');
       $('.user_selected').hide();
     }
     else {
-      console.log('not empty');
       $('.user_selected').show();
     }
   });
 
-  // switchery
-  var small = document.querySelector('.js-switch-small');
-  var switchery = new Switchery(small, { size: 'small' });
 
   // init DateRange picker
   $('#estimated_date').daterangepicker({
@@ -1627,26 +1614,26 @@ $(document).ready(function() {
             { name: 'project_loe.mandays', data: 'mandays' , searchable: true , visible: true },
             { name: 'project_loe.description', data: 'description' , searchable: true , visible: true },
             { name: 'project_loe.history', data: 'history' , searchable: true , visible: false },
-            { name: 'project_loe.signoff', data: 'signoff' , searchable: true , visible: true },
             { name: 'project_loe.created_at', data: 'created_at' , searchable: true , visible: false },
             { name: 'project_loe.updated_at', data: 'updated_at' , searchable: true , visible: false },
+            { name: 'project_loe.signoff', data: 'signoff' , searchable: true , visible: false },
             {
                 name: 'actions',
                 data: null,
                 sortable: false,
                 searchable: false,
                 render: function (data) {
-              var actions = '';
-              actions += '<div class="btn-group btn-group-xs">';
-              if (permissions['projectLoe-edit'] || permissions['projectLoe-editAll']){
-                actions += '<button type="button" data-id="'+data.loe_id+'" class="buttonLoeEdit btn btn-success"><span class="glyphicon glyphicon-pencil"></span></button>';
-              };
-              if (permissions['projectLoe-delete'] || permissions['projectLoe-deleteAll']){
-                actions += '<button type="button" data-id="'+data.loe_id+'" class="buttonLoeDelete btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
-              };
-              actions += '</div>';
-              return actions;
-            },
+                  var actions = '';
+                  actions += '<div class="btn-group btn-group-xs">';
+                  if (permissions['projectLoe-edit'] || permissions['projectLoe-editAll']){
+                    actions += '<button type="button" data-id="'+data.loe_id+'" class="buttonLoeEdit btn btn-success"><span class="glyphicon glyphicon-pencil"></span></button>';
+                  };
+                  if (permissions['projectLoe-delete'] || permissions['projectLoe-deleteAll']){
+                    actions += '<button type="button" data-id="'+data.loe_id+'" class="buttonLoeDelete btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
+                  };
+                  actions += '</div>';
+                  return actions;
+                },
                 width: '70px'
             }
             ],
@@ -1721,16 +1708,6 @@ $(document).ready(function() {
       $('textarea[name="description_loe_modal"]').val(row.data().description);
       $('input[name="date_loe_modal"]').val(row.data().start_date+" - "+row.data().end_date);
 
-      if (row.data().signoff == '1') {
-        if (!$('input[name="signoff_loe_modal"]').is(":checked")) {
-          $('input[name="signoff_loe_modal"]').parent().find(".switchery").trigger("click")
-        }
-      } else {
-        if ($('input[name="signoff_loe_modal"]').is(":checked")) {
-          $('input[name="signoff_loe_modal"]').parent().find(".switchery").trigger("click")
-        }
-      }
-
       $('select[name="domain_loe_modal"]').val(row.data().domain);
       $('select[name="domain_loe_modal"]').select2().trigger('change');
 
@@ -1758,17 +1735,16 @@ $(document).ready(function() {
       var mandays_loe_modal = $('input[name="mandays_loe_modal"]').val();
       var description_loe_modal = $('textarea[name="description_loe_modal"]').val();
       var date_loe_modal = $('input[name="date_loe_modal"]').val();
-      var signoff_loe_modal = $('input[name="signoff_loe_modal"]').is(":checked");
       if (action_loe_modal == "update") {
         var data = {'action':action_loe_modal,'project_id':project_id_loe_modal,'domain':domain_loe_modal,
           'type':type_loe_modal,'location':location_loe_modal,'mandays':mandays_loe_modal,'description':description_loe_modal,
-          'date':date_loe_modal,'signoff':signoff_loe_modal,'loe_id':loe_id
+          'date':date_loe_modal,'loe_id':loe_id
           };
         var loe_create_update_route = "{!! route('ProjectsLoeUpdateAjax') !!}";
       } else {
         var data = {'action':action_loe_modal,'project_id':project_id_loe_modal,'domain':domain_loe_modal,
           'type':type_loe_modal,'location':location_loe_modal,'mandays':mandays_loe_modal,'description':description_loe_modal,
-          'date':date_loe_modal,'signoff':signoff_loe_modal
+          'date':date_loe_modal
           };
         var loe_create_update_route = "{!! route('ProjectsLoeAddAjax') !!}";
       }
@@ -1797,7 +1773,7 @@ $(document).ready(function() {
               });
               projectLoe.ajax.reload();
             }
-          });
+      });
 
       $('#loeModal').modal('hide');
 

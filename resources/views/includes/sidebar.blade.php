@@ -75,7 +75,7 @@
             @permission(['dashboardOrder-view'])
             <li><a href="{!!route('orderdashboard')!!}/{{date('Y')}}/0">Order Dashboard</a></li>
             @endpermission
-            @permission(['projectLoe-view'])
+            @permission(['projectLoe-dashboard_view'])
             <li><a href="{!!route('loedashboard')!!}/{{date('Y')}}">LoE Dashboard</a></li>
             @endpermission
           </ul>

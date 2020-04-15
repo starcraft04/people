@@ -268,7 +268,7 @@ class ToolsController extends Controller {
     return redirect($redirect)->with('success','New project created successfully');
 	}
 
-  public function getFormUpdate($user_id,$project_id,$year)
+  public function getFormUpdate($user_id,$project_id,$year,$tab = 'tab_main')
 	{
     // Here we setup all the disabled fields to be disabled
     $project_name_disabled = 'disabled';
@@ -457,7 +457,7 @@ class ToolsController extends Controller {
     'revenue_disabled',
     'win_ratio_disabled',
     'show_change_button',
-    'num_of_comments','comments','user_list','user_selected','user_select_disabled','created_by_user_name'))
+    'num_of_comments','comments','user_list','user_selected','user_select_disabled','created_by_user_name','tab'))
       ->with('action','update');
 	}
 
