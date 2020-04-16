@@ -840,12 +840,12 @@
             .column( value, { page: 'current'} )
             .data()
             .reduce( function (a, b) {
-              return a+b;
+              return parseFloat(a)+parseFloat(b);
             }, 0 );
 
           // Update footer
           $( api.column( value ).footer() ).html(
-              '<div style="font-size: 120%;">'+parseFloat(pageTotal).toFixed(1)+'</div>'
+              '<div style="font-size: 120%;">'+pageTotal.toFixed(1)+'</div>'
           );
         });
       },
