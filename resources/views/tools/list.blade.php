@@ -845,7 +845,7 @@
 
           // Update footer
           $( api.column( value ).footer() ).html(
-              '<div style="font-size: 120%;">'+pageTotal.toFixed(0)+'</div>'
+              '<div style="font-size: 120%;">'+pageTotal+'</div>'
           );
         });
       },
