@@ -53,8 +53,6 @@
 @stop
 
 @section('content')
-
-
 <!-- Window -->
 <div class="row">
   <div class="col-md-12 col-sm-12 col-xs-12">
@@ -79,14 +77,14 @@
       <!-- Window content -->
       <div class="x_content">
         @if($action == 'create')
-              {!! Form::open(['url' => 'toolsFormCreate', 'method' => 'post', 'id' => 'myForm']) !!}
-              {!! Form::hidden('created_by_user_id', $created_by_user_id, ['class' => 'form-control']) !!}
-              @elseif($action == 'update')
-              {!! Form::open(['url' => 'toolsFormUpdate', 'method' => 'post', 'id' => 'myForm']) !!}
-              {!! Form::hidden('project_id', $project->id, ['class' => 'form-control']) !!}
-              <!-- Now we need also to set up id so that it can be used for the ProjectUpdateRequest.php -->
-              {!! Form::hidden('id', $project->id, ['class' => 'form-control']) !!}
-              {!! Form::hidden('user_id_url', $user_id, ['class' => 'form-control']) !!}
+          {!! Form::open(['url' => 'toolsFormCreate', 'method' => 'post', 'id' => 'myForm']) !!}
+          {!! Form::hidden('created_by_user_id', $created_by_user_id, ['class' => 'form-control']) !!}
+          @elseif($action == 'update')
+          {!! Form::open(['url' => 'toolsFormUpdate', 'method' => 'post', 'id' => 'myForm']) !!}
+          {!! Form::hidden('project_id', $project->id, ['class' => 'form-control']) !!}
+          <!-- Now we need also to set up id so that it can be used for the ProjectUpdateRequest.php -->
+          {!! Form::hidden('id', $project->id, ['class' => 'form-control']) !!}
+          {!! Form::hidden('user_id_url', $user_id, ['class' => 'form-control']) !!}
         @endif
         <div class="row">
           <div class="col-md-1">
@@ -127,16 +125,15 @@
               @permission(['projectLoe-view'])
               <li role="presentation"><a href="#tab_content4" id="tab_loe" role="tab" data-toggle="tab" aria-expanded="true">LoE</a></li>
               @endpermission
+              @permission('tools-projects-comments')
+              <li role="presentation"><a href="#tab_content3" id="tab_comment" role="tab" data-toggle="tab" aria-expanded="true">Comments (<span id="num_of_comments">{{ $num_of_comments }}</span>)</a></li>
+              @endpermission
             @endif
-            @permission('tools-projects-comments')
-            <li role="presentation"><a href="#tab_content3" id="tab_comment" role="tab" data-toggle="tab" aria-expanded="true">Comments (<span id="num_of_comments">{{ $num_of_comments }}</span>)</a></li>
-            @endpermission
           </ul>
 
           <div id="myTabContent" class="tab-content">
             <!-- Project -->
             <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="tab_main">
-              
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group {!! $errors->has('user_id') ? 'has-error' : '' !!} col-md-12">
@@ -663,47 +660,50 @@
                 <div class="row"></div>
                 <div class="row"></div>
               </div>
-
             </div>
+            <!-- Project -->
+
             @if($action == 'update')
-              @permission(['projectRevenue-create'])
               <!-- Revenues -->
+              @permission(['projectRevenue-create'])
               <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="tab_revenue">
                 <div class="row">
-                <div class="table-responsive">
-                  <table class="table table-striped table-hover table-bordered mytable" width="100%" id="projectRevenue">
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>Year</th>
-                        <th>FPC</th>
-                        <th>Jan</th>
-                        <th>feb</th>
-                        <th>Mar</th>
-                        <th>Apr</th>
-                        <th>May</th>
-                        <th>Jun</th>
-                        <th>Jul</th>
-                        <th>Aug</th>
-                        <th>Sep</th>
-                        <th>Oct</th>
-                        <th>Nov</th>
-                        <th>Dec</th>
-                        <th>
-                          @permission('projectRevenue-create')
-                            <button type="button" id="new_revenue" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span></button>
-                          @endpermission
-                        </th>
-                      </tr>
-                    </thead>
-                  </table>
-                </div>
+                  <div class="table-responsive">
+                    <table class="table table-striped table-hover table-bordered mytable" width="100%" id="projectRevenue">
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Year</th>
+                          <th>FPC</th>
+                          <th>Jan</th>
+                          <th>feb</th>
+                          <th>Mar</th>
+                          <th>Apr</th>
+                          <th>May</th>
+                          <th>Jun</th>
+                          <th>Jul</th>
+                          <th>Aug</th>
+                          <th>Sep</th>
+                          <th>Oct</th>
+                          <th>Nov</th>
+                          <th>Dec</th>
+                          <th>
+                            @permission('projectRevenue-create')
+                              <button type="button" id="new_revenue" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span></button>
+                            @endpermission
+                          </th>
+                        </tr>
+                      </thead>
+                    </table>
+                  </div>
                 </div>
               </div>
-              <!-- Revenues -->
               @endpermission
-              @permission(['projectLoe-view'])
+              <!-- Revenues -->
+
               <!-- LoE -->
+              @permission(['projectLoe-view'])
+              <!-- Table -->
               <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="tab_loe">
                 <div class="row">
                 <div class="table-responsive">
@@ -737,6 +737,7 @@
                 </div>
                 </div>
               </div>
+              <!-- Table -->
 
               <!-- Modal -->
               <div class="modal fade" id="loeModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -747,6 +748,7 @@
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                             <h4 class="modal-title" id="loe_title_modal"></h4>
                         </div>
+                        <!-- Modal Header -->
                       
                         <!-- Modal Body -->
                         <div class="modal-body">
@@ -819,97 +821,81 @@
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                             <button type="button" id="loe_create_update_button_modal" class="btn btn-success">Update</button>
                         </div>
-                      </form> 
                       </div>
                   </div>
               </div>
               <!-- Modal -->
-
-              <!-- LoE -->
               @endpermission
-            @endif
-            @permission('tools-projects-comments')
-            <!-- Comments -->
-            <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="tab_comment">
-              <div class="row">
-                <div class="form-group {!! $errors->has('project_comment') ? 'has-error' : '' !!} col-md-12">
+              <!-- LoE -->
+
+              <!-- Comments -->
+              @permission('tools-projects-comments')
+              <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="tab_comment">
+                <div class="row">
                   <div class="col-md-1">
-                    {!! Form::label('project_comment', 'New comment', ['class' => 'control-label']) !!}
-                  </div>
-                  <div class="col-md-11">
-                    <textarea name="project_comment" id="project_comment" class="form-control" placeholder="Have something to say?" rows="3"></textarea>
-                    {!! $errors->first('project_comment', '<small class="help-block">:message</small>') !!}
+                    <button type="button" id="new_comment" class="btn btn-info btn-xl"><span class="glyphicon glyphicon-plus"></span> Add comment</button>
                   </div>
                 </div>
-              </div>
-              <div class="ln_solid"></div>
-              <div id="all_comments">
-              @if($action == 'update')
-              @foreach ($comments as $comment)
-                <div class="panel panel-default">
-                  <div class="panel-heading">
-                    {{$comment->user->name}} said <small class="text-primary">{{$comment->updated_at->diffForHumans()}}</small>
-                    @if($comment->user_id == Auth::user()->id || Auth::user()->id == 1)
-                    <a id="{{ $comment->id }}" class="pull-right comment_edit"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
-                    <a id="{{ $comment->id }}" style="margin-right: 10px;" class="pull-right comment_delete"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></a>
-                    @endif
-                  </div>
-                  <div class="panel-body">
-                    {{$comment->comment}}
-                  </div>
-                </div>
-              @endforeach
-              @endif
-              </div>
-            </div>
-
-            <!-- Modal -->
-            <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                      <form id="comment_form" class="form-horizontal" role="form">
-                      <!-- Modal Header -->
-                      <div class="modal-header">
-                          <button type="button" class="close" 
-                              data-dismiss="modal">
-                                  <span aria-hidden="true">&times;</span>
-                                  <span class="sr-only">Close</span>
-                          </button>
-                          <h4 class="modal-title" id="myModalLabel">
-                              Edit comment
-                          </h4>
-                      </div>
-                        
-                      <!-- Modal Body -->
-                      <div class="modal-body">
-                          
-                            <div class="form-group">
-                              <label  class="col-sm-2 control-label" for="project_comment_modal">Comment</label>
-                              <div class="col-sm-10">
-                                  <textarea name="project_comment_modal" id="project_comment_modal" class="form-control" placeholder="Have something to say?" rows="3"></textarea>
-                              </div>
-                              <div id="comment_hidden">
-                              </div>
-                            </div>
-                          
-                      </div>
-                        
-                      <!-- Modal Footer -->
-                      <div class="modal-footer">
-                          <button type="button" class="btn btn-default"
-                                  data-dismiss="modal">
-                                      Close
-                          </button>
-                          <button type="submit" form="comment_form" value="Submit" class="btn btn-primary">Update</button>
-                      </div>
-                    </form> 
+                <div class="ln_solid"></div>
+                <div id="all_comments">
+                @if($action == 'update')
+                @foreach ($comments as $comment)
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      {{$comment->user->name}} said <small class="text-primary">{{$comment->updated_at->diffForHumans()}}</small>
+                      <!-- change user id to 1 -->
+                      @if($comment->user_id == Auth::user()->id || Auth::user()->id == 2)
+                      <a id="{{ $comment->id }}" class="pull-right comment_edit"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+                      <a id="{{ $comment->id }}" style="margin-right: 10px;" class="pull-right comment_delete"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+                      @endif
                     </div>
+                    <div class="panel-body">
+                      {{$comment->comment}}
+                    </div>
+                  </div>
+                @endforeach
+                @endif
                 </div>
-            </div>
-            <!-- Modal -->
-
-            <!-- Comments -->
-            @endpermission
+              </div>
+              <!-- Modal -->
+              <div class="modal fade" id="commentModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" style="display:table;">
+                  <div class="modal-content">
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title" id="comment_title_modal"></h4>
+                    </div>
+                    <!-- Modal Header -->
+                      
+                    <!-- Modal Body -->
+                    <div class="modal-body">
+                      <form id="form_comment_modal" role="form" method="POST" action="">
+                        <div class="form-group">
+                          <label  class="control-label" for="project_comment_modal">Comment</label>
+                          <div>
+                              <textarea type="text" name="project_comment_modal" class="form-control" placeholder="Enter a comment" rows="4"></textarea>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <div id="comment_hidden">
+                          </div>
+                        </div>
+                      </form>  
+                    </div>
+                      
+                    <!-- Modal Footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" id="comment_create_update_button_modal" class="btn btn-success">Update</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Modal -->
+              @endpermission
+              <!-- Comments -->
+            @endif
           </div>
         </div>
         {!! Form::close() !!}
@@ -923,40 +909,29 @@
 @stop
 
 @section('script')
-
-
 <script>
+
 var year;
 var revenues;
 var projectRevenue;
 // If we set up the tab to be selected in the url it will be in variable tab_origin
 var tab_origin = "{{ $tab }}";
 
+// Create the permission variable based on Laravel permission model
 <?php
   list($validate, $allValidations) = Entrust::ability(null,array('projectRevenue-delete','projectLoe-edit','projectLoe-delete','projectLoe-editAll','projectLoe-deleteAll'),['validate_all' => true,'return_type' => 'both']);
   echo "var permissions = jQuery.parseJSON('".json_encode($allValidations['permissions'])."');";
 ?>
 
 $(document).ready(function() {
-  $('.OTL_code,.mandatory').balloon({ 
-    position: "right",
-    tipSize: 24,
-    html: true,
-    css: {
-      border: 'solid 4px #5baec0',
-      padding: '10px',
-      fontSize: '100%',
-      fontWeight: 'bold',
-      lineHeight: '2',
-      backgroundColor: '#666',
-      color: '#fff'
-    } 
-  });
-
-  // Change the tab on screen with the one selected from the url
-  if (tab_origin != 'tab_main') {
-    $('#'+tab_origin).trigger('click');
-  }
+  // Ajax setup needed in case there is an update for revenue, comment, loe, ... tabs
+  @if($action == 'update')
+    $.ajaxSetup({
+      headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+  @endif
 
   // This code will make any modal window draggable
   $(".modal-header").on("mousedown", function(mousedownEvt) {
@@ -977,8 +952,29 @@ $(document).ready(function() {
     });
   });
 
-  // In case this is baseline, project or pre-sales, we will have different text to be selected
+  //region Init Main interface
+  // OTL code mandatory
+  $('.OTL_code,.mandatory').balloon({ 
+    position: "right",
+    tipSize: 24,
+    html: true,
+    css: {
+      border: 'solid 4px #5baec0',
+      padding: '10px',
+      fontSize: '100%',
+      fontWeight: 'bold',
+      lineHeight: '2',
+      backgroundColor: '#666',
+      color: '#fff'
+    } 
+  });
 
+  // Change the tab on screen with the one selected from the url
+  if (tab_origin != 'tab_main') {
+    $('#'+tab_origin).trigger('click');
+  }
+
+  // In case this is baseline, project or pre-sales, we will have different text to be selected
   function project_type_value_check() {
     project_type_val = $("#project_type option:selected").val();
     project_status_val = $("#project_status option:selected").val();
@@ -1029,6 +1025,7 @@ $(document).ready(function() {
     project_type_value_check();
   });
 
+  // This is to show the help when the button is clicked
   $(document).on('click', '#help_otl', function () {
     swal({
       title: 'How to enter the correct OTL code',
@@ -1048,6 +1045,7 @@ $(document).ready(function() {
     });
   });
 
+  // This is to allow to change the user when change user button is clicked
   @if($action == 'update')
     @if($show_change_button)
     $(document).on('click', '#change_user', function () {
@@ -1056,6 +1054,7 @@ $(document).ready(function() {
     @endif
   @endif
 
+  // This is to show or hide the entry of days on the project if the user is selected or not
   if($('#user_id').val()===""){
     $('.user_selected').hide();
   }
@@ -1071,7 +1070,6 @@ $(document).ready(function() {
       $('.user_selected').show();
     }
   });
-
 
   // init DateRange picker
   $('#estimated_date').daterangepicker({
@@ -1091,17 +1089,7 @@ $(document).ready(function() {
     @endif
   });
 
-  $('#date_loe_modal').daterangepicker({
-    locale: {
-    format: 'YYYY-MM-DD'
-    },
-    showISOWeekNumbers: true,
-    showDropdowns: true,
-    autoApply: true,
-    disabled: true,
-  });
-
-  //Init select2 boxes
+  //region Init select2 boxes
   $("#user_id").select2({
     allowClear: true,
     disabled: {{ $user_select_disabled }}
@@ -1155,20 +1143,9 @@ $(document).ready(function() {
     allowClear: true,
     disabled: {{ $country_select_disabled }}
   });
+  //endregion
 
-  $("#domain_loe_modal").select2({
-    allowClear: true
-  });
-
-  $("#type_loe_modal").select2({
-    allowClear: true
-  });
-
-  $("#location_loe_modal").select2({
-    allowClear: true
-  });
-
-
+  // Change when year has been changed
   @if($action == 'update')
     $('#year').on('change', function() {
         year=$(this).val();
@@ -1176,6 +1153,7 @@ $(document).ready(function() {
     });
   @endif
 
+  // Click remove user
   $('#remove_user').on('click', function () {
       bootbox.confirm("Are you sure want to remove the user from this project?", function(result) {
           if (result){
@@ -1188,7 +1166,7 @@ $(document).ready(function() {
       });
   });
 
-
+  // Click transfer user
   @if($action == 'update')
     $('#transfer_user').on('click', function () {
       bootbox.confirm("Are you sure want to transfer the user from this project?", function(result) {
@@ -1199,168 +1177,10 @@ $(document).ready(function() {
     });
   @endif
 
+  //endregion
+
+  //region Revenue
   @if($action == 'update')
-
-    $(document).on('click', '.comment_edit', function () {
-      comment_id = this.id;
-      $.ajax({
-        type: 'get',
-        url: "{!! route('comment_show','') !!}/"+comment_id,
-        dataType: 'json',
-        success: function(data) {
-          console.log(data);
-          $('textarea#project_comment_modal').val(data.comment);
-        }
-      }); 
-      $('#comment_hidden').empty();
-      var hidden = '';
-      hidden += '<input class="form-control" id="comment_id" name="comment_id" type="hidden" value="'+comment_id+'">';
-      $('#comment_hidden').append(hidden);
-      $('#commentModal').modal();
-    });
-
-    $("#comment_form").submit(function(e){
-      e.preventDefault();
-      var comment_id = $('input#comment_id').val();
-      var comment_comment = $('textarea#project_comment_modal').val();
-      $.ajax({
-        type: 'post',
-        url: "{!! route('comment_edit','') !!}/"+comment_id,
-        dataType: 'json',
-        data: {
-          'comment': comment_comment,
-          '_token':'{{ csrf_token() }}'
-        },
-        success: function(data) {
-          console.log(data);
-
-          $.ajax({
-            type: 'get',
-            url: "{!! route('comment_list','') !!}/"+{{ $project->id }},
-            dataType: 'json',
-            success: function(data) {
-              console.log(data);
-              $('#num_of_comments').text(data.num_of_comments);
-              $('#all_comments').empty();
-
-              var comments = '';
-              $.each(data.list, function( index, value ) {
-                comments += '<div class="panel panel-default">';
-                comments += '<div class="panel-heading">';
-                comments += value.user_name +' said <small class="text-primary">'+value.time+'</small>';
-                if (value.id > 0) {
-                  comments += '<a id="'+value.id+'" class="pull-right comment_edit"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span></a>';
-                  comments += '<a id="'+value.id+'" style="margin-right: 10px;" class="pull-right comment_delete"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></a>';
-                }
-                comments += '</div>';
-                comments += '<div class="panel-body">';
-                comments += value.comment;
-                comments += '</div>';
-                comments += '</div>';
-              });
-              
-              $('#all_comments').append(comments); 
-
-            }
-          }); 
-
-          if (data.result == 'success'){
-              box_type = 'success';
-              message_type = 'success';
-          }
-          else {
-              box_type = 'danger';
-              message_type = 'error';
-          }
-
-          $('#flash-message').empty();
-          var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button type="button" href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
-          console.log(data.msg);
-          $('#flash-message').append(box);
-          $('#delete-message').delay(2000).queue(function () {
-              $(this).addClass('animated flipOutX')
-          }); 
-        } 
-      });
-
-      $('#commentModal').modal('hide');
-    });
-
-    $(document).on('click', '.comment_delete', function () {
-      var comment_id = this.id;
-      bootbox.confirm("Are you sure want to delete this message?", function(result) {
-        if (result){
-          $.ajax({
-            type: 'get',
-            url: "{!! route('comment_delete','') !!}/"+comment_id,
-            dataType: 'json',
-            success: function(data) {
-              console.log(data);
-
-              $.ajax({
-                type: 'get',
-                url: "{!! route('comment_list','') !!}/"+{{ $project->id }},
-                dataType: 'json',
-                success: function(data) {
-                  console.log(data);
-                  $('#num_of_comments').text(data.num_of_comments);
-                  $('#all_comments').empty();
-
-                  var comments = '';
-                  $.each(data.list, function( index, value ) {
-                    comments += '<div class="panel panel-default">';
-                    comments += '<div class="panel-heading">';
-                    comments += value.user_name +' said <small class="text-primary">'+value.time+'</small>';
-                    if (value.id > 0) {
-                      comments += '<a id="'+value.id+'" class="pull-right comment_edit"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span></a>';
-                      comments += '<a id="'+value.id+'" style="margin-right: 10px;" class="pull-right comment_delete"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></a>';
-                    }
-                    comments += '</div>';
-                    comments += '<div class="panel-body">';
-                    comments += value.comment;
-                    comments += '</div>';
-                    comments += '</div>';
-                  });
-                  
-                  $('#all_comments').append(comments); 
-
-                }
-              }); 
-
-              if (data.result == 'success'){
-                  box_type = 'success';
-                  message_type = 'success';
-              }
-              else {
-                  box_type = 'danger';
-                  message_type = 'error';
-              }
-
-              $('#flash-message').empty();
-              var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button type="button" href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
-              console.log(data.msg);
-              $('#flash-message').append(box);
-              $('#delete-message').delay(2000).queue(function () {
-                  $(this).addClass('animated flipOutX')
-              });
-            }
-          });
-        }
-      });
-    } );
-
-  @endif
-
-  @if($action == 'update')
-
-    $.ajaxSetup({
-      headers: {
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-      }
-    });
-
-    // Revenue
-    
     projectRevenue = $('#projectRevenue').DataTable({
         serverSide: true,
         processing: true,
@@ -1552,7 +1372,7 @@ $(document).ready(function() {
           });
         }
       });
-    } );
+    });
 
     $(document).on('blur', '.rev_update', function(){
       var id = $(this).data("id");
@@ -1584,11 +1404,205 @@ $(document).ready(function() {
             }
       });
     });
+  @endif
+  //endregion
 
-    // Revenue
+  //region Comment
+  @if($action == 'update')
+    // Click edit
+    $(document).on('click', '.comment_edit', function () {
+      $('#comment_title_modal').text('Update Comment');
+      $('#comment_create_update_button_modal').text('Update');
+      comment_id = this.id;
+      $.ajax({
+        type: 'get',
+        url: "{!! route('comment_show','') !!}/"+comment_id,
+        dataType: 'json',
+        success: function(data) {
+          console.log(data);
+          $('textarea#project_comment_modal').val(data.comment);
+        }
+      }); 
+      $('#comment_hidden').empty();
+      var hidden = '';
+      hidden += '<input class="form-control" id="comment_id" name="comment_id" type="hidden" value="'+comment_id+'">';
+      $('#comment_hidden').append(hidden);
+      $('#commentModal').modal();
+    });
 
-    // Loe
+    // Click add new
+    $(document).on('click', '#new_comment', function () {
+      $('#comment_title_modal').text('Create Comment');
+      $('#comment_create_update_button_modal').text('Create');
+      $('#comment_hidden').empty();
+      var hidden = '';
+      hidden += '<input class="form-control" id="project_id_loe_modal" name="project_id_loe_modal" type="hidden" value="'+{{ $project->id }}+'">';
+      hidden += '<input class="form-control" id="action_loe_modal" name="action_loe_modal" type="hidden" value="create">';
+      $('#comment_hidden').append(hidden);
+      $('#commentModal').modal("show");
+    });
 
+    $("#comment_form").submit(function(e){
+      e.preventDefault();
+      var comment_id = $('input#comment_id').val();
+      var comment_comment = $('textarea#project_comment_modal').val();
+      $.ajax({
+        type: 'post',
+        url: "{!! route('comment_edit','') !!}/"+comment_id,
+        dataType: 'json',
+        data: {
+          'comment': comment_comment,
+          '_token':'{{ csrf_token() }}'
+        },
+        success: function(data) {
+          console.log(data);
+
+          $.ajax({
+            type: 'get',
+            url: "{!! route('comment_list','') !!}/"+{{ $project->id }},
+            dataType: 'json',
+            success: function(data) {
+              console.log(data);
+              $('#num_of_comments').text(data.num_of_comments);
+              $('#all_comments').empty();
+
+              var comments = '';
+              $.each(data.list, function( index, value ) {
+                comments += '<div class="panel panel-default">';
+                comments += '<div class="panel-heading">';
+                comments += value.user_name +' said <small class="text-primary">'+value.time+'</small>';
+                if (value.id > 0) {
+                  comments += '<a id="'+value.id+'" class="pull-right comment_edit"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span></a>';
+                  comments += '<a id="'+value.id+'" style="margin-right: 10px;" class="pull-right comment_delete"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></a>';
+                }
+                comments += '</div>';
+                comments += '<div class="panel-body">';
+                comments += value.comment;
+                comments += '</div>';
+                comments += '</div>';
+              });
+              
+              $('#all_comments').append(comments); 
+
+            }
+          }); 
+
+          if (data.result == 'success'){
+              box_type = 'success';
+              message_type = 'success';
+          }
+          else {
+              box_type = 'danger';
+              message_type = 'error';
+          }
+
+          $('#flash-message').empty();
+          var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button type="button" href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+          console.log(data.msg);
+          $('#flash-message').append(box);
+          $('#delete-message').delay(2000).queue(function () {
+              $(this).addClass('animated flipOutX')
+          }); 
+        } 
+      });
+
+      $('#commentModal').modal('hide');
+    });
+
+    // Click delete
+    $(document).on('click', '.comment_delete', function () {
+      var comment_id = this.id;
+      bootbox.confirm("Are you sure want to delete this message?", function(result) {
+        if (result){
+          $.ajax({
+            type: 'get',
+            url: "{!! route('comment_delete','') !!}/"+comment_id,
+            dataType: 'json',
+            success: function(data) {
+              console.log(data);
+
+              $.ajax({
+                type: 'get',
+                url: "{!! route('comment_list','') !!}/"+{{ $project->id }},
+                dataType: 'json',
+                success: function(data) {
+                  console.log(data);
+                  $('#num_of_comments').text(data.num_of_comments);
+                  $('#all_comments').empty();
+
+                  var comments = '';
+                  $.each(data.list, function( index, value ) {
+                    comments += '<div class="panel panel-default">';
+                    comments += '<div class="panel-heading">';
+                    comments += value.user_name +' said <small class="text-primary">'+value.time+'</small>';
+                    if (value.id > 0) {
+                      comments += '<a id="'+value.id+'" class="pull-right comment_edit"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span></a>';
+                      comments += '<a id="'+value.id+'" style="margin-right: 10px;" class="pull-right comment_delete"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></a>';
+                    }
+                    comments += '</div>';
+                    comments += '<div class="panel-body">';
+                    comments += value.comment;
+                    comments += '</div>';
+                    comments += '</div>';
+                  });
+                  
+                  $('#all_comments').append(comments); 
+
+                }
+              }); 
+
+              if (data.result == 'success'){
+                  box_type = 'success';
+                  message_type = 'success';
+              }
+              else {
+                  box_type = 'danger';
+                  message_type = 'error';
+              }
+
+              $('#flash-message').empty();
+              var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button type="button" href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+              console.log(data.msg);
+              $('#flash-message').append(box);
+              $('#delete-message').delay(2000).queue(function () {
+                  $(this).addClass('animated flipOutX')
+              });
+            }
+          });
+        }
+      });
+    });
+  @endif
+  //endregion
+  
+  //region Loe
+  @if($action == 'update')
+    // Init daterange in input field
+    $('#date_loe_modal').daterangepicker({
+      locale: {
+      format: 'YYYY-MM-DD'
+      },
+      showISOWeekNumbers: true,
+      showDropdowns: true,
+      autoApply: true,
+      disabled: true,
+    });
+
+    // Init select2 boxes in the modal
+    $("#domain_loe_modal").select2({
+      allowClear: true
+    });
+
+    $("#type_loe_modal").select2({
+      allowClear: true
+    });
+
+    $("#location_loe_modal").select2({
+      allowClear: true
+    });
+
+
+    // Ajax datatables to create the table
     projectLoe = $('#projectLoe').DataTable({
         serverSide: true,
         processing: true,
@@ -1677,6 +1691,7 @@ $(document).ready(function() {
         ]   
     });
 
+    // Click add new
     $(document).on('click', '#new_loe', function () {
       $('#loe_title_modal').text('Create LoE');
       $('#loe_create_update_button_modal').text('Create');
@@ -1688,6 +1703,7 @@ $(document).ready(function() {
       $('#loeModal').modal("show");
     });
 
+    // Click edit
     $(document).on('click', '.buttonLoeEdit', function () {
       $('#loe_title_modal').text('Update LoE');
       $('#loe_create_update_button_modal').text('Update');
@@ -1720,6 +1736,7 @@ $(document).ready(function() {
       $('#loeModal').modal("show");
     });
 
+    // click send info ajax to create or update
     $(document).on('click', '#loe_create_update_button_modal', function () {
       // hidden input
       var action_loe_modal = $('input#action_loe_modal').val();
@@ -1779,6 +1796,7 @@ $(document).ready(function() {
 
     });
 
+    // Click delete
     $(document).on('click', '.buttonLoeDelete', function () {
       record_id = $(this).attr('data-id');
 
@@ -1811,19 +1829,17 @@ $(document).ready(function() {
         }
       });
     } );
+  @endif
+  //endregion Loe
 
-    // Loe
-
-    // This part is to make sure that datatables can adjust the columns size when it is hidden because on non active tab when created
+  // This part is to make sure that datatables can adjust the columns size when it is hidden because of non active tab when created
+  @if($action == 'update')
     $('a[data-toggle="tab"]').on('shown.bs.tab', function(e){
       $($.fn.dataTable.tables(true)).DataTable()
           .columns.adjust();
     });
-
   @endif
 
 });
 </script>
-
-
 @stop

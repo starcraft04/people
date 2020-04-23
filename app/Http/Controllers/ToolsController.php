@@ -133,7 +133,7 @@ class ToolsController extends Controller {
     return view('tools/projects_lost', compact('manager_list','year','user_id_for_update'));
   }
 
-	public function getFormCreate($year)
+	public function getFormCreate($year,$tab = 'tab_main')
 	{
     $project_name_disabled = '';
     $customer_id_select_disabled = 'false';
@@ -213,7 +213,7 @@ class ToolsController extends Controller {
       'revenue_disabled',
       'win_ratio_disabled',
       'show_change_button',
-      'num_of_comments'
+      'num_of_comments','tab'
       ))
       ->with('action','create');
 	}

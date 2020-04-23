@@ -162,7 +162,7 @@ Route::group(['middleware' => ['auth']], function() {
       Route::get('toolsProjectsMissingInfo', ['uses'=>'ToolsController@projectsMissingInfo','as'=>'projectsMissingInfo','middleware' => ['permission:tools-missing_info-view']]);
       Route::get('toolsProjectsMissingOTL', ['uses'=>'ToolsController@projectsMissingOTL','as'=>'projectsMissingOTL','middleware' => ['permission:tools-missing_info-view']]);
       //  Create new activity
-      Route::get('toolsFormCreate/{y}', ['uses'=>'ToolsController@getFormCreate','as'=>'toolsFormCreate','middleware' => ['permission:tools-activity-new']]);
+      Route::get('toolsFormCreate/{y}/{tab?}', ['uses'=>'ToolsController@getFormCreate','as'=>'toolsFormCreate','middleware' => ['permission:tools-activity-new']]);
       Route::post('toolsFormCreate', ['uses'=>'ToolsController@postFormCreate','middleware' => ['permission:tools-activity-new']]);
       //  Update activity
       Route::get('toolsFormUpdate/{u}/{p}/{y}/{tab?}', ['uses'=>'ToolsController@getFormUpdate','as'=>'toolsFormUpdate','middleware' => ['permission:tools-activity-edit']]);
