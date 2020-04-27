@@ -142,16 +142,16 @@ Route::group(['middleware' => ['auth']], function() {
                     => ['permission:activity-view|activity-create|activity-edit|activity-delete']]);
 
       //Comment
-      Route::get('comment/{id}', ['uses'=>'CommentController@show','as'=>'comment_show','middleware' => ['permission:tools-activity-new|tools-activity-edit']]);
-      Route::get('comments/{project_id}', ['uses'=>'CommentController@getList','as'=>'comment_list','middleware' => ['permission:tools-activity-new|tools-activity-edit']]);
-      Route::post('comment/edit/{id}', ['uses'=>'CommentController@edit','as'=>'comment_edit','middleware' => ['permission:tools-activity-new|tools-activity-edit']]);
-      Route::get('comment/delete/{id}', ['uses'=>'CommentController@delete','as'=>'comment_delete','middleware' => ['permission:tools-activity-new|tools-activity-edit']]);
+      Route::get('comment/{id}', ['uses'=>'CommentController@show','as'=>'comment_show','middleware' => ['permission:tools-projects-comments']]);
+      Route::get('comments/{project_id}', ['uses'=>'CommentController@getList','as'=>'comment_list','middleware' => ['permission:tools-projects-comments']]);
+      Route::post('comment/edit/{id}', ['uses'=>'CommentController@edit','as'=>'comment_edit','middleware' => ['permission:comment-edit']]);
+      Route::get('comment/delete/{id}', ['uses'=>'CommentController@delete','as'=>'comment_delete','middleware' => ['permission:comment-delete']]);
+      Route::post('commentList', ['uses'=>'CommentController@commentList','as'=>'commentList','middleware' => ['permission:tools-projects-comments']]);
+      Route::post('commentInsert', ['uses'=>'CommentController@commentInsert','as'=>'commentInsert','middleware' => ['permission:comment-create']]);
 
       //Tools
       Route::get('toolsActivities', ['uses'=>'ToolsController@activities','as'=>'toolsActivities','middleware' => ['permission:tools-activity-view']]);
       Route::get('toolsUserSummary', ['uses'=>'ToolsController@userSummary','as'=>'toolsUserSummary','middleware' => ['permission:tools-user-summary']]);
-      Route::post('commentList', ['uses'=>'CommentController@commentList','as'=>'commentList','middleware' => ['permission:tools-projects-comments']]);
-      Route::post('commentInsert', ['uses'=>'CommentController@commentInsert','as'=>'commentInsert','middleware' => ['permission:tools-projects-comments']]);
       Route::post('actionList', ['uses'=>'ActionController@actionList','as'=>'actionList','middleware' => ['permission:tools-user-summary']]);
       Route::post('actionInsertUpdate', ['uses'=>'ActionController@actionInsertUpdate','as'=>'actionInsertUpdate','middleware' => ['permission:action-create']]);
       Route::post('actionDelete', ['uses'=>'ActionController@actionDelete','as'=>'actionDelete','middleware' => ['permission:action-delete']]);

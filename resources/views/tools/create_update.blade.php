@@ -831,26 +831,31 @@
               <!-- Comments -->
               @permission('tools-projects-comments')
               <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="tab_comment">
+                @permission('comment-create')
                 <div class="row">
                   <div class="col-md-1">
                     <button type="button" id="new_comment" class="btn btn-info btn-xl"><span class="glyphicon glyphicon-plus"></span> Add comment</button>
                   </div>
                 </div>
                 <div class="ln_solid"></div>
+                @endpermission
                 <div id="all_comments">
                 @if($action == 'update')
                 @foreach ($comments as $comment)
                   <div class="panel panel-default">
                     <div class="panel-heading">
                       {{$comment->user->name}} said <small class="text-primary">{{$comment->updated_at->diffForHumans()}}</small>
-                      <!-- change user id to 1 -->
-                      @if($comment->user_id == Auth::user()->id || Auth::user()->id == 2)
-                      <a id="{{ $comment->id }}" class="pull-right comment_edit"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
-                      <a id="{{ $comment->id }}" style="margin-right: 10px;" class="pull-right comment_delete"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+                      @if($comment->user_id == Auth::user()->id || Entrust::can('comment-all'))
+                        @if(Entrust::can('comment-edit'))
+                          <a id="{{ $comment->id }}" class="pull-right comment_edit"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+                        @endif
+                        @if(Entrust::can('comment-delete'))
+                          <a id="{{ $comment->id }}" style="margin-right: 10px;" class="pull-right comment_delete"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+                        @endif
                       @endif
                     </div>
                     <div class="panel-body">
-                      {{$comment->comment}}
+                      <span class="comment_textarea">{{$comment->comment}}</span>
                     </div>
                   </div>
                 @endforeach
@@ -1414,18 +1419,12 @@ $(document).ready(function() {
       $('#comment_title_modal').text('Update Comment');
       $('#comment_create_update_button_modal').text('Update');
       comment_id = this.id;
-      $.ajax({
-        type: 'get',
-        url: "{!! route('comment_show','') !!}/"+comment_id,
-        dataType: 'json',
-        success: function(data) {
-          console.log(data);
-          $('textarea#project_comment_modal').val(data.comment);
-        }
-      }); 
+      comment_comment = $(this).parent().next().find(".comment_textarea").text();
+      $('textarea[name="project_comment_modal"]').val(comment_comment);
       $('#comment_hidden').empty();
       var hidden = '';
       hidden += '<input class="form-control" id="comment_id" name="comment_id" type="hidden" value="'+comment_id+'">';
+      hidden += '<input class="form-control" id="action_comment_modal" name="action_comment_modal" type="hidden" value="update">';
       $('#comment_hidden').append(hidden);
       $('#commentModal').modal();
     });
@@ -1436,77 +1435,99 @@ $(document).ready(function() {
       $('#comment_create_update_button_modal').text('Create');
       $('#comment_hidden').empty();
       var hidden = '';
-      hidden += '<input class="form-control" id="project_id_loe_modal" name="project_id_loe_modal" type="hidden" value="'+{{ $project->id }}+'">';
-      hidden += '<input class="form-control" id="action_loe_modal" name="action_loe_modal" type="hidden" value="create">';
+      hidden += '<input class="form-control" id="project_id_comment_modal" name="project_id_comment_modal" type="hidden" value="'+{{ $project->id }}+'">';
+      hidden += '<input class="form-control" id="action_comment_modal" name="action_comment_modal" type="hidden" value="create">';
       $('#comment_hidden').append(hidden);
       $('#commentModal').modal("show");
     });
 
-    $("#comment_form").submit(function(e){
-      e.preventDefault();
-      var comment_id = $('input#comment_id').val();
-      var comment_comment = $('textarea#project_comment_modal').val();
+    // Function to refresh comments from ajax request
+    function refresh_comments() {
       $.ajax({
-        type: 'post',
-        url: "{!! route('comment_edit','') !!}/"+comment_id,
-        dataType: 'json',
-        data: {
-          'comment': comment_comment,
-          '_token':'{{ csrf_token() }}'
-        },
-        success: function(data) {
-          console.log(data);
+                type: 'get',
+                url: "{!! route('comment_list','') !!}/"+{{ $project->id }},
+                dataType: 'json',
+                success: function(data) {
+                  $('#num_of_comments').text(data.num_of_comments);
+                  $('#all_comments').empty();
 
-          $.ajax({
-            type: 'get',
-            url: "{!! route('comment_list','') !!}/"+{{ $project->id }},
+                  var comments = '';
+                  $.each(data.list, function( index, value ) {
+                    comments += '<div class="panel panel-default">';
+                    comments += '<div class="panel-heading">';
+                    comments += value.user_name +' said <small class="text-primary">'+value.time+'</small>';
+                    if (value.id > 0) {
+                      @if(Entrust::can('comment-edit'))
+                        comments += '<a id="'+value.id+'" class="pull-right comment_edit"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span></a>';
+                      @endif
+                      @if(Entrust::can('comment-delete'))
+                        comments += '<a id="'+value.id+'" style="margin-right: 10px;" class="pull-right comment_delete"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></a>';
+                      @endif
+                    }
+                    comments += '</div>';
+                    comments += '<div class="panel-body">';
+                    comments += '<span class="comment_textarea">';
+                    comments += value.comment;
+                    comments += '</span>';
+                    comments += '</div>';
+                    comments += '</div>';
+                  });
+                  
+                  $('#all_comments').append(comments); 
+
+                }
+              }); 
+    }
+
+    // click send info ajax to create or update
+    $(document).on('click', '#comment_create_update_button_modal', function () {
+      // hidden input
+      var action_comment_modal = $('input#action_comment_modal').val();
+      var project_id_comment_modal = $('input#project_id_comment_modal').val();
+      if (action_comment_modal == "update") {
+        var comment_id = $('input#comment_id').val();
+      }
+
+      // filled in
+      var comment_comment = $('textarea[name="project_comment_modal"]').val();
+      if (action_comment_modal == "update") {
+        var data = {'comment':comment_comment
+          };
+        var comment_create_update_route = "{!! route('comment_edit','') !!}/"+comment_id;
+      } else {
+        var data = {'project_id':project_id_comment_modal,'comment':comment_comment
+          };
+        var comment_create_update_route = "{!! route('commentInsert') !!}";
+      }
+      
+      $.ajax({
+            type: 'post',
+            url: comment_create_update_route,
+            data:data,
             dataType: 'json',
             success: function(data) {
-              console.log(data);
-              $('#num_of_comments').text(data.num_of_comments);
-              $('#all_comments').empty();
+              refresh_comments();
+              if (data.result == 'success'){
+                  box_type = 'success';
+                  message_type = 'success';
+              }
+              else {
+                  box_type = 'danger';
+                  message_type = 'error';
+              }
 
-              var comments = '';
-              $.each(data.list, function( index, value ) {
-                comments += '<div class="panel panel-default">';
-                comments += '<div class="panel-heading">';
-                comments += value.user_name +' said <small class="text-primary">'+value.time+'</small>';
-                if (value.id > 0) {
-                  comments += '<a id="'+value.id+'" class="pull-right comment_edit"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span></a>';
-                  comments += '<a id="'+value.id+'" style="margin-right: 10px;" class="pull-right comment_delete"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></a>';
-                }
-                comments += '</div>';
-                comments += '<div class="panel-body">';
-                comments += value.comment;
-                comments += '</div>';
-                comments += '</div>';
+              $('#flash-message').empty();
+              var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+              $('#flash-message').append(box);
+              $('#delete-message').delay(2000).queue(function () {
+                  $(this).addClass('animated flipOutX')
               });
-              
-              $('#all_comments').append(comments); 
-
+              projectLoe.ajax.reload();
             }
-          }); 
-
-          if (data.result == 'success'){
-              box_type = 'success';
-              message_type = 'success';
-          }
-          else {
-              box_type = 'danger';
-              message_type = 'error';
-          }
-
-          $('#flash-message').empty();
-          var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button type="button" href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
-          console.log(data.msg);
-          $('#flash-message').append(box);
-          $('#delete-message').delay(2000).queue(function () {
-              $(this).addClass('animated flipOutX')
-          }); 
-        } 
       });
 
       $('#commentModal').modal('hide');
+
     });
 
     // Click delete
@@ -1519,37 +1540,7 @@ $(document).ready(function() {
             url: "{!! route('comment_delete','') !!}/"+comment_id,
             dataType: 'json',
             success: function(data) {
-              console.log(data);
-
-              $.ajax({
-                type: 'get',
-                url: "{!! route('comment_list','') !!}/"+{{ $project->id }},
-                dataType: 'json',
-                success: function(data) {
-                  console.log(data);
-                  $('#num_of_comments').text(data.num_of_comments);
-                  $('#all_comments').empty();
-
-                  var comments = '';
-                  $.each(data.list, function( index, value ) {
-                    comments += '<div class="panel panel-default">';
-                    comments += '<div class="panel-heading">';
-                    comments += value.user_name +' said <small class="text-primary">'+value.time+'</small>';
-                    if (value.id > 0) {
-                      comments += '<a id="'+value.id+'" class="pull-right comment_edit"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span></a>';
-                      comments += '<a id="'+value.id+'" style="margin-right: 10px;" class="pull-right comment_delete"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></a>';
-                    }
-                    comments += '</div>';
-                    comments += '<div class="panel-body">';
-                    comments += value.comment;
-                    comments += '</div>';
-                    comments += '</div>';
-                  });
-                  
-                  $('#all_comments').append(comments); 
-
-                }
-              }); 
+              refresh_comments();
 
               if (data.result == 'success'){
                   box_type = 'success';

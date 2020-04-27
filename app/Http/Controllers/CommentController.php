@@ -31,21 +31,20 @@ class CommentController extends Controller {
 
     public function commentInsert(Request $request)
 	{
-        $inputs = $request->all();
+        // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
         $result = new \stdClass();
-        $insert_result = Comment::create($inputs);
-        if ($insert_result != null) {
-            $result->result = 'success';
-            $result->box_type = 'success';
-            $result->message_type = 'success';
-            $result->msg = 'Record added successfully';
-        } else {
-            $result->result = 'error';
-            $result->box_type = 'danger';
-            $result->message_type = 'error';
-            $result->msg = 'Record issue';
-        }
-        
+        $inputs = $request->all();
+        $comment = new Comment;
+
+        $comment->project_id = $inputs['project_id'];
+        $comment->comment = $inputs['comment'];
+        $comment->user_id = Auth::user()->id;
+
+        $comment->save();
+
+        $result->result = 'success';
+        $result->msg = 'Record added successfully';
+
         return json_encode($result);
     }
 
@@ -62,7 +61,7 @@ class CommentController extends Controller {
         $i = 0;
         foreach ($comments as $comment) {
             $result->list[$i] = new \stdClass();
-            if ($comment->user_id == Auth::user()->id || Auth::user()->id == 1) {
+            if ($comment->user_id == Auth::user()->id || Entrust::can('comment-all')) {
                 $result->list[$i]->id = $comment->id;
             } else {
                 $result->list[$i]->id = -1;
@@ -88,7 +87,7 @@ class CommentController extends Controller {
             $result->result = 'success';
             $result->box_type = 'success';
             $result->message_type = 'success';
-            $result->msg = 'Message deleted successfully';
+            $result->msg = 'Message edited successfully';
         } else {
             $result->result = 'error';
             $result->box_type = 'danger';
