@@ -364,4 +364,79 @@ class ProjectController extends Controller {
     $inputs = $request->all();
     return $this->projectRepository->getListOfProjectsAll($inputs);
   }
+
+  public function listOfProjectsNotUsedInPrime($user_name,$year)
+  {
+    $projects = DB::table('projects')
+          ->select('customers.name AS customer_name','projects.id AS project_id','projects.project_name AS project_name',
+                    'projects.project_type AS project_type','projects.project_status AS project_status',
+                    'projects.otl_project_code AS prime_code','projects.meta_activity AS meta_activity')
+          ->leftjoin('customers', 'projects.customer_id', '=', 'customers.id')
+          ->leftjoin('activities', 'activities.project_id', '=', 'projects.id')
+          ->leftjoin('users', 'users.id', '=', 'activities.user_id')
+          ->where('users.name','=',$user_name)
+          ->where('activities.year','=',$year)
+          ->groupBy('project_id')
+          ->orderBy('customer_name')
+          ->where('projects.otl_validated','=',0)
+          ->get()
+          ;
+    return $projects;
+  }
+
+  public function createProjectFromPrimeUpload(Request $request)
+  {
+    $inputs = $request->all();
+    $project_check = Project::where('project_name',$inputs['project_name'])->where('customer_id',$inputs['customer_id'])
+                              ->get()
+                              ->count();
+    $prime_check = Project::where('otl_project_code',$inputs['prime_code'])->where('meta_activity',$inputs['meta'])
+                              ->get()
+                              ->count();
+    // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
+    $result = new \stdClass();
+    if ($project_check == 0) {
+      if ($prime_check == 0) {
+        $project = new Project;
+        $project->project_name = $inputs['project_name'];
+        $project->customer_id = $inputs['customer_id'];
+        $project->project_type = $inputs['project_type'];
+        $project->project_status = $inputs['project_status'];
+        $project->otl_project_code = $inputs['prime_code'];
+        $project->meta_activity = $inputs['meta'];
+        $project->save();
+        $result->result = 'success';
+        $result->msg = 'Record added successfully';
+        return json_encode($result);
+      } else {
+        $result->result = 'error';
+        $result->msg = 'This prime code and meta activity already exist in the database';
+        return json_encode($result);
+      }
+    } else {
+      $result->result = 'error';
+      $result->msg = 'This project name and customer name already exist in the database';
+      return json_encode($result);
+    }
+  }
+
+  public function editProjectFromPrimeUpload(Request $request)
+  {
+    $inputs = $request->all();
+    // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
+    $result = new \stdClass();
+    $project = Project::find($inputs['project_id']);
+    if ($project->otl_validated == 0) {
+      $project->otl_project_code = $inputs['prime_code'];
+      $project->meta_activity = $inputs['meta'];
+      $project->save();
+		  $result->result = 'success';
+      $result->msg = 'Record modified successfully';
+		  return json_encode($result);
+    } else {
+      $result->result = 'error';
+      $result->msg = 'You don\'t have the rights to modify this record';
+      return json_encode($result);
+    }
+  }
 }

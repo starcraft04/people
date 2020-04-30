@@ -48,7 +48,7 @@
 <!-- Page title -->
 <div class="page-title">
   <div class="title_left">
-    <h3>Samba upload</h3>
+    <h3>CL upload</h3>
   </div>
 </div>
 <div class="clearfix"></div>
@@ -82,14 +82,14 @@
                 Download 
                 <a href="{{ asset('/Samples/samba_upload_sample.csv') }}" style="text-decoration: underline;">this file</a> to get the structure needed.
               </div>
-              <div class="col-md-5"><input name="create_in_db" type="checkbox" id="create_in_db" class="form-group js-switch-small" checked /> Create new record in DB if no Samba ID found</div>
+              <div class="col-md-5"><input name="create_in_db" type="checkbox" id="create_in_db" class="form-group js-switch-small" checked /> Create new record in DB if no CL ID found</div>
             </div>
           </div>
 
           <div class="row">
             <div class="form-group {!! $errors->has('uploadfile') ? 'has-error' : '' !!} col-md-12">
               <div class="col-md-2">
-                {!! Form::label('uploadfile', 'Samba excel file', ['class' => 'control-label']) !!}
+                {!! Form::label('uploadfile', 'CL excel file', ['class' => 'control-label']) !!}
               </div>
               <div class="col-md-10">
                 {!! Form::file('uploadfile', ['class' => 'form-control']) !!}
@@ -156,16 +156,16 @@
             <tr>
               <th>Action</th>
               <th>Cluster</th>
-              <th>Samba lead domain</th>
-              <th>Customer (samba)</th>
+              <th>CL lead domain</th>
+              <th>Customer (CL)</th>
               <th>Customer (Dolphin)</th>
               <th>Project name</th>
               <th>Assigned User</th>
-              <th>Samba ID</th>
+              <th>CL ID</th>
               <th>Opportunity owner</th>
               <th>Created date</th>
               <th>Close date</th>
-              <th>Samba stage</th>
+              <th>CL stage</th>
               <th>Win ratio (%)</th>
               <th>Order Intake (€)</th>
               <th>Consulting (€)</th>

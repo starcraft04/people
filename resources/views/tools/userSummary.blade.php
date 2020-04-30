@@ -918,7 +918,7 @@
             } else if (item['project_type'] == 'Pre-sales') {
               markup += '<div class="row">';
                 markup += '<div class="col-xs-4">';
-                  markup += 'Samba ID: '+print_null(item['samba_id']);
+                  markup += 'CL ID: '+print_null(item['samba_id']);
                 markup += '</div>';
                 markup += '<div class="col-xs-4">';
                   markup += 'Owner: '+print_null(item['samba_opportunit_owner']);

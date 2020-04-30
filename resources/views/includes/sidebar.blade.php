@@ -9,7 +9,7 @@
             <li><a href="{!!route('otluploadform')!!}">Prime upload</a></li>
           @endpermission
           @permission(['samba-upload'])
-            <li><a href="{!!route('sambauploadform')!!}">Samba upload</a></li>
+            <li><a href="{!!route('sambauploadform')!!}">CL upload</a></li>
           @endpermission
           @permission(['revenue-upload'])
             <li><a href="{!!route('revenueuploadform')!!}">Revenue upload</a></li>

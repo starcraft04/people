@@ -141,14 +141,14 @@
               <th>Meta activity</th>
               <th>Project subtype</th>
               <th>Technology</th>
-              <th>Samba ID</th>
-              <th>Pullthru Samba ID</th>
+              <th>CL ID</th>
+              <th>Pullthru CL ID</th>
               <th>Order intake inc. CS</th>
               <th>Consulting TCV</th>
               <th>Pullthru TCV</th>
-              <th>Samba Owner</th>
-              <th>Samba lead domain</th>
-              <th>Samba stage</th>
+              <th>CL Owner</th>
+              <th>CL lead domain</th>
+              <th>CL stage</th>
               <th>Start date</th>
               <th>End date</th>
               <th>Gold order</th>

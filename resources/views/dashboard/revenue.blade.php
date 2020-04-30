@@ -109,7 +109,7 @@
                       <th>Project subtype</th>
                       <th>Project status</th>
                       <th>Gold Order</th>
-                      <th>Samba ID</th>
+                      <th>CL ID</th>
                       <th>User ID</th>
                       <th>User name</th>
                       <th>FPC</th>
@@ -212,7 +212,7 @@
                       <th>Project subtype</th>
                       <th>Project status</th>
                       <th>Gold Order</th>
-                      <th>Samba ID</th>
+                      <th>CL ID</th>
                       <th>User ID</th>
                       <th>User name</th>
                       <th>Win ratio (%)</th>

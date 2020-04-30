@@ -158,8 +158,8 @@ class ActivityController extends Controller {
 
     return json_encode($data);
   }
-  public function test ()
+  public function test (UserRepository $userRepository)
   {
-    return $this->activityRepository->test();
+    return view('activity/test');
   }
 }

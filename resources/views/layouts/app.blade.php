@@ -70,7 +70,7 @@
         <div class="top_nav">
           <div class="nav_menu">
             @if(Auth::user())
-            @include('includes.top_navigation')
+              @include('includes.top_navigation')
             @endif
           </div>
         </div>

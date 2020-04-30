@@ -251,9 +251,10 @@ class OtlUploadController extends Controller
       }
     }
 
-    array_multisort(array_column($messages, 'user'), SORT_ASC, $messages);
+    $customers_list = Customer::orderBy('name')->lists('name','id');
 
+    array_multisort(array_column($messages, 'user'), SORT_ASC, $messages);
     \Session::flash('success', 'File uploaded');
-  return view('dataFeed/otlupload',  compact('messages','color'));
+  return view('dataFeed/otlupload',  compact('messages','color','customers_list'));
   }
 }

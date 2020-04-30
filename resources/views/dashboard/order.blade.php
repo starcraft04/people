@@ -108,14 +108,14 @@
                       <th>Project subtype</th>
                       <th>Project status</th>
                       <th>Gold Order</th>
-                      <th>Samba ID</th>
-                      <th>Pull-thru Samba ID</th>
-                      <th>Samba opportunity owner</th>
+                      <th>CL ID</th>
+                      <th>Pull-thru CL ID</th>
+                      <th>CL opportunity owner</th>
                       <th>User ID</th>
                       <th>User name</th>
                       <th>Win ratio (%)</th>
-                      <th>Samba lead domain</th>
-                      <th>Samba stage</th>
+                      <th>CL lead domain</th>
+                      <th>CL stage</th>
                       <th>Order intake</th>
                       <th>Consulting TCV</th>
                       <th>Pull-Thru TCV</th>

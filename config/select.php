@@ -24,10 +24,12 @@ return [
         '' => '',
         'APM' => 'APM',
         'Security' => 'Security',
-        'Network' => 'Network',
+        'SDLAN' => 'SDLAN',
+        'SDWAN' => 'SDWAN',
         'UC' => 'UC',
         'CC' => 'CC',
-        'WAN' => 'WAN'
+        'SMS' => 'SMS',
+        'DD' => 'DD'
     ],
     'domain-projects' => [
         'Hybrid Security' => 'Hybrid Security',

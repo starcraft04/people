@@ -106,6 +106,9 @@ Route::group(['middleware' => ['auth']], function() {
       Route::get('projectDelete/{n}', ['uses'=>'ProjectController@delete','as'=>'projectDelete','middleware' => ['permission:project-delete']]);
       //  AJAX
       Route::post('listOfProjectsAjax', ['uses'=>'ProjectController@listOfProjects','as'=>'listOfProjectsAjax','middleware' => ['permission:tools-all_projects-view|tools-unassigned-view|tools-activity-edit|project-view|project-create|project-edit|project-delete']]);
+      Route::get('listOfProjectsNotUsedInPrimeAjax/{user_name}/{year}', ['uses'=>'ProjectController@listOfProjectsNotUsedInPrime','as'=>'listOfProjectsNotUsedInPrimeAjax','middleware' => ['permission:tools-all_projects-view']]);
+      Route::post('createProjectFromPrimeUpload', ['uses'=>'ProjectController@createProjectFromPrimeUpload','as'=>'createProjectFromPrimeUpload','middleware' => ['permission:tools-all_projects-edit']]);
+      Route::post('editProjectFromPrimeUpload', ['uses'=>'ProjectController@editProjectFromPrimeUpload','as'=>'editProjectFromPrimeUpload','middleware' => ['permission:tools-all_projects-edit']]);
 
       //Customer
       //  Main customer list
@@ -222,7 +225,7 @@ Route::group(['middleware' => ['auth']], function() {
       Route::get('skillDelete/{n}', ['uses'=>'SkillController@delete','as'=>'skillDelete','middleware' => ['permission:user-delete']]);
       //  AJAX
       Route::post('listOfSkillsAjax', ['uses'=>'SkillController@listOfSkills','as'=>'listOfSkillsAjax','middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
-
+      Route::get('test', ['uses'=>'ActivityController@test','middleware' => ['permission:user-view']]);
 });
 
-//Route::get('test', ['uses'=>'ActivityController@test']);
+

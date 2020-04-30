@@ -539,10 +539,10 @@
                   <div id="samba_id_row" class="row">
                     <div class="form-group {!! $errors->has('samba_id') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
-                        {!! Form::label('samba_id', 'Samba ID', ['class' => 'control-label', 'id' => 'samba_id_text']) !!}
+                        {!! Form::label('samba_id', 'CL ID', ['class' => 'control-label', 'id' => 'samba_id_text']) !!}
                       </div>
                       <div class="col-md-9">
-                        {!! Form::text('samba_id', (isset($project)) ? $project->samba_id : '', ['class' => 'form-control', 'placeholder' => 'Samba ID',$samba_options_disabled]) !!}
+                        {!! Form::text('samba_id', (isset($project)) ? $project->samba_id : '', ['class' => 'form-control', 'placeholder' => 'CL ID',$samba_options_disabled]) !!}
                         {!! $errors->first('samba_id', '<small class="help-block">:message</small>') !!}
                       </div>
                     </div>
@@ -550,10 +550,10 @@
                   <div id="pullthru_samba_id_row" class="row">
                     <div class="form-group {!! $errors->has('pullthru_samba_id') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
-                        {!! Form::label('pullthru_samba_id', 'Pull-Thru Samba ID', ['class' => 'control-label', 'id' => 'pullthru_samba_id_text']) !!}
+                        {!! Form::label('pullthru_samba_id', 'Pull-Thru CL ID', ['class' => 'control-label', 'id' => 'pullthru_samba_id_text']) !!}
                       </div>
                       <div class="col-md-9">
-                        {!! Form::text('pullthru_samba_id', (isset($project)) ? $project->pullthru_samba_id : '', ['class' => 'form-control', 'placeholder' => 'Pull-Thru Samba ID',$samba_options_disabled]) !!}
+                        {!! Form::text('pullthru_samba_id', (isset($project)) ? $project->pullthru_samba_id : '', ['class' => 'form-control', 'placeholder' => 'Pull-Thru CL ID',$samba_options_disabled]) !!}
                         {!! $errors->first('pullthru_samba_id', '<small class="help-block">:message</small>') !!}
                       </div>
                     </div>
@@ -561,10 +561,10 @@
                   <div id="samba_opportunity_owner_row" class="row">
                     <div class="form-group {!! $errors->has('samba_opportunit_owner') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
-                        {!! Form::label('samba_opportunit_owner', 'Samba opportunity owner', ['class' => 'control-label', 'id' => 'samba_opportunit_owner_text']) !!}
+                        {!! Form::label('samba_opportunit_owner', 'CL opportunity owner', ['class' => 'control-label', 'id' => 'samba_opportunit_owner_text']) !!}
                       </div>
                       <div class="col-md-9">
-                        {!! Form::text('samba_opportunit_owner', (isset($project)) ? $project->samba_opportunit_owner : '', ['class' => 'form-control', 'placeholder' => 'Samba opportunity owner',$samba_options_disabled]) !!}
+                        {!! Form::text('samba_opportunit_owner', (isset($project)) ? $project->samba_opportunit_owner : '', ['class' => 'form-control', 'placeholder' => 'CL opportunity owner',$samba_options_disabled]) !!}
                         {!! $errors->first('samba_opportunit_owner', '<small class="help-block">:message</small>') !!}
                       </div>
                     </div>
@@ -572,10 +572,10 @@
                   <div id="samba_lead_domain_row" class="row">
                     <div class="form-group {!! $errors->has('samba_lead_domain') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
-                        {!! Form::label('samba_lead_domain', 'Samba lead domain', ['class' => 'control-label', 'id' => 'samba_lead_domain_text']) !!}
+                        {!! Form::label('samba_lead_domain', 'CL lead domain', ['class' => 'control-label', 'id' => 'samba_lead_domain_text']) !!}
                       </div>
                       <div class="col-md-9">
-                        {!! Form::text('samba_lead_domain', (isset($project)) ? $project->samba_lead_domain : '', ['class' => 'form-control', 'placeholder' => 'Samba lead domain',$samba_options_disabled]) !!}
+                        {!! Form::text('samba_lead_domain', (isset($project)) ? $project->samba_lead_domain : '', ['class' => 'form-control', 'placeholder' => 'CL lead domain',$samba_options_disabled]) !!}
                         {!! $errors->first('samba_lead_domain', '<small class="help-block">:message</small>') !!}
                       </div>
                     </div>
@@ -583,7 +583,7 @@
                   <div id="samba_stage_row" class="row">
                     <div class="form-group {!! $errors->has('samba_stage') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
-                        {!! Form::label('samba_stage', 'Samba stage', ['class' => 'control-label']) !!}
+                        {!! Form::label('samba_stage', 'CL stage', ['class' => 'control-label']) !!}
                       </div>
                       <div class="col-md-9">
                         <select class="form-control select2" style="width: 100%;" id="samba_stage" name="samba_stage" data-placeholder="Select a stage">
@@ -626,10 +626,10 @@
                   <div id="samba_consulting_product_tcv_row" class="row">
                     <div class="form-group {!! $errors->has('samba_consulting_product_tcv') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
-                        {!! Form::label('samba_consulting_product_tcv', 'Samba consulting TCV (€)', ['class' => 'control-label', 'id' => 'samba_consulting_product_tcv_text']) !!}
+                        {!! Form::label('samba_consulting_product_tcv', 'CL consulting TCV (€)', ['class' => 'control-label', 'id' => 'samba_consulting_product_tcv_text']) !!}
                       </div>
                       <div class="col-md-9">
-                        {!! Form::text('samba_consulting_product_tcv', (isset($project)) ? $project->samba_consulting_product_tcv : '', ['class' => 'form-control', 'placeholder' => 'Samba consulting TCV (€)',$samba_options_disabled]) !!}
+                        {!! Form::text('samba_consulting_product_tcv', (isset($project)) ? $project->samba_consulting_product_tcv : '', ['class' => 'form-control', 'placeholder' => 'CL consulting TCV (€)',$samba_options_disabled]) !!}
                         {!! $errors->first('samba_consulting_product_tcv', '<small class="help-block">:message</small>') !!}
                       </div>
                     </div>
@@ -637,10 +637,10 @@
                   <div id="samba_pullthru_tcv_row" class="row">
                     <div class="form-group {!! $errors->has('samba_pullthru_tcv') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
-                        {!! Form::label('samba_pullthru_tcv', 'Samba Pull-Thru TCV (€)', ['class' => 'control-label', 'id' => 'samba_pullthru_tcv_text']) !!}
+                        {!! Form::label('samba_pullthru_tcv', 'CL Pull-Thru TCV (€)', ['class' => 'control-label', 'id' => 'samba_pullthru_tcv_text']) !!}
                       </div>
                       <div class="col-md-9">
-                        {!! Form::text('samba_pullthru_tcv', (isset($project)) ? $project->samba_pullthru_tcv : '', ['class' => 'form-control', 'placeholder' => 'Samba Pull-Thru TCV (€)',$samba_options_disabled]) !!}
+                        {!! Form::text('samba_pullthru_tcv', (isset($project)) ? $project->samba_pullthru_tcv : '', ['class' => 'form-control', 'placeholder' => 'CL Pull-Thru TCV (€)',$samba_options_disabled]) !!}
                         {!! $errors->first('samba_pullthru_tcv', '<small class="help-block">:message</small>') !!}
                       </div>
                     </div>
@@ -929,6 +929,7 @@ var tab_origin = "{{ $tab }}";
 ?>
 
 $(document).ready(function() {
+  //region Init Main interface
   // Ajax setup needed in case there is an update for revenue, comment, loe, ... tabs
   @if($action == 'update')
     $.ajaxSetup({
@@ -956,8 +957,6 @@ $(document).ready(function() {
         $("body").off("mousemove.draggable");
     });
   });
-
-  //region Init Main interface
   // OTL code mandatory
   $('.OTL_code,.mandatory').balloon({ 
     position: "right",
