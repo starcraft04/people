@@ -402,4 +402,11 @@ class DashboardController extends Controller {
     return view('dashboard/loe', compact('authUsersForDataView','year','table_height'));
   }
 
+  public function action($user_name = '')
+  {
+    $table_height = Auth::user()->table_height;
+
+    return view('dashboard/action', compact('user_name','table_height'));
+  }
+
 }

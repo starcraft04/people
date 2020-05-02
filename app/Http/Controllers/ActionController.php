@@ -8,6 +8,7 @@ use DB;
 use Entrust;
 use Auth;
 use App\Action;
+use Datatables;
 
 class ActionController extends Controller {
 
@@ -55,6 +56,34 @@ class ActionController extends Controller {
     }
 
 		$data = $actionList->get();
+
+    return $data;
+  }
+
+  public function actionListAjax($project_id = -1)
+	{
+    $actionList = DB::table('actions');
+    $actionList->select('customers.id AS customer_id','customers.name AS customer_name',
+                        'actions.project_id AS project_id','projects.project_name AS project_name',
+                        'actions.id AS action_id','created_by.id AS created_by_id','created_by.name AS created_by_name',
+                        'assigned.id AS assigned_to_user_id','assigned.name AS assigned_to_name','actions.name AS action_name',
+                        'actions.severity AS action_severity','actions.status AS action_status','actions.percent_complete AS percent_complete',
+                        'actions.estimated_start_date AS action_start_date','actions.estimated_end_date AS action_end_date',
+                        'actions.description AS action_description',
+                        'actions.next_action_description AS next_action_description','actions.next_action_dependency AS next_action_dependency','actions.next_action_due_date AS next_action_due_date',
+                        'actions.created_at AS created_at','actions.updated_at AS updated_at'
+    );
+    $actionList->leftjoin('users AS assigned', 'actions.assigned_user_id', '=', 'assigned.id');
+    $actionList->leftjoin('users AS created_by', 'actions.user_id', '=', 'created_by.id');
+    $actionList->leftjoin('projects', 'actions.project_id', '=', 'projects.id');
+    $actionList->leftjoin('customers', 'projects.customer_id', '=', 'customers.id');
+
+
+    if ($project_id != -1) {
+      $actionList->where('project_id',$project_id);
+    }
+
+		$data = Datatables::of($actionList)->make(true);
 
     return $data;
   }
@@ -119,7 +148,74 @@ class ActionController extends Controller {
       $result->message_type = 'error';
       $result->msg = 'No permission to delete record';
     }
+  }
 
+  public function projectActionDelete($action_id)
+	{
+    $result = new \stdClass();
+    $delete_result = Action::find($action_id);
+    $project_id = $delete_result->project_id;
+
+    if ($delete_result->user_id == Auth::user()->id || Entrust::can('action-all')) {
+      $delete_result->delete();
+      $result->result = 'success';
+      $result->box_type = 'success';
+      $result->message_type = 'success';
+      $result->msg = 'Record deleted successfully';
+    } else {
+      $result->result = 'error';
+      $result->box_type = 'danger';
+      $result->message_type = 'error';
+      $result->msg = 'No permission to delete record';
+    }
+    $num_of_actions = Action::where('project_id','=',$project_id)->get()->count();
+    $result->num_of_actions = $num_of_actions;
+
+    return json_encode($result);
+  }
+
+  public function projectActionInsertUpdate(Request $request)
+	{
+    $inputs = $request->all();
+    $result = new \stdClass();
+
+    if (!isset($inputs['id'])) {
+      // Create a new record
+      $insert_result = Action::create($inputs);
+      $project_id = $insert_result->project_id;
+      if ($insert_result != null) {
+        $result->result = 'success';
+        $result->box_type = 'success';
+        $result->message_type = 'success';
+        $result->msg = 'Record added successfully';
+      } else {
+        $result->result = 'error';
+        $result->box_type = 'danger';
+        $result->message_type = 'error';
+        $result->msg = 'Record issue';
+      }
+    } else {
+      // Update a record
+      $update_result = Action::find($inputs['id']);
+      $project_id = $update_result->project_id;
+      unset($inputs['id']);
+      $update_result->update($inputs);
+      if ($update_result != null) {
+        $result->result = 'success';
+        $result->box_type = 'success';
+        $result->message_type = 'success';
+        $result->msg = 'Record updated successfully';
+      } else {
+        $result->result = 'error';
+        $result->box_type = 'danger';
+        $result->message_type = 'error';
+        $result->msg = 'Record issue';
+      }
+    }
+
+    $num_of_actions = Action::where('project_id','=',$project_id)->get()->count();
+    $result->num_of_actions = $num_of_actions;
+    
     return json_encode($result);
   }
 }

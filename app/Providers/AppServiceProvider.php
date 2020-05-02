@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Action;
+use Auth;
 
 class AppServiceProvider extends ServiceProvider
 {

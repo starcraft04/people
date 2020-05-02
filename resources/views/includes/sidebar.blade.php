@@ -78,6 +78,9 @@
             @permission(['projectLoe-dashboard_view'])
             <li><a href="{!!route('loedashboard')!!}/{{date('Y')}}">LoE Dashboard</a></li>
             @endpermission
+            @permission(['action-view'])
+            <li><a href="{!!route('actiondashboard')!!}">Action Dashboard</a></li>
+            @endpermission
           </ul>
         </li>
       </ul>

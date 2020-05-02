@@ -16,6 +16,42 @@
 <link href="{{ asset('/plugins/gentelella/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css') }}" rel="stylesheet">
 <link href="{{ asset('/plugins/gentelella/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css') }}" rel="stylesheet">
 <link href="{{ asset('/plugins/gentelella/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css') }}" rel="stylesheet">
+<!-- Progressbar -->
+<link href="{{ asset('/plugins/gentelella/vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css') }}" rel="stylesheet">
+<!-- Range slider -->
+<link href="{{ asset('/plugins/gentelella/vendors/ion.rangeSlider/css/ion.rangeSlider.css') }}" rel="stylesheet">
+<link href="{{ asset('/plugins/gentelella/vendors/ion.rangeSlider/css/ion.rangeSlider.skinModern.css') }}" rel="stylesheet">
+<!-- Document styling -->
+<style>
+h3 {
+  overflow: hidden;
+  text-align: center;
+}
+
+h3:before,
+h3:after {
+  background-color: #000;
+  content: "";
+  display: inline-block;
+  height: 1px;
+  position: relative;
+  vertical-align: middle;
+  width: 50%;
+}
+
+h3:before {
+  right: 0.5em;
+  margin-left: -50%;
+}
+
+h3:after {
+  left: 0.5em;
+  margin-right: -50%;
+}
+.label_error {
+  color: red;
+}
+</style>
 @stop
 
 @section('scriptsrc')
@@ -50,6 +86,12 @@
 <script src="{{ asset('/plugins/gentelella/vendors/pdfmake/build/vfs_fonts.js') }}" type="text/javascript"></script>
 <!-- Switchery -->
 <script src="{{ asset('/plugins/gentelella/vendors/switchery/dist/switchery.min.js') }}" type="text/javascript"></script>
+<!-- Progressbar -->
+<script src="{{ asset('/plugins/gentelella/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js') }}" type="text/javascript"></script>
+<!-- Range slider -->
+<script src="{{ asset('/plugins/gentelella/vendors/ion.rangeSlider/js/ion.rangeSlider.min.js') }}" type="text/javascript"></script>
+<!-- Form validator -->
+<script src="{{ asset('/plugins/gentelella/vendors/parsleyjs/dist/parsley.min.js') }}" type="text/javascript"></script>
 @stop
 
 @section('content')
@@ -124,6 +166,9 @@
               @endpermission
               @permission(['projectLoe-view'])
               <li role="presentation"><a href="#tab_content4" id="tab_loe" role="tab" data-toggle="tab" aria-expanded="true">LoE</a></li>
+              @endpermission
+              @permission(['action-view'])
+              <li role="presentation"><a href="#tab_content5" id="tab_action" role="tab" data-toggle="tab" aria-expanded="true">Actions (<span id="num_of_actions">{{ $num_of_actions }}</span>)</a></li>
               @endpermission
               @permission('tools-projects-comments')
               <li role="presentation"><a href="#tab_content3" id="tab_comment" role="tab" data-toggle="tab" aria-expanded="true">Comments (<span id="num_of_comments">{{ $num_of_comments }}</span>)</a></li>
@@ -828,6 +873,160 @@
               @endpermission
               <!-- LoE -->
 
+              <!-- Actions -->
+              @permission(['action-view'])
+              <!-- Table -->
+              <div role="tabpanel" class="tab-pane fade" id="tab_content5" aria-labelledby="tab_action">
+                <div class="row">
+                <div class="table-responsive">
+                  <table class="table table-striped table-hover table-bordered mytable" width="100%" id="actionsTable">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Assigned to user id</th>
+                        <th>Requestor</th>
+                        <th>Assigned to</th>
+                        <th>Action name</th>
+                        <th>Status</th>
+                        <th>Percent complete</th>
+                        <th>Priority</th>
+                        <th>Start date</th>
+                        <th>End date</th>
+                        <th>Description</th>
+                        <th>Next action desc</th>
+                        <th>Next action dependency</th>
+                        <th>Next action due date</th>
+                        <th>Created at</th>
+                        <th>Updated at</th>
+                        <th>
+                          @permission('action-create')
+                            <button type="button" id="new_action" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span></button>
+                          @endpermission
+                        </th>
+                      </tr>
+                    </thead>
+                  </table>
+                </div>
+                </div>
+              </div>
+              <!-- Table -->
+
+              <!-- Modal -->
+              <div class="modal fade" id="actionModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" style="display:table;">
+                      <div class="modal-content">
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title" id="action_title_modal"></h4>
+                        </div>
+                        <!-- Modal Header -->
+                      
+                        <!-- Modal Body -->
+                        <div class="modal-body">
+                          <form id="form_action_modal" role="form" method="POST" action="" data-parsley-validate>
+                            <div class="form-group">
+                              <label  class="control-label" for="assigned_to_action_modal">Assigned to</label>
+                              <div>
+                                <select class="form-control select2" style="width: 100%;" id="assigned_to_action_modal" name="assigned_to_action_modal" data-placeholder="Select a user" required>
+                                  <option value="" ></option>
+                                  @foreach($users_on_project as $key => $value)
+                                  <option value="{{ $key }}">
+                                    {{ $value }}
+                                  </option>
+                                  @endforeach
+                                </select>
+                              </div>
+                            </div>
+                            <div class="form-group">
+                                <label  class="control-label" for="action_name_modal" required>Name</label>
+                                <div>
+                                    <input type="text" name="action_name_modal" class="form-control" placeholder="Name" required></input>
+                                </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-md-6 col-sm-12 form-group">
+                                  <label  class="control-label" for="status_action_modal">Status</label>
+                                  <div>
+                                    <select class="form-control select2" style="width: 100%;" id="status_action_modal" name="status_action_modal" data-placeholder="Select a status">
+                                      <option value="" ></option>
+                                      @foreach(config('select.action_status') as $key => $value)
+                                      <option value="{{ $key }}">
+                                        {{ $value }}
+                                      </option>
+                                      @endforeach
+                                    </select>
+                                  </div>
+                              </div>
+                              <div class="col-md-6 col-sm-12 form-group">
+                                <label  class="control-label" for="priority_action_modal">Priority</label>
+                                <div>
+                                  <select class="form-control select2" style="width: 100%;" id="priority_action_modal" name="priority_action_modal" data-placeholder="Select a priority">
+                                    <option value="" ></option>
+                                    @foreach(config('select.action_severity') as $key => $value)
+                                    <option value="{{ $key }}">
+                                      {{ $value }}
+                                    </option>
+                                    @endforeach
+                                  </select>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="form-group">
+                                <label  class="control-label" for="action_percentage_modal">Percent complete</label>
+                                <div>
+                                    <input type="text" name="action_percentage_modal" class="form-control" placeholder=""></input>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label  class="control-label" for="date_action_modal">Start to end date</label>
+                                <div>
+                                    <input type="text" id="date_action_modal" name="date_action_modal" class="form-control"></input>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label  class="control-label" for="description_action_modal">Description</label>
+                                <div>
+                                    <textarea type="text" name="description_action_modal" class="form-control" placeholder="Enter a description" rows="4"></textarea>
+                                </div>
+                            </div>
+                            <h3>Next action</h3>
+                            <div class="form-group">
+                                <label  class="control-label" for="description_next_action_modal">Next action description</label>
+                                <div>
+                                    <textarea type="text" name="description_next_action_modal" class="form-control" placeholder="Enter a description" rows="4"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label  class="control-label" for="next_action_dependency_modal">Next action dependency</label>
+                                <div>
+                                    <input type="text" name="next_action_dependency_modal" class="form-control" placeholder="Next action dependency"></input>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label  class="control-label" for="next_action_due_date_modal">Next action due datedate</label>
+                                <div>
+                                    <input type="text" id="next_action_due_date_modal" name="next_action_due_date_modal" class="form-control"></input>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div id="action_hidden"></div>
+                            </div>
+                          </form>
+                        </div>
+                          
+                        <!-- Modal Footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" id="action_create_update_button_modal" class="btn btn-success">Update</button>
+                        </div>
+                      </div>
+                  </div>
+              </div>
+              <!-- Modal -->
+              @endpermission
+              <!-- Actions -->
+
               <!-- Comments -->
               @permission('tools-projects-comments')
               <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="tab_comment">
@@ -924,7 +1123,7 @@ var tab_origin = "{{ $tab }}";
 
 // Create the permission variable based on Laravel permission model
 <?php
-  list($validate, $allValidations) = Entrust::ability(null,array('projectRevenue-delete','projectLoe-edit','projectLoe-delete','projectLoe-editAll','projectLoe-deleteAll'),['validate_all' => true,'return_type' => 'both']);
+  list($validate, $allValidations) = Entrust::ability(null,array('action-all','action-edit','action-delete','projectRevenue-delete','projectLoe-edit','projectLoe-delete','projectLoe-editAll','projectLoe-deleteAll'),['validate_all' => true,'return_type' => 'both']);
   echo "var permissions = jQuery.parseJSON('".json_encode($allValidations['permissions'])."');";
 ?>
 
@@ -1320,7 +1519,7 @@ $(document).ready(function() {
                     sep:rev_sep, oct:rev_oct, nov:rev_nov, dec:rev_dec},
               dataType: 'json',
               success: function(data) {
-                console.log(data);
+                //console.log(data);
                 if (data.result == 'success'){
                     box_type = 'success';
                     message_type = 'success';
@@ -1355,7 +1554,7 @@ $(document).ready(function() {
             url: "{!! route('projectRevenueDelete','') !!}/"+record_id,
             dataType: 'json',
             success: function(data) {
-              console.log(data);
+              //console.log(data);
               if (data.result == 'success'){
                   box_type = 'success';
                   message_type = 'success';
@@ -1388,7 +1587,7 @@ $(document).ready(function() {
             data:{id:id, column_name:column_name, value:value},
             dataType: 'json',
             success: function(data) {
-              console.log(data);
+              //console.log(data);
               if (data.result == 'success'){
                   box_type = 'success';
                   message_type = 'success';
@@ -1552,7 +1751,7 @@ $(document).ready(function() {
 
               $('#flash-message').empty();
               var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button type="button" href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
-              console.log(data.msg);
+              //console.log(data.msg);
               $('#flash-message').append(box);
               $('#delete-message').delay(2000).queue(function () {
                   $(this).addClass('animated flipOutX')
@@ -1569,13 +1768,21 @@ $(document).ready(function() {
   @if($action == 'update')
     // Init daterange in input field
     $('#date_loe_modal').daterangepicker({
-      locale: {
-      format: 'YYYY-MM-DD'
-      },
       showISOWeekNumbers: true,
       showDropdowns: true,
-      autoApply: true,
-      disabled: true,
+      autoUpdateInput: false,
+      locale: {
+        format: 'YYYY-MM-DD',
+        cancelLabel: 'Clear'
+      }
+    });
+
+    $('#date_loe_modal').on('apply.daterangepicker', function(ev, picker) {
+      $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
+    });
+
+    $('#date_loe_modal').on('cancel.daterangepicker', function(ev, picker) {
+      $(this).val('');
     });
 
     // Init select2 boxes in the modal
@@ -1762,7 +1969,7 @@ $(document).ready(function() {
             data:data,
             dataType: 'json',
             success: function(data) {
-              console.log(data);
+              //console.log(data);
               if (data.result == 'success'){
                   box_type = 'success';
                   message_type = 'success';
@@ -1797,7 +2004,7 @@ $(document).ready(function() {
             url: "{!! route('projectLoeDelete','') !!}/"+record_id,
             dataType: 'json',
             success: function(data) {
-              console.log(data);
+              //console.log(data);
               if (data.result == 'success'){
                   box_type = 'success';
                   message_type = 'success';
@@ -1821,6 +2028,377 @@ $(document).ready(function() {
     } );
   @endif
   //endregion Loe
+
+  //region Action
+  @if($action == 'update')
+  // Init select2 boxes in the modal
+  $("#assigned_to_action_modal").select2({
+      allowClear: true
+  });
+  $("#status_action_modal").select2({
+      allowClear: true
+  });
+  $("#priority_action_modal").select2({
+      allowClear: true
+  });
+
+  // Init Date range
+  $('#date_action_modal').daterangepicker({
+      showISOWeekNumbers: true,
+      showDropdowns: true,
+      autoUpdateInput: false,
+      locale: {
+        format: 'YYYY-MM-DD',
+        cancelLabel: 'Clear'
+      }
+  });
+
+  $('#date_action_modal').on('apply.daterangepicker', function(ev, picker) {
+    $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
+  });
+
+  $('#date_action_modal').on('cancel.daterangepicker', function(ev, picker) {
+      $(this).val('');
+  });
+
+  $('#next_action_due_date_modal').daterangepicker({
+      singleDatePicker: true,
+      autoUpdateInput: false,
+      locale: {
+        format: 'YYYY-MM-DD',
+        cancelLabel: 'Clear'
+      }
+  });
+
+  $('#next_action_due_date_modal').on('apply.daterangepicker', function(ev, picker) {
+    $(this).val(picker.startDate.format('YYYY-MM-DD'));
+  });
+
+  $('#next_action_due_date_modal').on('cancel.daterangepicker', function(ev, picker) {
+      $(this).val('');
+  });
+
+  // Init slider
+  $("input[name='action_percentage_modal']").ionRangeSlider({
+        min: 0,
+        max: 100,
+        from: 0,
+        step: 5,
+        postfix: '%',
+        grid: true
+  });
+
+  var action_percentage_modal = $("input[name='action_percentage_modal']").data("ionRangeSlider");
+
+  // Ajax datatables to create the table
+  var actionsTable = $('#actionsTable').DataTable({
+      serverSide: true,
+      processing: true,
+      scrollX: true,
+      stateSave: true,
+      responsive: false,
+      ajax: {
+              url: "{!! route('actionListAjax',$project->id) !!}",
+              type: "GET",
+              dataType: "JSON"
+          },
+      columns: [
+          { name: 'actions.id', data: 'action_id' , searchable: false , visible: false },
+          { name: 'assigned.id', data: 'assigned_to_user_id' , searchable: false , visible: false },
+          { name: 'created_by.name', data: 'created_by_name' , searchable: true , visible: true },
+          { name: 'assigned.name', data: 'assigned_to_name' , searchable: true , visible: true },
+          { name: 'actions.name', data: 'action_name' , searchable: true , visible: true },
+          { name: 'actions.status', data: 'action_status' , searchable: true , visible: true },
+          { 
+            name: 'actions.percent_complete', 
+            data: 'percent_complete', 
+            searchable: true, 
+            visible: true,
+            render: function (data, type, row) {
+                  //console.log(data);
+                  var actions = '';
+                  actions += '<small>'+data+'% Complete</small>';
+                  actions += '<div class="progress">';
+                  actions += '<div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="'+data+'" aria-valuemin="0" aria-valuemax="100" style="width:'+data+'%">';
+                  actions += '</div>';
+                  actions += '</div>';
+                  return type === 'export' ? data : actions;
+                },
+            width: '150px'
+          },
+          { name: 'actions.severity', data: 'action_severity' , searchable: true , visible: true },
+          { name: 'actions.estimated_start_date', data: 'action_start_date' , searchable: true , visible: true },
+          { name: 'actions.estimated_end_date', data: 'action_end_date' , searchable: true , visible: true },
+          { name: 'actions.description', data: 'action_description' , searchable: true , visible: true },
+          { name: 'actions.next_action_description', data: 'next_action_description' , searchable: true , visible: true },
+          { name: 'actions.next_action_dependency', data: 'next_action_dependency' , searchable: true , visible: true },
+          { name: 'actions.next_action_due_date', data: 'next_action_due_date' , searchable: true , visible: true },
+          { name: 'actions.created_at', data: 'created_at' , searchable: true , visible: true },
+          { name: 'actions.updated_at', data: 'updated_at' , searchable: true , visible: true },
+          {
+              name: 'actions',
+              data: null,
+              sortable: false,
+              searchable: false,
+              render: function (data) {
+                var actions = '';
+                actions += '<div class="btn-group btn-group-xs">';
+                if (permissions['action-edit'] || permissions['action-all']){
+                  actions += '<button type="button" data-id="'+data.action_id+'" class="buttonActionEdit btn btn-success"><span class="glyphicon glyphicon-pencil"></span></button>';
+                };
+                if (permissions['action-delete'] || permissions['action-all']){
+                  actions += '<button type="button" data-id="'+data.action_id+'" class="buttonActionDelete btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
+                };
+                actions += '</div>';
+                return actions;
+              },
+              width: '70px'
+          }
+          ],
+      order: [[2, 'desc']],
+      lengthMenu: [
+          [ 10, 25, 50, -1 ],
+          [ '10 rows', '25 rows', '50 rows', 'Show all' ]
+      ],
+      dom: 'Bfrtip',
+      buttons: [
+        {
+          extend: "colvis",
+          className: "btn-sm",
+          columns: [ 2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+        },
+        {
+          extend: "pageLength",
+          className: "btn-sm"
+        },
+        {
+          extend: "csv",
+          className: "btn-sm",
+          exportOptions: {
+              columns: ':visible',
+              orthogonal: 'export'
+          }
+        },
+        {
+          extend: "excel",
+          className: "btn-sm",
+          exportOptions: {
+              columns: ':visible'
+          }
+        },
+        {
+          extend: "print",
+          className: "btn-sm",
+          exportOptions: {
+              columns: ':visible'
+          }
+        },
+      ]   
+  });
+
+  // Click add new
+  $(document).on('click', '#new_action', function () {
+      $('#action_title_modal').text('Create Action');
+      $('#action_create_update_button_modal').text('Create');
+      $('#action_hidden').empty();
+      var hidden = '';
+      hidden += '<input class="form-control" id="project_id_action_modal" name="project_id_action_modal" type="hidden" value="'+{{ $project->id }}+'">';
+      hidden += '<input class="form-control" id="user_id_action_modal" name="user_id_action_modal" type="hidden" value="'+{{ Auth::user()->id }}+'">';
+      hidden += '<input class="form-control" id="action_action_modal" name="action_action_modal" type="hidden" value="create">';
+      $('#action_hidden').append(hidden);
+
+      // Init fields
+
+      $('select[name="assigned_to_action_modal"]').val('');
+      $('select[name="assigned_to_action_modal"]').select2().trigger('change');
+      
+      $('input[name="action_name_modal"]').val('');
+
+      $('select[name="status_action_modal"]').val('OPEN');
+      $('select[name="status_action_modal"]').select2().trigger('change');
+
+      $('select[name="priority_action_modal"]').val('LOW');
+      $('select[name="priority_action_modal"]').select2().trigger('change');
+
+      action_percentage_modal.update({
+          from: 0
+      });
+
+      $('input[name="date_action_modal"]').val('');
+
+      $('textarea[name="description_action_modal"]').val('');
+
+      $('textarea[name="description_next_action_modal"]').val('');
+
+      $('input[name="next_action_dependency_modal"]').val('');
+
+      $('input[name="next_action_due_date_modal"]').val('');
+
+
+      $('#actionModal').modal("show");
+  });
+
+  // Click edit
+  $(document).on('click', '.buttonActionEdit', function () {
+    $('#action_title_modal').text('Update Action');
+    $('#action_create_update_button_modal').text('Update');
+
+    var table = actionsTable;
+    var tr = $(this).closest('tr');
+    var row = table.row(tr);
+    //console.log('the loe id is '+row.data().loe_id);
+
+    $('#action_hidden').empty();
+    var hidden = '';
+    hidden += '<input class="form-control" id="action_action_modal" name="action_action_modal" type="hidden" value="update">';
+    hidden += '<input class="form-control" id="action_id" name="action_id" type="hidden" value="'+row.data().action_id+'">';
+    $('#action_hidden').append(hidden);
+
+    // Init fields
+
+    $('select[name="assigned_to_action_modal"]').val(row.data().assigned_to_user_id);
+    $('select[name="assigned_to_action_modal"]').select2().trigger('change');
+    
+    $('input[name="action_name_modal"]').val(row.data().action_name);
+
+    $('select[name="status_action_modal"]').val(row.data().action_status);
+    $('select[name="status_action_modal"]').select2().trigger('change');
+
+    $('select[name="priority_action_modal"]').val(row.data().action_severity);
+    $('select[name="priority_action_modal"]').select2().trigger('change');
+
+    action_percentage_modal.update({
+        from: row.data().percent_complete
+    });
+
+    $('input[name="date_action_modal"]').val(row.data().action_start_date+" - "+row.data().action_end_date);
+    $('#date_action_modal').data('daterangepicker').setStartDate(row.data().action_start_date);
+    $('#date_action_modal').data('daterangepicker').setEndDate(row.data().action_end_date);
+
+    $('textarea[name="description_action_modal"]').val(row.data().action_description);
+
+    $('textarea[name="description_next_action_modal"]').val(row.data().next_action_description);
+
+    $('input[name="next_action_dependency_modal"]').val(row.data().next_action_dependency);
+
+    $('input[name="next_action_due_date_modal"]').val(row.data().next_action_due_date);
+    $('#next_action_due_date_modal').data('daterangepicker').setStartDate(row.data().next_action_due_date);
+
+    $('#actionModal').modal("show");
+  });
+
+  // Click delete
+  $(document).on('click', '.buttonActionDelete', function () {
+    record_id = $(this).attr('data-id');
+
+    bootbox.confirm("Are you sure want to delete this record?", function(result) {
+      if (result){
+        $.ajax({
+          type: 'get',
+          url: "{!! route('projectActionDelete','') !!}/"+record_id,
+          dataType: 'json',
+          success: function(data) {
+            $('#num_of_actions').text(data.num_of_actions);
+            //console.log(data);
+            if (data.result == 'success'){
+                box_type = 'success';
+                message_type = 'success';
+            }
+            else {
+                box_type = 'danger';
+                message_type = 'error';
+            }
+
+            $('#flash-message').empty();
+            var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+            $('#flash-message').append(box);
+            $('#delete-message').delay(2000).queue(function () {
+                $(this).addClass('animated flipOutX')
+            });
+            actionsTable.ajax.reload();
+          }
+        });
+      }
+    });
+  } );
+
+  // click send info ajax to create or update
+  $(document).on('click', '#action_create_update_button_modal', function () {
+    // Checking validation rules
+    if (!$('#form_action_modal').parsley().validate()) {
+      return;
+    }
+
+    // hidden input
+    var action_action_modal = $('input#action_action_modal').val();
+    if (action_action_modal == 'create') {
+      var project_id_action_modal = $('input#project_id_action_modal').val();
+      var user_id_action_modal = $('input#user_id_action_modal').val();
+    } else if (action_action_modal == 'update') {
+      var action_id = $('input#action_id').val();
+    }
+
+    // filled in
+    var assigned_to_action_modal = $('select[name="assigned_to_action_modal"]').children("option:selected").val();
+    var action_name_modal = $('input[name="action_name_modal"]').val();
+    var status_action_modal = $('select[name="status_action_modal"]').children("option:selected").val();
+    var priority_action_modal = $('select[name="priority_action_modal"]').children("option:selected").val();
+    var action_percentage_modal = $('input[name="action_percentage_modal"]').val();
+    var date_action_modal = $('input[name="date_action_modal"]').val().split(" - ");
+    var estimated_start_date = date_action_modal[0];
+    var estimated_end_date = date_action_modal[1];
+    var description_action_modal = $('textarea[name="description_action_modal"]').val();
+    var description_next_action_modal = $('textarea[name="description_next_action_modal"]').val();
+    var next_action_dependency_modal = $('input[name="next_action_dependency_modal"]').val();
+    var next_action_due_date_modal = $('input[name="next_action_due_date_modal"]').val();
+
+    var data = {'assigned_user_id':assigned_to_action_modal,'name':action_name_modal,'status':status_action_modal,
+      'severity':priority_action_modal,'percent_complete':action_percentage_modal,
+      'estimated_start_date':estimated_start_date,'estimated_end_date':estimated_end_date,
+      'description':description_action_modal,'next_action_description':description_next_action_modal,'next_action_dependency':next_action_dependency_modal,
+      'next_action_due_date':next_action_due_date_modal,
+      };
+    if (action_action_modal == "create") {
+      data.project_id = project_id_action_modal;
+      data.user_id = user_id_action_modal;
+    } else if (action_action_modal == "update") {
+      data.id = action_id;
+    }
+    //console.log(data);
+
+    $.ajax({
+          type: 'post',
+          url: "{!! route('projectActionInsertUpdate') !!}",
+          data:data,
+          dataType: 'json',
+          success: function(data) {
+            $('#num_of_actions').text(data.num_of_actions);
+            //console.log(data);
+            if (data.result == 'success'){
+                box_type = 'success';
+                message_type = 'success';
+            }
+            else {
+                box_type = 'danger';
+                message_type = 'error';
+            }
+
+            $('#flash-message').empty();
+            var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+            $('#flash-message').append(box);
+            $('#delete-message').delay(2000).queue(function () {
+                $(this).addClass('animated flipOutX')
+            });
+            actionsTable.ajax.reload();
+          }
+    });
+
+    $('#actionModal').modal('hide');
+
+  });
+
+  @endif
+  //endregion
 
   // This part is to make sure that datatables can adjust the columns size when it is hidden because of non active tab when created
   @if($action == 'update')

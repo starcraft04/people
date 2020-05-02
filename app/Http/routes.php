@@ -31,7 +31,7 @@ Route::post('password/email', 'Auth\PasswordController@sendResetLinkEmail');
 Route::post('password/reset', 'Auth\PasswordController@reset');
 
 // All routes in this function will be protected by user needed to be logged in.
-Route::group(['middleware' => ['auth']], function() {
+Route::group(['middleware' => ['auth','general']], function() {
       Route::get('/home', ['uses'=>'HomeController@index','as'=>'home']);
       Route::get('/', ['uses'=>'HomeController@index']);
 
@@ -164,6 +164,10 @@ Route::group(['middleware' => ['auth']], function() {
       Route::get('toolsProjectsAssignedAndNot', ['uses'=>'ToolsController@projectsAssignedAndNot','as'=>'projectsAssignedAndNot','middleware' => ['permission:tools-unassigned-view']]);
       Route::get('toolsProjectsMissingInfo', ['uses'=>'ToolsController@projectsMissingInfo','as'=>'projectsMissingInfo','middleware' => ['permission:tools-missing_info-view']]);
       Route::get('toolsProjectsMissingOTL', ['uses'=>'ToolsController@projectsMissingOTL','as'=>'projectsMissingOTL','middleware' => ['permission:tools-missing_info-view']]);
+      Route::get('actionListAjax/{project_id?}', ['uses'=>'ActionController@actionListAjax','as'=>'actionListAjax','middleware' => ['permission:action-view']]);
+      Route::get('projectActionDelete/{action_id}', ['uses'=>'ActionController@projectActionDelete','as'=>'projectActionDelete','middleware' => ['permission:action-delete']]);
+      Route::post('projectActionInsertUpdate', ['uses'=>'ActionController@projectActionInsertUpdate','as'=>'projectActionInsertUpdate','middleware' => ['permission:action-create|action-edit']]);
+
       //  Create new activity
       Route::get('toolsFormCreate/{y}/{tab?}', ['uses'=>'ToolsController@getFormCreate','as'=>'toolsFormCreate','middleware' => ['permission:tools-activity-new']]);
       Route::post('toolsFormCreate', ['uses'=>'ToolsController@postFormCreate','middleware' => ['permission:tools-activity-new']]);
@@ -207,6 +211,7 @@ Route::group(['middleware' => ['auth']], function() {
       Route::get('revenuedashboard/{year?}/{user_id?}', ['uses'=>'DashboardController@revenue','as'=>'revenuedashboard','middleware' => ['permission:dashboardRevenue-view']]);
       Route::get('orderdashboard/{year?}/{user_id?}', ['uses'=>'DashboardController@order','as'=>'orderdashboard','middleware' => ['permission:dashboardOrder-view']]);
       Route::get('loedashboard/{year?}', ['uses'=>'DashboardController@loe','as'=>'loedashboard','middleware' => ['permission:projectLoe-dashboard_view']]);
+      Route::get('actiondashboard/{user_name?}', ['uses'=>'DashboardController@action','as'=>'actiondashboard','middleware' => ['permission:action-view']]);
       //  AJAX
       Route::post('listOfLoadPerUserAjax', ['uses'=>'ActivityController@listOfLoadPerUserAjax','as'=>'listOfLoadPerUserAjax','middleware' => ['permission:dashboard-view']]);
       Route::post('listOfLoadPerUserChartAjax', ['uses'=>'ActivityController@listOfLoadPerUserChartAjax','as'=>'listOfLoadPerUserChartAjax','middleware' => ['permission:dashboard-view']]);

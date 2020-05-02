@@ -139,13 +139,15 @@ return [
         'DPS26' => 'DPS26'
     ],
     'action_status' => [
-        'open' => 'open',
-        'closed' => 'closed'
+        'OPEN' => 'OPEN',
+        'CLOSED' => 'CLOSED',
+        'ON HOLD' => 'ON HOLD',
+        'IN IMPLEMENTATION' => 'IN IMPLEMENTATION'
     ],
     'action_severity' => [
-        'low' => 'low',
-        'medium' => 'medium',
-        'high' => 'high'
+        'LOW' => 'LOW',
+        'MEDIUM' => 'MEDIUM',
+        'TOP' => 'TOP'
     ]
     
 ];

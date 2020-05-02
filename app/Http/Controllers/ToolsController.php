@@ -8,6 +8,7 @@ use App\Role;
 use App\User;
 use App\Customer;
 use App\Comment;
+use App\Action;
 use App\Activity;
 use App\Skill;
 use App\UserSkill;
@@ -431,7 +432,18 @@ class ToolsController extends Controller {
     $comments = Comment::where('project_id','=',$project_id)->orderBy('updated_at','desc')->get();
     $num_of_comments = count($comments);
 
-		return view('tools/create_update', compact('user_id','project','year','activities','from_otl','forecast','otl','customers_list',
+    $num_of_actions = Action::where('project_id','=',$project_id)->get()->count();
+
+    // all users on this project for the actions
+    $users_on_project = DB::table('projects')
+    ->leftjoin('activities', 'projects.id', '=', 'activities.project_id')
+    ->leftjoin('users', 'users.id', '=', 'activities.user_id')
+    ->select('users.id','users.name')
+    ->where('project_id',$project_id)
+    ->groupBy('users.name')
+    ->lists('users.name','users.id');
+
+		return view('tools/create_update', compact('users_on_project','num_of_actions','user_id','project','year','activities','from_otl','forecast','otl','customers_list',
     'project_name_disabled',
     'customer_id_select_disabled',
     'otl_name_disabled',
