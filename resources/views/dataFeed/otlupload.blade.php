@@ -182,7 +182,7 @@ h3:after {
               <td class="table_prime_code">@if(isset($project['prime_code'])){!! $project['prime_code'] !!}@endif</td>
               <td class="table_meta">@if(isset($project['meta'])){!! $project['meta'] !!}@endif</td>
               <td>@if(isset($project['msg'])){!! $project['msg'] !!}@endif</td>
-              <td>@if(isset($project['msg']) && strpos($project['msg'], 'Prime') !== false)<button type="button" class="btn btn-info btn-xs new_project"><span class="glyphicon glyphicon-plus"></span></button>@endif</td>
+              <td class="buttonHolder">@if(isset($project['msg']) && strpos($project['msg'], 'Prime') !== false)<button type="button" class="btn btn-info btn-xs new_project"><span class="glyphicon glyphicon-plus"></span></button>@endif</td>
             </tr>
           @endforeach
           </tbody>
@@ -521,7 +521,8 @@ h3:after {
             });
             if (data.result == 'success'){
               //console.log(row_id);
-              $('tr[data-row_id="'+row_id+'"]').empty();
+              $('tr[data-row_id="'+row_id+'"] td.buttonHolder').empty();
+              $('tr[data-row_id="'+row_id+'"] td.buttonHolder').append('Added');
               $('#addProjectModal').modal('hide');
             }
           }
@@ -530,6 +531,7 @@ h3:after {
 
       // Click create button in modal
       $(document).on('click', '#addProject_create_button_modal', function () {
+        
         // hidden input
         prime_code = $('input[name=table_prime_code]').val();
         meta = $('input[name=table_meta]').val();
@@ -570,7 +572,8 @@ h3:after {
             });
             if (data.result == 'success'){
               //console.log(row_id);
-              $('tr[data-row_id="'+row_id+'"]').empty();
+              $('tr[data-row_id="'+row_id+'"] td.buttonHolder').empty();
+              $('tr[data-row_id="'+row_id+'"] td.buttonHolder').append('Added');
               $('#addProjectModal').modal('hide');
             }
           }
