@@ -884,9 +884,10 @@ h3:after {
                       <tr>
                         <th>ID</th>
                         <th>Assigned to user id</th>
-                        <th>Requestor</th>
+                        <th>Created by</th>
                         <th>Assigned to</th>
                         <th>Action name</th>
+                        <th>Requestor</th>
                         <th>Status</th>
                         <th>Percent complete</th>
                         <th>Priority</th>
@@ -942,6 +943,12 @@ h3:after {
                                 <label  class="control-label" for="action_name_modal" required>Name</label>
                                 <div>
                                     <input type="text" name="action_name_modal" class="form-control" placeholder="Name" required></input>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label  class="control-label" for="action_requestor_modal" required>Requestor</label>
+                                <div>
+                                    <input type="text" name="action_requestor_modal" class="form-control" placeholder="Requestor"></input>
                                 </div>
                             </div>
                             <div class="row">
@@ -2045,7 +2052,7 @@ $(document).ready(function() {
   // Init Date range
   $('#date_action_modal').daterangepicker({
       showISOWeekNumbers: true,
-      showDropdowns: true,
+      showDropdowns: false,
       autoUpdateInput: false,
       locale: {
         format: 'YYYY-MM-DD',
@@ -2108,6 +2115,7 @@ $(document).ready(function() {
           { name: 'created_by.name', data: 'created_by_name' , searchable: true , visible: true },
           { name: 'assigned.name', data: 'assigned_to_name' , searchable: true , visible: true },
           { name: 'actions.name', data: 'action_name' , searchable: true , visible: true },
+          { name: 'actions.requestor', data: 'action_requestor' , searchable: true , visible: true },
           { name: 'actions.status', data: 'action_status' , searchable: true , visible: true },
           { 
             name: 'actions.percent_complete', 
@@ -2165,7 +2173,7 @@ $(document).ready(function() {
         {
           extend: "colvis",
           className: "btn-sm",
-          columns: [ 2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+          columns: [ 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
         },
         {
           extend: "pageLength",
@@ -2260,6 +2268,7 @@ $(document).ready(function() {
     $('select[name="assigned_to_action_modal"]').select2().trigger('change');
     
     $('input[name="action_name_modal"]').val(row.data().action_name);
+    $('input[name="action_requestor_modal"]').val(row.data().action_requestor);
 
     $('select[name="status_action_modal"]').val(row.data().action_status);
     $('select[name="status_action_modal"]').select2().trigger('change');
@@ -2272,8 +2281,6 @@ $(document).ready(function() {
     });
 
     $('input[name="date_action_modal"]').val(row.data().action_start_date+" - "+row.data().action_end_date);
-    $('#date_action_modal').data('daterangepicker').setStartDate(row.data().action_start_date);
-    $('#date_action_modal').data('daterangepicker').setEndDate(row.data().action_end_date);
 
     $('textarea[name="description_action_modal"]').val(row.data().action_description);
 
@@ -2282,7 +2289,6 @@ $(document).ready(function() {
     $('input[name="next_action_dependency_modal"]').val(row.data().next_action_dependency);
 
     $('input[name="next_action_due_date_modal"]').val(row.data().next_action_due_date);
-    $('#next_action_due_date_modal').data('daterangepicker').setStartDate(row.data().next_action_due_date);
 
     $('#actionModal').modal("show");
   });
@@ -2341,6 +2347,7 @@ $(document).ready(function() {
     // filled in
     var assigned_to_action_modal = $('select[name="assigned_to_action_modal"]').children("option:selected").val();
     var action_name_modal = $('input[name="action_name_modal"]').val();
+    var action_requestor_modal = $('input[name="action_requestor_modal"]').val();
     var status_action_modal = $('select[name="status_action_modal"]').children("option:selected").val();
     var priority_action_modal = $('select[name="priority_action_modal"]').children("option:selected").val();
     var action_percentage_modal = $('input[name="action_percentage_modal"]').val();
@@ -2352,7 +2359,7 @@ $(document).ready(function() {
     var next_action_dependency_modal = $('input[name="next_action_dependency_modal"]').val();
     var next_action_due_date_modal = $('input[name="next_action_due_date_modal"]').val();
 
-    var data = {'assigned_user_id':assigned_to_action_modal,'name':action_name_modal,'status':status_action_modal,
+    var data = {'assigned_user_id':assigned_to_action_modal,'name':action_name_modal,'requestor':action_requestor_modal,'status':status_action_modal,
       'severity':priority_action_modal,'percent_complete':action_percentage_modal,
       'estimated_start_date':estimated_start_date,'estimated_end_date':estimated_end_date,
       'description':description_action_modal,'next_action_description':description_next_action_modal,'next_action_dependency':next_action_dependency_modal,

@@ -78,9 +78,10 @@
                   <th>Assigned to user id</th>
                   <th>Customer name</th>
                   <th>Project name</th>
-                  <th>Requestor</th>
+                  <th>Created by</th>
                   <th>Assigned to</th>
                   <th>Action name</th>
+                  <th>Requestor</th>
                   <th>Status</th>
                   <th>Percent complete</th>
                   <th>Priority</th>
@@ -158,6 +159,7 @@ $(document).ready(function() {
           { name: 'created_by.name', data: 'created_by_name' , searchable: true , visible: true },
           { name: 'assigned.name', data: 'assigned_to_name' , searchable: true , visible: true },
           { name: 'actions.name', data: 'action_name' , searchable: true , visible: true },
+          { name: 'actions.requestor', data: 'action_requestor' , searchable: true , visible: true },
           { name: 'actions.status', data: 'action_status' , searchable: true , visible: true },
           { 
             name: 'actions.percent_complete', 
@@ -196,7 +198,7 @@ $(document).ready(function() {
           {
             extend: "colvis",
             className: "btn-sm",
-            columns: [ 2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+            columns: [ 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]
           },
           {
             extend: "pageLength",

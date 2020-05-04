@@ -66,7 +66,7 @@ class ActionController extends Controller {
     $actionList->select('customers.id AS customer_id','customers.name AS customer_name',
                         'actions.project_id AS project_id','projects.project_name AS project_name',
                         'actions.id AS action_id','created_by.id AS created_by_id','created_by.name AS created_by_name',
-                        'assigned.id AS assigned_to_user_id','assigned.name AS assigned_to_name','actions.name AS action_name',
+                        'assigned.id AS assigned_to_user_id','assigned.name AS assigned_to_name','actions.name AS action_name','actions.requestor AS action_requestor',
                         'actions.severity AS action_severity','actions.status AS action_status','actions.percent_complete AS percent_complete',
                         'actions.estimated_start_date AS action_start_date','actions.estimated_end_date AS action_end_date',
                         'actions.description AS action_description',
@@ -199,8 +199,8 @@ class ActionController extends Controller {
       $update_result = Action::find($inputs['id']);
       $project_id = $update_result->project_id;
       unset($inputs['id']);
-      $update_result->update($inputs);
-      if ($update_result != null) {
+      if ($update_result->user_id == Auth::user()->id || $update_result->assigned_user_id == Auth::user()->id || Entrust::can('action-all')) {
+        $update_result->update($inputs);
         $result->result = 'success';
         $result->box_type = 'success';
         $result->message_type = 'success';
@@ -209,7 +209,7 @@ class ActionController extends Controller {
         $result->result = 'error';
         $result->box_type = 'danger';
         $result->message_type = 'error';
-        $result->msg = 'Record issue';
+        $result->msg = 'No permission to update record';
       }
     }
 
