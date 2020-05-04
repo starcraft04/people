@@ -2212,6 +2212,7 @@ $(document).ready(function() {
       var hidden = '';
       hidden += '<input class="form-control" id="project_id_action_modal" name="project_id_action_modal" type="hidden" value="'+{{ $project->id }}+'">';
       hidden += '<input class="form-control" id="user_id_action_modal" name="user_id_action_modal" type="hidden" value="'+{{ Auth::user()->id }}+'">';
+      hidden += '<input class="form-control" id="section_action_modal" name="user_id_action_modal" type="hidden" value="project">';
       hidden += '<input class="form-control" id="action_action_modal" name="action_action_modal" type="hidden" value="create">';
       $('#action_hidden').append(hidden);
 
@@ -2260,6 +2261,7 @@ $(document).ready(function() {
     var hidden = '';
     hidden += '<input class="form-control" id="action_action_modal" name="action_action_modal" type="hidden" value="update">';
     hidden += '<input class="form-control" id="action_id" name="action_id" type="hidden" value="'+row.data().action_id+'">';
+    hidden += '<input class="form-control" id="section_action_modal" name="user_id_action_modal" type="hidden" value="project">';
     $('#action_hidden').append(hidden);
 
     // Init fields
@@ -2337,6 +2339,7 @@ $(document).ready(function() {
 
     // hidden input
     var action_action_modal = $('input#action_action_modal').val();
+    var section_action_modal = $('input#section_action_modal').val();
     if (action_action_modal == 'create') {
       var project_id_action_modal = $('input#project_id_action_modal').val();
       var user_id_action_modal = $('input#user_id_action_modal').val();
@@ -2363,7 +2366,7 @@ $(document).ready(function() {
       'severity':priority_action_modal,'percent_complete':action_percentage_modal,
       'estimated_start_date':estimated_start_date,'estimated_end_date':estimated_end_date,
       'description':description_action_modal,'next_action_description':description_next_action_modal,'next_action_dependency':next_action_dependency_modal,
-      'next_action_due_date':next_action_due_date_modal,
+      'next_action_due_date':next_action_due_date_modal,'section':section_action_modal
       };
     if (action_action_modal == "create") {
       data.project_id = project_id_action_modal;

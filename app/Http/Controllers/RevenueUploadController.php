@@ -3,6 +3,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\RevenueUploadRequest;
 use App\Revenue;
 use App\Customer;
+use Excel;
+use Config;
 
 class RevenueUploadController extends Controller
 {
@@ -29,22 +31,19 @@ class RevenueUploadController extends Controller
     {
       $filename = $file->getClientOriginalName();
       $fileextension = $file->getClientOriginalExtension();
-      $year = explode(".", $filename)[0];
-      $year = explode("_", $filename)[0];
 
-      if (!checkdate ( 1 , 1 , (int)$year )) {
-        return redirect('revenueupload')->with('error','File name incorrect');
-      }
+      // Which row is the row with the headers
+      config(['excel.import.startRow' => 6]);
+      // Ignore empty cells
+      config(['excel.import.ignoreEmpty' => true]);
 
-      $year_short = substr($year, -2); 
-
-      $sheet = \Excel::selectSheetsByIndex(0)
-      ->load($file);
-      // This command helps getting a view on what we get from $sheet
-      //$sheet->dd();
-      $result = $sheet->toArray();
-
-      //dd($result);
+      $sheet = \Excel::selectSheets('05-Revenues_FPC_Customer')->load($file)->get();
+      /* Structure of object received
+        $sheet->heading is an array with all the headings
+        $sheet->items is an array with all the rows and their data
+        example to get the data in a cell: $sheet->items[2]->items['FPC'] where 2 is the row (starting at 0 for the first row) and FPC is the column
+      */
+      dd($sheet);
 
       $messages = [];
       // $i corresponds to the line in the excel file and because the column title is on line 1, we start with $i = 2

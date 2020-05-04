@@ -77,6 +77,7 @@ class ActionController extends Controller {
     $actionList->leftjoin('users AS created_by', 'actions.user_id', '=', 'created_by.id');
     $actionList->leftjoin('projects', 'actions.project_id', '=', 'projects.id');
     $actionList->leftjoin('customers', 'projects.customer_id', '=', 'customers.id');
+    $actionList->where('section','project');
 
 
     if ($project_id != -1) {
