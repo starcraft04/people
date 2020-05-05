@@ -225,6 +225,15 @@ class OtlUploadController extends Controller
         else {
           // Only if we can find 1 instance of a mix of otl_project_code and meta-activity then we enter the activity
           $projectInDB = $this->projectRepository->getByOTL($row['project_name'],$row['meta_activity']);
+          // Now we can check if we find a customer link ID in the Prime code, it should be in the form IB-PP-...
+          // For that we will use a regex that can be found in the config/option.php
+          // $matches will contain in [0] the whole matching expression and [1] will be the first () in the regexp
+          if (preg_match(config('options.regex_for_prime_cl'), $row['project_name'],$matches)) {
+            // We need to check first that the customer link id in the project is empty
+            if (empty($projectInDB->samba_id)) {
+              $projectInDB->samba_id = $matches[1];
+            }
+          }
           $projectInDB->otl_validated = 1;
           $projectInDB->save();
         }
