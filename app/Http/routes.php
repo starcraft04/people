@@ -49,6 +49,7 @@ Route::group(['middleware' => ['auth','general']], function() {
       //Revenue
       Route::get('revenueupload', ['uses'=>'RevenueUploadController@getForm','as'=>'revenueuploadform','middleware' => ['permission:revenue-upload']]);
       Route::post('revenueupload', ['uses'=>'RevenueUploadController@postForm','middleware' => ['permission:revenue-upload']]);
+      Route::post('revenueUploadChangeName', ['uses'=>'CustomerOtherNameController@addNameAjax','as'=>'revenueUploadChangeName','middleware' => ['permission:revenue-upload']]);
 
       //Samba
       Route::get('sambaupload', ['uses'=>'SambaUploadController@getForm','as'=>'sambauploadform','middleware' => ['permission:samba-upload']]);

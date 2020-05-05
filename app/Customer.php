@@ -16,4 +16,9 @@ class Customer extends Model
         return $this->hasMany('App\Project', 'customer_id');
     }
 
+    public function other_names()
+    {
+        return $this->hasMany('App\CustomerOtherName', 'customer_id');
+    }
+
 }

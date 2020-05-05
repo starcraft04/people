@@ -118,6 +118,8 @@ return [
         '11' => 'November',
         '12' => 'December'
     ],
+    'available_months' => ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'
+    ],
     'userskill_rating' => [
         '1' => '1-basic',
         '2' => '2-proficient',
