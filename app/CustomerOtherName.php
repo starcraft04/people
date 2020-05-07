@@ -13,7 +13,7 @@ class CustomerOtherName extends Model
 
     public function dolphin_name()
     {
-        return $this->belongsTo('App\Customer', 'customer_id');
+        return $this->belongsTo(\App\Customer::class, 'customer_id');
     }
 
 }

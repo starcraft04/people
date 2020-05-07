@@ -13,17 +13,17 @@ class Comment extends Model
 
     public function project()
     {
-        return $this->belongsTo('App\Project', 'project_id');
+        return $this->belongsTo(\App\Project::class, 'project_id');
     }
 
     public function user()
     {
-        return $this->belongsTo('App\User', 'user_id');
+        return $this->belongsTo(\App\User::class, 'user_id');
     }
 
     public function user_summary()
     {
-        return $this->belongsTo('App\User', 'user_id')->select(['id', 'name']);
+        return $this->belongsTo(\App\User::class, 'user_id')->select(['id', 'name']);
     }
 
 }

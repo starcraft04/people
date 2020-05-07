@@ -13,12 +13,12 @@ class Customer extends Model
 
     public function projects()
     {
-        return $this->hasMany('App\Project', 'customer_id');
+        return $this->hasMany(\App\Project::class, 'customer_id');
     }
 
     public function other_names()
     {
-        return $this->hasMany('App\CustomerOtherName', 'customer_id');
+        return $this->hasMany(\App\CustomerOtherName::class, 'customer_id');
     }
 
 }
