@@ -1130,7 +1130,7 @@ var tab_origin = "{{ $tab }}";
 
 // Create the permission variable based on Laravel permission model
 <?php
-  list($validate, $allValidations) = Entrust::ability(null,array('action-all','action-edit','action-delete','projectRevenue-delete','projectLoe-edit','projectLoe-delete','projectLoe-editAll','projectLoe-deleteAll'),['validate_all' => true,'return_type' => 'both']);
+  list($validate, $allValidations) = Entrust::ability(null,['action-all','action-edit','action-delete','projectRevenue-delete','projectLoe-edit','projectLoe-delete','projectLoe-editAll','projectLoe-deleteAll'],['validate_all' => true,'return_type' => 'both']);
   echo "var permissions = jQuery.parseJSON('".json_encode($allValidations['permissions'])."');";
 ?>
 

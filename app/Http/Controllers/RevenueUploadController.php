@@ -116,11 +116,11 @@ class RevenueUploadController extends Controller
 
           // If we found the customer in either table, then we can save the record
           if ($customer_found) {
-            $revenue = Revenue::firstOrNew(array(
+            $revenue = Revenue::firstOrNew([
               'customer_id' => $customer_id,
               'product_code' => $row['fpc'],
               'year' => $row['year']
-              ));
+              ]);
             foreach (config('select.available_months') as $key => $month) {
               if (isset($row[$month])) {$revenue->$month = $row[$month];}
             }

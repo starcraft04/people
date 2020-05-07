@@ -9,7 +9,7 @@ class CustomerOtherName extends Model
 
     protected $table = 'customers_other_names';
     public $timestamps = true;
-    protected $fillable = array('customer_id','other_name');
+    protected $fillable = ['customer_id','other_name'];
 
     public function dolphin_name()
     {

@@ -139,11 +139,11 @@ var unassigned = 'no_use';
 // Here we are going to get from PHP the list of roles and their value for the logged in project
 
 <?php
-  $options = array(
+  $options = [
     'validate_all' => true,
     'return_type' => 'both'
-  );
-  list($validate, $allValidations) = Entrust::ability(null,array('project-view','project-edit','project-delete','project-create'),$options);
+  ];
+  list($validate, $allValidations) = Entrust::ability(null,['project-view','project-edit','project-delete','project-create'],$options);
   echo "var permissions = jQuery.parseJSON('".json_encode($allValidations['permissions'])."');";
 ?>
 // Roles check finished.
