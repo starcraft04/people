@@ -168,13 +168,10 @@ class ActivityRepository
     *   Then we will need to use in the view page the name of the table.column. This is so that it knows how to do proper sorting or search.
     **/
 
+    $activityList = DB::table('activities');
 
-    $temp_table = new ProjectTableRepositoryV2('temp_a');
-
-    $activityList = DB::table('temp_a');
-
-    $activityList->select('uu.manager_id AS manager_id','m.name AS manager_name','temp_a.user_id AS user_id','u.name AS user_name','u.country AS user_country','u.employee_type AS user_employee_type','u.domain AS user_domain',
-                            'temp_a.project_id AS project_id',
+    $activityList->select('uu.manager_id AS manager_id','m.name AS manager_name','activities.user_id AS user_id','u.name AS user_name','u.country AS user_country','u.employee_type AS user_employee_type','u.domain AS user_domain',
+                            'activities.project_id AS project_id',
                             'p.project_name AS project_name',
                             'p.otl_project_code AS otl_project_code','p.meta_activity AS meta_activity','p.project_subtype AS project_subtype',
                             'p.technology AS technology','p.samba_id AS samba_id','p.pullthru_samba_id AS pullthru_samba_id',
@@ -183,14 +180,14 @@ class ActivityRepository
                             'p.estimated_start_date AS estimated_start_date','p.estimated_end_date AS estimated_end_date',
                             'p.gold_order_number AS gold_order_number','p.win_ratio AS win_ratio',
                             'c.name AS customer_name','c.cluster_owner AS customer_cluster_owner','c.country_owner AS customer_country_owner',
-                            'temp_a.year AS year','p.activity_type AS activity_type','p.project_status AS project_status','p.project_type AS project_type',
-                            'jan_user','jan_otl','jan_from_otl','feb_user','feb_otl','feb_from_otl','mar_user','mar_otl','mar_from_otl',
-                            'apr_user','apr_otl','apr_from_otl','may_user','may_otl','may_from_otl','jun_user','jun_otl','jun_from_otl',
-                            'jul_user','jul_otl','jul_from_otl','aug_user','aug_otl','aug_from_otl','sep_user','sep_otl','sep_from_otl',
-                            'oct_user','oct_otl','oct_from_otl','nov_user','nov_otl','nov_from_otl','dec_user','dec_otl','dec_from_otl'
+                            'activities.year AS year','p.activity_type AS activity_type','p.project_status AS project_status','p.project_type AS project_type',
+                            'jan_user','jan_otl','feb_user','feb_otl','mar_user','mar_otl',
+                            'apr_user','apr_otl','may_user','may_otl','jun_user','jun_otl',
+                            'jul_user','jul_otl','aug_user','aug_otl','sep_user','sep_otl',
+                            'oct_user','oct_otl','nov_user','nov_otl','dec_user','dec_otl'
     );
-    $activityList->leftjoin('projects AS p', 'p.id', '=', 'temp_a.project_id');
-    $activityList->leftjoin('users AS u', 'temp_a.user_id', '=', 'u.id');
+    $activityList->leftjoin('projects AS p', 'p.id', '=', 'activities.project_id');
+    $activityList->leftjoin('users AS u', 'activities.user_id', '=', 'u.id');
     $activityList->leftjoin('users_users AS uu', 'u.id', '=', 'uu.user_id');
     $activityList->leftjoin('users AS m', 'm.id', '=', 'uu.manager_id');
     $activityList->leftjoin('customers AS c', 'c.id', '=', 'p.customer_id');
@@ -267,7 +264,7 @@ class ActivityRepository
               $activityList->where(function ($query) use ($where) {
                   foreach ($where['user'] as $w)
                   {
-                      $query->orWhere('temp_a.user_id',$w);
+                      $query->orWhere('activities.user_id',$w);
                   }
               });
           }
@@ -293,14 +290,14 @@ class ActivityRepository
                 $activityList->where(function ($query) use ($where) {
                     foreach ($where['user'] as $w)
                     {
-                        $query->orWhere('temp_a.user_id',$w);
+                        $query->orWhere('activities.user_id',$w);
                     }
                 });
             }
     }
     // In the end, the user is not a manager and doesn't have a special role so he can only see himself
     else {
-      $activityList->where('temp_a.user_id','=',Auth::user()->id);
+      $activityList->where('activities.user_id','=',Auth::user()->id);
     }
 
     $activityList->orderBy('c.name', 'asc');

@@ -157,67 +157,43 @@
               <th>Jan</th>
               <th>Jan user</th>
               <th>Jan otl</th>
-              <th>OTL</th>
               <th>Feb</th>
               <th>Feb user</th>
               <th>Feb otl</th>
-              <th>OTL</th>
               <th>Mar</th>
               <th>Mar user</th>
               <th>Mar otl</th>
-              <th>OTL</th>
               <th>Apr</th>
               <th>Apr user</th>
               <th>Apr otl</th>
-              <th>OTL</th>
               <th>May</th>
               <th>May user</th>
               <th>May otl</th>
-              <th>OTL</th>
               <th>Jun</th>
               <th>Jun user</th>
               <th>Jun otl</th>
-              <th>OTL</th>
               <th>Jul</th>
               <th>Jul user</th>
               <th>Jul otl</th>
-              <th>OTL</th>
               <th>Aug</th>
               <th>Aug user</th>
               <th>Aug otl</th>
-              <th>OTL</th>
               <th>Sep</th>
               <th>Sep user</th>
               <th>Sep otl</th>
-              <th>OTL</th>
               <th>Oct</th>
               <th>Oct user</th>
               <th>Oct otl</th>
-              <th>OTL</th>
               <th>Nov</th>
               <th>Nov user</th>
               <th>Nov otl</th>
-              <th>OTL</th>
               <th>Dec</th>
               <th>Dec user</th>
               <th>Dec otl</th>
-              <th>OTL</th>
             </tr>
           </thead>
           <tfoot>
             <tr>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
               <th></th>
               <th></th>
               <th></th>
@@ -503,7 +479,7 @@
 
     // SELECTIONS END
 
-    month_col = [32,36,40,44,48,52,56,60,64,68,72,76];
+    month_col = [32,35,38,41,44,47,50,53,56,59,62,65];
   
 
     activitiesTable = $('#activitiesTable').DataTable({
@@ -526,7 +502,7 @@
       columns: [
         { name: 'uu.manager_id', data: 'manager_id' , searchable: false , visible: false},
         { name: 'm.name', data: 'manager_name' , className: "dt-nowrap", visible: false},
-        { name: 'temp_a.user_id', data: 'user_id' , searchable: false , visible: false},
+        { name: 'activities.user_id', data: 'user_id' , searchable: false , visible: false},
         { name: 'u.name', data: 'user_name' , className: "dt-nowrap"},
         { name: 'u.domain', data: 'user_domain' , searchable: true, visible: false, className: "dt-nowrap"},
         { name: 'u.country', data: 'user_country' , searchable: true , visible: false, className: "dt-nowrap"},
@@ -534,7 +510,7 @@
         { name: 'c.name', data: 'customer_name' , className: "dt-nowrap"},
         { name: 'c.cluster_owner', data: 'customer_cluster_owner' , searchable: true , visible: false, className: "dt-nowrap"},
         { name: 'c.country_owner', data: 'customer_country_owner' , searchable: true , visible: false, className: "dt-nowrap"},
-        { name: 'temp_a.project_id', data: 'project_id' , searchable: false , visible: false},
+        { name: 'activities.project_id', data: 'project_id' , searchable: false , visible: false},
         { name: 'p.project_name', data: 'project_name', className: "dt-nowrap"},
         { name: 'p.project_type', data: 'project_type', visible: true, className: "dt-nowrap"},
         { name: 'p.activity_type', data: 'activity_type', visible: false, className: "dt-nowrap"},
@@ -555,14 +531,14 @@
         { name: 'p.estimated_end_date', data: 'estimated_end_date' , searchable: true , visible: false, className: "dt-nowrap"},
         { name: 'p.gold_order_number', data: 'gold_order_number' , searchable: true , visible: false, className: "dt-nowrap"},
         { name: 'p.win_ratio', data: 'win_ratio' , searchable: true , visible: false, className: "dt-nowrap"},
-        { name: 'temp_a.year', data: 'year' , searchable: false , visible: false, className: "dt-nowrap"},
+        { name: 'activities.year', data: 'year' , searchable: false , visible: false, className: "dt-nowrap"},
         { data: function ( row, type, val, meta ) {
-          if (row.jan_from_otl == 1){return row.jan_otl;}else{return row.jan_user;}
+          if (row.jan_otl != null){return row.jan_otl;}else if(row.jan_user != null){return row.jan_user;}else{return 0;}
             }, 
           createdCell: function (td, cellData, rowData, row, col) {
-            if (rowData.jan_otl == 0 && rowData.jan_user == 0) {
+            if (cellData == 0) {
               $(td).addClass("zero");
-            } else if(rowData.jan_from_otl == 1){
+            } else if(rowData.jan_otl != null){
               $(td).addClass("otl");
             } else {
               $(td).addClass("forecast");
@@ -570,14 +546,13 @@
           }, width: '30px', searchable: false},
         { name: 'jan_user', data: 'jan_user', width: '30px', searchable: false , visible: false},
         { name: 'jan_otl', data: 'jan_otl', width: '10px', searchable: false , visible: false},
-        { name: 'jan_from_otl', data: 'jan_from_otl', width: '10px', searchable: false , visible: false},
         { data: function ( row, type, val, meta ) {
-          if (row.feb_from_otl == 1){return row.feb_otl;}else{return row.feb_user;}
+          if (row.feb_otl != null){return row.feb_otl;}else if(row.feb_user != null){return row.feb_user;}else{return 0;}
             }, 
           createdCell: function (td, cellData, rowData, row, col) {
-            if (rowData.feb_otl == 0 && rowData.feb_user == 0) {
+            if (cellData == 0) {
               $(td).addClass("zero");
-            } else if(rowData.feb_from_otl == 1){
+            } else if(rowData.feb_otl != null){
               $(td).addClass("otl");
             } else {
               $(td).addClass("forecast");
@@ -585,14 +560,13 @@
           }, width: '30px', searchable: false},
         { name: 'feb_user', data: 'feb_user', width: '30px', searchable: false , visible: false},
         { name: 'feb_otl', data: 'feb_otl', width: '10px', searchable: false , visible: false},
-        { name: 'feb_from_otl', data: 'feb_from_otl', width: '10px', searchable: false , visible: false},
         { data: function ( row, type, val, meta ) {
-          if (row.mar_from_otl == 1){return row.mar_otl;}else{return row.mar_user;}
+          if (row.mar_otl != null){return row.mar_otl;}else if(row.mar_user != null){return row.mar_user;}else{return 0;}
             }, 
           createdCell: function (td, cellData, rowData, row, col) {
-            if (rowData.mar_otl == 0 && rowData.mar_user == 0) {
+            if (cellData == 0) {
               $(td).addClass("zero");
-            } else if(rowData.mar_from_otl == 1){
+            } else if(rowData.mar_otl != null){
               $(td).addClass("otl");
             } else {
               $(td).addClass("forecast");
@@ -600,14 +574,13 @@
           }, width: '30px', searchable: false},
         { name: 'mar_user', data: 'mar_user', width: '30px', searchable: false , visible: false},
         { name: 'mar_otl', data: 'mar_otl', width: '10px', searchable: false , visible: false},
-        { name: 'mar_from_otl', data: 'mar_from_otl', width: '10px', searchable: false , visible: false},
         { data: function ( row, type, val, meta ) {
-          if (row.apr_from_otl == 1){return row.apr_otl;}else{return row.apr_user;}
+          if (row.apr_otl != null){return row.apr_otl;}else if(row.apr_user != null){return row.apr_user;}else{return 0;}
             }, 
           createdCell: function (td, cellData, rowData, row, col) {
-            if (rowData.apr_otl == 0 && rowData.apr_user == 0) {
+            if (cellData == 0) {
               $(td).addClass("zero");
-            } else if(rowData.apr_from_otl == 1){
+            } else if(rowData.apr_otl != null){
               $(td).addClass("otl");
             } else {
               $(td).addClass("forecast");
@@ -615,14 +588,13 @@
           }, width: '30px', searchable: false},
         { name: 'apr_user', data: 'apr_user', width: '30px', searchable: false , visible: false},
         { name: 'apr_otl', data: 'apr_otl', width: '10px', searchable: false , visible: false},
-        { name: 'apr_from_otl', data: 'apr_from_otl', width: '10px', searchable: false , visible: false},
         { data: function ( row, type, val, meta ) {
-          if (row.may_from_otl == 1){return row.may_otl;}else{return row.may_user;}
+          if (row.may_otl != null){return row.may_otl;}else if(row.may_user != null){return row.may_user;}else{return 0;}
             }, 
           createdCell: function (td, cellData, rowData, row, col) {
-            if (rowData.may_otl == 0 && rowData.may_user == 0) {
+            if (cellData == 0) {
               $(td).addClass("zero");
-            } else if(rowData.may_from_otl == 1){
+            } else if(rowData.may_otl != null){
               $(td).addClass("otl");
             } else {
               $(td).addClass("forecast");
@@ -630,14 +602,13 @@
           }, width: '30px', searchable: false},
         { name: 'may_user', data: 'may_user', width: '30px', searchable: false , visible: false},
         { name: 'may_otl', data: 'may_otl', width: '10px', searchable: false , visible: false},
-        { name: 'may_from_otl', data: 'may_from_otl', width: '10px', searchable: false , visible: false},
         { data: function ( row, type, val, meta ) {
-          if (row.jun_from_otl == 1){return row.jun_otl;}else{return row.jun_user;}
+          if (row.jun_otl != null){return row.jun_otl;}else if(row.jun_user != null){return row.jun_user;}else{return 0;}
             }, 
           createdCell: function (td, cellData, rowData, row, col) {
-            if (rowData.jun_otl == 0 && rowData.jun_user == 0) {
+            if (cellData == 0) {
               $(td).addClass("zero");
-            } else if(rowData.jun_from_otl == 1){
+            } else if(rowData.jun_otl != null){
               $(td).addClass("otl");
             } else {
               $(td).addClass("forecast");
@@ -645,14 +616,13 @@
           }, width: '30px', searchable: false},
         { name: 'jun_user', data: 'jun_user', width: '30px', searchable: false , visible: false},
         { name: 'jun_otl', data: 'jun_otl', width: '10px', searchable: false , visible: false},
-        { name: 'jun_from_otl', data: 'jun_from_otl', width: '10px', searchable: false , visible: false},
         { data: function ( row, type, val, meta ) {
-          if (row.jul_from_otl == 1){return row.jul_otl;}else{return row.jul_user;}
+          if (row.jul_otl != null){return row.jul_otl;}else if(row.jul_user != null){return row.jul_user;}else{return 0;}
           }, 
           createdCell: function (td, cellData, rowData, row, col) {
-            if (rowData.jul_otl == 0 && rowData.jul_user == 0) {
+            if (cellData == 0) {
               $(td).addClass("zero");
-            } else if(rowData.jul_from_otl == 1){
+            } else if(rowData.jul_otl != null){
               $(td).addClass("otl");
             } else {
               $(td).addClass("forecast");
@@ -661,14 +631,13 @@
           width: '30px', searchable: false}, 
         { name: 'jul_user', data: 'jul_user', width: '30px', searchable: false , visible: false},
         { name: 'jul_otl', data: 'jul_otl', width: '10px', searchable: false , visible: false},
-        { name: 'jul_from_otl', data: 'jul_from_otl', width: '10px', searchable: false , visible: false},
         { data: function ( row, type, val, meta ) {
-          if (row.aug_from_otl == 1){return row.aug_otl;}else{return row.aug_user;}
+          if (row.aug_otl != null){return row.aug_otl;}else if(row.aug_user != null){return row.aug_user;}else{return 0;}
             }, 
           createdCell: function (td, cellData, rowData, row, col) {
-            if (rowData.aug_otl == 0 && rowData.aug_user == 0) {
+            if (cellData == 0) {
               $(td).addClass("zero");
-            } else if(rowData.aug_from_otl == 1){
+            } else if(rowData.aug_otl != null){
               $(td).addClass("otl");
             } else {
               $(td).addClass("forecast");
@@ -676,14 +645,13 @@
           }, width: '30px', searchable: false},
         { name: 'aug_user', data: 'aug_user', width: '30px', searchable: false , visible: false},
         { name: 'aug_otl', data: 'aug_otl', width: '10px', searchable: false , visible: false},
-        { name: 'aug_from_otl', data: 'aug_from_otl', width: '10px', searchable: false , visible: false},
         { data: function ( row, type, val, meta ) {
-          if (row.sep_from_otl == 1){return row.sep_otl;}else{return row.sep_user;}
+          if (row.sep_otl != null){return row.sep_otl;}else if(row.sep_user != null){return row.sep_user;}else{return 0;}
             }, 
           createdCell: function (td, cellData, rowData, row, col) {
-            if (rowData.sep_otl == 0 && rowData.sep_user == 0) {
+            if (cellData == 0) {
               $(td).addClass("zero");
-            } else if(rowData.sep_from_otl == 1){
+            } else if(rowData.sep_otl != null){
               $(td).addClass("otl");
             } else {
               $(td).addClass("forecast");
@@ -691,14 +659,13 @@
           }, width: '30px', searchable: false},
         { name: 'sep_user', data: 'sep_user', width: '30px', searchable: false , visible: false},
         { name: 'sep_otl', data: 'sep_otl', width: '10px', searchable: false , visible: false},
-        { name: 'sep_from_otl', data: 'sep_from_otl', width: '10px', searchable: false , visible: false},
         { data: function ( row, type, val, meta ) {
-          if (row.oct_from_otl == 1){return row.oct_otl;}else{return row.oct_user;}
+          if (row.oct_otl != null){return row.oct_otl;}else if(row.oct_user != null){return row.oct_user;}else{return 0;}
             }, 
           createdCell: function (td, cellData, rowData, row, col) {
-            if (rowData.oct_otl == 0 && rowData.oct_user == 0) {
+            if (cellData == 0) {
               $(td).addClass("zero");
-            } else if(rowData.oct_from_otl == 1){
+            } else if(rowData.oct_otl != null){
               $(td).addClass("otl");
             } else {
               $(td).addClass("forecast");
@@ -706,14 +673,13 @@
           }, width: '30px', searchable: false},
         { name: 'oct_user', data: 'oct_user', width: '30px', searchable: false , visible: false},
         { name: 'oct_otl', data: 'oct_otl', width: '10px', searchable: false , visible: false},
-        { name: 'oct_from_otl', data: 'oct_from_otl', width: '10px', searchable: false , visible: false},
         { data: function ( row, type, val, meta ) {
-          if (row.nov_from_otl == 1){return row.nov_otl;}else{return row.nov_user;}
+          if (row.nov_otl != null){return row.nov_otl;}else if(row.nov_user != null){return row.nov_user;}else{return 0;}
             }, 
           createdCell: function (td, cellData, rowData, row, col) {
-            if (rowData.nov_otl == 0 && rowData.nov_user == 0) {
+            if (cellData == 0) {
               $(td).addClass("zero");
-            } else if(rowData.nov_from_otl == 1){
+            } else if(rowData.nov_otl != null){
               $(td).addClass("otl");
             } else {
               $(td).addClass("forecast");
@@ -721,14 +687,13 @@
           }, width: '30px', searchable: false},
         { name: 'nov_user', data: 'nov_user', width: '30px', searchable: false , visible: false},
         { name: 'nov_otl', data: 'nov_otl', width: '10px', searchable: false , visible: false},
-        { name: 'nov_from_otl', data: 'nov_from_otl', width: '10px', searchable: false , visible: false},
         { data: function ( row, type, val, meta ) {
-          if (row.dec_from_otl == 1){return row.dec_otl;}else{return row.dec_user;}
+          if (row.dec_otl != null){return row.dec_otl;}else if(row.dec_user != null){return row.dec_user;}else{return 0;}
             }, 
           createdCell: function (td, cellData, rowData, row, col) {
-            if (rowData.dec_otl == 0 && rowData.dec_user == 0) {
+            if (cellData == 0) {
               $(td).addClass("zero");
-            } else if(rowData.dec_from_otl == 1){
+            } else if(rowData.dec_otl != null){
               $(td).addClass("otl");
             } else {
               $(td).addClass("forecast");
@@ -736,7 +701,6 @@
           }, width: '30px', searchable: false},
         { name: 'dec_user', data: 'dec_user', width: '30px', searchable: false , visible: false},
         { name: 'dec_otl', data: 'dec_otl', width: '10px', searchable: false , visible: false},
-        { name: 'dec_from_otl', data: 'dec_from_otl', width: '10px', searchable: false , visible: false}
       ],
       order: [[1, 'asc'],[3, 'asc'],[7, 'asc'],[12, 'asc']],
 
@@ -750,61 +714,7 @@
           extend: "colvis",
           className: "btn-sm",
           collectionLayout: "three-column",
-          columns: [ 1, 3, 4, 5, 6,7,8,9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,32,36,40,44,48,52,56,60,64,68,72,76 ]
-        },
-        {
-          extend: 'collection',
-          className: "btn-sm",
-          text: 'Views',
-          buttons: [
-              {
-                text: 'Cluster',
-                extend: 'colvisGroup',
-                show: [ 3,4,7,8,11,12,14,32,36,40,44,48,52,56,60,64,68,72,76 ],
-                hide: [ 1,5,6,9,10,13,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31 ]
-              },
-              {
-                text: 'Team member',
-                extend: 'colvisGroup',
-                show: [ 3,7,11,12,14,32,36,40,44,48,52,56,60,64,68,72,76 ],
-                hide: [ 1,4,5,6,8,9,10,13,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31 ]
-              }
-          ],
-          responsive: true
-        },
-        {
-          extend: 'collection',
-          className: "btn-sm",
-          text: 'Selection',
-          buttons: [
-              {
-                text: 'Security',
-                action: function ( e, dt, node, config ) {
-                  $('input', activitiesTable.column(4).footer()).val("Security");
-                  activitiesTable.column(4).search("Security").draw();
-                  activitiesTable.columns([ 3,4,7,8,11,12,14,32,36,40,44,48,52,56,60,64,68,72,76 ]).visible(true);
-                  activitiesTable.columns([ 1,5,6,9,10,13,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31 ]).visible(false);
-                }
-              },
-              {
-                text: 'PullThru',
-                action: function ( e, dt, node, config ) {
-                  $('input', activitiesTable.column(12).footer()).val("Pre-sales");
-                  activitiesTable.column(12).search("Pre-sales").draw();
-                  activitiesTable.columns([ 3,7,9,11,13,16,17,18,19,20,23,24,26,27,30 ]).visible(true);
-                  activitiesTable.columns([ 1,4,5,6,8,10,12,14,15,21,22,25,28,29,31,32,36,40,44,48,52,56,60,64,68,72,76 ]).visible(false);
-                }
-              },
-              {
-                text: 'APM',
-                action: function ( e, dt, node, config ) {
-                  $('input', activitiesTable.column(4).footer()).val("APM");
-                  activitiesTable.column(4).search("APM").draw();
-                  activitiesTable.columns([ 3,4,7,8,11,12,14,32,36,40,44,48,52,56,60,64,68,72,76 ]).visible(true);
-                  activitiesTable.columns([ 1,5,6,9,10,13,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31 ]).visible(false);
-                }
-              }
-          ]
+          columns: [  ]
         },
         {
           extend: "pageLength",
