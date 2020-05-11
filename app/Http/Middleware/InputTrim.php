@@ -19,10 +19,11 @@ class InputTrim
         if ($input) {
             array_walk_recursive($input, function (&$item) {
                 $item = trim($item);
-                $item = ($item == "") ? null : $item;
+                $item = ($item == '') ? null : $item;
             });
             $request->merge($input);
         }
+
         return $next($request);
     }
 }

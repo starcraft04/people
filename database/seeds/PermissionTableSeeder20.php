@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Seeder;
 use App\Permission;
+use Illuminate\Database\Seeder;
 
 class PermissionTableSeeder20 extends Seeder
 {
@@ -14,15 +14,15 @@ class PermissionTableSeeder20 extends Seeder
     {
         $permission = [
             [
-        		'id' => 54,
-        		'name' => 'tools-projects-comments',
-        		'display_name' => 'View & add comments',
-        		'description' => 'Allow to view and add comments'
-            ]
+                'id' => 54,
+                'name' => 'tools-projects-comments',
+                'display_name' => 'View & add comments',
+                'description' => 'Allow to view and add comments',
+            ],
         ];
 
         foreach ($permission as $key => $value) {
-        	Permission::create($value);
+            Permission::create($value);
         }
     }
 }

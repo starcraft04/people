@@ -77,6 +77,6 @@ return [
     */
 
     'prefix' => 'laravel',
-    'ttl' => 30 //In minutes
+    'ttl' => 30, //In minutes
 
 ];

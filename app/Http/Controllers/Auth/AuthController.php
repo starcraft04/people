@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Controller;
 use App\User;
 use Auth;
-use Validator;
-use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
+use Illuminate\Foundation\Auth\ThrottlesLogins;
+use Validator;
 
 class AuthController extends Controller
 {
@@ -71,11 +71,12 @@ class AuthController extends Controller
             'password' => bcrypt($data['password']),
         ]);
     }
+
     protected function authenticated()
     {
         date_default_timezone_set('CET');
         $user = User::find(Auth::user()->id);
-        $user->last_login = date("Y-m-d H:i:s");
+        $user->last_login = date('Y-m-d H:i:s');
         $user->save();
 
         return redirect('home');

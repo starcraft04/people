@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Loe extends Model
 {
-
     protected $table = 'project_loe';
     public $timestamps = true;
     protected $guarded = ['id'];
@@ -20,5 +19,4 @@ class Loe extends Model
     {
         return $this->belongsTo('App\Project', 'project_id');
     }
-
 }

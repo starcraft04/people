@@ -9,7 +9,7 @@ return [
      * the backups.
      */
     'name' => 'backup',
-    
+
     'source' => [
 
         'files' => [
@@ -19,7 +19,7 @@ return [
              * specify individual files as well.
              */
             'include' => [
-                
+
             ],
 
             /*
@@ -27,7 +27,7 @@ return [
              * You can specify individual files as well.
              */
             'exclude' => [
-                
+
             ],
         ],
 
@@ -36,17 +36,17 @@ return [
          * Currently only MySQL- and PostgreSQL-databases are supported.
          */
         'databases' => [
-            'mysql'
+            'mysql',
         ],
     ],
-    
+
     'destination' => [
 
        /*
-        * The disk names on which the backups will be stored. 
+        * The disk names on which the backups will be stored.
         */
         'disks' => [
-            'local'
+            'local',
         ],
     ],
 ],
@@ -63,7 +63,7 @@ return [
         /*
          * The amount of days that all backups must be kept.
          */
-        'keepAllBackupsForDays' => 7, 
+        'keepAllBackupsForDays' => 7,
 
         /*
          * The amount of days that daily backups must be kept.
@@ -89,10 +89,9 @@ return [
          * After cleaning up the backups remove the oldest backup until
          * this amount of megabytes has been reached.
          */
-        'deleteOldestBackupsWhenUsingMoreMegabytesThan' => 5000
-    ]
+        'deleteOldestBackupsWhenUsingMoreMegabytesThan' => 5000,
+    ],
 ],
-
 
 /*
  *  In this array you can specify which backups should be monitored.
@@ -106,7 +105,7 @@ return [
         'newestBackupsShouldNotBeOlderThanDays' => 1,
         'storageUsedMayNotBeHigherThanMegabytes' => 5000,
     ],
-    
+
     /*
     [
         'name' => 'name of the second app',
@@ -127,7 +126,7 @@ return [
     /*
      * Here you can specify the ways you want to be notified when certain
      * events take place. Possible values are "log", "mail", "slack", "pushover" and "telegram".
-     * 
+     *
      * Slack requires the installation of the maknz/slack package.
      * Telegram requires the installation of the irazasyed/telegram-bot-sdk package.
      */
@@ -137,7 +136,7 @@ return [
         'whenHealthyBackupWasFound'   => ['log'],
         'whenBackupHasFailed'         => ['log', 'mail'],
         'whenCleanupHasFailed'        => ['log', 'mail'],
-        'whenUnhealthyBackupWasFound' => ['log', 'mail']
+        'whenUnhealthyBackupWasFound' => ['log', 'mail'],
     ],
 
     /*
@@ -147,6 +146,6 @@ return [
         'from' => 'your@email.com',
         'to' => 'your@email.com',
     ],
-    
-]
+
+],
 ];

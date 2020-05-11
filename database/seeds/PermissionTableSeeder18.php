@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Seeder;
 use App\Permission;
+use Illuminate\Database\Seeder;
 
 class PermissionTableSeeder18 extends Seeder
 {
@@ -14,15 +14,15 @@ class PermissionTableSeeder18 extends Seeder
     {
         $permission = [
             [
-        		'id' => 52,
-        		'name' => 'customer-upload',
-        		'display_name' => 'Customers upload',
-        		'description' => 'Allow to upload data from Customers excel file'
-            ]
+                'id' => 52,
+                'name' => 'customer-upload',
+                'display_name' => 'Customers upload',
+                'description' => 'Allow to upload data from Customers excel file',
+            ],
         ];
 
         foreach ($permission as $key => $value) {
-        	Permission::create($value);
+            Permission::create($value);
         }
     }
 }

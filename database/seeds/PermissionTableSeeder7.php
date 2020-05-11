@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Seeder;
 use App\Permission;
+use Illuminate\Database\Seeder;
 
 class PermissionTableSeeder7 extends Seeder
 {
@@ -13,16 +13,16 @@ class PermissionTableSeeder7 extends Seeder
     public function run()
     {
         $permission = [
-        	[
+            [
                 'id' => 34,
                 'name' => 'cluster-view',
-        		'display_name' => 'Cluster dashboard view',
-        		'description' => 'Allow cluster managers to view the cluster dashboard'
-        	]
+                'display_name' => 'Cluster dashboard view',
+                'description' => 'Allow cluster managers to view the cluster dashboard',
+            ],
         ];
 
         foreach ($permission as $key => $value) {
-        	Permission::create($value);
+            Permission::create($value);
         }
     }
 }

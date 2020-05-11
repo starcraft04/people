@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Comment extends Model
 {
-
     protected $table = 'projects_comments';
     public $timestamps = true;
     protected $guarded = ['id'];
@@ -23,8 +22,6 @@ class Comment extends Model
 
     public function user_summary()
     {
-        return $this->belongsTo('App\User', 'user_id')->select(array('id', 'name'));
+        return $this->belongsTo('App\User', 'user_id')->select(['id', 'name']);
     }
-
 }
-

@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Action extends Model
 {
-
     protected $table = 'actions';
     public $timestamps = true;
     protected $guarded = ['id'];
@@ -25,6 +24,4 @@ class Action extends Model
     {
         return $this->belongsTo('App\User', 'assigned_user_id');
     }
-
 }
-

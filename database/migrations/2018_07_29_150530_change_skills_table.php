@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class ChangeSkillsTable extends Migration
 {
@@ -12,8 +12,8 @@ class ChangeSkillsTable extends Migration
      */
     public function up()
     {
-        DB::statement("ALTER TABLE `skills` DROP INDEX `domain`;");
-		DB::statement("ALTER TABLE `skills` ADD UNIQUE( `domain`, `subdomain`, `technology`, `skill`, `certification`);");
+        DB::statement('ALTER TABLE `skills` DROP INDEX `domain`;');
+        DB::statement('ALTER TABLE `skills` ADD UNIQUE( `domain`, `subdomain`, `technology`, `skill`, `certification`);');
     }
 
     /**
@@ -23,7 +23,7 @@ class ChangeSkillsTable extends Migration
      */
     public function down()
     {
-        DB::statement("ALTER TABLE `skills` DROP INDEX `domain`;");
-		DB::statement("ALTER TABLE `skills` ADD UNIQUE( `domain`, `subdomain`, `technology`, `skill`);");
+        DB::statement('ALTER TABLE `skills` DROP INDEX `domain`;');
+        DB::statement('ALTER TABLE `skills` ADD UNIQUE( `domain`, `subdomain`, `technology`, `skill`);');
     }
 }

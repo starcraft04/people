@@ -1,15 +1,16 @@
 <?php
+
 return [
     'domain-users' => [
         '' => '',
         'APM' => 'APM',
         'Security' => 'Security',
         'Network' => 'Network',
-        'UC' => 'UC'
+        'UC' => 'UC',
     ],
     'domain-fpc' => [
-        'APM' => ['P07','F27','H10'],
+        'APM' => ['P07', 'F27', 'H10'],
         'Security' => ['F35'],
-        'UC' => ['H13', 'F39', 'D30', 'D23'  ]
+        'UC' => ['H13', 'F39', 'D30', 'D23'],
     ],
 ];

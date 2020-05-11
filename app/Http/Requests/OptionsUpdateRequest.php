@@ -23,11 +23,10 @@ class OptionsUpdateRequest extends Request
      */
     public function rules()
     {
-
         return [
 
       'clusterboard_top' => 'required|integer|min:0',
-      'table_height' => 'integer|min:10|max:200'
+      'table_height' => 'integer|min:10|max:200',
 
         ];
     }

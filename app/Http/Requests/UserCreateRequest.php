@@ -23,10 +23,10 @@ class UserCreateRequest extends Request
      */
     public function rules()
     {
-		return [
-			'name' => 'required|max:255|unique:users',
+        return [
+            'name' => 'required|max:255|unique:users',
       'email' => 'email|required|max:255|unique:users',
-      'password' => 'same:confirm-password'
-		];
+      'password' => 'same:confirm-password',
+        ];
     }
 }

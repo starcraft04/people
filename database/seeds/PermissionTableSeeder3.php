@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Seeder;
 use App\Permission;
+use Illuminate\Database\Seeder;
 
 class PermissionTableSeeder3 extends Seeder
 {
@@ -13,16 +13,16 @@ class PermissionTableSeeder3 extends Seeder
     public function run()
     {
         $permission = [
-        	[
+            [
             'id' => 30,
-        		'name' => 'tools-user_assigned-change',
-        		'display_name' => 'Tools update project change user assigned',
-        		'description' => 'Allow to change the user assigned to a project'
-        	]
+                'name' => 'tools-user_assigned-change',
+                'display_name' => 'Tools update project change user assigned',
+                'description' => 'Allow to change the user assigned to a project',
+            ],
         ];
 
         foreach ($permission as $key => $value) {
-        	Permission::create($value);
+            Permission::create($value);
         }
     }
 }

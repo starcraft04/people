@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Cluster extends Model
 {
     //
-	public $timestamps = false;
+    public $timestamps = false;
     protected $table = 'cluster_user';
     protected $guarded = ['id'];
 
@@ -15,5 +15,4 @@ class Cluster extends Model
     {
         return $this->belongsTo('App\User');
     }
-
 }

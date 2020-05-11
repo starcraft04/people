@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProjectRevenue extends Model
 {
-
     protected $table = 'project_revenues';
     public $timestamps = false;
     protected $guarded = ['id'];
@@ -15,5 +14,4 @@ class ProjectRevenue extends Model
     {
         return $this->belongsTo('App\Project', 'project_id');
     }
-
 }

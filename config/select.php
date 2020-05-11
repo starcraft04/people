@@ -1,24 +1,25 @@
 <?php
+
 return [
     'employee_type' => [
         'employee' => 'employee',
-        'contractor' => 'contractor'
+        'contractor' => 'contractor',
     ],
     'loe_type' => [
         'Junior' => 'Junior',
         'Normal' => 'Normal',
-        'Senior' => 'Senior'
+        'Senior' => 'Senior',
     ],
     'region' => [
         'Europe' => 'Europe',
         'MEA' => 'MEA',
         'NAM' => 'NAM',
         'LATAM' => 'LATAM',
-        'APAC' => 'APAC'
+        'APAC' => 'APAC',
     ],
     'job_role' => [
         'ASC' => 'ASC',
-        'ISC' => 'ISC'
+        'ISC' => 'ISC',
     ],
     'domain-users' => [
         '' => '',
@@ -29,30 +30,30 @@ return [
         'UC' => 'UC',
         'CC' => 'CC',
         'SMS' => 'SMS',
-        'DD' => 'DD'
+        'DD' => 'DD',
     ],
     'domain-projects' => [
         'Hybrid Security' => 'Hybrid Security',
         'Hybrid APM' => 'Hybrid APM',
         'Hybrid Network' => 'Hybrid Network',
-        'UC' => 'UC'
+        'UC' => 'UC',
     ],
     'meta_activity' => [
         'BILLABLE' => 'BILLABLE',
         'ABS' => 'ABS',
         'OTHER' => 'OTHER',
-        'CF' => 'CF'
+        'CF' => 'CF',
     ],
     'project_status' => [
         'Pipeline' => 'Pipeline',
         'Started' => 'Started',
-        'Closed' => 'Closed'
+        'Closed' => 'Closed',
     ],
     'project_type' => [
         'Baseline' => 'Baseline',
         'Project' => 'Project',
         'Pre-sales' => 'Pre-sales',
-        'Orange absence or other' => 'Orange absence or other'
+        'Orange absence or other' => 'Orange absence or other',
     ],
     'project_subtype' => [
         'POC' => 'POC',
@@ -60,7 +61,7 @@ return [
         'Pilot' => 'Pilot',
         'Build/Run' => 'Build/Run',
         'Recurring consulting' => 'Recurring consulting',
-        'OpenLab' => 'OpenLab'
+        'OpenLab' => 'OpenLab',
     ],
     'samba_stage' => [
         '1 Pre-Qualification' => '1 Pre-Qualification',
@@ -71,11 +72,11 @@ return [
         'Closed Cancelled' => 'Closed Cancelled',
         'Closed Duplicate' => 'Closed Duplicate',
         'Closed Lost' => 'Closed Lost',
-        'Closed Won' => 'Closed Won'
+        'Closed Won' => 'Closed Won',
     ],
     'activity_type' => [
         'ISC' => 'ISC',
-        'ASC' => 'ASC'
+        'ASC' => 'ASC',
     ],
     'year' => [
         '2015' => '2015',
@@ -88,7 +89,7 @@ return [
         '2022' => '2022',
         '2023' => '2023',
         '2024' => '2024',
-        '2025' => '2025'
+        '2025' => '2025',
     ],
     'month' => [
         '1' => 'JAN',
@@ -102,7 +103,7 @@ return [
         '9' => 'SEP',
         '10' => 'OCT',
         '11' => 'NOV',
-        '12' => 'DEC'
+        '12' => 'DEC',
     ],
     'month_names' => [
         '1' => 'January',
@@ -116,40 +117,40 @@ return [
         '9' => 'September',
         '10' => 'October',
         '11' => 'November',
-        '12' => 'December'
+        '12' => 'December',
     ],
-    'available_months' => ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'
+    'available_months' => ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec',
     ],
     'userskill_rating' => [
         '1' => '1-basic',
         '2' => '2-proficient',
         '3' => '3-advanced',
-        '4' => '4-expert'
+        '4' => '4-expert',
     ],
     'usercert_rating' => [
-        '1' => 'yes'
+        '1' => 'yes',
     ],
     'defaultRole' => 'User',
     'activity_status' => [
         'active' => 'active',
-        'inactive' => 'inactive'
+        'inactive' => 'inactive',
     ],
     'users-mc' => [
         'DLP30' => 'DLP30',
         'DPS22' => 'DPS22',
         'DMR03' => 'DMR03',
-        'DPS26' => 'DPS26'
+        'DPS26' => 'DPS26',
     ],
     'action_status' => [
         'OPEN' => 'OPEN',
         'CLOSED' => 'CLOSED',
         'ON HOLD' => 'ON HOLD',
-        'IN IMPLEMENTATION' => 'IN IMPLEMENTATION'
+        'IN IMPLEMENTATION' => 'IN IMPLEMENTATION',
     ],
     'action_severity' => [
         'LOW' => 'LOW',
         'MEDIUM' => 'MEDIUM',
-        'TOP' => 'TOP'
-    ]
-    
+        'TOP' => 'TOP',
+    ],
+
 ];

@@ -1,4 +1,5 @@
 <?php
+
 return [
     'country' => [
         'Afghanistan'=>'Afghanistan',
@@ -205,6 +206,6 @@ return [
         'Vietnam'=>'Vietnam',
         'Yemen'=>'Yemen',
         'Zambia'=>'Zambia',
-        'Zimbabwe'=>'Zimbabwe'
-    ]
+        'Zimbabwe'=>'Zimbabwe',
+    ],
 ];

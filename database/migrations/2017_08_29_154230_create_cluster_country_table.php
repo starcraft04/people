@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateClusterCountryTable extends Migration
 {
@@ -18,11 +18,11 @@ class CreateClusterCountryTable extends Migration
             $table->string('country', 100);
         });
 
-        Schema::table('cluster_country', function(Blueprint $table) {
-			$table->foreign('cluster_id')->references('id')->on('clusters')
-						->onDelete('restrict')
-						->onUpdate('restrict');
-		});
+        Schema::table('cluster_country', function (Blueprint $table) {
+            $table->foreign('cluster_id')->references('id')->on('clusters')
+                        ->onDelete('restrict')
+                        ->onUpdate('restrict');
+        });
     }
 
     /**
@@ -32,8 +32,8 @@ class CreateClusterCountryTable extends Migration
      */
     public function down()
     {
-        Schema::table('cluster_country', function(Blueprint $table) {
-			$table->dropForeign('cluster_country_cluster_id_foreign');
+        Schema::table('cluster_country', function (Blueprint $table) {
+            $table->dropForeign('cluster_country_cluster_id_foreign');
         });
 
         Schema::drop('countries');

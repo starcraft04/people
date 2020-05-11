@@ -5,7 +5,7 @@ return [
     /*
     | Make commands
     */
-    
+
     'make' => [
         'make:auth',
         'make:console',
@@ -21,7 +21,7 @@ return [
         'make:seeder',
         'make:controller',
         'make:middleware',
-    ],  
+    ],
 
     /*
     | Migrate commands
@@ -45,7 +45,7 @@ return [
         'route:clear',
         'route:list',
     ],
-    
+
     /*
     | Queue commands
     */
@@ -61,8 +61,8 @@ return [
         'queue:restart',
         //'queue:listen',
         'queue:subscribe',
-    ],    
-    
+    ],
+
     /*
     | Config commands
     */
@@ -71,7 +71,7 @@ return [
         'config:cache',
         'config:clear',
     ],
-    
+
     /*
     | Cache commands
     */
@@ -80,7 +80,7 @@ return [
         'cache:clear',
         'cache:table',
     ],
-    
+
     /*
     | Miscellaneous commands
     */
@@ -101,4 +101,3 @@ return [
         'session:table',
     ],
 ];
-

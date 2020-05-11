@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class ChangeUserTargets extends Migration
 {
@@ -14,8 +14,8 @@ class ChangeUserTargets extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('revenue_product_codes', 100)->nullable();
-            $table->float('revenue_target',15,2)->nullable();
-            $table->float('order_target',15,2)->nullable();
+            $table->float('revenue_target', 15, 2)->nullable();
+            $table->float('order_target', 15, 2)->nullable();
         });
     }
 

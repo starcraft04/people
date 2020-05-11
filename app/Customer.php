@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Customer extends Model
 {
-
     protected $table = 'customers';
     public $timestamps = false;
     protected $guarded = ['id'];
@@ -20,5 +19,4 @@ class Customer extends Model
     {
         return $this->hasMany('App\CustomerOtherName', 'customer_id');
     }
-
 }

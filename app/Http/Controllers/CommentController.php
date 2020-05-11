@@ -2,17 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 use App\Comment;
-use Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
+use Auth;
 use Entrust;
+use Illuminate\Http\Request;
 
-class CommentController extends Controller {
-
-
+class CommentController extends Controller
+{
     public function show($id)
     {
         $comment = Comment::find($id);
@@ -22,15 +20,16 @@ class CommentController extends Controller {
             return 'error';
         }
     }
+
     public function commentList(Request $request)
     {
         $inputs = $request->all();
         //dd($inputs);
-        return Comment::whereIn('project_id', $inputs['project_ids'])->with('user_summary')->orderBy('created_at','desc')->get();
+        return Comment::whereIn('project_id', $inputs['project_ids'])->with('user_summary')->orderBy('created_at', 'desc')->get();
     }
 
     public function commentInsert(Request $request)
-	{
+    {
         // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
         $result = new \stdClass();
         $inputs = $request->all();
@@ -53,7 +52,7 @@ class CommentController extends Controller {
         // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
         $result = new \stdClass();
 
-        $comments = Comment::where('project_id','=',$project_id)->orderBy('updated_at','desc')->get();
+        $comments = Comment::where('project_id', '=', $project_id)->orderBy('updated_at', 'desc')->get();
         $num_of_comments = count($comments);
         $result->num_of_comments = $num_of_comments;
         $result->list = [];
@@ -94,6 +93,7 @@ class CommentController extends Controller {
             $result->message_type = 'error';
             $result->msg = 'Message cannot be edited by you';
         }
+
         return json_encode($result);
     }
 
@@ -114,7 +114,7 @@ class CommentController extends Controller {
             $result->message_type = 'error';
             $result->msg = 'Message cannot be deleted by you';
         }
+
         return json_encode($result);
     }
-
 }

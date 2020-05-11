@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Seeder;
 use App\Permission;
+use Illuminate\Database\Seeder;
 
 class PermissionTableSeeder19 extends Seeder
 {
@@ -14,15 +14,15 @@ class PermissionTableSeeder19 extends Seeder
     {
         $permission = [
             [
-        		'id' => 53,
-        		'name' => 'projects-lost',
-        		'display_name' => 'View projects lost',
-        		'description' => 'Allow to view the projects lost in the tools section'
-            ]
+                'id' => 53,
+                'name' => 'projects-lost',
+                'display_name' => 'View projects lost',
+                'description' => 'Allow to view the projects lost in the tools section',
+            ],
         ];
 
         foreach ($permission as $key => $value) {
-        	Permission::create($value);
+            Permission::create($value);
         }
     }
 }

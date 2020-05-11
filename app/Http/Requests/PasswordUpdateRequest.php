@@ -23,10 +23,9 @@ class PasswordUpdateRequest extends Request
      */
     public function rules()
     {
-
         return [
 
-      'password' => 'same:confirm-password'
+      'password' => 'same:confirm-password',
 
         ];
     }
