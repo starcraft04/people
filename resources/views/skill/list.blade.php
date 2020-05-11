@@ -106,11 +106,11 @@
         // Here we are going to get from PHP the list of roles and their value for the logged in skill
 
         <?php
-          $options = array(
+          $options = [
               'validate_all' => true,
               'return_type' => 'both'
-          );
-          list($validate, $allValidations) = Entrust::ability(null,array('user-view','user-edit','user-delete','user-create'),$options);
+          ];
+          list($validate, $allValidations) = Entrust::ability(null,['user-view','user-edit','user-delete','user-create'],$options);
           echo "var permissions = jQuery.parseJSON('".json_encode($allValidations['permissions'])."');";
         ?>
         // Roles check finished.

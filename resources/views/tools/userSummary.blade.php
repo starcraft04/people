@@ -218,11 +218,11 @@
   // Roles check
   <?php
           // Permissions for actions
-          $options = array(
+          $options = [
               'validate_all' => true,
               'return_type' => 'both'
-          );
-          list($validate, $allValidations) = Entrust::ability(null,array('action-create','action-edit','action-delete','action-all','comment-create','comment-edit','comment-delete','comment-all'),$options);
+          ];
+          list($validate, $allValidations) = Entrust::ability(null,['action-create','action-edit','action-delete','action-all','comment-create','comment-edit','comment-delete','comment-all'],$options);
           echo "var permissions = jQuery.parseJSON('".json_encode($allValidations['permissions'])."');";
   ?>
   //console.log(permissions);

@@ -153,7 +153,7 @@
 <script>
 
 <?php
-  list($validate, $allValidations) = Entrust::ability(null,array('projectLoe-signoff'),['validate_all' => true,'return_type' => 'both']);
+  list($validate, $allValidations) = Entrust::ability(null,['projectLoe-signoff'],['validate_all' => true,'return_type' => 'both']);
   echo "var permissions = jQuery.parseJSON('".json_encode($allValidations['permissions'])."');";
 ?>
 
