@@ -221,7 +221,7 @@ class ProjectRepository
 
     public function getAllProjectsList()
     {
-        return $this->project->lists('project_name', 'id');
+        return $this->project->pluck('project_name', 'id');
     }
 
     public function getListOfProjectsMissingInfo($where = null)

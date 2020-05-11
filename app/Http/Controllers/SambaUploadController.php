@@ -237,7 +237,7 @@ class SambaUploadController extends Controller
             $create_records = true;
         }
 
-        $customers_list = Customer::orderBy('name')->lists('name', 'id');
+        $customers_list = Customer::orderBy('name')->pluck('name', 'id');
         $customers_list->prepend('', '');
 
         $table_height = Auth::user()->table_height;

@@ -136,7 +136,7 @@ class RevenueUploadController extends Controller
 
                 return view('dataFeed/revenueupload', compact('messages', 'color'));
             }
-            $customers_list = Customer::orderBy('name')->lists('name', 'id');
+            $customers_list = Customer::orderBy('name')->pluck('name', 'id');
             \Session::flash('success', 'File uploaded');
 
             return view('dataFeed/revenueupload', compact('customers_list', 'customers_missing', 'messages', 'color'));

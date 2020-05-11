@@ -163,7 +163,7 @@ class ToolsController extends Controller
             $user_list = $this->userRepository->getAllUsersList();
             $user_select_disabled = 'false';
         } elseif (Auth::user()->is_manager == 1) {
-            $user_list = Auth::user()->employees()->lists('name', 'user_id');
+            $user_list = Auth::user()->employees()->pluck('name', 'user_id');
             $user_list->prepend(Auth::user()->name, Auth::user()->id);
             $user_select_disabled = 'false';
         } else {
@@ -172,7 +172,7 @@ class ToolsController extends Controller
             $user_select_disabled = 'true';
         }
 
-        $customers_list = Customer::orderBy('name')->lists('name', 'id');
+        $customers_list = Customer::orderBy('name')->pluck('name', 'id');
         $customers_list->prepend('', '');
         //dd($customers_list);
 
@@ -326,7 +326,7 @@ class ToolsController extends Controller
 
         $user_list = [];
 
-        $customers_list = Customer::orderBy('name')->lists('name', 'id');
+        $customers_list = Customer::orderBy('name')->pluck('name', 'id');
         $customers_list->prepend('', '');
 
         // Here we will define if we can select a user for this project and activity or not
@@ -348,7 +348,7 @@ class ToolsController extends Controller
                 $user_selected = $user_id;
             }
         } elseif (Auth::user()->is_manager == 1) {
-            $user_list_temp = Auth::user()->employees()->lists('name', 'user_id');
+            $user_list_temp = Auth::user()->employees()->pluck('name', 'user_id');
             $user_list_temp->prepend(Auth::user()->name, Auth::user()->id);
 
             if ($user_id == '0') {
@@ -430,7 +430,7 @@ class ToolsController extends Controller
     ->select('users.id', 'users.name')
     ->where('project_id', $project_id)
     ->groupBy('users.name')
-    ->lists('users.name', 'users.id');
+    ->pluck('users.name', 'users.id');
 
         return view('tools/create_update', compact('users_on_project','num_of_actions','user_id','project','year','activities','from_otl','forecast','otl','customers_list',
     'project_name_disabled',
@@ -642,7 +642,7 @@ class ToolsController extends Controller
                     }
                 }
             } else {
-                $user_list = User::where('id', Auth::user()->id)->lists('name', 'id');
+                $user_list = User::where('id', Auth::user()->id)->pluck('name', 'id');
             }
         } else {
             $skill = null;
@@ -663,7 +663,7 @@ class ToolsController extends Controller
             $select = config('select.userskill_rating');
         }
 
-        $user_list = User::where('id', $userskill->user_id)->lists('name', 'id');
+        $user_list = User::where('id', $userskill->user_id)->pluck('name', 'id');
         if (Entrust::can('tools-usersskills-editall') or (Auth::user()->id == $userskill->user_id)) {
             return view('tools/userskill_create_update', compact('userskill', 'skill', 'user_list', 'select'))->with('action', 'update');
         } else {

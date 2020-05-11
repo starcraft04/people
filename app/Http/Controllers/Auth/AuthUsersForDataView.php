@@ -44,7 +44,7 @@ class AuthUsersForDataView
             $this->user_select_disabled = 'false';
         } elseif (Auth::user()->is_manager == 1) {
             $this->manager_list = [Auth::user()->id => Auth::user()->name];
-            $this->user_list = Auth::user()->employees()->lists('name', 'user_id');
+            $this->user_list = Auth::user()->employees()->pluck('name', 'user_id');
             $this->user_list->prepend(Auth::user()->name, Auth::user()->id);
             $this->manager_selected = Auth::user()->id;
             $this->manager_select_disabled = 'true';

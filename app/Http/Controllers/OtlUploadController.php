@@ -262,7 +262,7 @@ class OtlUploadController extends Controller
             }
         }
 
-        $customers_list = Customer::orderBy('name')->lists('name', 'id');
+        $customers_list = Customer::orderBy('name')->pluck('name', 'id');
 
         array_multisort(array_column($messages, 'user'), SORT_ASC, $messages);
         \Session::flash('success', 'File uploaded');

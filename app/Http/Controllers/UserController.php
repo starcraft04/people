@@ -35,7 +35,7 @@ class UserController extends Controller
     {
         $user = User::find($id);
         $manager = $this->userRepository->getMyManagersList($id);
-        $userCluster = $user->clusters->lists('cluster_owner')->toArray();
+        $userCluster = $user->clusters->pluck('cluster_owner')->toArray();
 
         return view('user/show', compact('user', 'manager', 'userCluster'));
     }
@@ -85,9 +85,9 @@ class UserController extends Controller
         $defaultRole = config('select.defaultRole');
 
         if (Entrust::hasRole('Admin')) {
-            $roles = Role::lists('display_name', 'id');
+            $roles = Role::pluck('display_name', 'id');
         } else {
-            $roles = Role::where('id', '!=', '1')->lists('display_name', 'id');
+            $roles = Role::where('id', '!=', '1')->pluck('display_name', 'id');
         }
 
         if (Entrust::can('role-assign')) {
@@ -96,10 +96,10 @@ class UserController extends Controller
             $role_select_disabled = 'true';
         }
 
-        $manager_list = User::orderBy('name')->where('is_manager', '1')->lists('name', 'id');
+        $manager_list = User::orderBy('name')->where('is_manager', '1')->pluck('name', 'id');
         $manager_list->prepend('', '');
 
-        $clusters = Customer::where('cluster_owner', '!=', '')->groupBy('cluster_owner')->lists('cluster_owner');
+        $clusters = Customer::where('cluster_owner', '!=', '')->groupBy('cluster_owner')->pluck('cluster_owner');
 
         return view('user/create_update', compact('manager_list', 'clusters', 'roles', 'role_select_disabled', 'defaultRole'))->with('action', 'create');
     }
@@ -109,9 +109,9 @@ class UserController extends Controller
         $user = User::find($id);
 
         if (Entrust::hasRole('Admin')) {
-            $roles = Role::lists('display_name', 'id');
+            $roles = Role::pluck('display_name', 'id');
         } else {
-            $roles = Role::where('id', '!=', '1')->lists('display_name', 'id');
+            $roles = Role::where('id', '!=', '1')->pluck('display_name', 'id');
         }
 
         if (Entrust::can('role-assign')) {
@@ -120,16 +120,16 @@ class UserController extends Controller
             $role_select_disabled = 'true';
         }
 
-        $userRole = $user->roles->lists('id')->toArray();
+        $userRole = $user->roles->pluck('id')->toArray();
 
-        $manager_list = User::orderBy('name')->where('is_manager', '1')->lists('name', 'id');
+        $manager_list = User::orderBy('name')->where('is_manager', '1')->pluck('name', 'id');
         $manager_list->prepend('', '');
 
         $user = $this->userRepository->getById($id);
         $manager = $this->userRepository->getMyManagersList($id);
 
-        $clusters = Customer::where('cluster_owner', '!=', '')->groupBy('cluster_owner')->lists('cluster_owner');
-        $userCluster = $user->clusters->lists('cluster_owner')->toArray();
+        $clusters = Customer::where('cluster_owner', '!=', '')->groupBy('cluster_owner')->pluck('cluster_owner');
+        $userCluster = $user->clusters->pluck('cluster_owner')->toArray();
         //dd($userCluster);
 
         //\Debugbar::info($manager_list);

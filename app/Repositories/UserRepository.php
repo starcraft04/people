@@ -184,12 +184,12 @@ class UserRepository
 
     public function getManagersList()
     {
-        return $this->user->where('is_manager', '=', '1')->lists('name', 'id');
+        return $this->user->where('is_manager', '=', '1')->pluck('name', 'id');
     }
 
     public function getAllUsersList()
     {
-        return $this->user->lists('name', 'id');
+        return $this->user->pluck('name', 'id');
     }
 
     public function getAllUsersFromManager($id)
@@ -212,7 +212,7 @@ class UserRepository
 
     public function getAllUsersListNoManagers()
     {
-        return $this->user->where('is_manager', '!=', '1')->where('id', '!=', '1')->lists('name', 'id');
+        return $this->user->where('is_manager', '!=', '1')->where('id', '!=', '1')->pluck('name', 'id');
     }
 
     public function getTheoreticalCapacity($where = null)
@@ -251,7 +251,7 @@ class UserRepository
     ->leftjoin('cluster_country', 'cluster_user.cluster_id', '=', 'cluster_country.cluster_id')
     ->where('users.id', '=', $id)
     ->groupBy('country')
-    ->lists('country');
+    ->pluck('country');
 
         return $countries;
     }

@@ -63,7 +63,7 @@ class DashboardController extends Controller
         foreach ($managers as $manager_name) {
             $dscvsisc[$manager_name] = [];
             $manager = User::where('name', $manager_name)->first();
-            $employee_list = $manager->employees()->lists('name', 'users.id');
+            $employee_list = $manager->employees()->pluck('name', 'users.id');
             foreach ($employee_list as $employee_id => $employee_name) {
                 $totalworkdays = DB::table('activities')
           ->select(DB::raw('SUM(activities.task_hour) as sum_task'))
@@ -133,17 +133,17 @@ class DashboardController extends Controller
         } else {
             $top = Auth::user()->clusterboard_top;
         }
-        $clusters = Auth::user()->clusters()->lists('cluster_owner');
+        $clusters = Auth::user()->clusters()->pluck('cluster_owner');
         //dd($clusters);
         if (count($clusters) == 0) {
-            $clusters = Customer::whereNotNull('cluster_owner')->groupBy('cluster_owner')->lists('cluster_owner');
+            $clusters = Customer::whereNotNull('cluster_owner')->groupBy('cluster_owner')->pluck('cluster_owner');
             //dd($clusters);
         }
         $customers_list = Customer::where(function ($query) use ($clusters) {
             foreach ($clusters as $cluster) {
                 $query->orWhere('cluster_owner', $cluster);
             }
-        })->lists('name', 'id');
+        })->pluck('name', 'id');
         //dd($customers_list);
 
         if (is_null($customer_id) || $customer_id == 0) {

@@ -29,7 +29,7 @@ class ActivityRepository
 
     public function getByOTL($year, $user_id, $project_id, $from_otl)
     {
-        return $this->activity->where('year', $year)->where('user_id', $user_id)->where('project_id', $project_id)->where('from_otl', $from_otl)->lists('task_hour', 'month');
+        return $this->activity->where('year', $year)->where('user_id', $user_id)->where('project_id', $project_id)->where('from_otl', $from_otl)->pluck('task_hour', 'month');
     }
 
     public function checkIfExists($inputs)

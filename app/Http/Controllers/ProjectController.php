@@ -43,7 +43,7 @@ class ProjectController extends Controller
     public function getFormCreate()
     {
         $today = date('Y-m-d');
-        $customers_list = Customer::orderBy('name')->lists('name', 'id');
+        $customers_list = Customer::orderBy('name')->pluck('name', 'id');
         $customers_list->prepend('', '');
 
         return view('project/create_update', compact('today', 'customers_list'))->with('action', 'create');
@@ -52,7 +52,7 @@ class ProjectController extends Controller
     public function getFormUpdate($id)
     {
         $project = $this->projectRepository->getById($id);
-        $customers_list = Customer::orderBy('name')->lists('name', 'id');
+        $customers_list = Customer::orderBy('name')->pluck('name', 'id');
         $customers_list->prepend('', '');
 
         return view('project/create_update', compact('project', 'customers_list'))->with('action', 'update');
