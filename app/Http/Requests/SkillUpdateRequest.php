@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Foundation\Http\FormRequest;
 use App\Http\Requests\Request;
 
-class SkillUpdateRequest extends Request
+class SkillUpdateRequest extends FormRequest
 {
     /**
      * Determine if the activity is authorized to make this request.

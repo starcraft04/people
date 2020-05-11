@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Foundation\Http\FormRequest;
 use App\Http\Requests\Request;
 
-class OtlUploadRequest extends Request
+class OtlUploadRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

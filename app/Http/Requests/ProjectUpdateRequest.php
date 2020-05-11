@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Foundation\Http\FormRequest;
 use App\Http\Requests\Request;
 
-class ProjectUpdateRequest extends Request
+class ProjectUpdateRequest extends FormRequest
 {
     /**
      * Determine if the project is authorized to make this request.
