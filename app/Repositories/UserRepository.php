@@ -2,13 +2,13 @@
 
 namespace App\Repositories;
 
-use Illuminate\Support\Facades\Hash;
 use App\Cluster;
 use App\User;
 use Auth;
 use Datatables;
 use DB;
 use Entrust;
+use Illuminate\Support\Facades\Hash;
 
 class UserRepository
 {
