@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
@@ -44,7 +45,7 @@ class User extends Authenticatable
 
     public function update_password($password, $toDB = false)
     {
-        $this->password = bcrypt($password);
+        $this->password = Hash::make($password);
         if ($toDB) {
             $this->save();
         }

@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use Illuminate\Support\Facades\Hash;
 use App\Cluster;
 use App\User;
 use Auth;
@@ -51,7 +52,7 @@ class UserRepository
         }
         // Password special case
         if (isset($inputs['password']) && trim($inputs['password']) != '') {
-            $user->password = bcrypt($inputs['password']);
+            $user->password = Hash::make($inputs['password']);
         }
         // Nullable
         if (isset($inputs['country'])) {
