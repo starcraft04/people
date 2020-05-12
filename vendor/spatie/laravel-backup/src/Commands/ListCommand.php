@@ -2,38 +2,31 @@
 
 namespace Spatie\Backup\Commands;
 
-use Illuminate\Support\Collection;
 use Spatie\Backup\Helpers\Format;
+use Illuminate\Support\Collection;
 use Spatie\Backup\Tasks\Monitor\BackupDestinationStatus;
 use Spatie\Backup\Tasks\Monitor\BackupDestinationStatusFactory;
 
 class ListCommand extends BaseCommand
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $signature = 'backup:list';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $description = 'Display a list of all backups.';
 
     public function handle()
     {
-        $statuses = BackupDestinationStatusFactory::createForMonitorConfig(config('laravel-backup.monitorBackups'));
+        $statuses = BackupDestinationStatusFactory::createForMonitorConfig(config('backup.monitorBackups'));
 
         $this->displayOverview($statuses);
 
         $this->displayConnectionErrors($statuses);
     }
 
-    /**
-     * @param \Illuminate\Support\Collection $backupDestinationStatuses
-     */
     protected function displayOverview(Collection $backupDestinationStatuses)
     {
-        $headers = ['Name', 'Disk', 'Reachable', 'Healthy', '# of backups', 'Youngest backup', 'Used storage'];
+        $headers = ['Name', 'Disk', 'Reachable', 'Healthy', '# of backups', 'Newest backup', 'Used storage'];
 
         $rows = $backupDestinationStatuses->map(function (BackupDestinationStatus $backupDestinationStatus) {
             return $this->convertToRow($backupDestinationStatus);
@@ -42,27 +35,22 @@ class ListCommand extends BaseCommand
         $this->table($headers, $rows);
     }
 
-    /**
-     * @param \Spatie\Backup\Tasks\Monitor\BackupDestinationStatus $backupDestinationStatus
-     *
-     * @return array
-     */
-    public function convertToRow(BackupDestinationStatus $backupDestinationStatus)
+    public function convertToRow(BackupDestinationStatus $backupDestinationStatus): array
     {
         $row = [
-            $backupDestinationStatus->getBackupName(),
-            $backupDestinationStatus->getDiskName(),
-            Format::getEmoji($backupDestinationStatus->isReachable()),
-            Format::getEmoji($backupDestinationStatus->isHealthy()),
-            'amount' => $backupDestinationStatus->getAmountOfBackups(),
-            'youngest' => $backupDestinationStatus->getDateOfNewestBackup()
-                ? Format::ageInDays($backupDestinationStatus->getDateOfNewestBackup())
+            $backupDestinationStatus->backupName(),
+            $backupDestinationStatus->diskName(),
+            Format::emoji($backupDestinationStatus->isReachable()),
+            Format::emoji($backupDestinationStatus->isHealthy()),
+            'amount' => $backupDestinationStatus->amountOfBackups(),
+            'newest' => $backupDestinationStatus->dateOfNewestBackup()
+                ? Format::ageInDays($backupDestinationStatus->dateOfNewestBackup())
                 : 'No backups present',
-            'usedStorage' => $backupDestinationStatus->getHumanReadableUsedStorage(),
+            'usedStorage' => $backupDestinationStatus->humanReadableUsedStorage(),
         ];
 
-        if (!$backupDestinationStatus->isReachable()) {
-            foreach (['amount', 'youngest', 'usedStorage'] as $propertyName) {
+        if (! $backupDestinationStatus->isReachable()) {
+            foreach (['amount', 'newest', 'usedStorage'] as $propertyName) {
                 $row[$propertyName] = '/';
             }
         }
@@ -72,33 +60,24 @@ class ListCommand extends BaseCommand
         return $row;
     }
 
-    /**
-     * @param array                                                $row
-     * @param \Spatie\Backup\Tasks\Monitor\BackupDestinationStatus $backupDestinationStatus
-     *
-     * @return array
-     */
-    protected function applyStylingToRow($row, BackupDestinationStatus $backupDestinationStatus)
+    protected function applyStylingToRow(array $row, BackupDestinationStatus $backupDestinationStatus): array
     {
-        if ($backupDestinationStatus->newestBackupIsToolOld() || (!$backupDestinationStatus->getDateOfNewestBackup())) {
-            $row['youngest'] = "<error>{$row['youngest']}</error>";
+        if ($backupDestinationStatus->newestBackupIsTooOld() || (! $backupDestinationStatus->dateOfNewestBackup())) {
+            $row['newest'] = "<error>{$row['newest']}</error>";
         }
 
-        if ($backupDestinationStatus->backupUsesTooMuchStorage()) {
+        if ($backupDestinationStatus->usesTooMuchStorage()) {
             $row['usedStorage'] = "<error>{$row['usedStorage']} </error>";
         }
 
         return $row;
     }
 
-    /**
-     * @param \Illuminate\Support\Collection $backupDestinationStatuses
-     */
     protected function displayConnectionErrors(Collection $backupDestinationStatuses)
     {
         $unreachableBackupDestinationStatuses = $backupDestinationStatuses
-            ->filter(function (BackupDestinationStatus $backupDestinationStatus) {
-                return !$backupDestinationStatus->isReachable();
+            ->reject(function (BackupDestinationStatus $backupDestinationStatus) {
+                return $backupDestinationStatus->isReachable();
             });
 
         if ($unreachableBackupDestinationStatuses->isEmpty()) {
@@ -110,9 +89,8 @@ class ListCommand extends BaseCommand
         $this->warn('-------------------------------');
 
         $unreachableBackupDestinationStatuses->each(function (BackupDestinationStatus $backupStatus) {
-
-            $this->warn("Could not reach backups for {$backupStatus->getBackupName()} on disk {$backupStatus->getFilesystemName()} because:");
-            $this->warn($backupStatus->getConnectionError()->getMessage());
+            $this->warn("Could not reach backups for {$backupStatus->backupName()} on disk {$backupStatus->diskName()} because:");
+            $this->warn($backupStatus->connectionError()->getMessage());
             $this->warn('');
         });
     }

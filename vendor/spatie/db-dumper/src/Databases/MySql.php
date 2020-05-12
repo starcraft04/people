@@ -4,174 +4,67 @@ namespace Spatie\DbDumper\Databases;
 
 use Spatie\DbDumper\DbDumper;
 use Spatie\DbDumper\Exceptions\CannotStartDump;
-use Spatie\DbDumper\Exceptions\CannotSetParameter;
 use Symfony\Component\Process\Process;
 
 class MySql extends DbDumper
 {
-    protected $dbName;
-    protected $userName;
-    protected $password;
-    protected $host = 'localhost';
-    protected $port = 3306;
-    protected $socket;
-    protected $dumpBinaryPath = '';
+    /** @var bool */
+    protected $skipComments = true;
+
+    /** @var bool */
     protected $useExtendedInserts = true;
+
+    /** @var bool */
     protected $useSingleTransaction = false;
-    protected $includeTables = array();
-    protected $excludeTables = array();
-    protected $timeout;
 
-    /**
-     * @return string
-     */
-    public function getDbName()
+    /** @var bool */
+    protected $skipLockTables = false;
+
+    /** @var bool */
+    protected $useQuick = false;
+
+    /** @var string */
+    protected $defaultCharacterSet = '';
+
+    /** @var bool */
+    protected $dbNameWasSetAsExtraOption = false;
+
+    /** @var bool */
+    protected $allDatabasesWasSetAsExtraOption = false;
+
+    /** @var string */
+    protected $setGtidPurged = 'AUTO';
+
+    /** @var bool */
+    protected $createTables = true;
+
+    public function __construct()
     {
-        return $this->dbName;
+        $this->port = 3306;
     }
 
     /**
-     * @param string $dbName
-     *
-     * @return \Spatie\DbDumper\Databases\MySql
+     * @return $this
      */
-    public function setDbName($dbName)
+    public function skipComments()
     {
-        $this->dbName = $dbName;
+        $this->skipComments = true;
 
         return $this;
     }
 
     /**
-     * @param string $userName
-     *
-     * @return \Spatie\DbDumper\Databases\MySql
+     * @return $this
      */
-    public function setUserName($userName)
+    public function dontSkipComments()
     {
-        $this->userName = $userName;
+        $this->skipComments = false;
 
         return $this;
     }
 
     /**
-     * @param string $password
-     *
-     * @return \Spatie\DbDumper\Databases\MySql
-     */
-    public function setPassword($password)
-    {
-        $this->password = $password;
-
-        return $this;
-    }
-
-    /**
-     * @param string $host
-     *
-     * @return \Spatie\DbDumper\Databases\MySql
-     */
-    public function setHost($host)
-    {
-        $this->host = $host;
-
-        return $this;
-    }
-
-    /**
-     * @param int $port
-     *
-     * @return \Spatie\DbDumper\Databases\MySql
-     */
-    public function setPort($port)
-    {
-        $this->port = $port;
-
-        return $this;
-    }
-
-    /**
-     * @param int $socket
-     *
-     * @return \Spatie\DbDumper\Databases\MySql
-     */
-    public function setSocket($socket)
-    {
-        $this->socket = $socket;
-
-        return $this;
-    }
-
-    /**
-     * @param int $timeout
-     *
-     * @return \Spatie\DbDumper\Databases\PostgreSql
-     */
-    public function setTimeout($timeout)
-    {
-        $this->timeout = $timeout;
-
-        return $this;
-    }
-
-    /**
-     * @param string $dumpBinaryPath
-     *
-     * @return \Spatie\DbDumper\Databases\MySql
-     */
-    public function setDumpBinaryPath($dumpBinaryPath)
-    {
-        if ($dumpBinaryPath !== '' && substr($dumpBinaryPath, -1) !== '/') {
-            $dumpBinaryPath .= '/';
-        }
-
-        $this->dumpBinaryPath = $dumpBinaryPath;
-
-        return $this;
-    }
-
-    /**
-     * @param string|array $includeTables
-     *
-     * @return \Spatie\DbDumper\Databases\MySql
-     */
-    public function includeTables($includeTables)
-    {
-        if (!empty($this->excludeTables)) {
-            throw CannotSetParameter::conflictingParameters('includeTables', 'excludeTables');
-        }
-
-        if (!is_array($includeTables)) {
-            $includeTables = explode(', ', $includeTables);
-        }
-
-        $this->includeTables = $includeTables;
-
-        return $this;
-    }
-
-    /**
-     * @param string/array $excludeTables
-     *
-     * @return \Spatie\DbDumper\Databases\MySql
-     */
-    public function excludeTables($excludeTables)
-    {
-        if (!empty($this->includeTables)) {
-            throw CannotSetParameter::conflictingParameters('excludeTables', 'tables');
-        }
-
-        if (!is_array($excludeTables)) {
-            $excludeTables = explode(', ', $excludeTables);
-        }
-
-        $this->excludeTables = $excludeTables;
-
-        return $this;
-    }
-
-    /**
-     * @return \Spatie\DbDumper\Databases\MySql
+     * @return $this
      */
     public function useExtendedInserts()
     {
@@ -181,7 +74,7 @@ class MySql extends DbDumper
     }
 
     /**
-     * @return \Spatie\DbDumper\Databases\MySql
+     * @return $this
      */
     public function dontUseExtendedInserts()
     {
@@ -191,7 +84,7 @@ class MySql extends DbDumper
     }
 
     /**
-     * @return \Spatie\DbDumper\Databases\MySql
+     * @return $this
      */
     public function useSingleTransaction()
     {
@@ -201,11 +94,73 @@ class MySql extends DbDumper
     }
 
     /**
-     * @return \Spatie\DbDumper\Databases\MySql
+     * @return $this
      */
     public function dontUseSingleTransaction()
     {
         $this->useSingleTransaction = false;
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function skipLockTables()
+    {
+        $this->skipLockTables = true;
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function dontSkipLockTables()
+    {
+        $this->skipLockTables = false;
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function useQuick()
+    {
+        $this->useQuick = true;
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function dontUseQuick()
+    {
+        $this->useQuick = false;
+
+        return $this;
+    }
+
+    /**
+     * @param string $characterSet
+     *
+     * @return $this
+     */
+    public function setDefaultCharacterSet(string $characterSet)
+    {
+        $this->defaultCharacterSet = $characterSet;
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setGtidPurged(string $setGtidPurged)
+    {
+        $this->setGtidPurged = $setGtidPurged;
 
         return $this;
     }
@@ -218,7 +173,7 @@ class MySql extends DbDumper
      * @throws \Spatie\DbDumper\Exceptions\CannotStartDump
      * @throws \Spatie\DbDumper\Exceptions\DumpFailed
      */
-    public function dumpToFile($dumpFile)
+    public function dumpToFile(string $dumpFile)
     {
         $this->guardAgainstIncompleteCredentials();
 
@@ -228,15 +183,36 @@ class MySql extends DbDumper
 
         $command = $this->getDumpCommand($dumpFile, $temporaryCredentialsFile);
 
-        $process = new Process($command);
-
-        if (!is_null($this->timeout)) {
-            $process->setTimeout($this->timeout);
-        }
+        $process = Process::fromShellCommandline($command, null, null, null, $this->timeout);
 
         $process->run();
 
         $this->checkIfDumpWasSuccessFul($process, $dumpFile);
+    }
+
+    public function addExtraOption(string $extraOption)
+    {
+        if (strpos($extraOption, '--all-databases') !== false) {
+            $this->dbNameWasSetAsExtraOption = true;
+            $this->allDatabasesWasSetAsExtraOption = true;
+        }
+
+        if (preg_match('/^--databases (\S+)/', $extraOption, $matches) === 1) {
+            $this->setDbName($matches[1]);
+            $this->dbNameWasSetAsExtraOption = true;
+        }
+
+        return parent::addExtraOption($extraOption);
+    }
+
+    /**
+     * @return $this
+     */
+    public function doNotCreateTables()
+    {
+        $this->createTables = false;
+
+        return $this;
     }
 
     /**
@@ -247,42 +223,74 @@ class MySql extends DbDumper
      *
      * @return string
      */
-    public function getDumpCommand($dumpFile, $temporaryCredentialsFile)
+    public function getDumpCommand(string $dumpFile, string $temporaryCredentialsFile): string
     {
+        $quote = $this->determineQuote();
+
         $command = [
-            "{$this->dumpBinaryPath}mysqldump",
+            "{$quote}{$this->dumpBinaryPath}mysqldump{$quote}",
             "--defaults-extra-file=\"{$temporaryCredentialsFile}\"",
-            '--skip-comments',
-            $this->useExtendedInserts ? '--extended-insert' : '--skip-extended-insert',
         ];
+
+        if (! $this->createTables) {
+            $command[] = '--no-create-info';
+        }
+
+        if ($this->skipComments) {
+            $command[] = '--skip-comments';
+        }
+
+        $command[] = $this->useExtendedInserts ? '--extended-insert' : '--skip-extended-insert';
 
         if ($this->useSingleTransaction) {
             $command[] = '--single-transaction';
         }
 
-        if ($this->socket != '') {
+        if ($this->skipLockTables) {
+            $command[] = '--skip-lock-tables';
+        }
+
+        if ($this->useQuick) {
+            $command[] = '--quick';
+        }
+
+        if ($this->socket !== '') {
             $command[] = "--socket={$this->socket}";
         }
 
-        if (!empty($this->excludeTables)) {
-            $command[] = '--ignore-table='.implode(' --ignore-table=', $this->excludeTables);
+        foreach ($this->excludeTables as $tableName) {
+            $command[] = "--ignore-table={$this->dbName}.{$tableName}";
         }
 
-        $command[] = "{$this->dbName}";
-
-        if (!empty($this->includeTables)) {
-            $command[] = implode(' ', $this->includeTables);
+        if (! empty($this->defaultCharacterSet)) {
+            $command[] = '--default-character-set='.$this->defaultCharacterSet;
         }
 
-        $command[] = "> \"{$dumpFile}\"";
+        foreach ($this->extraOptions as $extraOption) {
+            $command[] = $extraOption;
+        }
 
-        return implode(' ', $command);
+        if ($this->setGtidPurged !== 'AUTO') {
+            $command[] = '--set-gtid-purged='.$this->setGtidPurged;
+        }
+
+        if (! $this->dbNameWasSetAsExtraOption) {
+            $command[] = $this->dbName;
+        }
+
+        if (! empty($this->includeTables)) {
+            $includeTables = implode(' ', $this->includeTables);
+            $command[] = "--tables {$includeTables}";
+        }
+
+        foreach ($this->extraOptionsAfterDbName as $extraOptionAfterDbName) {
+            $command[] = $extraOptionAfterDbName;
+        }
+
+        return $this->echoToFile(implode(' ', $command), $dumpFile);
     }
 
-    /**
-     * @return string
-     */
-    public function getContentsOfCredentialsFile()
+    public function getContentsOfCredentialsFile(): string
     {
         $contents = [
             '[client]',
@@ -297,10 +305,14 @@ class MySql extends DbDumper
 
     protected function guardAgainstIncompleteCredentials()
     {
-        foreach (['userName', 'dbName', 'host'] as $requiredProperty) {
+        foreach (['userName', 'host'] as $requiredProperty) {
             if (strlen($this->$requiredProperty) === 0) {
                 throw CannotStartDump::emptyParameter($requiredProperty);
             }
+        }
+
+        if (strlen($this->dbName) === 0 && ! $this->allDatabasesWasSetAsExtraOption) {
+            throw CannotStartDump::emptyParameter('dbName');
         }
     }
 }

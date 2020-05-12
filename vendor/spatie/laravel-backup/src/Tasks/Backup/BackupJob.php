@@ -2,20 +2,23 @@
 
 namespace Spatie\Backup\Tasks\Backup;
 
+use Exception;
+use Carbon\Carbon;
+use Spatie\DbDumper\DbDumper;
 use Illuminate\Support\Collection;
-use Spatie\Backup\BackupDestination\Backup;
-use Spatie\Backup\BackupDestination\BackupDestination;
+use Spatie\DbDumper\Databases\Sqlite;
 use Spatie\Backup\Events\BackupHasFailed;
 use Spatie\Backup\Events\BackupWasSuccessful;
 use Spatie\Backup\Events\BackupZipWasCreated;
 use Spatie\Backup\Exceptions\InvalidBackupJob;
-use Spatie\Backup\Helpers\Format;
-use Spatie\DbDumper\DbDumper;
-use Exception;
+use Spatie\DbDumper\Compressors\GzipCompressor;
+use Spatie\TemporaryDirectory\TemporaryDirectory;
+use Spatie\Backup\Events\BackupManifestWasCreated;
+use Spatie\Backup\BackupDestination\BackupDestination;
 
 class BackupJob
 {
-    /**  @var \Spatie\Backup\Tasks\Backup\FileSelection */
+    /** @var \Spatie\Backup\Tasks\Backup\FileSelection */
     protected $fileSelection;
 
     /** @var \Illuminate\Support\Collection */
@@ -24,113 +27,97 @@ class BackupJob
     /** @var \Illuminate\Support\Collection */
     protected $backupDestinations;
 
-    /** @var \Spatie\Backup\Tasks\Backup\TemporaryDirectory */
+    /** @var string */
+    protected $filename;
+
+    /** @var \Spatie\TemporaryDirectory\TemporaryDirectory */
     protected $temporaryDirectory;
 
-    /** @var string  */
-    protected $filename;
+    /** @var bool */
+    protected $sendNotifications = true;
 
     public function __construct()
     {
-        $this->doNotBackupFilesystem();
-        $this->doNotBackupDatabases();
+        $this->dontBackupFilesystem();
+        $this->dontBackupDatabases();
         $this->setDefaultFilename();
 
         $this->backupDestinations = new Collection();
     }
 
-    /**
-     * @return \Spatie\Backup\Tasks\Backup\BackupJob
-     */
-    public function doNotBackupFilesystem()
+    public function dontBackupFilesystem(): self
     {
-        $this->fileSelection = FileSelectionFactory::noFiles();
+        $this->fileSelection = FileSelection::create();
 
         return $this;
     }
 
-    /**
-     * @return \Spatie\Backup\Tasks\Backup\BackupJob
-     */
-    public function doNotBackupDatabases()
+    public function onlyDbName(array $allowedDbNames): self
+    {
+        $this->dbDumpers = $this->dbDumpers->filter(
+            function (DbDumper $dbDumper, string $connectionName) use ($allowedDbNames) {
+                return in_array($connectionName, $allowedDbNames);
+            });
+
+        return $this;
+    }
+
+    public function dontBackupDatabases(): self
     {
         $this->dbDumpers = new Collection();
 
         return $this;
     }
 
-    /**
-     * @return \Spatie\Backup\Tasks\Backup\BackupJob
-     */
-    public function setDefaultFilename()
+    public function disableNotifications(): self
     {
-        $this->filename = date('Y-m-d-His').'.zip';
+        $this->sendNotifications = false;
 
         return $this;
     }
 
-    /**
-     * @param \Spatie\Backup\Tasks\Backup\FileSelection $fileSelection
-     *
-     * @return \Spatie\Backup\Tasks\Backup\BackupJob
-     */
-    public function setFileSelection(FileSelection $fileSelection)
+    public function setDefaultFilename(): self
+    {
+        $this->filename = Carbon::now()->format('Y-m-d-H-i-s').'.zip';
+
+        return $this;
+    }
+
+    public function setFileSelection(FileSelection $fileSelection): self
     {
         $this->fileSelection = $fileSelection;
 
         return $this;
     }
 
-    /**
-     * @param array $dbDumpers
-     *
-     * @return \Spatie\Backup\Tasks\Backup\BackupJob
-     */
-    public function setDbDumpers(array $dbDumpers)
+    public function setDbDumpers(Collection $dbDumpers): self
     {
-        $this->dbDumpers = Collection::make($dbDumpers);
+        $this->dbDumpers = $dbDumpers;
 
         return $this;
     }
 
-    /**
-     * @param string $filename
-     *
-     * @return \Spatie\Backup\Tasks\Backup\BackupJob
-     */
-    public function setFilename($filename)
+    public function setFilename(string $filename): self
     {
         $this->filename = $filename;
 
         return $this;
     }
 
-    /**
-     * @param string $diskName
-     *
-     * @return \Spatie\Backup\Tasks\Backup\BackupJob
-     *
-     * @throws \Spatie\Backup\Exceptions\InvalidBackupJob
-     */
-    public function backupOnlyTo($diskName)
+    public function onlyBackupTo(string $diskName): self
     {
         $this->backupDestinations = $this->backupDestinations->filter(function (BackupDestination $backupDestination) use ($diskName) {
-            return $backupDestination->getDiskName() === $diskName;
+            return $backupDestination->diskName() === $diskName;
         });
 
-        if (!count($this->backupDestinations)) {
+        if (! count($this->backupDestinations)) {
             throw InvalidBackupJob::destinationDoesNotExist($diskName);
         }
 
         return $this;
     }
 
-    /**
-     * @param \Illuminate\Support\Collection $backupDestinations
-     *
-     * @return \Spatie\Backup\Tasks\Backup\BackupJob
-     */
-    public function setBackupDestinations(Collection $backupDestinations)
+    public function setBackupDestinations(Collection $backupDestinations): self
     {
         $this->backupDestinations = $backupDestinations;
 
@@ -139,94 +126,152 @@ class BackupJob
 
     public function run()
     {
+        $temporaryDirectoryPath = config('backup.backup.temporary_directory') ?? storage_path('app/backup-temp');
+
+        $this->temporaryDirectory = (new TemporaryDirectory($temporaryDirectoryPath))
+            ->name('temp')
+            ->force()
+            ->create()
+            ->empty();
+
         try {
-            if (!count($this->backupDestinations)) {
+            if (! count($this->backupDestinations)) {
                 throw InvalidBackupJob::noDestinationsSpecified();
             }
 
-            $this->temporaryDirectory = TemporaryDirectory::create();
+            $manifest = $this->createBackupManifest();
 
-            $zip = $this->createZipContainingAllFilesToBeBackedUp();
+            if (! $manifest->count()) {
+                throw InvalidBackupJob::noFilesToBeBackedUp();
+            }
 
-            $this->copyToBackupDestinations($zip);
+            $zipFile = $this->createZipContainingEveryFileInManifest($manifest);
+
+            $this->copyToBackupDestinations($zipFile);
+        } catch (Exception $exception) {
+            consoleOutput()->error("Backup failed because {$exception->getMessage()}.".PHP_EOL.$exception->getTraceAsString());
+
+            $this->sendNotification(new BackupHasFailed($exception));
 
             $this->temporaryDirectory->delete();
-        } catch (Exception $exception) {
-            consoleOutput()->error("Backup failed because {$exception->getMessage()}.");
 
-            event(new BackupHasFailed($exception));
+            throw $exception;
         }
+
+        $this->temporaryDirectory->delete();
     }
 
-    /**
-     * @return \Spatie\Backup\Tasks\Backup\Zip
-     */
-    protected function createZipContainingAllFilesToBeBackedUp()
+    protected function createBackupManifest(): Manifest
     {
-        $zip = Zip::create($this->temporaryDirectory->getPath($this->filename));
+        $databaseDumps = $this->dumpDatabases();
 
-        $this->addDatabaseDumpsToZip($zip);
-
-        $this->addSelectedFilesToZip($zip);
-
-        event(new BackupZipWasCreated($zip));
-
-        return $zip;
-    }
-
-    /**
-     * @param \Spatie\Backup\Tasks\Backup\Zip $zip
-     */
-    protected function addSelectedFilesToZip(Zip $zip)
-    {
         consoleOutput()->info('Determining files to backup...');
 
-        $zip->add($this->fileSelection->getSelectedFiles());
+        $manifest = Manifest::create($this->temporaryDirectory->path('manifest.txt'))
+            ->addFiles($databaseDumps)
+            ->addFiles($this->filesToBeBackedUp());
 
-        consoleOutput()->info("Zipped {$zip->count()} files...");
+        $this->sendNotification(new BackupManifestWasCreated($manifest));
+
+        return $manifest;
+    }
+
+    public function filesToBeBackedUp()
+    {
+        $this->fileSelection->excludeFilesFrom($this->directoriesUsedByBackupJob());
+
+        return $this->fileSelection->selectedFiles();
+    }
+
+    protected function directoriesUsedByBackupJob(): array
+    {
+        return $this->backupDestinations
+            ->filter(function (BackupDestination $backupDestination) {
+                return $backupDestination->filesystemType() === 'local';
+            })
+            ->map(function (BackupDestination $backupDestination) {
+                return $backupDestination->disk()->getDriver()->getAdapter()->applyPathPrefix('').$backupDestination->backupName();
+            })
+            ->each(function (string $backupDestinationDirectory) {
+                $this->fileSelection->excludeFilesFrom($backupDestinationDirectory);
+            })
+            ->push($this->temporaryDirectory->path())
+            ->toArray();
+    }
+
+    protected function createZipContainingEveryFileInManifest(Manifest $manifest)
+    {
+        consoleOutput()->info("Zipping {$manifest->count()} files...");
+
+        $pathToZip = $this->temporaryDirectory->path(config('backup.backup.destination.filename_prefix').$this->filename);
+
+        $zip = Zip::createForManifest($manifest, $pathToZip);
+
+        consoleOutput()->info("Created zip containing {$zip->count()} files. Size is {$zip->humanReadableSize()}");
+
+        $this->sendNotification(new BackupZipWasCreated($pathToZip));
+
+        return $pathToZip;
     }
 
     /**
-     * @param \Spatie\Backup\Tasks\Backup\Zip $zip
+     * Dumps the databases to the given directory.
+     * Returns an array with paths to the dump files.
+     *
+     * @return array
      */
-    protected function addDatabaseDumpsToZip(Zip $zip)
+    protected function dumpDatabases(): array
     {
-        $this->dbDumpers->each(function (DbDumper $dbDumper) use ($zip) {
-
+        return $this->dbDumpers->map(function (DbDumper $dbDumper) {
             consoleOutput()->info("Dumping database {$dbDumper->getDbName()}...");
 
-            $fileName = $dbDumper->getDbName().'.sql';
-            $temporaryFile = $this->temporaryDirectory->getPath($fileName);
-            $dbDumper->dumpToFile($temporaryFile);
+            $dbType = mb_strtolower(basename(str_replace('\\', '/', get_class($dbDumper))));
 
-            $zip->add($temporaryFile, $fileName);
+            $dbName = $dbDumper instanceof Sqlite ? 'database' : $dbDumper->getDbName();
+
+            $fileName = "{$dbType}-{$dbName}.sql";
+
+            if (config('backup.backup.gzip_database_dump')) {
+                $dbDumper->useCompressor(new GzipCompressor());
+                $fileName .= '.'.$dbDumper->getCompressorExtension();
+            }
+
+            if ($compressor = config('backup.backup.database_dump_compressor')) {
+                $dbDumper->useCompressor(new $compressor());
+                $fileName .= '.'.$dbDumper->getCompressorExtension();
+            }
+
+            $temporaryFilePath = $this->temporaryDirectory->path('db-dumps'.DIRECTORY_SEPARATOR.$fileName);
+
+            $dbDumper->dumpToFile($temporaryFilePath);
+
+            return $temporaryFilePath;
+        })->toArray();
+    }
+
+    protected function copyToBackupDestinations(string $path)
+    {
+        $this->backupDestinations->each(function (BackupDestination $backupDestination) use ($path) {
+            try {
+                consoleOutput()->info("Copying zip to disk named {$backupDestination->diskName()}...");
+
+                $backupDestination->write($path);
+
+                consoleOutput()->info("Successfully copied zip to disk named {$backupDestination->diskName()}.");
+
+                $this->sendNotification(new BackupWasSuccessful($backupDestination));
+            } catch (Exception $exception) {
+                consoleOutput()->error("Copying zip failed because: {$exception->getMessage()}.");
+
+                $this->sendNotification(new BackupHasFailed($exception, $backupDestination ?? null));
+            }
         });
     }
 
-    /**
-     * @param \Spatie\Backup\Tasks\Backup\Zip $zip
-     */
-    protected function copyToBackupDestinations(Zip $zip)
+    protected function sendNotification($notification)
     {
-        $this->backupDestinations->each(function (BackupDestination $backupDestination) use ($zip) {
-
-            try {
-                $fileSize = Format::getHumanReadableSize($zip->getSize());
-
-                $fileName = pathinfo($zip->getPath(), PATHINFO_BASENAME);
-
-                consoleOutput()->info("Copying {$fileName} (size: {$fileSize}) to disk named {$backupDestination->getDiskName()}...");
-
-                $backupDestination->write($zip->getPath());
-
-                consoleOutput()->info("Successfully copied .zip file to disk named {$backupDestination->getDiskName()}.");
-
-                event(new BackupWasSuccessful($backupDestination));
-            } catch (Exception $exception) {
-                consoleOutput()->error("Copying .zip file failed because: {$exception->getMessage()}.");
-
-                event(new BackupHasFailed($exception));
-            }
-        });
+        if ($this->sendNotifications) {
+            event($notification);
+        }
     }
 }

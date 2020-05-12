@@ -11,11 +11,11 @@
 
 namespace NunoMaduro\Collision\Adapters\Laravel;
 
-use Illuminate\Contracts\Container\Container;
-use Illuminate\Contracts\Debug\ExceptionHandler as ExceptionHandlerContract;
+use Exception;
+use Illuminate\Contracts\Foundation\Application;
 use NunoMaduro\Collision\Contracts\Provider as ProviderContract;
+use Illuminate\Contracts\Debug\ExceptionHandler as ExceptionHandlerContract;
 use Symfony\Component\Console\Exception\ExceptionInterface as SymfonyConsoleExceptionInterface;
-use Throwable;
 
 /**
  * This is an Collision Laravel Adapter ExceptionHandler implementation.
@@ -34,25 +34,28 @@ class ExceptionHandler implements ExceptionHandlerContract
     protected $appExceptionHandler;
 
     /**
-     * Holds an instance of the container.
+     * Holds an instance of the application.
      *
-     * @var \Illuminate\Contracts\Container\Container
+     * @var \Illuminate\Contracts\Foundation\Application
      */
-    protected $container;
+    protected $app;
 
     /**
      * Creates a new instance of the ExceptionHandler.
+     *
+     * @param \Illuminate\Contracts\Foundation\Application $app
+     * @param \Illuminate\Contracts\Debug\ExceptionHandler $appExceptionHandler
      */
-    public function __construct(Container $container, ExceptionHandlerContract $appExceptionHandler)
+    public function __construct(Application $app, ExceptionHandlerContract $appExceptionHandler)
     {
-        $this->container           = $container;
+        $this->app = $app;
         $this->appExceptionHandler = $appExceptionHandler;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function report(Throwable $e)
+    public function report(Exception $e)
     {
         $this->appExceptionHandler->report($e);
     }
@@ -60,7 +63,7 @@ class ExceptionHandler implements ExceptionHandlerContract
     /**
      * {@inheritdoc}
      */
-    public function render($request, Throwable $e)
+    public function render($request, Exception $e)
     {
         return $this->appExceptionHandler->render($request, $e);
     }
@@ -68,12 +71,12 @@ class ExceptionHandler implements ExceptionHandlerContract
     /**
      * {@inheritdoc}
      */
-    public function renderForConsole($output, Throwable $e)
+    public function renderForConsole($output, Exception $e)
     {
         if ($e instanceof SymfonyConsoleExceptionInterface) {
             $this->appExceptionHandler->renderForConsole($output, $e);
         } else {
-            $handler = $this->container->make(ProviderContract::class)
+            $handler = $this->app->make(ProviderContract::class)
                 ->register()
                 ->getHandler()
                 ->setOutput($output);
@@ -87,9 +90,10 @@ class ExceptionHandler implements ExceptionHandlerContract
     /**
      * Determine if the exception should be reported.
      *
+     * @param  \Exception  $e
      * @return bool
      */
-    public function shouldReport(Throwable $e)
+    public function shouldReport(Exception $e)
     {
         return $this->appExceptionHandler->shouldReport($e);
     }

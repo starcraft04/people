@@ -4,19 +4,16 @@ namespace Spatie\Backup\Tasks\Cleanup\Strategies;
 
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
-use Spatie\Backup\BackupDestination\Backup;
-use Spatie\Backup\BackupDestination\BackupCollection;
-use Spatie\Backup\Tasks\Cleanup\CleanupStrategy;
 use Spatie\Backup\Tasks\Cleanup\Period;
+use Spatie\Backup\BackupDestination\Backup;
+use Spatie\Backup\Tasks\Cleanup\CleanupStrategy;
+use Spatie\Backup\BackupDestination\BackupCollection;
 
 class DefaultStrategy extends CleanupStrategy
 {
     /** @var \Spatie\Backup\BackupDestination\Backup */
     protected $newestBackup;
 
-    /**
-     * @param \Spatie\Backup\BackupDestination\BackupCollection $backups
-     */
     public function deleteOldBackups(BackupCollection $backups)
     {
         // Don't ever delete the newest backup.
@@ -26,7 +23,7 @@ class DefaultStrategy extends CleanupStrategy
 
         $backupsPerPeriod = $dateRanges->map(function (Period $period) use ($backups) {
             return $backups->filter(function (Backup $backup) use ($period) {
-               return $backup->date()->between($period->getStartDate(), $period->getEndDate());
+                return $backup->date()->between($period->startDate(), $period->endDate());
             });
         });
 
@@ -37,17 +34,14 @@ class DefaultStrategy extends CleanupStrategy
 
         $this->removeBackupsForAllPeriodsExceptOne($backupsPerPeriod);
 
-        $this->removeBackupsOlderThan($dateRanges['yearly']->getEndDate(), $backups);
+        $this->removeBackupsOlderThan($dateRanges['yearly']->endDate(), $backups);
 
-        $this->removeOldestsBackupsUntilUsingMaximumStorage($backups);
+        $this->removeOldBackupsUntilUsingLessThanMaximumStorage($backups);
     }
 
-    /**
-     * @return \Illuminate\Support\Collection
-     */
-    protected function calculateDateRanges()
+    protected function calculateDateRanges(): Collection
     {
-        $config = $this->config->get('laravel-backup.cleanup.defaultStrategy');
+        $config = $this->config->get('backup.cleanup.defaultStrategy');
 
         $daily = new Period(
             Carbon::now()->subDays($config['keepAllBackupsForDays']),
@@ -57,45 +51,36 @@ class DefaultStrategy extends CleanupStrategy
         );
 
         $weekly = new Period(
-            $daily->getEndDate(),
-            $daily->getEndDate()
+            $daily->endDate(),
+            $daily->endDate()
                 ->subWeeks($config['keepWeeklyBackupsForWeeks'])
         );
 
         $monthly = new Period(
-            $weekly->getEndDate(),
-            $weekly->getEndDate()
+            $weekly->endDate(),
+            $weekly->endDate()
                 ->subMonths($config['keepMonthlyBackupsForMonths'])
         );
 
         $yearly = new Period(
-            $monthly->getEndDate(),
-            $monthly->getEndDate()
+            $monthly->endDate(),
+            $monthly->endDate()
                 ->subYears($config['keepYearlyBackupsForYears'])
         );
 
         return collect(compact('daily', 'weekly', 'monthly', 'yearly'));
     }
 
-    /**
-     * @param \Illuminate\Support\Collection $backups
-     * @param string                         $dateFormat
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    protected function groupByDateFormat(Collection $backups, $dateFormat)
+    protected function groupByDateFormat(Collection $backups, string $dateFormat): Collection
     {
         return $backups->groupBy(function (Backup $backup) use ($dateFormat) {
             return $backup->date()->format($dateFormat);
         });
     }
 
-    /**
-     * @param \Illuminate\Support\Collection $backupsPerPeriod
-     */
-    protected function removeBackupsForAllPeriodsExceptOne($backupsPerPeriod)
+    protected function removeBackupsForAllPeriodsExceptOne(Collection $backupsPerPeriod)
     {
-        foreach ($backupsPerPeriod as $periodName => $groupedBackupsByDateProperty) {
+        $backupsPerPeriod->each(function (Collection $groupedBackupsByDateProperty, string $periodName) {
             $groupedBackupsByDateProperty->each(function (Collection $group) {
                 $group->shift();
 
@@ -103,40 +88,35 @@ class DefaultStrategy extends CleanupStrategy
                     $backup->delete();
                 });
             });
-        }
+        });
     }
 
-    /**
-     * @param \Carbon\Carbon                                    $endDate
-     * @param \Spatie\Backup\BackupDestination\BackupCollection $backups
-     */
     protected function removeBackupsOlderThan(Carbon $endDate, BackupCollection $backups)
     {
         $backups->filter(function (Backup $backup) use ($endDate) {
             return $backup->exists() && $backup->date()->lt($endDate);
         })->each(function (Backup $backup) {
-           $backup->delete();
+            $backup->delete();
         });
     }
 
-    /**
-     * @param \Spatie\Backup\BackupDestination\BackupCollection $backups
-     */
-    protected function removeOldestsBackupsUntilUsingMaximumStorage(BackupCollection $backups)
+    protected function removeOldBackupsUntilUsingLessThanMaximumStorage(BackupCollection $backups)
     {
-        $maximumSize = $this->config->get('laravel-backup.cleanup.defaultStrategy.deleteOldestBackupsWhenUsingMoreMegabytesThan')
-         * 1024 * 1024;
-
-        if (!$oldestBackup = $backups->oldest()) {
+        if (! $oldest = $backups->oldest()) {
             return;
         }
+
+        $maximumSize = $this->config->get('backup.cleanup.defaultStrategy.deleteOldestBackupsWhenUsingMoreMegabytesThan')
+            * 1024 * 1024;
 
         if (($backups->size() + $this->newestBackup->size()) <= $maximumSize) {
             return;
         }
 
-        $oldestBackup->delete();
+        $oldest->delete();
 
-        $this->removeOldestsBackupsUntilUsingMaximumStorage($backups);
+        $backups = $backups->filter->exists();
+
+        $this->removeOldBackupsUntilUsingLessThanMaximumStorage($backups);
     }
 }
