@@ -535,7 +535,7 @@ class ActivityRepository
         if ($domain != 'all') {
             $activityList->where('u.domain', '=', $domain);
         }
-        $activityList->orderBy('p.country', 'c.name', 'project_name');
+        $activityList->orderBy('p.country')->orderBy('c.name')->orderBy('project_name');
         //$activityList->groupBy('project_name','user_name');
         $data = $activityList->get();
         //dd($data);
@@ -555,7 +555,7 @@ class ActivityRepository
             $activityList->where('u.domain', '=', $domain);
         }
         $activityList->groupBy('c.name');
-        $activityList->orderBy('p.country', 'c.name');
+        $activityList->orderBy('p.country')->orderBy('c.name');
         $data = $activityList->first();
         //dd($data);
 
