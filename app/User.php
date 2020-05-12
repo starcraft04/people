@@ -29,12 +29,12 @@ class User extends Authenticatable
 
     public function managers()
     {
-        return $this->belongsToMany(\App\User::class, 'users_users', 'user_id', 'manager_id')->withPivot('manager_type')->withTimestamps();
+        return $this->belongsToMany(self::class, 'users_users', 'user_id', 'manager_id')->withPivot('manager_type')->withTimestamps();
     }
 
     public function employees()
     {
-        return $this->belongsToMany(\App\User::class, 'users_users', 'manager_id', 'user_id')->withPivot('manager_type')->withTimestamps();
+        return $this->belongsToMany(self::class, 'users_users', 'manager_id', 'user_id')->withPivot('manager_type')->withTimestamps();
     }
 
     public function projects()

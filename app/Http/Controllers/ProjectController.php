@@ -158,7 +158,7 @@ class ProjectController extends Controller
                         'LoE_offshore', 'LoE_contractor', 'gold_order_number', 'product_code', 'revenue', 'win_ratio')
             ->leftjoin('customers', 'projects.customer_id', '=', 'customers.id');
 
-        if (isset($inputs['unassigned']) && $inputs['unassigned'] == 'true') {           
+        if (isset($inputs['unassigned']) && $inputs['unassigned'] == 'true') {
             $projectList->doesntHave('activities');
         } elseif (isset($inputs['unassigned']) && $inputs['unassigned'] == 'false') {
             $projectList->has('activities');
