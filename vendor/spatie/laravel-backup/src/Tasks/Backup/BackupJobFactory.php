@@ -2,10 +2,10 @@
 
 namespace Spatie\Backup\Tasks\Backup;
 
+use Spatie\Backup\BackupDestination\BackupDestinationFactory;
+use Spatie\Backup\Exceptions\InvalidConfiguration;
 use Spatie\DbDumper\Databases\MySql;
 use Spatie\DbDumper\Databases\PostgreSql;
-use Spatie\Backup\Exceptions\InvalidConfiguration;
-use Spatie\Backup\BackupDestination\BackupDestinationFactory;
 
 class BackupJobFactory
 {
@@ -44,12 +44,13 @@ class BackupJobFactory
     protected static function getDbDumpers(array $dbConnectionNames)
     {
         $dbDumpers = array_map(function ($dbConnectionName) {
+
             $dbConfig = config("database.connections.{$dbConnectionName}");
-            $dbHost = array_get($dbConfig, 'read.host', array_get($dbConfig, 'host'));
+
             switch ($dbConfig['driver']) {
                 case 'mysql':
                     $dbDumper = MySql::create()
-                        ->setHost($dbHost)
+                        ->setHost($dbConfig['host'])
                         ->setDbName($dbConfig['database'])
                         ->setUserName($dbConfig['username'])
                         ->setPassword($dbConfig['password'])
@@ -87,7 +88,7 @@ class BackupJobFactory
                     return $dbDumper;
                     break;
 
-                default:
+                default :
                     throw InvalidConfiguration::cannotUseUnsupportedDriver($dbConnectionName, $dbConfig['driver']);
                     break;
             }

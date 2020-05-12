@@ -2,9 +2,9 @@
 
 namespace Spatie\Backup\Notifications\Senders;
 
-use Illuminate\Mail\Message;
-use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Contracts\Config\Repository;
+use Illuminate\Contracts\Mail\Mailer;
+use Illuminate\Mail\Message;
 use Spatie\Backup\Notifications\BaseSender;
 
 class Mail extends BaseSender
@@ -29,6 +29,7 @@ class Mail extends BaseSender
     public function send()
     {
         $this->mailer->raw($this->message, function (Message $message) {
+
             $message
                 ->subject($this->subject)
                 ->from($this->config['from'])

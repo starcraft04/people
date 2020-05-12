@@ -4,10 +4,10 @@ namespace Spatie\Backup\Tasks\Cleanup\Strategies;
 
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
-use Spatie\Backup\Tasks\Cleanup\Period;
 use Spatie\Backup\BackupDestination\Backup;
-use Spatie\Backup\Tasks\Cleanup\CleanupStrategy;
 use Spatie\Backup\BackupDestination\BackupCollection;
+use Spatie\Backup\Tasks\Cleanup\CleanupStrategy;
+use Spatie\Backup\Tasks\Cleanup\Period;
 
 class DefaultStrategy extends CleanupStrategy
 {
@@ -26,7 +26,7 @@ class DefaultStrategy extends CleanupStrategy
 
         $backupsPerPeriod = $dateRanges->map(function (Period $period) use ($backups) {
             return $backups->filter(function (Backup $backup) use ($period) {
-                return $backup->date()->between($period->getStartDate(), $period->getEndDate());
+               return $backup->date()->between($period->getStartDate(), $period->getEndDate());
             });
         });
 
@@ -115,7 +115,7 @@ class DefaultStrategy extends CleanupStrategy
         $backups->filter(function (Backup $backup) use ($endDate) {
             return $backup->exists() && $backup->date()->lt($endDate);
         })->each(function (Backup $backup) {
-            $backup->delete();
+           $backup->delete();
         });
     }
 
@@ -127,7 +127,7 @@ class DefaultStrategy extends CleanupStrategy
         $maximumSize = $this->config->get('laravel-backup.cleanup.defaultStrategy.deleteOldestBackupsWhenUsingMoreMegabytesThan')
          * 1024 * 1024;
 
-        if (! $oldestBackup = $backups->oldest()) {
+        if (!$oldestBackup = $backups->oldest()) {
             return;
         }
 
