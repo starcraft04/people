@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Gestion;
+
 use Illuminate\Support\Str;
 
 class PhotoGestion
