@@ -3,11 +3,11 @@
 namespace Spatie\Backup\Tasks\Cleanup;
 
 use Exception;
-use Spatie\Backup\Helpers\Format;
 use Illuminate\Support\Collection;
+use Spatie\Backup\BackupDestination\BackupDestination;
 use Spatie\Backup\Events\CleanupHasFailed;
 use Spatie\Backup\Events\CleanupWasSuccessful;
-use Spatie\Backup\BackupDestination\BackupDestination;
+use Spatie\Backup\Helpers\Format;
 
 class CleanupJob
 {
@@ -30,10 +30,11 @@ class CleanupJob
     public function run()
     {
         $this->backupDestinations->each(function (BackupDestination $backupDestination) {
+
             try {
-                if (! $backupDestination->isReachable()) {
+                if (!$backupDestination->isReachable()) {
                     throw new Exception("Could not connect to disk {$backupDestination->getDiskName()} because: {$backupDestination->getConnectionError()}");
-                }
+                };
 
                 consoleOutput()->info("Cleaning backups of {$backupDestination->getBackupName()} on disk {$backupDestination->getDiskName()}...");
 

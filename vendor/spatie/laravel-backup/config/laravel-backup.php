@@ -40,7 +40,7 @@ return [
 
             /*
              * The names of the connections to the databases that should be part of the backup.
-             * Currently only MySQL and PostgreSQL databases are supported.
+             * Currently only MySQL- and PostgreSQL-databases are supported.
              */
             'databases' => [
                 'mysql',
@@ -68,42 +68,43 @@ return [
         'defaultStrategy' => [
 
             /*
-             * The number of days for which all backups must be kept.
+             * The amount of days that all backups must be kept.
              */
             'keepAllBackupsForDays' => 7,
 
             /*
-             * The number of days for which all daily backups must be kept.
+             * The amount of days that all daily backups must be kept.
              */
             'keepDailyBackupsForDays' => 16,
 
             /*
-             * The number of weeks for which all one weekly backup must be kept.
+             * The amount of weeks of which one weekly backup must be kept.
              */
             'keepWeeklyBackupsForWeeks' => 8,
 
             /*
-             * The number of months for which one monthly backup must be kept.
+             * The amount of months of which one monthly backup must be kept.
              */
             'keepMonthlyBackupsForMonths' => 4,
 
             /*
-             * The number of years for which one yearly backup must be kept.
+             * The amount of years of which one yearly backup must be kept.
              */
             'keepYearlyBackupsForYears' => 2,
 
             /*
-             * After cleaning up backups, remove the oldest backup until
-             * this number of megabytes has been reached.
+             * After cleaning up the backups remove the oldest backup until
+             * this amount of megabytes has been reached.
              */
-            'deleteOldestBackupsWhenUsingMoreMegabytesThan' => 5000,
-        ],
+            'deleteOldestBackupsWhenUsingMoreMegabytesThan' => 5000
+        ]
     ],
+
 
     /*
      *  In this array you can specify which backups should be monitored.
-     *  If a backup does not meet the specified requirements, the
-     *  UnHealthyBackupWasFound event will be fired.
+     *  If a backup does not meet the specified requirements the
+     *  UnHealthyBackupWasFound-event will be fired.
      */
     'monitorBackups' => [
         [
@@ -132,7 +133,7 @@ return [
 
         /*
          * Here you can specify the ways you want to be notified when certain
-         * events take place. Possible values are "log", "mail", "slack",
+         * events take place. Possible values are "log", "mail", "slack", 
          * "pushover", and "telegram".
          *
          * Slack requires the installation of the maknz/slack package.
@@ -152,38 +153,38 @@ return [
          */
         'mail' => [
             'from' => 'your@email.com',
-            'to' => 'your@email.com',
+            'to'   => 'your@email.com',
         ],
 
         /*
          * Here you can specify how messages should be sent to Slack.
          */
         'slack' => [
-            'channel' => '#backups',
+            'channel'  => '#backups',
             'username' => 'Backup bot',
-            'icon' => ':robot:',
+            'icon'     => ':robot:',
         ],
 
         /*
          * Here you can specify how messages should be sent to Pushover.
          */
         'pushover' => [
-            'token' => env('PUSHOVER_APP_TOKEN'),
-            'user' => env('PUSHOVER_USER_KEY'),
+            'token'  => env('PUSHOVER_APP_TOKEN'),
+            'user'   => env('PUSHOVER_USER_KEY'),
             'sounds' => [
                 'success' => env('PUSHOVER_SOUND_SUCCESS', 'pushover'),
-                'error' => env('PUSHOVER_SOUND_ERROR', 'siren'),
+                'error'   => env('PUSHOVER_SOUND_ERROR', 'siren'),
             ],
         ],
-
+        
         /*
          * Here you can specify how messages should be sent to Telegram Bot API.
          */
         'telegram' => [
             'bot_token' => env('TELEGRAM_BOT_TOKEN'),
-            'chat_id' => env('TELEGRAM_CHAT_ID'),
+            'chat_id'   => env('TELEGRAM_CHAT_ID'),
             'async_requests' => env('TELEGRAM_ASYNC_REQUESTS', false),
             'disable_web_page_preview' => env('TELEGRAM_DISABLE_WEB_PAGE_PREVIEW', true),
         ],
-    ],
+    ]
 ];

@@ -2,20 +2,20 @@
 
 namespace Spatie\Backup\Tasks\Backup;
 
-use Exception;
-use Spatie\DbDumper\DbDumper;
-use Spatie\Backup\Helpers\Format;
 use Illuminate\Support\Collection;
-use Spatie\Backup\Events\BackupHasFailed;
 use Spatie\Backup\BackupDestination\Backup;
+use Spatie\Backup\BackupDestination\BackupDestination;
+use Spatie\Backup\Events\BackupHasFailed;
 use Spatie\Backup\Events\BackupWasSuccessful;
 use Spatie\Backup\Events\BackupZipWasCreated;
 use Spatie\Backup\Exceptions\InvalidBackupJob;
-use Spatie\Backup\BackupDestination\BackupDestination;
+use Spatie\Backup\Helpers\Format;
+use Spatie\DbDumper\DbDumper;
+use Exception;
 
 class BackupJob
 {
-    /** @var \Spatie\Backup\Tasks\Backup\FileSelection */
+    /**  @var \Spatie\Backup\Tasks\Backup\FileSelection */
     protected $fileSelection;
 
     /** @var \Illuminate\Support\Collection */
@@ -27,7 +27,7 @@ class BackupJob
     /** @var \Spatie\Backup\Tasks\Backup\TemporaryDirectory */
     protected $temporaryDirectory;
 
-    /** @var string */
+    /** @var string  */
     protected $filename;
 
     public function __construct()
@@ -118,7 +118,7 @@ class BackupJob
             return $backupDestination->getDiskName() === $diskName;
         });
 
-        if (! count($this->backupDestinations)) {
+        if (!count($this->backupDestinations)) {
             throw InvalidBackupJob::destinationDoesNotExist($diskName);
         }
 
@@ -140,7 +140,7 @@ class BackupJob
     public function run()
     {
         try {
-            if (! count($this->backupDestinations)) {
+            if (!count($this->backupDestinations)) {
                 throw InvalidBackupJob::noDestinationsSpecified();
             }
 
@@ -192,6 +192,7 @@ class BackupJob
     protected function addDatabaseDumpsToZip(Zip $zip)
     {
         $this->dbDumpers->each(function (DbDumper $dbDumper) use ($zip) {
+
             consoleOutput()->info("Dumping database {$dbDumper->getDbName()}...");
 
             $fileName = $dbDumper->getDbName().'.sql';
@@ -208,6 +209,7 @@ class BackupJob
     protected function copyToBackupDestinations(Zip $zip)
     {
         $this->backupDestinations->each(function (BackupDestination $backupDestination) use ($zip) {
+
             try {
                 $fileSize = Format::getHumanReadableSize($zip->getSize());
 
