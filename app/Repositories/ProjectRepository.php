@@ -6,7 +6,6 @@ use App\Project;
 use Auth;
 use Datatables;
 use DB;
-use Entrust;
 
 class ProjectRepository
 {

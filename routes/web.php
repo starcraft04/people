@@ -221,3 +221,7 @@ Route::group(['middleware' => ['auth', 'general']], function () {
     Route::post('listOfSkillsAjax', ['uses' => 'SkillController@listOfSkills', 'as' => 'listOfSkillsAjax', 'middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
     Route::get('test', ['uses' => 'ActivityController@test', 'middleware' => ['permission:user-view']]);
 });
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');

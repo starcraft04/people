@@ -9,7 +9,6 @@ use App\Repositories\UserRepository;
 use Auth;
 use Datatables;
 use DB;
-use Entrust;
 
 class ActivityRepository
 {
@@ -261,7 +260,7 @@ class ActivityRepository
         }
 
         // Checking the roles to see if allowed to see all users
-        if (Entrust::can('tools-activity-all-view')) {
+        if (Auth::user()->can('tools-activity-all-view')) {
             // Format of $manager_list is [ 1=> 'manager1', 2=>'manager2',...]
             // Checking which users to show from the manager list
             if (! empty($where['user'])) {
@@ -351,7 +350,7 @@ class ActivityRepository
         }
 
         // Checking the roles to see if allowed to see all users
-        if (Entrust::can('dashboard-all-view')) {
+        if (Auth::user()->can('dashboard-all-view')) {
             // Format of $manager_list is [ 1=> 'manager1', 2=>'manager2',...]
             if (! empty($where['user'])) {
                 $activityList->where(function ($query) use ($where) {
@@ -431,7 +430,7 @@ class ActivityRepository
         }
 
         // Checking the roles to see if allowed to see all users
-        if (Entrust::can('dashboard-all-view')) {
+        if (Auth::user()->can('dashboard-all-view')) {
             // Format of $manager_list is [ 1=> 'manager1', 2=>'manager2',...]
             if (! empty($where['user'])) {
                 $activityList->where(function ($query) use ($where,$table) {

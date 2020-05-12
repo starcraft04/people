@@ -10,7 +10,6 @@ use App\Role;
 use Auth;
 use Datatables;
 use DB;
-use Entrust;
 use Illuminate\Http\Request;
 
 class CustomerController extends Controller

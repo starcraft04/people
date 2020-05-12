@@ -4,12 +4,12 @@
     <h3>Administer Database Backups</h3>
     <div class="row">
         <div class="col-xs-12 clearfix">
-        @if(Entrust::can('backup-create'))
+        @can('backup-create')
             <a id="create-new-backup-button" href="{{ url('backup/create') }}" class="btn btn-primary pull-right"
                style="margin-bottom:2em;"><i
                     class="fa fa-plus"></i> Create New Backup
             </a>
-        @endif
+        @endcan
         </div>
         <div class="col-xs-12">
             @if (count($backups))
@@ -32,16 +32,16 @@
                                 {{ date('m/d/Y H:i:s',$backup['last_modified']) }}
                             </td>
                             <td class="text-right">
-                            @if(Entrust::can('backup-download'))
+                            @can('backup-download')
                                 <a class="btn btn-xs btn-default"
                                    href="{{ url('backup/download/'.$backup['file_name']) }}"><i
                                         class="fa fa-cloud-download"></i> Download</a>
-                            @endif
-                            @if(Entrust::can('backup-delete'))
+                            @endcan
+                            @can('backup-delete')
                                 <a class="btn btn-xs btn-danger" data-button-type="delete"
                                    href="{{ url('backup/delete/'.$backup['file_name']) }}"><i class="fa fa-trash-o"></i>
                                     Delete</a>
-                            @endif
+                            @endcan
                             </td>
                         </tr>
                     @endforeach

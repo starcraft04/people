@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use Auth;
 use Datatables;
 use DB;
-use Entrust;
 use Illuminate\Http\Request;
 
 class ActionController extends Controller
@@ -134,7 +133,7 @@ class ActionController extends Controller
         $result = new \stdClass();
         $delete_result = Action::find($inputs['id']);
 
-        if ($delete_result->user_id == Auth::user()->id || Entrust::can('action-all')) {
+        if ($delete_result->user_id == Auth::user()->id || Auth::user()->can('action-all')) {
             $delete_result->delete();
             $result->result = 'success';
             $result->box_type = 'success';
@@ -154,7 +153,7 @@ class ActionController extends Controller
         $delete_result = Action::find($action_id);
         $project_id = $delete_result->project_id;
 
-        if ($delete_result->user_id == Auth::user()->id || Entrust::can('action-all')) {
+        if ($delete_result->user_id == Auth::user()->id || Auth::user()->can('action-all')) {
             $delete_result->delete();
             $result->result = 'success';
             $result->box_type = 'success';
@@ -197,7 +196,7 @@ class ActionController extends Controller
             $update_result = Action::find($inputs['id']);
             $project_id = $update_result->project_id;
             unset($inputs['id']);
-            if ($update_result->user_id == Auth::user()->id || $update_result->assigned_user_id == Auth::user()->id || Entrust::can('action-all')) {
+            if ($update_result->user_id == Auth::user()->id || $update_result->assigned_user_id == Auth::user()->id || Auth::user()->can('action-all')) {
                 $update_result->update($inputs);
                 $result->result = 'success';
                 $result->box_type = 'success';

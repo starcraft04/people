@@ -87,9 +87,9 @@
               <th>Project status</th>
               <th>Win ratio (%)</th>
               <th class="last_column">
-                @permission('project-create')
+                @can('project-create')
                 <a href="{{ route('projectFormCreate') }}" class="btn btn-info btn-xs" align="right"><span class="glyphicon glyphicon-plus"> New</span></a>
-                @endpermission
+                @endcan
               </th>
             </tr>
           </thead>
@@ -139,12 +139,12 @@ var unassigned = 'no_use';
 // Here we are going to get from PHP the list of roles and their value for the logged in project
 
 <?php
-  $options = [
+  /* $options = [
     'validate_all' => true,
     'return_type' => 'both'
   ];
   list($validate, $allValidations) = Entrust::ability(null,['project-view','project-edit','project-delete','project-create'],$options);
-  echo "var permissions = jQuery.parseJSON('".json_encode($allValidations['permissions'])."');";
+  echo "var permissions = jQuery.parseJSON('".json_encode($allValidations['permissions'])."');"; */
 ?>
 // Roles check finished.
 

@@ -16,7 +16,6 @@ use App\Role;
 use App\User;
 use Auth;
 use DB;
-use Entrust;
 use Illuminate\Http\Request;
 use Session;
 

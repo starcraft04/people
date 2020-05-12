@@ -15,7 +15,6 @@ use App\Role;
 use Auth;
 use Datatables;
 use DB;
-use Entrust;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
@@ -269,7 +268,7 @@ class ProjectController extends Controller
         // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
         $result = new \stdClass();
         $loe_result = Loe::find($id);
-        if ($loe_result->user_id == Auth::user()->id || Entrust::can('projectLoe-deleteAll')) {
+        if ($loe_result->user_id == Auth::user()->id || Auth::user()->can('projectLoe-deleteAll')) {
             $loe_result->delete();
             $result->result = 'success';
             $result->box_type = 'success';
@@ -326,7 +325,7 @@ class ProjectController extends Controller
         $today = date('Y-m-d H:i:s');
         $Loe = Loe::find($inputs['loe_id']);
 
-        if ($Loe->user_id == Auth::user()->id || Entrust::can('projectLoe-editAll')) {
+        if ($Loe->user_id == Auth::user()->id || Auth::user()->can('projectLoe-editAll')) {
             $startdate = explode(' - ', $inputs['date'])[0];
             $enddate = explode(' - ', $inputs['date'])[1];
 
@@ -377,7 +376,7 @@ class ProjectController extends Controller
         $today = date('Y-m-d H:i:s');
         $Loe = Loe::find($loe_id);
 
-        if (($Loe->user_id == Auth::user()->id || Entrust::can('projectLoe-editAll')) && Entrust::can('projectLoe-signoff')) {
+        if (($Loe->user_id == Auth::user()->id || Auth::user()->can('projectLoe-editAll')) && Auth::user()->can('projectLoe-signoff')) {
             if (! empty($Loe->history)) {
                 $history = $Loe->history;
             } else {

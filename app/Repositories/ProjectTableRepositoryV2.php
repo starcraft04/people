@@ -5,7 +5,6 @@ namespace App\Repositories;
 use Auth;
 use Datatables;
 use DB;
-use Entrust;
 
 class ProjectTableRepositoryV2
 {

@@ -68,13 +68,13 @@
 
       <!-- Window content -->
       <div class="x_content">
-            @permission('tools-activity-new')
+            @can('tools-activity-new')
             <div class="row button_in_row">
               <div class="col-md-12">
                 <button id="new_project" class="btn btn-info btn-xs" align="right"><span class="glyphicon glyphicon-plus"> New Project</span></button>
               </div>
             </div>
-            @endpermission
+            @endcan
             <table id="projectTable" class="table table-striped table-hover table-bordered mytable" width="100%">
                 <thead>
                     <tr>
@@ -260,7 +260,7 @@
                 }
             });
 
-            @permission('tools-activity-edit')
+            @can('tools-activity-edit')
             $('#projectTable').on('click', 'tbody td', function() {
               var table = projectTable;
               var tr = $(this).closest('tr');
@@ -275,9 +275,9 @@
               // If we click on the name, then we create a new project
               window.location.href = "{!! route('toolsFormUpdate',[$user_id_for_update,'','']) !!}/"+row.data().id+"/"+{{ $year }};
             });
-            @endpermission
+            @endcan
 
-            @permission('tools-activity-new')
+            @can('tools-activity-new')
             $('#new_project').on('click', function() {
               window.location.href = "{!! route('toolsFormCreate',$year) !!}";
             });

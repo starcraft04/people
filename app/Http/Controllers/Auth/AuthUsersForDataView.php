@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Auth;
 
 use App\Repositories\UserRepository;
 use Auth;
-use Entrust;
 
 class AuthUsersForDataView
 {
@@ -33,7 +32,7 @@ class AuthUsersForDataView
         $this->year_selected = date('Y');
         $this->year_select_disabled = 'false';
 
-        if (! empty($permissionCheck) && Entrust::can($permissionCheck)) {
+        if (! empty($permissionCheck) && Auth::user()->can($permissionCheck)) {
             // Format of $manager_list is [ 1=> 'manager1', 2=>'manager2',...]
             $this->manager_list = $this->userRepository->getManagersList();
             $this->manager_selected = '';

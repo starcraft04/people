@@ -8,7 +8,6 @@ use App\Http\Requests\SkillUpdateRequest;
 use App\Skill;
 use App\UserSkill;
 use Datatables;
-use Entrust;
 use Illuminate\Http\Request;
 
 class SkillController extends Controller

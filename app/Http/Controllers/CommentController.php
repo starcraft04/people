@@ -6,7 +6,6 @@ use App\Comment;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use Auth;
-use Entrust;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
@@ -60,7 +59,7 @@ class CommentController extends Controller
         $i = 0;
         foreach ($comments as $comment) {
             $result->list[$i] = new \stdClass();
-            if ($comment->user_id == Auth::user()->id || Entrust::can('comment-all')) {
+            if ($comment->user_id == Auth::user()->id || Auth::user()->can('comment-all')) {
                 $result->list[$i]->id = $comment->id;
             } else {
                 $result->list[$i]->id = -1;
@@ -80,7 +79,7 @@ class CommentController extends Controller
         $inputs = $request->all();
         //dd($inputs);
         $comment = Comment::find($id);
-        if ($comment->user_id == Auth::user()->id || Entrust::can('comment-all')) {
+        if ($comment->user_id == Auth::user()->id || Auth::user()->can('comment-all')) {
             $comment->comment = $inputs['comment'];
             $comment->save();
             $result->result = 'success';
@@ -102,7 +101,7 @@ class CommentController extends Controller
         // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
         $result = new \stdClass();
         $comment = Comment::find($id);
-        if ($comment->user_id == Auth::user()->id || Entrust::can('comment-all')) {
+        if ($comment->user_id == Auth::user()->id || Auth::user()->can('comment-all')) {
             Comment::destroy($id);
             $result->result = 'success';
             $result->box_type = 'success';

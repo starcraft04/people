@@ -253,7 +253,7 @@
                 }
             });
 
-            @permission('tools-activity-edit')
+            @can('tools-activity-edit')
             $('#projectTable').on('click', 'tbody td', function() {
               var table = projectTable;
               var tr = $(this).closest('tr');
@@ -268,7 +268,7 @@
               // If we click on the name, then we create a new project
               window.location.href = "{!! route('toolsFormTransferAction',[$user_id,$project_id,'']) !!}/"+row.data().id;
             });
-            @endpermission
+            @endcan
         } );
     </script>
 @stop

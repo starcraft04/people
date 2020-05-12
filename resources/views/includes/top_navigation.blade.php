@@ -18,7 +18,7 @@
       </ul>
     </li>
 
-    @permission(['action-view'])
+    @can('action-view')
     @if(isset($num_of_actions_logged_in_user))
     <!-- Logged in user and drop down -->
     <li class="nav-item dropdown" style="padding-left: 15px; padding-right: 15px;">
@@ -51,7 +51,7 @@
       </ul>
     </li>
     @endif
-    @endpermission
+    @endcan
 
   </ul>
 </nav>

@@ -85,9 +85,9 @@
                         <th>Type</th>
                         <th>From OTL</th>
                         <th class="last_column">
-                          @permission('user-create')
+                          @can('user-create')
                             <a href="{{ route('userFormCreate') }}" class="btn btn-info btn-xs" align="right"><span class="glyphicon glyphicon-plus"> New</span></a>
-                          @endpermission
+                          @endcan
                         </th>
                     </tr>
                 </thead>
@@ -136,12 +136,12 @@
         // Here we are going to get from PHP the list of roles and their value for the logged in user
 
         <?php
-          $options = [
+          /* $options = [
               'validate_all' => true,
               'return_type' => 'both'
           ];
           list($validate, $allValidations) = Entrust::ability(null,['user-view','user-edit','user-delete','user-create'],$options);
-          echo "var permissions = jQuery.parseJSON('".json_encode($allValidations['permissions'])."');";
+          echo "var permissions = jQuery.parseJSON('".json_encode($allValidations['permissions'])."');"; */
         ?>
         // Roles check finished.
 

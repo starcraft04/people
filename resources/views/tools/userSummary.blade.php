@@ -117,7 +117,7 @@
                   </tbody>
                 </table>
               </div>
-              @permission('action-view')
+              @can('action-view')
               <div class="row">
                 <h4>Actions</h4>
                   <div id="actions_general" class="action">
@@ -139,9 +139,9 @@
                         <th>Start</th>
                         <th>End</th>
                         <th>
-                        @permission('action-create')
+                        @can('action-create')
                           <button type="button" class="btn btn-info btn-xs new_action"><span class="glyphicon glyphicon-plus"></span></button>
-                        @endpermission
+                        @endcan
                         </th>
                         </tr>
                       </thead>
@@ -150,7 +150,7 @@
                     </table>
                 </div>
               </div>
-              @endpermission
+              @endcan
             </div>
             <!-- Tab General -->
             <!-- Tab Delivery -->
@@ -218,12 +218,12 @@
   // Roles check
   <?php
           // Permissions for actions
-          $options = [
+          /* $options = [
               'validate_all' => true,
               'return_type' => 'both'
           ];
           list($validate, $allValidations) = Entrust::ability(null,['action-create','action-edit','action-delete','action-all','comment-create','comment-edit','comment-delete','comment-all'],$options);
-          echo "var permissions = jQuery.parseJSON('".json_encode($allValidations['permissions'])."');";
+          echo "var permissions = jQuery.parseJSON('".json_encode($allValidations['permissions'])."');"; */
   ?>
   //console.log(permissions);
   // Roles check
@@ -1004,7 +1004,7 @@
             markup += '</div>';
 
             // Comments
-            @permission('tools-projects-comments')
+            @can('tools-projects-comments')
             markup += '<div class="row">';
             markup += '<h4>Comments</h4>';
             markup += '<div id="comments_project_'+item['project_id']+'" data-project_id="'+item['project_id']+'" class="comment">';
@@ -1018,9 +1018,9 @@
             markup += '<th style="{{ $extra_info_display }}">Project ID</th>';
             markup += '<th>Comment</th>';
             markup += '<th>';
-            @permission('comment-create')
+            @can('comment-create')
               markup += '<button type="button" class="btn btn-info btn-xs new_comment"><span class="glyphicon glyphicon-plus"></span></button>';
-            @endpermission
+            @endcan
             markup += '</th>';
             markup += '</tr>';
             markup += '</thead>';
@@ -1029,11 +1029,11 @@
             markup += '</table>';
             markup += '</div>';
             markup += '</div>';
-            @endpermission
+            @endcan
             // Comments
 
             // Actions
-            @permission('action-view')
+            @can('action-view')
             markup += '<div class="row">';
             markup += '<h4>Actions</h4>';
             markup += '<div id="actions_project_'+item['project_id']+'" data-project_id="'+item['project_id']+'" class="action">';
@@ -1055,9 +1055,9 @@
             markup += '<th>Start</th>';
             markup += '<th>End</th>';
             markup += '<th>';
-            @permission('action-create')
+            @can('action-create')
               markup += '<button type="button" class="btn btn-info btn-xs new_action"><span class="glyphicon glyphicon-plus"></span></button>';
-            @endpermission
+            @endcan
             markup += '</th>';
             markup += '</tr>';
             markup += '</thead>';
@@ -1066,7 +1066,7 @@
             markup += '</table>';
             markup += '</div>';
             markup += '</div>';
-            @endpermission
+            @endcan
             // Actions
 
             markup += '<hr>';
@@ -1083,12 +1083,12 @@
             }
           });
           //console.log(project_ids);
-          @permission('tools-projects-comments')
+          @can('tools-projects-comments')
             loadComments();
-          @endpermission
-          @permission('action-view')
+          @endcan
+          @can('action-view')
             loadActions();
-          @endpermission
+          @endcan
         }
       });
     };

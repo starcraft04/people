@@ -136,16 +136,20 @@ h3:after {
           </div>
           <div class="col-md-offset-8 col-md-1" style="text-align: right;">
             @if($action == 'update')
-            @if(Entrust::can('tools-user_assigned-remove') && $user_id != 0)
+            @can('tools-user_assigned-remove')
+            @if($user_id != 0)
             <button type="button" id="remove_user" class="btn btn-danger btn-sm">Remove user</button>
             @endif
+            @endcan
             @endif
           </div>
           <div class="col-md-1" style="text-align: right;">
             @if($action == 'update')
-            @if(Entrust::can('tools-user_assigned-transfer') && $user_id != 0)
+            @can('tools-user_assigned-transfer')
+            @if($user_id != 0)
             <button type="button" id="transfer_user" class="btn btn-info btn-sm">Transfer</button>
             @endif
+            @endcan
             @endif
           </div>
           <div class="col-md-1" style="text-align: right;">
@@ -161,18 +165,18 @@ h3:after {
           <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
             <li role="presentation" class="active"><a href="#tab_content1" id="tab_main" role="tab" data-toggle="tab" aria-expanded="true">Project</a></li>
             @if($action == 'update')
-              @permission(['projectRevenue-create'])
+              @can('projectRevenue-create')
               <li role="presentation"><a href="#tab_content2" id="tab_revenue" role="tab" data-toggle="tab" aria-expanded="true">Revenue</a></li>
-              @endpermission
-              @permission(['projectLoe-view'])
+              @endcan
+              @can('projectLoe-view')
               <li role="presentation"><a href="#tab_content4" id="tab_loe" role="tab" data-toggle="tab" aria-expanded="true">LoE</a></li>
-              @endpermission
-              @permission(['action-view'])
+              @endcan
+              @can('action-view')
               <li role="presentation"><a href="#tab_content5" id="tab_action" role="tab" data-toggle="tab" aria-expanded="true">Actions (<span id="num_of_actions">{{ $num_of_actions }}</span>)</a></li>
-              @endpermission
-              @permission('tools-projects-comments')
+              @endcan
+              @can('tools-projects-comments')
               <li role="presentation"><a href="#tab_content3" id="tab_comment" role="tab" data-toggle="tab" aria-expanded="true">Comments (<span id="num_of_comments">{{ $num_of_comments }}</span>)</a></li>
-              @endpermission
+              @endcan
             @endif
           </ul>
 
@@ -710,7 +714,7 @@ h3:after {
 
             @if($action == 'update')
               <!-- Revenues -->
-              @permission(['projectRevenue-create'])
+              @can('projectRevenue-create')
               <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="tab_revenue">
                 <div class="row">
                   <div class="table-responsive">
@@ -733,9 +737,9 @@ h3:after {
                           <th>Nov</th>
                           <th>Dec</th>
                           <th>
-                            @permission('projectRevenue-create')
+                            @can('projectRevenue-create')
                               <button type="button" id="new_revenue" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span></button>
-                            @endpermission
+                            @endcan
                           </th>
                         </tr>
                       </thead>
@@ -743,11 +747,11 @@ h3:after {
                   </div>
                 </div>
               </div>
-              @endpermission
+              @endcan
               <!-- Revenues -->
 
               <!-- LoE -->
-              @permission(['projectLoe-view'])
+              @can('projectLoe-view')
               <!-- Table -->
               <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="tab_loe">
                 <div class="row">
@@ -772,9 +776,9 @@ h3:after {
                         <th>Updated at</th>
                         <th>Manager signoff</th>
                         <th>
-                          @permission('projectLoe-create')
+                          @can('projectLoe-create')
                             <button type="button" id="new_loe" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span></button>
-                          @endpermission
+                          @endcan
                         </th>
                       </tr>
                     </thead>
@@ -870,11 +874,11 @@ h3:after {
                   </div>
               </div>
               <!-- Modal -->
-              @endpermission
+              @endcan
               <!-- LoE -->
 
               <!-- Actions -->
-              @permission(['action-view'])
+              @can('action-view')
               <!-- Table -->
               <div role="tabpanel" class="tab-pane fade" id="tab_content5" aria-labelledby="tab_action">
                 <div class="row">
@@ -900,9 +904,9 @@ h3:after {
                         <th>Created at</th>
                         <th>Updated at</th>
                         <th>
-                          @permission('action-create')
+                          @can('action-create')
                             <button type="button" id="new_action" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span></button>
-                          @endpermission
+                          @endcan
                         </th>
                       </tr>
                     </thead>
@@ -1031,33 +1035,33 @@ h3:after {
                   </div>
               </div>
               <!-- Modal -->
-              @endpermission
+              @endcan
               <!-- Actions -->
 
               <!-- Comments -->
-              @permission('tools-projects-comments')
+              @can('tools-projects-comments')
               <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="tab_comment">
-                @permission('comment-create')
+                @can('comment-create')
                 <div class="row">
                   <div class="col-md-1">
                     <button type="button" id="new_comment" class="btn btn-info btn-xl"><span class="glyphicon glyphicon-plus"></span> Add comment</button>
                   </div>
                 </div>
                 <div class="ln_solid"></div>
-                @endpermission
+                @endcan
                 <div id="all_comments">
                 @if($action == 'update')
                 @foreach ($comments as $comment)
                   <div class="panel panel-default">
                     <div class="panel-heading">
                       {{$comment->user->name}} said <small class="text-primary">{{$comment->updated_at->diffForHumans()}}</small>
-                      @if($comment->user_id == Auth::user()->id || Entrust::can('comment-all'))
-                        @if(Entrust::can('comment-edit'))
+                      @if($comment->user_id == Auth::user()->id || Auth::user()->can('comment-all'))
+                        @can('comment-edit')
                           <a id="{{ $comment->id }}" class="pull-right comment_edit"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
-                        @endif
-                        @if(Entrust::can('comment-delete'))
+                        @endcan
+                        @can('comment-delete')
                           <a id="{{ $comment->id }}" style="margin-right: 10px;" class="pull-right comment_delete"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></a>
-                        @endif
+                        @endcan
                       @endif
                     </div>
                     <div class="panel-body">
@@ -1104,7 +1108,7 @@ h3:after {
                 </div>
               </div>
               <!-- Modal -->
-              @endpermission
+              @endcan
               <!-- Comments -->
             @endif
           </div>
@@ -1130,8 +1134,8 @@ var tab_origin = "{{ $tab }}";
 
 // Create the permission variable based on Laravel permission model
 <?php
-  list($validate, $allValidations) = Entrust::ability(null,['action-all','action-edit','action-delete','projectRevenue-delete','projectLoe-edit','projectLoe-delete','projectLoe-editAll','projectLoe-deleteAll'],['validate_all' => true,'return_type' => 'both']);
-  echo "var permissions = jQuery.parseJSON('".json_encode($allValidations['permissions'])."');";
+  /* list($validate, $allValidations) = Entrust::ability(null,['action-all','action-edit','action-delete','projectRevenue-delete','projectLoe-edit','projectLoe-delete','projectLoe-editAll','projectLoe-deleteAll'],['validate_all' => true,'return_type' => 'both']);
+  echo "var permissions = jQuery.parseJSON('".json_encode($allValidations['permissions'])."');"; */
 ?>
 
 $(document).ready(function() {
@@ -1662,12 +1666,12 @@ $(document).ready(function() {
                     comments += '<div class="panel-heading">';
                     comments += value.user_name +' said <small class="text-primary">'+value.time+'</small>';
                     if (value.id > 0) {
-                      @if(Entrust::can('comment-edit'))
+                      @can('comment-edit')
                         comments += '<a id="'+value.id+'" class="pull-right comment_edit"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span></a>';
-                      @endif
-                      @if(Entrust::can('comment-delete'))
+                      @endcan
+                      @can('comment-delete')
                         comments += '<a id="'+value.id+'" style="margin-right: 10px;" class="pull-right comment_delete"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></a>';
-                      @endif
+                      @endcan
                     }
                     comments += '</div>';
                     comments += '<div class="panel-body">';

@@ -6,7 +6,6 @@ use App\Revenue;
 use Auth;
 use Datatables;
 use DB;
-use Entrust;
 
 class RevenueRepository
 {

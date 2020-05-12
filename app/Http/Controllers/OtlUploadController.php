@@ -9,7 +9,6 @@ use App\Repositories\ActivityRepository;
 use App\Repositories\ProjectRepository;
 use App\Repositories\UserRepository;
 use Auth;
-use Entrust;
 use Illuminate\Http\Request;
 
 class OtlUploadController extends Controller
@@ -180,7 +179,7 @@ class OtlUploadController extends Controller
                 // END check user
 
                 // Checking if you have the rights to modify this user
-                if (! Entrust::can('otl-upload-all') && ! in_array($userInDB->id, $users_id)) {
+                if (! Auth::user()->can('otl-upload-all') && ! in_array($userInDB->id, $users_id)) {
                     if (! in_array(['status'=>'error', 'msg'=>'User not your employee', 'user' =>$row['employee_name']], $messages, true)) {
                         array_push($messages, ['status'=>'error',
             'msg'=>'User not your employee',

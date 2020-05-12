@@ -10,7 +10,6 @@ use App\Repositories\UserRepository;
 use App\SambaName;
 use Auth;
 use DateTime;
-use Entrust;
 use Illuminate\Http\Request;
 
 class SambaUploadController extends Controller

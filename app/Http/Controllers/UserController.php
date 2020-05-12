@@ -14,7 +14,6 @@ use App\Role;
 use App\User;
 use Auth;
 use DB;
-use Entrust;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -84,13 +83,13 @@ class UserController extends Controller
     {
         $defaultRole = config('select.defaultRole');
 
-        if (Entrust::hasRole('Admin')) {
+        if (Auth::user()->hasRole('Admin')) {
             $roles = Role::pluck('display_name', 'id');
         } else {
             $roles = Role::where('id', '!=', '1')->pluck('display_name', 'id');
         }
 
-        if (Entrust::can('role-assign')) {
+        if (Auth::user()->can('role-assign')) {
             $role_select_disabled = 'false';
         } else {
             $role_select_disabled = 'true';
@@ -108,13 +107,13 @@ class UserController extends Controller
     {
         $user = User::find($id);
 
-        if (Entrust::hasRole('Admin')) {
+        if (Auth::user()->hasRole('Admin')) {
             $roles = Role::pluck('display_name', 'id');
         } else {
             $roles = Role::where('id', '!=', '1')->pluck('display_name', 'id');
         }
 
-        if (Entrust::can('role-assign')) {
+        if (Auth::user()->can('role-assign')) {
             $role_select_disabled = 'false';
         } else {
             $role_select_disabled = 'true';

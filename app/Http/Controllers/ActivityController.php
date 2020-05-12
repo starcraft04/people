@@ -14,7 +14,6 @@ use App\Repositories\UserRepository;
 use App\Role;
 use Auth;
 use DB;
-use Entrust;
 use Illuminate\Http\Request;
 
 class ActivityController extends Controller

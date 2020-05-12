@@ -7,7 +7,6 @@ use App\User;
 use Auth;
 use Datatables;
 use DB;
-use Entrust;
 use Illuminate\Support\Facades\Hash;
 
 class UserRepository
@@ -165,7 +164,7 @@ class UserRepository
         if (Auth::user()->id != 1) {
             $userList->where('users.id', '!=', '1');
         }
-        if (! Entrust::can('user-view-all')) {
+        if (! Auth::user()->can('user-view-all')) {
             $userList->where('users_users.manager_id', '=', Auth::user()->id);
         }
         if ($exclude_contractors == '1') {
