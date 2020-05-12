@@ -4,8 +4,8 @@ namespace App\Providers;
 
 use App\Action;
 use Auth;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
