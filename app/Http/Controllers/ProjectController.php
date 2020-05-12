@@ -153,7 +153,23 @@ class ProjectController extends Controller
     {
         $inputs = $request->all();
 
-        return $this->projectRepository->getListOfProjects($inputs);
+        $projectList = Project::select('projects.id','customers.name AS customer_name','project_name','otl_project_code','project_type','activity_type','project_status','meta_activity','region',
+                        'country','technology','description','estimated_start_date','estimated_end_date','comments','LoE_onshore','LoE_nearshore',
+                        'LoE_offshore', 'LoE_contractor', 'gold_order_number', 'product_code', 'revenue', 'win_ratio')
+            ->leftjoin('customers', 'projects.customer_id', '=', 'customers.id');
+
+
+        if (isset($inputs['unassigned']) && $inputs['unassigned'] == 'true') {
+            $projectList->doesntHave('activities');
+        }
+        elseif (isset($inputs['unassigned']) && $inputs['unassigned'] == 'false') {
+            $projectList->has('activities');
+        }
+
+        $data = Datatables::of($projectList)->make(true);
+        
+
+        return $data;
     }
 
     public function listOfProjectsRevenue($id)
@@ -162,21 +178,21 @@ class ProjectController extends Controller
 
         if (Auth::user()->can('projectRevenue-edit')) {
             $data = Datatables::of($project_revenues)
-            ->editColumn('year', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="year">{{$year}}</div>')
-            ->editColumn('product_code', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="product_code">{{$product_code}}</div>')
-            ->editColumn('jan', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="jan">{{$jan}}</div>')
-            ->editColumn('feb', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="feb">{{$feb}}</div>')
-            ->editColumn('mar', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="mar">{{$mar}}</div>')
-            ->editColumn('apr', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="apr">{{$apr}}</div>')
-            ->editColumn('may', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="may">{{$may}}</div>')
-            ->editColumn('jun', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="jun">{{$jun}}</div>')
-            ->editColumn('jul', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="jul">{{$jul}}</div>')
-            ->editColumn('aug', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="aug">{{$aug}}</div>')
-            ->editColumn('sep', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="sep">{{$sep}}</div>')
-            ->editColumn('oct', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="oct">{{$oct}}</div>')
-            ->editColumn('nov', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="nov">{{$nov}}</div>')
-            ->editColumn('dec', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="dec">{{$dec}}</div>')
-            ->make(true);
+                ->editColumn('year', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="year">{{$year}}</div>')
+                ->editColumn('product_code', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="product_code">{{$product_code}}</div>')
+                ->editColumn('jan', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="jan">{{$jan}}</div>')
+                ->editColumn('feb', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="feb">{{$feb}}</div>')
+                ->editColumn('mar', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="mar">{{$mar}}</div>')
+                ->editColumn('apr', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="apr">{{$apr}}</div>')
+                ->editColumn('may', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="may">{{$may}}</div>')
+                ->editColumn('jun', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="jun">{{$jun}}</div>')
+                ->editColumn('jul', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="jul">{{$jul}}</div>')
+                ->editColumn('aug', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="aug">{{$aug}}</div>')
+                ->editColumn('sep', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="sep">{{$sep}}</div>')
+                ->editColumn('oct', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="oct">{{$oct}}</div>')
+                ->editColumn('nov', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="nov">{{$nov}}</div>')
+                ->editColumn('dec', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="dec">{{$dec}}</div>')
+                ->make(true);
         } else {
             $data = Datatables::of($project_revenues)->make(true);
         }
@@ -187,13 +203,28 @@ class ProjectController extends Controller
     public function listOfProjectsLoe($id)
     {
         $project_loes = DB::table('project_loe')
-      ->leftjoin('projects', 'projects.id', '=', 'project_loe.project_id')
-      ->leftjoin('customers', 'customers.id', '=', 'projects.customer_id')
-      ->leftjoin('users', 'users.id', '=', 'project_loe.user_id')
-      ->select('project_loe.id AS loe_id','project_loe.project_id AS p_id','projects.project_name','customers.name AS customer_name','users.name AS user_name','project_loe.start_date',
-                'project_loe.end_date','project_loe.domain','project_loe.type','project_loe.location','project_loe.mandays','project_loe.description','project_loe.history','project_loe.signoff',
-                'project_loe.created_at', 'project_loe.updated_at')
-      ->where('project_id', $id);
+            ->leftjoin('projects', 'projects.id', '=', 'project_loe.project_id')
+            ->leftjoin('customers', 'customers.id', '=', 'projects.customer_id')
+            ->leftjoin('users', 'users.id', '=', 'project_loe.user_id')
+            ->select(
+                'project_loe.id AS loe_id',
+                'project_loe.project_id AS p_id',
+                'projects.project_name',
+                'customers.name AS customer_name',
+                'users.name AS user_name',
+                'project_loe.start_date',
+                'project_loe.end_date',
+                'project_loe.domain',
+                'project_loe.type',
+                'project_loe.location',
+                'project_loe.mandays',
+                'project_loe.description',
+                'project_loe.history',
+                'project_loe.signoff',
+                'project_loe.created_at',
+                'project_loe.updated_at'
+            )
+            ->where('project_id', $id);
 
         $data = Datatables::of($project_loes)->make(true);
 
@@ -203,15 +234,33 @@ class ProjectController extends Controller
     public function listOfAllProjectsLoe($year)
     {
         $project_loes = DB::table('project_loe')
-      ->leftjoin('projects', 'projects.id', '=', 'project_loe.project_id')
-      ->leftjoin('customers', 'customers.id', '=', 'projects.customer_id')
-      ->leftjoin('users', 'users.id', '=', 'project_loe.user_id')
-      ->leftjoin('users_users AS uu', 'users.id', '=', 'uu.user_id')
-      ->leftjoin('users AS m', 'm.id', '=', 'uu.manager_id')
-      ->select('project_loe.id AS loe_id','project_loe.project_id AS p_id','projects.project_name','customers.name AS customer_name','users.name AS user_name','project_loe.start_date',
-                'project_loe.end_date','project_loe.domain','project_loe.type','project_loe.location','project_loe.mandays','project_loe.description','project_loe.history','project_loe.signoff',
-                'project_loe.created_at', 'project_loe.updated_at', 'projects.samba_id', 'customers.cluster_owner', 'm.name AS manager_name')
-      ->where('project_loe.created_at', 'like', '%'.$year.'%');
+            ->leftjoin('projects', 'projects.id', '=', 'project_loe.project_id')
+            ->leftjoin('customers', 'customers.id', '=', 'projects.customer_id')
+            ->leftjoin('users', 'users.id', '=', 'project_loe.user_id')
+            ->leftjoin('users_users AS uu', 'users.id', '=', 'uu.user_id')
+            ->leftjoin('users AS m', 'm.id', '=', 'uu.manager_id')
+            ->select(
+                'project_loe.id AS loe_id',
+                'project_loe.project_id AS p_id',
+                'projects.project_name',
+                'customers.name AS customer_name',
+                'users.name AS user_name',
+                'project_loe.start_date',
+                'project_loe.end_date',
+                'project_loe.domain',
+                'project_loe.type',
+                'project_loe.location',
+                'project_loe.mandays',
+                'project_loe.description',
+                'project_loe.history',
+                'project_loe.signoff',
+                'project_loe.created_at',
+                'project_loe.updated_at',
+                'projects.samba_id',
+                'customers.cluster_owner',
+                'm.name AS manager_name'
+            )
+            ->where('project_loe.created_at', 'like', '%' . $year . '%');
 
         $data = Datatables::of($project_loes)->make(true);
 
@@ -286,18 +335,18 @@ class ProjectController extends Controller
 
             if (Auth::user()->is_manager == 1) {
                 $signoff = 1;
-                $history_signoff = 'Date of change: '.$today.'</BR>-- Changed by: '.Auth::user()->name.'</BR>-- MANAGER SIGNOFF</BR>';
+                $history_signoff = 'Date of change: ' . $today . '</BR>-- Changed by: ' . Auth::user()->name . '</BR>-- MANAGER SIGNOFF</BR>';
             } else {
                 $signoff = 0;
                 $history_signoff = '';
             }
 
-            if (! empty($Loe->history)) {
+            if (!empty($Loe->history)) {
                 $history = $Loe->history;
             } else {
                 $history = '';
             }
-            $Loe->history = $history.'Date of change: '.$today.'</BR>-- Changed by: '.Auth::user()->name.'</BR>-- Mandays: '.$Loe->mandays.' to '.$inputs['mandays'].'</BR>'.$history_signoff;
+            $Loe->history = $history . 'Date of change: ' . $today . '</BR>-- Changed by: ' . Auth::user()->name . '</BR>-- Mandays: ' . $Loe->mandays . ' to ' . $inputs['mandays'] . '</BR>' . $history_signoff;
 
             $Loe->start_date = $startdate;
             $Loe->end_date = $enddate;
@@ -332,17 +381,17 @@ class ProjectController extends Controller
         $Loe = Loe::find($loe_id);
 
         if (($Loe->user_id == Auth::user()->id || Entrust::can('projectLoe-editAll')) && Entrust::can('projectLoe-signoff')) {
-            if (! empty($Loe->history)) {
+            if (!empty($Loe->history)) {
                 $history = $Loe->history;
             } else {
                 $history = '';
             }
             if ($Loe->signoff == 0) {
                 $Loe->signoff = 1;
-                $Loe->history = $history.'Date of change: '.$today.'</BR>-- Changed by: '.Auth::user()->name.'</BR>-- MANAGER SIGNOFF</BR>';
+                $Loe->history = $history . 'Date of change: ' . $today . '</BR>-- Changed by: ' . Auth::user()->name . '</BR>-- MANAGER SIGNOFF</BR>';
             } else {
                 $Loe->signoff = 0;
-                $Loe->history = $history.'Date of change: '.$today.'</BR>-- Changed by: '.Auth::user()->name.'</BR>-- MANAGER  REMOVED SIGNOFF</BR>';
+                $Loe->history = $history . 'Date of change: ' . $today . '</BR>-- Changed by: ' . Auth::user()->name . '</BR>-- MANAGER  REMOVED SIGNOFF</BR>';
             }
             $Loe->save();
 
@@ -391,18 +440,24 @@ class ProjectController extends Controller
     public function listOfProjectsNotUsedInPrime($user_name, $year)
     {
         $projects = DB::table('projects')
-          ->select('customers.name AS customer_name','projects.id AS project_id','projects.project_name AS project_name',
-                    'projects.project_type AS project_type','projects.project_status AS project_status',
-                    'projects.otl_project_code AS prime_code', 'projects.meta_activity AS meta_activity')
-          ->leftjoin('customers', 'projects.customer_id', '=', 'customers.id')
-          ->leftjoin('activities', 'activities.project_id', '=', 'projects.id')
-          ->leftjoin('users', 'users.id', '=', 'activities.user_id')
-          ->where('users.name', '=', $user_name)
-          ->where('activities.year', '=', $year)
-          ->groupBy('project_id')
-          ->orderBy('customer_name')
-          ->where('projects.otl_validated', '=', 0)
-          ->get();
+            ->select(
+                'customers.name AS customer_name',
+                'projects.id AS project_id',
+                'projects.project_name AS project_name',
+                'projects.project_type AS project_type',
+                'projects.project_status AS project_status',
+                'projects.otl_project_code AS prime_code',
+                'projects.meta_activity AS meta_activity'
+            )
+            ->leftjoin('customers', 'projects.customer_id', '=', 'customers.id')
+            ->leftjoin('activities', 'activities.project_id', '=', 'projects.id')
+            ->leftjoin('users', 'users.id', '=', 'activities.user_id')
+            ->where('users.name', '=', $user_name)
+            ->where('activities.year', '=', $year)
+            ->groupBy('project_id')
+            ->orderBy('customer_name')
+            ->where('projects.otl_validated', '=', 0)
+            ->get();
 
         return $projects;
     }
@@ -411,11 +466,11 @@ class ProjectController extends Controller
     {
         $inputs = $request->all();
         $project_check = Project::where('project_name', $inputs['project_name'])->where('customer_id', $inputs['customer_id'])
-                              ->get()
-                              ->count();
+            ->get()
+            ->count();
         $prime_check = Project::where('otl_project_code', $inputs['prime_code'])->where('meta_activity', $inputs['meta'])
-                              ->get()
-                              ->count();
+            ->get()
+            ->count();
         // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
         $result = new \stdClass();
         if ($project_check == 0) {

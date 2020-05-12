@@ -67,9 +67,13 @@
                   <i class="fa fa-btn fa-sign-in"></i> Login
                 </button>
 
-                <a class="btn btn-link" href="{{ url('/password/reset') }}">Forgot Your Password?</a>
+
               </div>
             </div>
+            <div class="row">
+              In order to reset your password, please check with your manager.
+            </div>
+
           </form>
         </div>
       </div>
@@ -86,9 +90,10 @@
 <script>
   $(document).ready(function() {
 
-    $(function() { $('[name="email"]').focus(); });
+    $(function() {
+      $('[name="email"]').focus();
+    });
 
   });
-
 </script>
 @stop

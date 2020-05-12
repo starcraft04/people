@@ -195,30 +195,6 @@ class ProjectRepository
         return $project;
     }
 
-    public function getListOfProjects($where = null)
-    {
-        /** We create here a SQL statement and the Datatables function will add the information it got from the AJAX request to have things like search or limit or show.
-         *   So we need to have a proper SQL search that the ajax can use via get with parameters given to it.
-         *   In the ajax datatables (view), there will be a parameter name that is going to be used here for the extra parameters so if we use a join,
-         *   Then we will need to use in the view page the name of the table.column. This is so that it knows how to do proper sorting or search.
-         **/
-        $projectList = $this->project
-      ->select('projects.id','customers.name AS customer_name','project_name','otl_project_code','project_type','activity_type','project_status','meta_activity','region',
-                'country','technology','description','estimated_start_date','estimated_end_date','comments','LoE_onshore','LoE_nearshore',
-                'LoE_offshore', 'LoE_contractor', 'gold_order_number', 'product_code', 'revenue', 'win_ratio')
-      ->leftjoin('customers', 'projects.customer_id', '=', 'customers.id');
-
-        if (isset($where['unassigned']) && $where['unassigned'] == 'true') {
-            $projectList->doesntHave('activities');
-        //$projectList->groupBy('projects.id');
-        } elseif (isset($where['unassigned']) && $where['unassigned'] == 'false') {
-            $projectList->has('activities');
-        }
-        $data = Datatables::of($projectList)->make(true);
-
-        return $data;
-    }
-
     public function getAllProjectsList()
     {
         return $this->project->pluck('project_name', 'id');

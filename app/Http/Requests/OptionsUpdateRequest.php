@@ -26,8 +26,8 @@ class OptionsUpdateRequest extends FormRequest
     {
         return [
 
-      'clusterboard_top' => 'required|integer|min:0',
-      'table_height' => 'integer|min:10|max:200',
+            'clusterboard_top' => 'required|integer|min:0',
+            'table_height' => 'required|integer|min:10|max:200',
 
         ];
     }

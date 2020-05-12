@@ -23,13 +23,16 @@ class RevenueUploadController extends Controller
     public function postForm(RevenueUploadRequest $request)
     {
         $color = [
-      'error' => 'text-danger',
-      'info' => 'text-info',
-      'update' => 'text-warning',
-      'add' => 'text-primary',
-    ];
+            'error' => 'text-danger',
+            'info' => 'text-info',
+            'update' => 'text-warning',
+            'add' => 'text-primary',
+        ];
+
+
 
         $file = $request->file('uploadfile');
+
         if ($file->isValid()) {
             $messages = [];
             $customers_missing = [];
@@ -42,6 +45,7 @@ class RevenueUploadController extends Controller
             config(['excel.import.ignoreEmpty' => true]);
 
             $sheet = Excel::selectSheets('05-Revenues_FPC_Customer')->load($file);
+
             // Now we need to check we have the right columns
             $headerRow = $sheet->first()->keys()->toArray();
 
@@ -49,11 +53,12 @@ class RevenueUploadController extends Controller
             $months_in_file = [];
             $available_months = config('select.available_months');
             $all_years = [];
+
             foreach ($headerRow as $key => $column_name) {
                 $column = explode('_', $column_name);
                 if (in_array($column[0], $available_months) && ctype_digit($column[1])) {
                     array_push($months_in_file, $column_name);
-                    if (! in_array($column[1], $all_years)) {
+                    if (!in_array($column[1], $all_years)) {
                         array_push($all_years, $column[1]);
                     }
                 }
@@ -68,17 +73,17 @@ class RevenueUploadController extends Controller
             // Checking if we have the minimum of columns
             $columns_needed_minimum = ['customer_name', 'fpc'];
             // If the columns are not all present then we have an error and go back
-            if (! array_diff($columns_needed_minimum, $headerRow)) {
+            if (!array_diff($columns_needed_minimum, $headerRow)) {
                 // Now we need to rearrange the table so that we have a column year and 12 columns month
                 $result_organised = [];
                 foreach ($result as $key => $row) {
                     // First we need to check that the row is not empty
-                    if (! empty($row)) {
+                    if (!empty($row)) {
                         foreach ($all_years as $key => $year) {
                             $new_row = [];
                             $new_row['customer_name'] = $row['customer_name'];
                             $new_row['fpc'] = $row['fpc'];
-                            $new_row['year'] = '20'.$year;
+                            $new_row['year'] = '20' . $year;
                             foreach ($row as $header => $value) {
                                 if (in_array($header, $months_in_file)) {
                                     $header_exploded = explode('_', $header);
@@ -101,7 +106,7 @@ class RevenueUploadController extends Controller
                     if (count($Customer_in_dolphin) == 0) {
                         $Customer_in_dolphin_other_name = CustomerOtherName::where('other_name', $row['customer_name'])->first();
                         if (count($Customer_in_dolphin_other_name) == 0) {
-                            if (! in_array($row['customer_name'], $customers_missing)) {
+                            if (!in_array($row['customer_name'], $customers_missing)) {
                                 array_push($customers_missing, $row['customer_name']);
                             }
                         } else {
@@ -118,10 +123,10 @@ class RevenueUploadController extends Controller
                     // If we found the customer in either table, then we can save the record
                     if ($customer_found) {
                         $revenue = Revenue::firstOrNew([
-              'customer_id' => $customer_id,
-              'product_code' => $row['fpc'],
-              'year' => $row['year'],
-              ]);
+                            'customer_id' => $customer_id,
+                            'product_code' => $row['fpc'],
+                            'year' => $row['year'],
+                        ]);
                         foreach (config('select.available_months') as $key => $month) {
                             if (isset($row[$month])) {
                                 $revenue->$month = $row[$month];
@@ -131,8 +136,10 @@ class RevenueUploadController extends Controller
                     }
                 }
             } else {
-                array_push($messages, ['status'=>'error',
-          'msg'=>'Some columns are required but not present in the file, please see what is needed and upload again.', ]);
+                array_push($messages, [
+                    'status' => 'error',
+                    'msg' => 'Some columns are required but not present in the file, please see what is needed and upload again.',
+                ]);
 
                 return view('dataFeed/revenueupload', compact('messages', 'color'));
             }
