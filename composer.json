@@ -15,12 +15,12 @@
         "yajra/laravel-datatables-oracle": "~9.0",
         "doctrine/dbal": "~2.5.12",
         "spatie/laravel-backup": "^6.9",
-        "trebol/entrust": "^1.0",
         "laravel/tinker": "^2.0",
         "fideloper/proxy": "^4.2",
         "laravel/ui": "^2.0",
         "fruitcake/laravel-cors": "^1.0",
-        "guzzlehttp/guzzle": "^6.3"
+        "guzzlehttp/guzzle": "^6.3",
+        "spatie/laravel-permission": "^3.11"
     },
     "require-dev": {
         "fzaninotto/faker": "^1.4",

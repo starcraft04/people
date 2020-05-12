@@ -225,7 +225,6 @@ return [
     'Form'  => Collective\Html\FormFacade::class,
     'Html'  => Collective\Html\HtmlFacade::class,
     'Datatables' => Yajra\DataTables\Facades\DataTables::class,
-    'Entrust'   => Trebol\Entrust\EntrustFacade::class,
   ],
 
 ];

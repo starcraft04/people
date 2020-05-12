@@ -63,8 +63,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'general' => \App\Http\Middleware\General::class,
-        'role' => \Trebol\Entrust\Middleware\EntrustRole::class,
-        'permission' => \Trebol\Entrust\Middleware\EntrustPermission::class,
-        'ability' => \Trebol\Entrust\Middleware\EntrustAbility::class,
+        'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
+	    'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
     ];
 }
