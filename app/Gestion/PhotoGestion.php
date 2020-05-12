@@ -2,6 +2,8 @@
 
 namespace App\Gestion;
 
+use Illuminate\Support\Str;
+
 class PhotoGestion
 {
     public function save($image)
@@ -11,7 +13,7 @@ class PhotoGestion
             $extension = $image->getClientOriginalExtension();
 
             do {
-                $nom = str_random(10).'.'.$extension;
+                $nom = Str::random(10).'.'.$extension;
             } while (file_exists($chemin.'/'.$nom));
 
             return $image->move($chemin, $nom);

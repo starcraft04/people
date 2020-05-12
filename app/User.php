@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
-use Zizaco\Entrust\Traits\EntrustUserTrait;
+use Trebol\Entrust\Traits\EntrustUserTrait;
 
 class User extends Authenticatable
 {
