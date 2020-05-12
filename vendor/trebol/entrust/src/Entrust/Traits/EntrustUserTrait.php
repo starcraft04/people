@@ -11,8 +11,8 @@
 use Illuminate\Cache\TaggableStore;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
-use InvalidArgumentException;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 trait EntrustUserTrait
 {
@@ -142,11 +142,11 @@ trait EntrustUserTrait
      *
      * @return bool
      */
-    public function can($permission, $requireAll = false)
+    public function cans($permission, $requireAll = false)
     {
         if (is_array($permission)) {
             foreach ($permission as $permName) {
-                $hasPerm = $this->can($permName);
+                $hasPerm = $this->cans($permName);
 
                 if ($hasPerm && !$requireAll) {
                     return true;
@@ -219,7 +219,7 @@ trait EntrustUserTrait
             $checkedRoles[$role] = $this->hasRole($role);
         }
         foreach ($permissions as $permission) {
-            $checkedPermissions[$permission] = $this->can($permission);
+            $checkedPermissions[$permission] = $this->cans($permission);
         }
 
         // If validate all and there is a false in either
