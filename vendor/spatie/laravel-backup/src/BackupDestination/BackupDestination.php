@@ -2,8 +2,8 @@
 
 namespace Spatie\Backup\BackupDestination;
 
-use Exception;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Contracts\Filesystem\Factory;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Spatie\Backup\Exceptions\InvalidBackupDestination;
@@ -75,7 +75,7 @@ class BackupDestination
     public function write(string $file)
     {
         if (is_null($this->disk)) {
-            throw InvalidBackupDestination::diskNotSet();
+            throw InvalidBackupDestination::diskNotSet($this->backupName);
         }
 
         $destination = $this->backupName.'/'.pathinfo($file, PATHINFO_BASENAME);
@@ -139,7 +139,7 @@ class BackupDestination
         }
     }
 
-    public function usedStorage(): int
+    public function usedStorage(): float
     {
         return $this->backups()->size();
     }

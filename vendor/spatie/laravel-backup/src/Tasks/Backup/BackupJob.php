@@ -2,19 +2,20 @@
 
 namespace Spatie\Backup\Tasks\Backup;
 
-use Exception;
 use Carbon\Carbon;
-use Spatie\DbDumper\DbDumper;
+use Exception;
 use Illuminate\Support\Collection;
-use Spatie\DbDumper\Databases\Sqlite;
+use Spatie\Backup\BackupDestination\BackupDestination;
 use Spatie\Backup\Events\BackupHasFailed;
+use Spatie\Backup\Events\BackupManifestWasCreated;
 use Spatie\Backup\Events\BackupWasSuccessful;
 use Spatie\Backup\Events\BackupZipWasCreated;
 use Spatie\Backup\Exceptions\InvalidBackupJob;
 use Spatie\DbDumper\Compressors\GzipCompressor;
+use Spatie\DbDumper\Databases\MongoDb;
+use Spatie\DbDumper\Databases\Sqlite;
+use Spatie\DbDumper\DbDumper;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
-use Spatie\Backup\Events\BackupManifestWasCreated;
-use Spatie\Backup\BackupDestination\BackupDestination;
 
 class BackupJob
 {
@@ -201,13 +202,13 @@ class BackupJob
 
     protected function createZipContainingEveryFileInManifest(Manifest $manifest)
     {
-        consoleOutput()->info("Zipping {$manifest->count()} files...");
+        consoleOutput()->info("Zipping {$manifest->count()} files and directories...");
 
         $pathToZip = $this->temporaryDirectory->path(config('backup.backup.destination.filename_prefix').$this->filename);
 
         $zip = Zip::createForManifest($manifest, $pathToZip);
 
-        consoleOutput()->info("Created zip containing {$zip->count()} files. Size is {$zip->humanReadableSize()}");
+        consoleOutput()->info("Created zip containing {$zip->count()} files and directories. Size is {$zip->humanReadableSize()}");
 
         $this->sendNotification(new BackupZipWasCreated($pathToZip));
 
@@ -222,14 +223,17 @@ class BackupJob
      */
     protected function dumpDatabases(): array
     {
-        return $this->dbDumpers->map(function (DbDumper $dbDumper) {
+        return $this->dbDumpers->map(function (DbDumper $dbDumper, $key) {
             consoleOutput()->info("Dumping database {$dbDumper->getDbName()}...");
 
             $dbType = mb_strtolower(basename(str_replace('\\', '/', get_class($dbDumper))));
 
-            $dbName = $dbDumper instanceof Sqlite ? 'database' : $dbDumper->getDbName();
+            $dbName = $dbDumper->getDbName();
+            if ($dbDumper instanceof Sqlite) {
+                $dbName = $key.'-database';
+            }
 
-            $fileName = "{$dbType}-{$dbName}.sql";
+            $fileName = "{$dbType}-{$dbName}.{$this->getExtension($dbDumper)}";
 
             if (config('backup.backup.gzip_database_dump')) {
                 $dbDumper->useCompressor(new GzipCompressor());
@@ -271,7 +275,18 @@ class BackupJob
     protected function sendNotification($notification)
     {
         if ($this->sendNotifications) {
-            event($notification);
+            rescue(function () use ($notification) {
+                event($notification);
+            }, function () {
+                consoleOutput()->error('Sending notification failed');
+            });
         }
+    }
+
+    protected function getExtension(DbDumper $dbDumper): string
+    {
+        return $dbDumper instanceof MongoDb
+            ? 'archive'
+            : 'sql';
     }
 }

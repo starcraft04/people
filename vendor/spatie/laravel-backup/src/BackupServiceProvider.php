@@ -3,11 +3,11 @@
 namespace Spatie\Backup;
 
 use Illuminate\Support\ServiceProvider;
-use Spatie\Backup\Commands\ListCommand;
-use Spatie\Backup\Helpers\ConsoleOutput;
 use Spatie\Backup\Commands\BackupCommand;
 use Spatie\Backup\Commands\CleanupCommand;
+use Spatie\Backup\Commands\ListCommand;
 use Spatie\Backup\Commands\MonitorCommand;
+use Spatie\Backup\Helpers\ConsoleOutput;
 use Spatie\Backup\Notifications\EventHandler;
 use Spatie\Backup\Tasks\Cleanup\CleanupStrategy;
 
@@ -20,7 +20,7 @@ class BackupServiceProvider extends ServiceProvider
         ], 'config');
 
         $this->publishes([
-            __DIR__.'/../resources/lang' => resource_path('lang/vendor/backup'),
+            __DIR__.'/../resources/lang' => "{$this->app['path.lang']}/vendor/backup",
         ]);
 
         $this->loadTranslationsFrom(__DIR__.'/../resources/lang/', 'backup');

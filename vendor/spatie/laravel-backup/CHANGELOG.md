@@ -2,6 +2,146 @@
 
 All notable changes to `laravel-backup` will be documented in this file.
 
+## 6.9.0 - 2020-04-20
+
+- add right-aligned numbers in console output
+- don't resolve notifications from the IoC container, as per Laravel docs
+
+## 6.8.1 - 2020-03-11
+
+- added support to set execution timeout (#1046)
+
+## 6.8.0 - 2020-03-02
+
+- add support for Laravel 7
+
+## 6.7.8 - 2020-02-19
+
+- add Finnish localization (#1039)
+
+## 6.7.7 - 2020-01-26
+
+- fix MongoDB authentication connection name (#1025)
+
+## 6.7.6 - 2019-12-12
+
+- empty directories are now being backed up (#1008)
+
+## 6.7.5 - 2019-12-02
+
+- make compatible with PHP 7.4
+
+## 6.7.4 - 2019-07-11
+
+- corrects a typo in the method name (#994)
+
+## 6.7.3 - 2019-10-31
+
+- the monitor command will now really return non zero error code if there is a problem detected (#986)
+
+## 6.7.2 - 2019-10-29
+
+- the monitor command will now return non zero error code if there is a problem detected (#986)
+
+## 6.7.1 - 2019-10-16
+
+- fix deps
+
+## 6.7.0 - 2019-10-16
+
+- handle database urls for database connections (#980)
+
+## 6.6.1 - 2019-10-09
+
+- fix working with large backups on 32bit PHP installations
+
+## 6.6.0 - 2019-10-08
+
+- add disk getter function on Backup (#974)
+
+## 6.5.1 - 2019-10-07
+
+- fix email notifications not being sent #973
+
+## 6.5.0 - 2019-10-07
+
+**THIS VERSION CONTAINS A BREAKING BUG, DO NOT USE**
+
+- add custom from address for mail notifications (#967)
+
+## 6.4.2 - 2019-09-30
+
+- fix for customized lang paths (#964)
+
+## 6.4.1 - 2019-09-25
+
+- fix backup stopping on notification failure (#960)
+
+## 6.4.0 - 2019-09-04
+
+- make compatible with Laravel 6
+
+## 6.3.1 - 2019-07-16
+
+- fix typo in zh-TW backup notification
+
+## 6.3.0 - 2019-07-08
+
+- add zh-CN & zh-TW
+
+## 6.2.1 - 2019-07-01
+
+- prevent excessive IO calls by caching backup properties
+
+## 6.2.0 - 2019-04-25
+
+- add support to add custom dumpers to DbDumperFactory (#900)
+
+## 6.1.2 - 2019-04-05
+
+- fix naming bug when dumping multiple sqlite db's
+
+## 6.1.1 - 2019-02-27
+
+- fix translation
+
+## 6.1.0 - 2019-02-27
+
+- add support for Laravel 5.8
+- drop support for Laravel 5.7
+
+## 6.0.6 - 2019-02-21
+
+- add Czech translations
+
+## 6.0.5 - 2019-02-01
+
+- use Str:: and Arr:: instead of helper methods
+
+## 6.0.4 - 2019-01-30
+
+- fix mongo auth error
+- fix mongo export extension
+
+## 6.0.3 - 2019-01-03
+
+- set default backup name
+
+## 6.0.2 - 2019-01-03
+
+- set default backup name
+
+## 6.0.1 - 2019-01-01
+
+- fix `monitor_backups.name` default config value
+
+## 6.0.0 - 2018-12-29
+
+- all config keys are now snake_cased
+- health checks have been converted to their own class
+- added Dutch translations
+- support for older laravel versions has been dropped
+
 ## 5.12.0 - 2018-11-28
 
 - added the ability to use `backup_options` on a disk defined in the `filesystems` config file

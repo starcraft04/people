@@ -4,7 +4,6 @@ namespace Spatie\Backup\Commands;
 
 use Spatie\Backup\Events\HealthyBackupWasFound;
 use Spatie\Backup\Events\UnhealthyBackupWasFound;
-use Spatie\Backup\Tasks\Monitor\BackupDestinationStatus;
 use Spatie\Backup\Tasks\Monitor\BackupDestinationStatusFactory;
 
 class MonitorCommand extends BaseCommand
@@ -17,18 +16,25 @@ class MonitorCommand extends BaseCommand
 
     public function handle()
     {
-        $statuses = BackupDestinationStatusFactory::createForMonitorConfig(config('backup.monitorBackups'));
+        $hasError = false;
 
-        $statuses->each(function (BackupDestinationStatus $backupDestinationStatus) {
+        $statuses = BackupDestinationStatusFactory::createForMonitorConfig(config('backup.monitor_backups'));
+
+        foreach ($statuses as $backupDestinationStatus) {
+            $diskName = $backupDestinationStatus->backupDestination()->diskName();
+
             if ($backupDestinationStatus->isHealthy()) {
-                $this->info("The backups on {$backupDestinationStatus->diskName()} are considered healthy.");
+                $this->info("The backups on {$diskName} are considered healthy.");
                 event(new HealthyBackupWasFound($backupDestinationStatus));
-
-                return;
+            } else {
+                $hasError = true;
+                $this->error("The backups on {$diskName} are considered unhealthy!");
+                event(new UnHealthyBackupWasFound($backupDestinationStatus));
             }
+        }
 
-            $this->error("The backups on {$backupDestinationStatus->diskName()} are considered unhealthy!");
-            event(new UnHealthyBackupWasFound($backupDestinationStatus));
-        });
+        if ($hasError) {
+            return 1;
+        }
     }
 }
