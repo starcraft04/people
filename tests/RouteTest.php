@@ -4,7 +4,7 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 
-class RouteTest extends TestCase
+class RouteTest extends BrowserKitTestCase
 {
     /**
      * A basic functional test example.

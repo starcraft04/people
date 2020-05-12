@@ -12,26 +12,26 @@ class Project extends Model
 
     public function activities()
     {
-        return $this->hasMany('App\Activity', 'project_id');
+        return $this->hasMany(\App\Activity::class, 'project_id');
     }
 
     public function revenues()
     {
-        return $this->hasMany('App\ProjectRevenue', 'project_id');
+        return $this->hasMany(\App\ProjectRevenue::class, 'project_id');
     }
 
     public function loes()
     {
-        return $this->hasMany('App\Loe', 'project_id');
+        return $this->hasMany(\App\Loe::class, 'project_id');
     }
 
     public function created_by_user()
     {
-        return $this->belongsTo('App\User', 'created_by_user_id');
+        return $this->belongsTo(\App\User::class, 'created_by_user_id');
     }
 
     public function customer()
     {
-        return $this->belongsTo('App\Customer', 'customer_id');
+        return $this->belongsTo(\App\Customer::class, 'customer_id');
     }
 }

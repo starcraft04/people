@@ -7,35 +7,32 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class ProjectCreateRequest extends FormRequest
 {
-  /**
-   * Determine if the project is authorized to make this request.
-   *
-   * @return bool
-   */
-  public function authorize()
-  {
-    return true;
-  }
+    /**
+     * Determine if the project is authorized to make this request.
+     *
+     * @return bool
+     */
+    public function authorize()
+    {
+        return true;
+    }
 
-  /**
-   * Get the validation rules that apply to the request.
-   *
-   * @return array
-   */
-  public function rules()
-  {
-    $customer_id = $this->customer_id;
-    $meta_activity = $this->meta_activity;
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function rules()
+    {
+        $customer_id = $this->customer_id;
+        $meta_activity = $this->meta_activity;
 
-    return [
+        return [
 
-      'project_name' => 'required|max:255|unique:projects,project_name,NULL,id,customer_id,' . $customer_id,
+      'project_name' => 'required|max:255|unique:projects,project_name,NULL,id,customer_id,'.$customer_id,
       'customer_id' => 'required|max:255',
-      'otl_project_code' => 'sometimes|required_with:meta_activity|max:255|unique:projects,otl_project_code,NULL,id,meta_activity,' . $meta_activity,
+      'otl_project_code' => 'sometimes|required_with:meta_activity|max:255|unique:projects,otl_project_code,NULL,id,meta_activity,'.$meta_activity,
       'meta_activity' => 'sometimes|required_with:otl_project_code|max:255',
-      'estimated_date' => 'nullable|date_format:"Y-m-d - Y-m-d"',
-      'estimated_start_date' => 'nullable|date',
-      'estimated_end_date' => 'nullable|date',
       'LoE_onshore' => 'nullable|numeric',
       'LoE_nearshore' => 'nullable|numeric',
       'LoE_offshore' => 'nullable|numeric',
@@ -43,13 +40,13 @@ class ProjectCreateRequest extends FormRequest
       'revenue' => 'nullable|numeric',
       'win_ratio' => 'nullable|integer',
     ];
-  }
+    }
 
-  public function messages()
-  {
-    return [
+    public function messages()
+    {
+        return [
       'otl_project_code.unique' => 'This OTL project code and meta-activity already exists in the database.',
       'project_name.unique' => 'This project name and customer name already exists in the database.',
     ];
-  }
+    }
 }

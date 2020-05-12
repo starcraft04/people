@@ -158,16 +158,13 @@ class ProjectController extends Controller
                         'LoE_offshore', 'LoE_contractor', 'gold_order_number', 'product_code', 'revenue', 'win_ratio')
             ->leftjoin('customers', 'projects.customer_id', '=', 'customers.id');
 
-
-        if (isset($inputs['unassigned']) && $inputs['unassigned'] == 'true') {
+        if (isset($inputs['unassigned']) && $inputs['unassigned'] == 'true') {           
             $projectList->doesntHave('activities');
-        }
-        elseif (isset($inputs['unassigned']) && $inputs['unassigned'] == 'false') {
+        } elseif (isset($inputs['unassigned']) && $inputs['unassigned'] == 'false') {
             $projectList->has('activities');
         }
 
         $data = Datatables::of($projectList)->make(true);
-        
 
         return $data;
     }
@@ -260,7 +257,7 @@ class ProjectController extends Controller
                 'customers.cluster_owner',
                 'm.name AS manager_name'
             )
-            ->where('project_loe.created_at', 'like', '%' . $year . '%');
+            ->where('project_loe.created_at', 'like', '%'.$year.'%');
 
         $data = Datatables::of($project_loes)->make(true);
 
@@ -335,18 +332,18 @@ class ProjectController extends Controller
 
             if (Auth::user()->is_manager == 1) {
                 $signoff = 1;
-                $history_signoff = 'Date of change: ' . $today . '</BR>-- Changed by: ' . Auth::user()->name . '</BR>-- MANAGER SIGNOFF</BR>';
+                $history_signoff = 'Date of change: '.$today.'</BR>-- Changed by: '.Auth::user()->name.'</BR>-- MANAGER SIGNOFF</BR>';
             } else {
                 $signoff = 0;
                 $history_signoff = '';
             }
 
-            if (!empty($Loe->history)) {
+            if (! empty($Loe->history)) {
                 $history = $Loe->history;
             } else {
                 $history = '';
             }
-            $Loe->history = $history . 'Date of change: ' . $today . '</BR>-- Changed by: ' . Auth::user()->name . '</BR>-- Mandays: ' . $Loe->mandays . ' to ' . $inputs['mandays'] . '</BR>' . $history_signoff;
+            $Loe->history = $history.'Date of change: '.$today.'</BR>-- Changed by: '.Auth::user()->name.'</BR>-- Mandays: '.$Loe->mandays.' to '.$inputs['mandays'].'</BR>'.$history_signoff;
 
             $Loe->start_date = $startdate;
             $Loe->end_date = $enddate;
@@ -381,17 +378,17 @@ class ProjectController extends Controller
         $Loe = Loe::find($loe_id);
 
         if (($Loe->user_id == Auth::user()->id || Entrust::can('projectLoe-editAll')) && Entrust::can('projectLoe-signoff')) {
-            if (!empty($Loe->history)) {
+            if (! empty($Loe->history)) {
                 $history = $Loe->history;
             } else {
                 $history = '';
             }
             if ($Loe->signoff == 0) {
                 $Loe->signoff = 1;
-                $Loe->history = $history . 'Date of change: ' . $today . '</BR>-- Changed by: ' . Auth::user()->name . '</BR>-- MANAGER SIGNOFF</BR>';
+                $Loe->history = $history.'Date of change: '.$today.'</BR>-- Changed by: '.Auth::user()->name.'</BR>-- MANAGER SIGNOFF</BR>';
             } else {
                 $Loe->signoff = 0;
-                $Loe->history = $history . 'Date of change: ' . $today . '</BR>-- Changed by: ' . Auth::user()->name . '</BR>-- MANAGER  REMOVED SIGNOFF</BR>';
+                $Loe->history = $history.'Date of change: '.$today.'</BR>-- Changed by: '.Auth::user()->name.'</BR>-- MANAGER  REMOVED SIGNOFF</BR>';
             }
             $Loe->save();
 

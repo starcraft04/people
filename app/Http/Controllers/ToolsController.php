@@ -471,7 +471,6 @@ class ToolsController extends Controller
         }
 
         $inputs = $request->all();
-        //dd($inputs);
 
         // Now we need to check if the user has been flagged for remove from project
         if ($inputs['action'] == 'Remove') {
