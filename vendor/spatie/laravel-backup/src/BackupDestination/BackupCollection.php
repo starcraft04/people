@@ -2,13 +2,13 @@
 
 namespace Spatie\Backup\BackupDestination;
 
-use Spatie\Backup\Helpers\File;
-use Illuminate\Support\Collection;
 use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Support\Collection;
+use Spatie\Backup\Helpers\File;
 
 class BackupCollection extends Collection
 {
-    /** @var null|int */
+    /** @var null|float */
     protected $sizeCache = null;
 
     public static function createFromFiles(?FileSystem $disk, array $files): self
@@ -38,7 +38,7 @@ class BackupCollection extends Collection
             ->last();
     }
 
-    public function size(): int
+    public function size(): float
     {
         if ($this->sizeCache !== null) {
             return $this->sizeCache;

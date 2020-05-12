@@ -2,21 +2,27 @@
 
 namespace Spatie\Backup\Notifications\Notifications;
 
-use Spatie\Backup\Notifications\BaseNotification;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Messages\SlackMessage;
 use Illuminate\Notifications\Messages\SlackAttachment;
+use Illuminate\Notifications\Messages\SlackMessage;
 use Spatie\Backup\Events\CleanupHasFailed as CleanupHasFailedEvent;
+use Spatie\Backup\Notifications\BaseNotification;
 
 class CleanupHasFailed extends BaseNotification
 {
     /** @var \Spatie\Backup\Events\CleanupHasFailed */
     protected $event;
 
+    public function __construct(CleanupHasFailedEvent $event)
+    {
+        $this->event = $event;
+    }
+
     public function toMail(): MailMessage
     {
         $mailMessage = (new MailMessage)
             ->error()
+            ->from(config('backup.notifications.mail.from.address', config('mail.from.address')), config('backup.notifications.mail.from.name', config('mail.from.name')))
             ->subject(trans('backup::notifications.cleanup_failed_subject', ['application_name' => $this->applicationName()]))
             ->line(trans('backup::notifications.cleanup_failed_body', ['application_name' => $this->applicationName()]))
             ->line(trans('backup::notifications.exception_message', ['message' => $this->event->exception->getMessage()]))
@@ -49,12 +55,5 @@ class CleanupHasFailed extends BaseNotification
             ->attachment(function (SlackAttachment $attachment) {
                 $attachment->fields($this->backupDestinationProperties()->toArray());
             });
-    }
-
-    public function setEvent(CleanupHasFailedEvent $event)
-    {
-        $this->event = $event;
-
-        return $this;
     }
 }
