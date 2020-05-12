@@ -170,11 +170,7 @@ return [
     App\Providers\EventServiceProvider::class,
     App\Providers\RouteServiceProvider::class,
     Collective\Html\HtmlServiceProvider::class,
-    Barryvdh\Debugbar\ServiceProvider::class,
-    Maatwebsite\Excel\ExcelServiceProvider::class,
-    Yajra\Datatables\DatatablesServiceProvider::class,
-    Zizaco\Entrust\EntrustServiceProvider::class,
-    Spatie\Backup\BackupServiceProvider::class,
+    Yajra\DataTables\DataTablesServiceProvider::class,
   ],
 
   /*
@@ -194,7 +190,7 @@ return [
     'Artisan' => Illuminate\Support\Facades\Artisan::class,
     'Auth' => Illuminate\Support\Facades\Auth::class,
     'Blade' => Illuminate\Support\Facades\Blade::class,
-        'Broadcast' => Illuminate\Support\Facades\Broadcast::class,
+    'Broadcast' => Illuminate\Support\Facades\Broadcast::class,
     'Bus' => Illuminate\Support\Facades\Bus::class,
     'Cache' => Illuminate\Support\Facades\Cache::class,
     'Config' => Illuminate\Support\Facades\Config::class,
@@ -225,10 +221,7 @@ return [
     'View' => Illuminate\Support\Facades\View::class,
     'Form'  => Collective\Html\FormFacade::class,
     'Html'  => Collective\Html\HtmlFacade::class,
-    'Excel' => Maatwebsite\Excel\Facades\Excel::class,
-    'Datatables' => Yajra\Datatables\Facades\Datatables::class,
-    'Debugbar' => Barryvdh\Debugbar\Facade::class,
-    'Entrust'   => Zizaco\Entrust\EntrustFacade::class,
+    'Datatables' => Yajra\DataTables\Facades\DataTables::class,
   ],
 
 ];

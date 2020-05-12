@@ -4,26 +4,22 @@ namespace Spatie\Backup\Helpers;
 
 class ConsoleOutput
 {
-    /** @var \Illuminate\Console\OutputStyle  */
+    /** @var \Illuminate\Console\OutputStyle */
     protected $output;
 
     /**
-     * @param $output
+     * @param \Illuminate\Console\OutputStyle $output
      */
     public function setOutput($output)
     {
         $this->output = $output;
     }
 
-    /**
-     * @param string $method
-     * @param array  $arguments
-     */
-    public function __call($method, array $arguments)
+    public function __call(string $method, array $arguments)
     {
         $consoleOutput = app(static::class);
 
-        if (!$consoleOutput->output) {
+        if (! $consoleOutput->output) {
             return;
         }
 

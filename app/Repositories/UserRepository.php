@@ -8,6 +8,7 @@ use Auth;
 use Datatables;
 use DB;
 use Entrust;
+use Illuminate\Support\Facades\Hash;
 
 class UserRepository
 {
@@ -51,7 +52,7 @@ class UserRepository
         }
         // Password special case
         if (isset($inputs['password']) && trim($inputs['password']) != '') {
-            $user->password = bcrypt($inputs['password']);
+            $user->password = Hash::make($inputs['password']);
         }
         // Nullable
         if (isset($inputs['country'])) {
