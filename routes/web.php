@@ -68,19 +68,14 @@ Route::group(['middleware' => ['auth', 'general']], function () {
     Route::post('passwordUpdate/{n}', ['uses' => 'UserController@passwordUpdate', 'as' => 'passwordUpdate']);
     Route::post('optionsUpdate/{id}', ['uses' => 'UserController@optionsUpdate', 'as' => 'optionsUpdate']);
     //  AJAX
-    Route::get('listOfUsersAjax/{exclude_contractors}', ['uses' => 'UserController@listOfUsers', 'as' => 'listOfUsersAjax', 'middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
+    Route::get('listOfUsersAjax/{exclude_contractors?}', ['uses' => 'UserController@listOfUsers', 'as' => 'listOfUsersAjax', 'middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
 
     //ProfileToolsController
     Route::get('ajax_git_pull', ['uses' => 'ProfileToolsController@ajax_git_pull', 'as' => 'ajax_git_pull']);
     Route::get('ajax_env_app_debug/{n}', ['uses' => 'ProfileToolsController@ajax_env_app_debug', 'as' => 'ajax_env_app_debug']);
 
     // Roles
-    Route::get('roles', ['as' => 'roles.index', 'uses' => 'RoleController@index', 'middleware' => ['permission:role-view|role-create|role-edit|role-delete']]);
-    Route::get('roles/create', ['as' => 'roles.create', 'uses' => 'RoleController@create', 'middleware' => ['permission:role-create']]);
-    Route::post('roles/create', ['as' => 'roles.store', 'uses' => 'RoleController@store', 'middleware' => ['permission:role-create']]);
-    Route::get('roles/{id}/edit', ['as' => 'roles.edit', 'uses' => 'RoleController@edit', 'middleware' => ['permission:role-edit']]);
-    Route::patch('roles/{id}', ['as' => 'roles.update', 'uses' => 'RoleController@update', 'middleware' => ['permission:role-edit']]);
-    Route::delete('roles/{id}', ['as' => 'roles.destroy', 'uses' => 'RoleController@destroy', 'middleware' => ['permission:role-delete']]);
+    Route::resource('roles','RoleController');
 
     //Project
     //  Main project list
@@ -175,7 +170,7 @@ Route::group(['middleware' => ['auth', 'general']], function () {
     //  AJAX
     Route::get('ProjectsRevenueAjax/{id}', ['uses' => 'ProjectController@listOfProjectsRevenue', 'as' => 'listOfProjectsRevenueAjax', 'middleware' => ['permission:projectRevenue-create']]);
     Route::post('ProjectsRevenueAddAjax', ['uses' => 'ProjectController@addRevenue', 'as' => 'ProjectsRevenueAddAjax', 'middleware' => ['permission:projectRevenue-create']]);
-    Route::post('ProjectsRevenueUpdateAjax', ['uses' => 'ProjectController@updateRevenue', 'as' => 'ProjectsRevenueUpdateAjax', 'middleware' => ['permission:projectRevenue-edit']]);
+    Route::post('ProjectsRevenueUpdateAjax/{id?}', ['uses' => 'ProjectController@updateRevenue', 'as' => 'ProjectsRevenueUpdateAjax', 'middleware' => ['permission:projectRevenue-edit']]);
     Route::get('projectRevenueDelete/{n}', ['uses' => 'ProjectController@deleteRevenue', 'as' => 'projectRevenueDelete', 'middleware' => ['permission:projectRevenue-delete']]);
     Route::get('ProjectsLoeAjax/{id}', ['uses' => 'ProjectController@listOfProjectsLoe', 'as' => 'listOfProjectsLoeAjax', 'middleware' => ['permission:projectLoe-view']]);
     Route::get('ProjectsLoeSignoffAjax/{id}', ['uses' => 'ProjectController@listOfProjectsLoeSignoff', 'as' => 'listOfProjectsLoeSignoffAjax', 'middleware' => ['permission:projectLoe-signoff']]);
@@ -221,7 +216,5 @@ Route::group(['middleware' => ['auth', 'general']], function () {
     Route::post('listOfSkillsAjax', ['uses' => 'SkillController@listOfSkills', 'as' => 'listOfSkillsAjax', 'middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
     Route::get('test', ['uses' => 'ActivityController@test', 'middleware' => ['permission:user-view']]);
 });
-
-Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');

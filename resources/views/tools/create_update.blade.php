@@ -90,8 +90,6 @@ h3:after {
 <script src="{{ asset('/plugins/gentelella/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js') }}" type="text/javascript"></script>
 <!-- Range slider -->
 <script src="{{ asset('/plugins/gentelella/vendors/ion.rangeSlider/js/ion.rangeSlider.min.js') }}" type="text/javascript"></script>
-<!-- Form validator -->
-<script src="{{ asset('/plugins/gentelella/vendors/parsleyjs/dist/parsley.min.js') }}" type="text/javascript"></script>
 @stop
 
 @section('content')
@@ -714,6 +712,7 @@ h3:after {
 
             @if($action == 'update')
               <!-- Revenues -->
+              <!-- Table -->
               @can('projectRevenue-create')
               <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="tab_revenue">
                 <div class="row">
@@ -748,6 +747,60 @@ h3:after {
                 </div>
               </div>
               @endcan
+              <!-- Table -->
+
+              <!-- Modal -->
+              <div class="modal fade" id="revenueModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" style="display:table;">
+                      <div class="modal-content">
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title" id="revenue_title_modal"></h4>
+                        </div>
+                        <!-- Modal Header -->
+                      
+                        <!-- Modal Body -->
+                        <div class="modal-body">
+                          <form id="form_revenue_modal" role="form" method="POST" action="">
+                            <div class="form-group">
+                                <label class="control-label" for="year_revenue_modal">Year</label>
+                                <select class="form-control select2" style="width: 100%;" id="year_revenue_modal" name="year_revenue_modal" data-placeholder="Select a year">
+                                  <option value="" ></option>
+                                  @foreach(config('select.year') as $key => $value)
+                                  <option value="{{ $key }}" @if($key == date("Y")) selected @endif>
+                                    {{ $value }}
+                                  </option>
+                                  @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label  class="control-label" for="fpc_revenue_modal">FPC</label>
+                                <input type="text" name="fpc_revenue_modal" class="form-control" placeholder="FPC"></input>
+                            </div>
+                            @foreach(config('select.available_months') as $key => $month)
+                            <div class="form-group">
+                                <label  class="control-label" for="{{ $month }}_revenue_modal">{{ $month }}</label>
+                                <input type="text" name="{{ $month }}_revenue_modal" class="form-control" placeholder="{{ $month }}" value="0"></input>
+                            </div>
+                            @endforeach
+
+                            <div class="form-group">
+                                <div id="revenue_hidden"></div>
+                            </div>
+                          </form>
+                        </div>
+                          
+                        <!-- Modal Footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" id="revenue_create_update_button_modal" class="btn btn-success">Update</button>
+                        </div>
+                      </div>
+                  </div>
+              </div>
+              <!-- Modal -->
+
               <!-- Revenues -->
 
               <!-- LoE -->
@@ -929,11 +982,11 @@ h3:after {
                       
                         <!-- Modal Body -->
                         <div class="modal-body">
-                          <form id="form_action_modal" role="form" method="POST" action="" data-parsley-validate>
+                          <form id="form_action_modal" role="form" method="POST" action="">
                             <div class="form-group">
                               <label  class="control-label" for="assigned_to_action_modal">Assigned to</label>
                               <div>
-                                <select class="form-control select2" style="width: 100%;" id="assigned_to_action_modal" name="assigned_to_action_modal" data-placeholder="Select a user" required>
+                                <select class="form-control select2" style="width: 100%;" id="assigned_to_action_modal" name="assigned_to_action_modal" data-placeholder="Select a user">
                                   <option value="" ></option>
                                   @foreach($users_on_project as $key => $value)
                                   <option value="{{ $key }}">
@@ -944,13 +997,13 @@ h3:after {
                               </div>
                             </div>
                             <div class="form-group">
-                                <label  class="control-label" for="action_name_modal" required>Name</label>
+                                <label  class="control-label" for="action_name_modal">Name</label>
                                 <div>
-                                    <input type="text" name="action_name_modal" class="form-control" placeholder="Name" required></input>
+                                    <input type="text" name="action_name_modal" class="form-control" placeholder="Name"></input>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label  class="control-label" for="action_requestor_modal" required>Requestor</label>
+                                <label  class="control-label" for="action_requestor_modal">Requestor</label>
                                 <div>
                                     <input type="text" name="action_requestor_modal" class="form-control" placeholder="Requestor"></input>
                                 </div>
@@ -1132,14 +1185,9 @@ var projectRevenue;
 // If we set up the tab to be selected in the url it will be in variable tab_origin
 var tab_origin = "{{ $tab }}";
 
-// Create the permission variable based on Laravel permission model
-<?php
-  /* list($validate, $allValidations) = Entrust::ability(null,['action-all','action-edit','action-delete','projectRevenue-delete','projectLoe-edit','projectLoe-delete','projectLoe-editAll','projectLoe-deleteAll'],['validate_all' => true,'return_type' => 'both']);
-  echo "var permissions = jQuery.parseJSON('".json_encode($allValidations['permissions'])."');"; */
-?>
-
 $(document).ready(function() {
   //region Init Main interface
+
   // Ajax setup needed in case there is an update for revenue, comment, loe, ... tabs
   @if($action == 'update')
     $.ajaxSetup({
@@ -1395,6 +1443,12 @@ $(document).ready(function() {
 
   //region Revenue
   @if($action == 'update')
+
+    // Init select2 boxes in the modal
+    $("#year_revenue_modal").select2({
+        allowClear: false
+    });
+
     projectRevenue = $('#projectRevenue').DataTable({
         serverSide: true,
         processing: true,
@@ -1430,8 +1484,11 @@ $(document).ready(function() {
                 render: function (data) {
               var actions = '';
               actions += '<div class="btn-group btn-group-xs">';
-              if (permissions['projectRevenue-delete']){
-                actions += '<button type="button" id="'+data.id+'" class="buttonRevenueDelete btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
+              if ({{ Auth::user()->can('projectRevenue-edit') ? 'true' : 'false' }}){
+                actions += '<button type="button" data-id="'+data.id+'" class="buttonRevenueEdit btn btn-success"><span class="glyphicon glyphicon-pencil"></span></button>';
+              };
+              if ({{ Auth::user()->can('projectRevenue-delete') ? 'true' : 'false' }}){
+                actions += '<button type="button" data-id="'+data.id+'" class="buttonRevenueDelete btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
               };
               actions += '</div>';
               return actions;
@@ -1479,85 +1536,114 @@ $(document).ready(function() {
         ]   
     });
 
-    $('#new_revenue').click(function(){
-      var currentTime = new Date();
-
-      var html = '<tr>';
-      html += '<td contenteditable id="rev_year">'+currentTime.getFullYear()+'</td>';
-      html += '<td contenteditable id="rev_fpc"></td>';
-      html += '<td contenteditable id="rev_jan">0</td>';
-      html += '<td contenteditable id="rev_feb">0</td>';
-      html += '<td contenteditable id="rev_mar">0</td>';
-      html += '<td contenteditable id="rev_apr">0</td>';
-      html += '<td contenteditable id="rev_may">0</td>';
-      html += '<td contenteditable id="rev_jun">0</td>';
-      html += '<td contenteditable id="rev_jul">0</td>';
-      html += '<td contenteditable id="rev_aug">0</td>';
-      html += '<td contenteditable id="rev_sep">0</td>';
-      html += '<td contenteditable id="rev_oct">0</td>';
-      html += '<td contenteditable id="rev_nov">0</td>';
-      html += '<td contenteditable id="rev_dec">0</td>';
-      html += '<td><button type="button" name="rev_insert" id="rev_insert" class="btn btn-success btn-xs"><span class="glyphicon glyphicon-log-in"></span></button></td>';
-      html += '</tr>';
-      $('#projectRevenue tbody').prepend(html);
+    // Click add new
+    $(document).on('click', '#new_revenue', function () {
+      $('#revenue_title_modal').text('Create revenue');
+      $('#revenue_create_update_button_modal').text('Create');
+      $('#revenue_hidden').empty();
+      var hidden = '';
+      hidden += '<input class="form-control" id="project_id_revenue_modal" name="project_id_revenue_modal" type="hidden" value="'+{{ $project->id }}+'">';
+      hidden += '<input class="form-control" id="action_revenue_modal" name="action_revenue_modal" type="hidden" value="create">';
+      $('#revenue_hidden').append(hidden);
+      $('#revenueModal').modal("show");
     });
 
-    $(document).on('click', '#rev_insert', function(){
-      var rev_proj_id = {!! $project->id !!};
-      var rev_year = $('#rev_year').text();
-      var rev_fpc = $('#rev_fpc').text();
-      var rev_jan = $('#rev_jan').text();
-      var rev_feb = $('#rev_feb').text();
-      var rev_mar = $('#rev_mar').text();
-      var rev_apr = $('#rev_apr').text();
-      var rev_may = $('#rev_may').text();
-      var rev_jun = $('#rev_jun').text();
-      var rev_jul = $('#rev_jul').text();
-      var rev_aug = $('#rev_aug').text();
-      var rev_sep = $('#rev_sep').text();
-      var rev_oct = $('#rev_oct').text();
-      var rev_nov = $('#rev_nov').text();
-      var rev_dec = $('#rev_dec').text();
+    // Click edit
+    $(document).on('click', '.buttonRevenueEdit', function () {
+      $('#revenue_title_modal').text('Update revenue');
+      $('#revenue_create_update_button_modal').text('Update');
 
-      if(rev_year != '' && rev_fpc != '' && rev_jan != '' && rev_feb != '' && rev_mar != '' && rev_apr != '' && rev_may != '' && rev_jun != '' && rev_jul != '' && rev_aug != '' && rev_sep != '' && rev_oct != '' && rev_nov != '' && rev_dec != '')
-      {
-        $.ajax({
-              type: 'post',
-              url: "{!! route('ProjectsRevenueAddAjax') !!}",
-              data:{project_id:rev_proj_id, year:rev_year, product_code:rev_fpc, 
-                    jan:rev_jan, feb:rev_feb, mar:rev_mar, apr:rev_apr, 
-                    may:rev_may, jun:rev_jun, jul:rev_jul, aug:rev_aug,
-                    sep:rev_sep, oct:rev_oct, nov:rev_nov, dec:rev_dec},
-              dataType: 'json',
-              success: function(data) {
-                //console.log(data);
-                if (data.result == 'success'){
-                    box_type = 'success';
-                    message_type = 'success';
-                }
-                else {
-                    box_type = 'danger';
-                    message_type = 'error';
-                }
+      var table = projectRevenue;
+      var tr = $(this).closest('tr');
+      var row = table.row(tr);
+      //console.log('the revenue id is '+row.data().revenue_id);
 
-                $('#flash-message').empty();
-                var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
-                $('#flash-message').append(box);
-                $('#delete-message').delay(2000).queue(function () {
-                    $(this).addClass('animated flipOutX')
-                });
-                projectRevenue.ajax.reload();
+      $('#revenue_hidden').empty();
+      var hidden = '';
+      hidden += '<input class="form-control" id="project_id_revenue_modal" name="project_id_revenue_modal" type="hidden" value="'+{{ $project->id }}+'">';
+      hidden += '<input class="form-control" id="action_revenue_modal" name="action_revenue_modal" type="hidden" value="update">';
+      hidden += '<input class="form-control" id="revenue_id" name="revenue_id" type="hidden" value="'+row.data().id+'">';
+      $('#revenue_hidden').append(hidden);
+
+      $('select[name="year_revenue_modal"]').val(row.data().year);
+      $('select[name="year_revenue_modal"]').select2().trigger('change');
+      
+      $('input[name="fpc_revenue_modal"]').val(row.data().product_code);
+
+      @foreach(config('select.available_months') as $key => $month)
+        $('input[name="{{ $month }}_revenue_modal"]').val(row.data().{{ $month }});
+      @endforeach
+
+      $('#revenueModal').modal("show");
+    });
+
+    // click send info ajax to create or update
+    $(document).on('click', '#revenue_create_update_button_modal', function () {
+
+      // hidden input
+      var action_revenue_modal = $('input#action_revenue_modal').val();
+      var project_id_revenue_modal = $('input#project_id_revenue_modal').val();
+      if (action_revenue_modal == "update") {
+        var revenue_id = $('input#revenue_id').val();
+      }
+
+      // filled in
+      var year = $('select[name="year_revenue_modal"]').children("option:selected").val();
+      var product_code = $('input[name="fpc_revenue_modal"]').val();
+      @foreach(config('select.available_months') as $key => $month)
+        var input_revenue_{{ $month }} = $('input[name="{{ $month }}_revenue_modal"]').val();
+      @endforeach
+
+      if (action_revenue_modal == "create") {
+        var data = {'project_id':project_id_revenue_modal,'year':year,'product_code':product_code
+          @foreach(config('select.available_months') as $key => $month)
+            ,'{{ $month }}':  input_revenue_{{ $month }}
+          @endforeach
+          };
+        var revenue_create_update_route = "{!! route('ProjectsRevenueAddAjax') !!}";
+      } else {
+        var data = {'project_id':project_id_revenue_modal,'year':year,'product_code':product_code
+          @foreach(config('select.available_months') as $key => $month)
+          ,'{{ $month }}':  input_revenue_{{ $month }}
+          @endforeach
+          };
+        var revenue_create_update_route = "{{ route('ProjectsRevenueUpdateAjax',['']) }}/"+revenue_id;
+      }
+
+      //console.log(data);console.log(revenue_create_update_route);return;
+      
+      $.ajax({
+            type: 'post',
+            url: revenue_create_update_route,
+            data:data,
+            dataType: 'json',
+            success: function(data) {
+              //console.log(data);
+              if (data.result == 'success'){
+                  box_type = 'success';
+                  message_type = 'success';
               }
-            });
-      }
-      else
-      {
-        alert("All Fields are required");
-      }
+              else {
+                  box_type = 'danger';
+                  message_type = 'error';
+              }
+
+              $('#flash-message').empty();
+              var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+              $('#flash-message').append(box);
+              $('#delete-message').delay(2000).queue(function () {
+                  $(this).addClass('animated flipOutX')
+              });
+              projectRevenue.ajax.reload();
+            }
+      });
+
+      $('#revenueModal').modal('hide');
+
     });
 
     $(document).on('click', '.buttonRevenueDelete', function () {
-      record_id = this.id;
+      record_id = $(this).data("id");
       bootbox.confirm("Are you sure want to delete this record?", function(result) {
         if (result){
           $.ajax({
@@ -1585,37 +1671,6 @@ $(document).ready(function() {
             }
           });
         }
-      });
-    });
-
-    $(document).on('blur', '.rev_update', function(){
-      var id = $(this).data("id");
-      var column_name = $(this).data("column");
-      var value = $(this).text();
-      $.ajax({
-            type: 'post',
-            url: "{!! route('ProjectsRevenueUpdateAjax') !!}",
-            data:{id:id, column_name:column_name, value:value},
-            dataType: 'json',
-            success: function(data) {
-              //console.log(data);
-              if (data.result == 'success'){
-                  box_type = 'success';
-                  message_type = 'success';
-              }
-              else {
-                  box_type = 'danger';
-                  message_type = 'error';
-              }
-
-              $('#flash-message').empty();
-              var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
-              $('#flash-message').append(box);
-              $('#delete-message').delay(2000).queue(function () {
-                  $(this).addClass('animated flipOutX')
-              });
-              projectRevenue.ajax.reload();
-            }
       });
     });
   @endif
@@ -1847,10 +1902,10 @@ $(document).ready(function() {
                 render: function (data) {
                   var actions = '';
                   actions += '<div class="btn-group btn-group-xs">';
-                  if (permissions['projectLoe-edit'] || permissions['projectLoe-editAll']){
+                  if ({{ Auth::user()->can('projectLoe-edit') ? 'true' : 'false' }} || {{ Auth::user()->can('projectLoe-editAll') ? 'true' : 'false' }}){
                     actions += '<button type="button" data-id="'+data.loe_id+'" class="buttonLoeEdit btn btn-success"><span class="glyphicon glyphicon-pencil"></span></button>';
                   };
-                  if (permissions['projectLoe-delete'] || permissions['projectLoe-deleteAll']){
+                  if ({{ Auth::user()->can('projectLoe-delete') ? 'true' : 'false' }} || {{ Auth::user()->can('projectLoe-deleteAll') ? 'true' : 'false' }}){
                     actions += '<button type="button" data-id="'+data.loe_id+'" class="buttonLoeDelete btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
                   };
                   actions += '</div>';
@@ -1930,7 +1985,12 @@ $(document).ready(function() {
       
       $('input[name="mandays_loe_modal"]').val(row.data().mandays);
       $('textarea[name="description_loe_modal"]').val(row.data().description);
-      $('input[name="date_loe_modal"]').val(row.data().start_date+" - "+row.data().end_date);
+      if (row.data().start_date) {
+        $('input[name="date_loe_modal"]').val(row.data().start_date+" - "+row.data().end_date);
+      } else {
+        $('input[name="date_loe_modal"]').val('');
+      }
+      
 
       $('select[name="domain_loe_modal"]').val(row.data().domain);
       $('select[name="domain_loe_modal"]').select2().trigger('change');
@@ -2155,10 +2215,10 @@ $(document).ready(function() {
               render: function (data) {
                 var actions = '';
                 actions += '<div class="btn-group btn-group-xs">';
-                if (permissions['action-edit'] || permissions['action-all']){
+                if ({{ Auth::user()->can('action-edit') ? 'true' : 'false' }} || {{ Auth::user()->can('action-all') ? 'true' : 'false' }}){
                   actions += '<button type="button" data-id="'+data.action_id+'" class="buttonActionEdit btn btn-success"><span class="glyphicon glyphicon-pencil"></span></button>';
                 };
-                if (permissions['action-delete'] || permissions['action-all']){
+                if ({{ Auth::user()->can('action-delete') ? 'true' : 'false' }} || {{ Auth::user()->can('action-all') ? 'true' : 'false' }}){
                   actions += '<button type="button" data-id="'+data.action_id+'" class="buttonActionDelete btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
                 };
                 actions += '</div>';
@@ -2286,16 +2346,22 @@ $(document).ready(function() {
         from: row.data().percent_complete
     });
 
-    $('input[name="date_action_modal"]').val(row.data().action_start_date+" - "+row.data().action_end_date);
-
+    if (row.data().action_start_date) {
+      $('input[name="date_action_modal"]').val(row.data().action_start_date+" - "+row.data().action_end_date);
+    } else {
+        $('input[name="date_action_modal"]').val('');
+    }
     $('textarea[name="description_action_modal"]').val(row.data().action_description);
 
     $('textarea[name="description_next_action_modal"]').val(row.data().next_action_description);
 
     $('input[name="next_action_dependency_modal"]').val(row.data().next_action_dependency);
 
-    $('input[name="next_action_due_date_modal"]').val(row.data().next_action_due_date);
-
+    if (row.data().next_action_due_date) {
+      $('input[name="next_action_due_date_modal"]').val(row.data().next_action_due_date);
+    } else {
+      $('input[name="next_action_due_date_modal"]').val('');
+    }
     $('#actionModal').modal("show");
   });
 
@@ -2336,11 +2402,6 @@ $(document).ready(function() {
 
   // click send info ajax to create or update
   $(document).on('click', '#action_create_update_button_modal', function () {
-    // Checking validation rules
-    if (!$('#form_action_modal').parsley().validate()) {
-      return;
-    }
-
     // hidden input
     var action_action_modal = $('input#action_action_modal').val();
     var section_action_modal = $('input#section_action_modal').val();
@@ -2358,9 +2419,15 @@ $(document).ready(function() {
     var status_action_modal = $('select[name="status_action_modal"]').children("option:selected").val();
     var priority_action_modal = $('select[name="priority_action_modal"]').children("option:selected").val();
     var action_percentage_modal = $('input[name="action_percentage_modal"]').val();
-    var date_action_modal = $('input[name="date_action_modal"]').val().split(" - ");
-    var estimated_start_date = date_action_modal[0];
-    var estimated_end_date = date_action_modal[1];
+    if ($('input[name="date_action_modal"]').val()) {
+      var date_action_modal = $('input[name="date_action_modal"]').val().split(" - ");
+      var estimated_start_date = date_action_modal[0];
+      var estimated_end_date = date_action_modal[1];
+    } else {
+      var estimated_start_date = '';
+      var estimated_end_date = '';
+    }
+    
     var description_action_modal = $('textarea[name="description_action_modal"]').val();
     var description_next_action_modal = $('textarea[name="description_next_action_modal"]').val();
     var next_action_dependency_modal = $('input[name="next_action_dependency_modal"]').val();

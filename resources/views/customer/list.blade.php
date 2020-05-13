@@ -97,20 +97,6 @@
         var customerTable;
         var record_id;
 
-        // Here we are going to get from PHP the list of roles and their value for the logged in customer
-
-        <?php
-          /* $options = [
-              'validate_all' => true,
-              'return_type' => 'both'
-          ];
-          list($validate, $allValidations) = Entrust::ability(null,['project-view','project-edit','project-delete','project-create'],$options);
-          echo "var permissions = jQuery.parseJSON('".json_encode($allValidations['permissions'])."');"; */
-        ?>
-        // Roles check finished.
-
-        //console.log(permissions);
-
 
         $(document).ready(function() {
 
@@ -140,13 +126,13 @@
                         render: function (data) {
                             var actions = '';
                             actions += '<div class="btn-group btn-group-xs">';
-                            if (permissions['project-view']){
+                            if ({{ Auth::user()->can('project-view') ? 'true' : 'false' }}){
                               actions += '<button id="'+data.id+'" class="buttonView btn btn-success"><span class="glyphicon glyphicon-eye-open"></span></button>';
                             };
-                            if (permissions['project-edit']){
+                            if ({{ Auth::user()->can('project-edit') ? 'true' : 'false' }}){
                               actions += '<button id="'+data.id+'" class="buttonUpdate btn btn-primary"><span class="glyphicon glyphicon-pencil"></span></button>';
                             };
-                            if (permissions['project-delete']){
+                            if ({{ Auth::user()->can('project-delete') ? 'true' : 'false' }}){
                               actions += '<button id="'+data.id+'" class="buttonDelete btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
                             };
                             actions += '</div>';

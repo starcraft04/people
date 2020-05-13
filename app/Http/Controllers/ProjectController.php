@@ -110,29 +110,15 @@ class ProjectController extends Controller
         return json_encode($result);
     }
 
-    public function updateRevenue(Request $request)
+    public function updateRevenue(Request $request,$id)
     {
         // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
         $result = new \stdClass();
         $inputs = $request->all();
-        $projectRevenueToUpdate = ProjectRevenue::find($inputs['id']);
-        if ($inputs['column_name'] == 'year') {
-            $projectRevenue = ProjectRevenue::where('project_id', '=', $projectRevenueToUpdate->project_id)->where('year', '=', $inputs['value'])->where('product_code', '=', $projectRevenueToUpdate->product_code)->first();
-        } elseif ($inputs['column_name'] == 'product_code') {
-            $projectRevenue = ProjectRevenue::where('project_id', '=', $projectRevenueToUpdate->project_id)->where('year', '=', $projectRevenueToUpdate->year)->where('product_code', '=', $inputs['value'])->first();
-        } else {
-            $projectRevenue = null;
-        }
-
-        if ($projectRevenue === null) {
-            $projectRevenueToUpdate->{$inputs['column_name']} = $inputs['value'];
-            $projectRevenueToUpdate->save();
-            $result->result = 'success';
-            $result->msg = 'Record updated successfully';
-        } else {
-            $result->result = 'error';
-            $result->msg = 'Record already in DB';
-        }
+        $projectRevenueToUpdate = ProjectRevenue::find($id);
+        $projectRevenueToUpdate->update($inputs);
+        $result->result = 'success';
+        $result->msg = 'Record updated successfully';
 
         return json_encode($result);
     }
@@ -171,27 +157,7 @@ class ProjectController extends Controller
     public function listOfProjectsRevenue($id)
     {
         $project_revenues = Project::findOrFail($id)->revenues();
-
-        if (Auth::user()->can('projectRevenue-edit')) {
-            $data = Datatables::of($project_revenues)
-                ->editColumn('year', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="year">{{$year}}</div>')
-                ->editColumn('product_code', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="product_code">{{$product_code}}</div>')
-                ->editColumn('jan', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="jan">{{$jan}}</div>')
-                ->editColumn('feb', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="feb">{{$feb}}</div>')
-                ->editColumn('mar', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="mar">{{$mar}}</div>')
-                ->editColumn('apr', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="apr">{{$apr}}</div>')
-                ->editColumn('may', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="may">{{$may}}</div>')
-                ->editColumn('jun', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="jun">{{$jun}}</div>')
-                ->editColumn('jul', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="jul">{{$jul}}</div>')
-                ->editColumn('aug', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="aug">{{$aug}}</div>')
-                ->editColumn('sep', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="sep">{{$sep}}</div>')
-                ->editColumn('oct', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="oct">{{$oct}}</div>')
-                ->editColumn('nov', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="nov">{{$nov}}</div>')
-                ->editColumn('dec', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="dec">{{$dec}}</div>')
-                ->make(true);
-        } else {
-            $data = Datatables::of($project_revenues)->make(true);
-        }
+        $data = Datatables::of($project_revenues)->make(true);
 
         return $data;
     }
@@ -289,9 +255,9 @@ class ProjectController extends Controller
         // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
         $result = new \stdClass();
         $inputs = $request->all();
+        
         $Loe = new Loe;
-        $startdate = explode(' - ', $inputs['date'])[0];
-        $enddate = explode(' - ', $inputs['date'])[1];
+        
         if (Auth::user()->is_manager == 1) {
             $signoff = 1;
         } else {
@@ -300,14 +266,23 @@ class ProjectController extends Controller
 
         $Loe->project_id = $inputs['project_id'];
         $Loe->user_id = Auth::user()->id;
-        $Loe->start_date = $startdate;
-        $Loe->end_date = $enddate;
+        if (!empty($inputs['date'])) {
+            $startdate = explode(' - ', $inputs['date'])[0];
+            $enddate = explode(' - ', $inputs['date'])[1];
+            $Loe->start_date = $startdate;
+            $Loe->end_date = $enddate;
+        } else {
+            $Loe->start_date = null;
+            $Loe->end_date = null;
+        }
+        
         $Loe->domain = $inputs['domain'];
         $Loe->type = $inputs['type'];
         $Loe->location = $inputs['location'];
         $Loe->mandays = $inputs['mandays'];
         $Loe->description = $inputs['description'];
         $Loe->signoff = $signoff;
+
 
         $Loe->save();
 
@@ -326,8 +301,6 @@ class ProjectController extends Controller
         $Loe = Loe::find($inputs['loe_id']);
 
         if ($Loe->user_id == Auth::user()->id || Auth::user()->can('projectLoe-editAll')) {
-            $startdate = explode(' - ', $inputs['date'])[0];
-            $enddate = explode(' - ', $inputs['date'])[1];
 
             if (Auth::user()->is_manager == 1) {
                 $signoff = 1;
@@ -344,8 +317,15 @@ class ProjectController extends Controller
             }
             $Loe->history = $history.'Date of change: '.$today.'</BR>-- Changed by: '.Auth::user()->name.'</BR>-- Mandays: '.$Loe->mandays.' to '.$inputs['mandays'].'</BR>'.$history_signoff;
 
-            $Loe->start_date = $startdate;
-            $Loe->end_date = $enddate;
+            if (!empty($inputs['date'])) {
+                $startdate = explode(' - ', $inputs['date'])[0];
+                $enddate = explode(' - ', $inputs['date'])[1];
+                $Loe->start_date = $startdate;
+                $Loe->end_date = $enddate;
+            } else {
+                $Loe->start_date = null;
+                $Loe->end_date = null;
+            }
             $Loe->domain = $inputs['domain'];
             $Loe->type = $inputs['type'];
             $Loe->location = $inputs['location'];

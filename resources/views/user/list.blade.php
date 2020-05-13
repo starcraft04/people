@@ -133,22 +133,6 @@
         var small = document.querySelector('.js-switch-small');
         var switchery = new Switchery(small, { size: 'small' });
 
-        // Here we are going to get from PHP the list of roles and their value for the logged in user
-
-        <?php
-          /* $options = [
-              'validate_all' => true,
-              'return_type' => 'both'
-          ];
-          list($validate, $allValidations) = Entrust::ability(null,['user-view','user-edit','user-delete','user-create'],$options);
-          echo "var permissions = jQuery.parseJSON('".json_encode($allValidations['permissions'])."');"; */
-        ?>
-        // Roles check finished.
-
-
-
-        //console.log(permissions);
-
         // exclude contractors
         // Init
         if ($('#exclude_contractors').is(':checked')) {
@@ -223,13 +207,13 @@
                         render: function (data) {
                             var actions = '';
                             actions += '<div class="btn-group btn-group-xs">';
-                            if (permissions['user-view']){
+                            if ({{ Auth::user()->can('user-view') ? 'true' : 'false' }}){
                               actions += '<button id="'+data.id+'" class="buttonView btn btn-success"><span class="glyphicon glyphicon-eye-open"></span></button>';
                             };
-                            if (permissions['user-edit']){
+                            if ({{ Auth::user()->can('user-edit') ? 'true' : 'false' }}){
                               actions += '<button id="'+data.id+'" class="buttonUpdate btn btn-primary"><span class="glyphicon glyphicon-pencil"></span></button>';
                             };
-                            if (permissions['user-delete']){
+                            if ({{ Auth::user()->can('user-delete') ? 'true' : 'false' }}){
                               actions += '<button id="'+data.id+'" class="buttonDelete btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
                             };
                             actions += '</div>';

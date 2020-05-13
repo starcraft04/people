@@ -214,20 +214,6 @@
   var hide_closed = true;
   var project_ids = [];
 
-  // Here we are going to get from PHP the list of roles and their value for the logged in customer
-  // Roles check
-  <?php
-          // Permissions for actions
-          /* $options = [
-              'validate_all' => true,
-              'return_type' => 'both'
-          ];
-          list($validate, $allValidations) = Entrust::ability(null,['action-create','action-edit','action-delete','action-all','comment-create','comment-edit','comment-delete','comment-all'],$options);
-          echo "var permissions = jQuery.parseJSON('".json_encode($allValidations['permissions'])."');"; */
-  ?>
-  //console.log(permissions);
-  // Roles check
-
 
   // This is the function that will set the values in the select2 boxes with info from Cookies
   function fill_select(select_id){
@@ -381,13 +367,13 @@
             markup += '<td>';
             delete_permission = false;
             edit_permission = false;
-            if (permissions['action-delete'] && item['created_by_id'] == {!! $user_id !!}) {
+            if ({{ Auth::user()->can('action-delete') ? 'true' : 'false' }} && item['created_by_id'] == {!! $user_id !!}) {
               delete_permission = true;
             }
-            if (permissions['action-edit'] && item['created_by_id'] == {!! $user_id !!}) {
+            if ({{ Auth::user()->can('action-edit') ? 'true' : 'false' }} && item['created_by_id'] == {!! $user_id !!}) {
               edit_permission = true;
             }
-            if (permissions['action-all']) {
+            if ({{ Auth::user()->can('action-all') ? 'true' : 'false' }}) {
               delete_permission = true;
               edit_permission = true;
             }
@@ -674,13 +660,13 @@
             markup += '<td>';
             delete_permission = false;
             edit_permission = false;
-            if (permissions['comment-delete'] && item['user_id'] == {!! $user_id !!}) {
+            if ({{ Auth::user()->can('comment-delete') ? 'true' : 'false' }} && item['user_id'] == {!! $user_id !!}) {
               delete_permission = true;
             }
-            if (permissions['comment-edit'] && item['user_id'] == {!! $user_id !!}) {
+            if ({{ Auth::user()->can('comment-edit') ? 'true' : 'false' }} && item['user_id'] == {!! $user_id !!}) {
               edit_permission = true;
             }
-            if (permissions['comment-all']) {
+            if ({{ Auth::user()->can('comment-all') ? 'true' : 'false' }}) {
               delete_permission = true;
               edit_permission = true;
             }
