@@ -1126,27 +1126,26 @@ h3:after {
                 </div>
               </div>
               <!-- Modal -->
-              <div class="modal fade" id="commentModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal fade" id="modal_comment" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" style="display:table;">
                   <div class="modal-content">
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title" id="comment_title_modal"></h4>
+                        <h4 class="modal-title" id="modal_comment_title"></h4>
                     </div>
                     <!-- Modal Header -->
                       
                     <!-- Modal Body -->
                     <div class="modal-body">
-                      <form id="form_comment_modal" role="form" method="POST" action="">
-                        <div class="form-group">
-                          <label  class="control-label" for="project_comment_modal">Comment</label>
-                          <div>
-                              <textarea type="text" name="project_comment_modal" class="form-control" placeholder="Enter a comment" rows="4"></textarea>
-                          </div>
+                      <form id="modal_comment_form" role="form" method="POST" action="">
+                        <div id="modal_comment_formgroup_comment" class="form-group">
+                          <label  class="control-label" for="modal_comment_form_comment">Comment</label>
+                          <textarea type="text" id="modal_comment_form_comment" class="form-control" placeholder="Enter a comment" rows="4"></textarea>
+                          <span id="modal_comment_form_comment_error" class="help-block"></span>
                         </div>
                         <div class="form-group">
-                          <div id="comment_hidden">
+                          <div id="modal_comment_form_hidden">
                           </div>
                         </div>
                       </form>  
@@ -1155,7 +1154,7 @@ h3:after {
                     <!-- Modal Footer -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" id="comment_create_update_button_modal" class="btn btn-success">Update</button>
+                        <button type="button" id="modal_comment_create_update_button" class="btn btn-success">Update</button>
                     </div>
                   </div>
                 </div>
@@ -1678,31 +1677,51 @@ $(document).ready(function() {
 
   //region Comment
   @if($action == 'update')
+
+    function modal_comment_form_clean(title) {
+      $('#modal_comment_title').text(title+' Comment');
+      $('#modal_comment_create_update_button').text(title);
+      $('#modal_comment_form_hidden').empty();
+      // Clean all textarea
+      $("form#modal_comment_form textarea").each(function(){
+        $(this).val('');
+      });
+
+      modal_comment_form_error_clean();
+    }
+
+    function modal_comment_form_error_clean() {
+      // Clean all error class
+      $("form#modal_comment_form  div.form-group").each(function(){
+        $(this).removeClass('has-error');
+      });
+      // Clean all error message
+      $("form#modal_comment_form span.help-block").each(function(){
+        $(this).empty();
+      });
+    }
+
     // Click edit
     $(document).on('click', '.comment_edit', function () {
-      $('#comment_title_modal').text('Update Comment');
-      $('#comment_create_update_button_modal').text('Update');
+      modal_comment_form_clean('Update');
       comment_id = this.id;
       comment_comment = $(this).parent().next().find(".comment_textarea").text();
-      $('textarea[name="project_comment_modal"]').val(comment_comment);
-      $('#comment_hidden').empty();
+      $('#modal_comment_form_comment').val(comment_comment);
       var hidden = '';
       hidden += '<input class="form-control" id="comment_id" name="comment_id" type="hidden" value="'+comment_id+'">';
       hidden += '<input class="form-control" id="action_comment_modal" name="action_comment_modal" type="hidden" value="update">';
-      $('#comment_hidden').append(hidden);
-      $('#commentModal').modal();
+      $('#modal_comment_form_hidden').append(hidden);
+      $('#modal_comment').modal();
     });
 
     // Click add new
     $(document).on('click', '#new_comment', function () {
-      $('#comment_title_modal').text('Create Comment');
-      $('#comment_create_update_button_modal').text('Create');
-      $('#comment_hidden').empty();
+      modal_comment_form_clean('Create');
       var hidden = '';
       hidden += '<input class="form-control" id="project_id_comment_modal" name="project_id_comment_modal" type="hidden" value="'+{{ $project->id }}+'">';
       hidden += '<input class="form-control" id="action_comment_modal" name="action_comment_modal" type="hidden" value="create">';
-      $('#comment_hidden').append(hidden);
-      $('#commentModal').modal("show");
+      $('#modal_comment_form_hidden').append(hidden);
+      $('#modal_comment').modal("show");
     });
 
     // Function to refresh comments from ajax request
@@ -1744,7 +1763,7 @@ $(document).ready(function() {
     }
 
     // click send info ajax to create or update
-    $(document).on('click', '#comment_create_update_button_modal', function () {
+    $(document).on('click', '#modal_comment_create_update_button', function () {
       // hidden input
       var action_comment_modal = $('input#action_comment_modal').val();
       var project_id_comment_modal = $('input#project_id_comment_modal').val();
@@ -1753,19 +1772,21 @@ $(document).ready(function() {
       }
 
       // filled in
-      var comment_comment = $('textarea[name="project_comment_modal"]').val();
+      var comment_comment = $('#modal_comment_form_comment').val();
       if (action_comment_modal == "update") {
         var data = {'comment':comment_comment
           };
         var comment_create_update_route = "{!! route('comment_edit','') !!}/"+comment_id;
-      } else {
+        var type = 'patch';
+      } else if (action_comment_modal == "create"){
         var data = {'project_id':project_id_comment_modal,'comment':comment_comment
           };
         var comment_create_update_route = "{!! route('commentInsert') !!}";
+        var type = 'post'
       }
       
       $.ajax({
-            type: 'post',
+            type: type,
             url: comment_create_update_route,
             data:data,
             dataType: 'json',
@@ -1786,12 +1807,25 @@ $(document).ready(function() {
               $('#delete-message').delay(2000).queue(function () {
                   $(this).addClass('animated flipOutX')
               });
+              $('#modal_comment').modal('hide');
               projectLoe.ajax.reload();
+            },
+            error: function (data, ajaxOptions, thrownError) {
+              modal_comment_form_error_clean();
+              var errors = data.responseJSON.errors;
+              var status = data.status;
+
+              if (status === 422) {
+                $.each(errors, function (key, value) {
+                  $('#modal_comment_formgroup_'+key).addClass('has-error');
+                  $('#modal_comment_form_'+key+'_error').text(value);
+                });
+              } else if (status === 403 || status === 500) {
+                $('#modal_comment_formgroup_'+key).addClass('has-error');
+                $('#modal_comment_form_'+key+'_error').text('No Authorization!');
+              }
             }
       });
-
-      $('#commentModal').modal('hide');
-
     });
 
     // Click delete
@@ -1800,7 +1834,7 @@ $(document).ready(function() {
       bootbox.confirm("Are you sure want to delete this message?", function(result) {
         if (result){
           $.ajax({
-            type: 'get',
+            type: 'delete',
             url: "{!! route('comment_delete','') !!}/"+comment_id,
             dataType: 'json',
             success: function(data) {

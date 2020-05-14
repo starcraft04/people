@@ -27,21 +27,63 @@ class CommentController extends Controller
         return Comment::whereIn('project_id', $inputs['project_ids'])->with('user_summary')->orderBy('created_at', 'desc')->get();
     }
 
-    public function commentInsert(Request $request)
+    public function store(Request $request)
     {
+        // First we need to validate the data we received
+        $data = $request->validate([
+            'comment' => 'required',
+            'project_id' => 'required',
+        ]);
+
         // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
         $result = new \stdClass();
-        $inputs = $request->all();
-        $comment = new Comment;
 
-        $comment->project_id = $inputs['project_id'];
-        $comment->comment = $inputs['comment'];
-        $comment->user_id = Auth::user()->id;
-
-        $comment->save();
+        $data["user_id"] = Auth::user()->id;
+        Comment::create($data);
 
         $result->result = 'success';
         $result->msg = 'Record added successfully';
+
+        return json_encode($result);
+    }
+
+    public function update(Request $request, $id)
+    {
+        // First we need to validate the data we received
+        $data = $request->validate([
+            'comment' => 'required',
+        ]);
+        
+        $result = new \stdClass();
+        $inputs = $request->all();
+
+        $comment = Comment::find($id);
+        if ($comment->user_id == Auth::user()->id || Auth::user()->can('comment-all')) {
+            $comment->comment = $inputs['comment'];
+            $comment->save();
+            $result->result = 'success';
+            $result->msg = 'Message edited successfully';
+        } else {
+            $result->result = 'error';
+            $result->msg = 'Message cannot be edited by you';
+        }
+
+        return json_encode($result);
+    }
+
+    public function destroy($id)
+    {
+        // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
+        $result = new \stdClass();
+        $comment = Comment::find($id);
+        if ($comment->user_id == Auth::user()->id || Auth::user()->can('comment-all')) {
+            Comment::destroy($id);
+            $result->result = 'success';
+            $result->msg = 'Message deleted successfully';
+        } else {
+            $result->result = 'error';
+            $result->msg = 'Message cannot be deleted by you';
+        }
 
         return json_encode($result);
     }
@@ -68,50 +110,6 @@ class CommentController extends Controller
             $result->list[$i]->time = $comment->updated_at->diffForHumans();
             $result->list[$i]->user_name = $comment->user->name;
             $i++;
-        }
-
-        return json_encode($result);
-    }
-
-    public function edit(Request $request, $id)
-    {
-        $result = new \stdClass();
-        $inputs = $request->all();
-        //dd($inputs);
-        $comment = Comment::find($id);
-        if ($comment->user_id == Auth::user()->id || Auth::user()->can('comment-all')) {
-            $comment->comment = $inputs['comment'];
-            $comment->save();
-            $result->result = 'success';
-            $result->box_type = 'success';
-            $result->message_type = 'success';
-            $result->msg = 'Message edited successfully';
-        } else {
-            $result->result = 'error';
-            $result->box_type = 'danger';
-            $result->message_type = 'error';
-            $result->msg = 'Message cannot be edited by you';
-        }
-
-        return json_encode($result);
-    }
-
-    public function delete($id)
-    {
-        // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
-        $result = new \stdClass();
-        $comment = Comment::find($id);
-        if ($comment->user_id == Auth::user()->id || Auth::user()->can('comment-all')) {
-            Comment::destroy($id);
-            $result->result = 'success';
-            $result->box_type = 'success';
-            $result->message_type = 'success';
-            $result->msg = 'Message deleted successfully';
-        } else {
-            $result->result = 'error';
-            $result->box_type = 'danger';
-            $result->message_type = 'error';
-            $result->msg = 'Message cannot be deleted by you';
         }
 
         return json_encode($result);

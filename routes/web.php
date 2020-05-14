@@ -131,10 +131,11 @@ Route::group(['middleware' => ['auth', 'general']], function () {
     //Comment
     Route::get('comment/{id}', ['uses' => 'CommentController@show', 'as' => 'comment_show', 'middleware' => ['permission:tools-projects-comments']]);
     Route::get('comments/{project_id}', ['uses' => 'CommentController@getList', 'as' => 'comment_list', 'middleware' => ['permission:tools-projects-comments']]);
-    Route::post('comment/edit/{id}', ['uses' => 'CommentController@edit', 'as' => 'comment_edit', 'middleware' => ['permission:comment-edit']]);
-    Route::get('comment/delete/{id}', ['uses' => 'CommentController@delete', 'as' => 'comment_delete', 'middleware' => ['permission:comment-delete']]);
+    Route::post('comments', ['uses' => 'CommentController@store', 'as' => 'commentInsert', 'middleware' => ['permission:comment-create']]);
+    Route::patch('comments/{id}', ['uses' => 'CommentController@update', 'as' => 'comment_edit', 'middleware' => ['permission:comment-edit']]);
+    Route::delete('comment/{id}', ['uses' => 'CommentController@destroy', 'as' => 'comment_delete', 'middleware' => ['permission:comment-delete']]);
     Route::post('commentList', ['uses' => 'CommentController@commentList', 'as' => 'commentList', 'middleware' => ['permission:tools-projects-comments']]);
-    Route::post('commentInsert', ['uses' => 'CommentController@commentInsert', 'as' => 'commentInsert', 'middleware' => ['permission:comment-create']]);
+    
 
     //Tools
     Route::get('toolsActivities', ['uses' => 'ToolsController@activities', 'as' => 'toolsActivities', 'middleware' => ['permission:tools-activity-view']]);
