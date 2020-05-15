@@ -37,9 +37,10 @@ class CommentController extends Controller
 
         // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
         $result = new \stdClass();
+        $inputs = $request->all();
 
-        $data["user_id"] = Auth::user()->id;
-        Comment::create($data);
+        $inputs["user_id"] = Auth::user()->id;
+        Comment::create($inputs);
 
         $result->result = 'success';
         $result->msg = 'Record added successfully';
@@ -59,8 +60,8 @@ class CommentController extends Controller
 
         $comment = Comment::find($id);
         if ($comment->user_id == Auth::user()->id || Auth::user()->can('comment-all')) {
-            $comment->comment = $inputs['comment'];
-            $comment->save();
+            $comment->update($inputs);
+
             $result->result = 'success';
             $result->msg = 'Message edited successfully';
         } else {

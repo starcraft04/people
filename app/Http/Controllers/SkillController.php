@@ -51,10 +51,7 @@ class SkillController extends Controller
     public function postFormCreate(skillCreateRequest $request)
     {
         $inputs = $request->only('domain', 'subdomain', 'technology', 'skill', 'certification');
-        if (is_null($inputs['certification'])) {
-            $inputs['certification'] = 0;
-        }
-        $skill = Skill::create($inputs);
+        Skill::create($inputs);
 
         return redirect('skillList')->with('success', 'Record created successfully');
     }
@@ -62,9 +59,6 @@ class SkillController extends Controller
     public function postFormUpdate(skillUpdateRequest $request, $id)
     {
         $inputs = $request->only('domain', 'subdomain', 'technology', 'skill', 'certification');
-        if (is_null($inputs['certification'])) {
-            $inputs['certification'] = 0;
-        }
         $skill = Skill::find($id);
         $skill->update($inputs);
 

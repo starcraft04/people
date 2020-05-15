@@ -97,8 +97,9 @@
                       {!! Form::label('certification', 'Certification', ['class' => 'control-label']) !!}
                   </div>
                   <div class="col-md-9">
-                      {!! Form::checkbox('certification', '1', (isset($skill)) ? $skill->certification : '', ['class' => 'checkbox']) !!}
-                      {!! $errors->first('manager_id', '<small class="help-block">:message</small>') !!}
+                    <input type="hidden" name="certification" value="0">
+                    {!! Form::checkbox('certification', '1', (isset($skill)) ? $skill->certification : '', ['class' => 'checkbox']) !!}
+                    {!! $errors->first('manager_id', '<small class="help-block">:message</small>') !!}
                   </div>
               </div>
           </div>

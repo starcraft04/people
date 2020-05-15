@@ -116,49 +116,6 @@ h3:after {
 
       <!-- Window content -->
       <div class="x_content">
-        @if($action == 'create')
-          {!! Form::open(['url' => 'toolsFormCreate', 'method' => 'post', 'id' => 'myForm']) !!}
-          {!! Form::hidden('created_by_user_id', $created_by_user_id, ['class' => 'form-control']) !!}
-          @elseif($action == 'update')
-          {!! Form::open(['url' => 'toolsFormUpdate', 'method' => 'post', 'id' => 'myForm']) !!}
-          {!! Form::hidden('project_id', $project->id, ['class' => 'form-control']) !!}
-          <!-- Now we need also to set up id so that it can be used for the ProjectUpdateRequest.php -->
-          {!! Form::hidden('id', $project->id, ['class' => 'form-control']) !!}
-          {!! Form::hidden('user_id_url', $user_id, ['class' => 'form-control']) !!}
-        @endif
-        <div class="row">
-          <div class="col-md-1">
-            <a href="javascript:history.back()" class="btn btn-primary btn-sm">
-              <span class="glyphicon glyphicon-circle-arrow-left"></span> Back
-            </a>
-          </div>
-          <div class="col-md-offset-8 col-md-1" style="text-align: right;">
-            @if($action == 'update')
-            @can('tools-user_assigned-remove')
-            @if($user_id != 0)
-            <button type="button" id="remove_user" class="btn btn-danger btn-sm">Remove user</button>
-            @endif
-            @endcan
-            @endif
-          </div>
-          <div class="col-md-1" style="text-align: right;">
-            @if($action == 'update')
-            @can('tools-user_assigned-transfer')
-            @if($user_id != 0)
-            <button type="button" id="transfer_user" class="btn btn-info btn-sm">Transfer</button>
-            @endif
-            @endcan
-            @endif
-          </div>
-          <div class="col-md-1" style="text-align: right;">
-            @if($action == 'create')
-            <input class="btn btn-success btn-sm" type="submit" name="action" value="Create" />
-            @elseif($action == 'update')
-            <input class="btn btn-success btn-sm" type="submit" name="action" value="Update" />
-            @endif
-          </div>
-        </div>
-
         <div class="" role="tabpanel" data-example-id="togglable-tabs">
           <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
             <li role="presentation" class="active"><a href="#tab_content1" id="tab_main" role="tab" data-toggle="tab" aria-expanded="true">Project</a></li>
@@ -181,6 +138,51 @@ h3:after {
           <div id="myTabContent" class="tab-content">
             <!-- Project -->
             <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="tab_main">
+              @if($action == 'create')
+                {!! Form::open(['url' => 'toolsFormCreate', 'method' => 'post', 'id' => 'projectForm']) !!}
+                {!! Form::hidden('created_by_user_id', $created_by_user_id, ['class' => 'form-control']) !!}
+              @elseif($action == 'update')
+                {!! Form::open(['url' => 'toolsFormUpdate', 'method' => 'post', 'id' => 'projectForm']) !!}
+                {!! Form::hidden('project_id', $project->id, ['class' => 'form-control']) !!}
+                <!-- Now we need also to set up id so that it can be used for the ProjectUpdateRequest.php -->
+                {!! Form::hidden('id', $project->id, ['class' => 'form-control']) !!}
+                {!! Form::hidden('user_id_url', $user_id, ['class' => 'form-control']) !!}
+              @endif
+              <!-- Row with buttons -->
+              <div class="row">
+                <div class="col-md-1">
+                  <a href="javascript:history.back()" class="btn btn-primary btn-sm">
+                    <span class="glyphicon glyphicon-circle-arrow-left"></span> Back
+                  </a>
+                </div>
+                <div class="col-md-offset-8 col-md-1" style="text-align: right;">
+                  @if($action == 'update')
+                  @can('tools-user_assigned-remove')
+                  @if($user_id != 0)
+                  <button type="button" id="remove_user" class="btn btn-danger btn-sm">Remove user</button>
+                  @endif
+                  @endcan
+                  @endif
+                </div>
+                <div class="col-md-1" style="text-align: right;">
+                  @if($action == 'update')
+                  @can('tools-user_assigned-transfer')
+                  @if($user_id != 0)
+                  <button type="button" id="transfer_user" class="btn btn-info btn-sm">Transfer</button>
+                  @endif
+                  @endcan
+                  @endif
+                </div>
+                <div class="col-md-1" style="text-align: right;">
+                  @if($action == 'create')
+                  <input class="btn btn-success btn-sm" type="submit" name="action" value="Create" />
+                  @elseif($action == 'update')
+                  <input class="btn btn-success btn-sm" type="submit" name="action" value="Update" />
+                  @endif
+                </div>
+              </div>
+
+              <!-- Row with User and Year -->
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group {!! $errors->has('user_id') ? 'has-error' : '' !!} col-md-12">
@@ -221,6 +223,7 @@ h3:after {
                 </div>
               </div>
 
+              <!-- Row with months and values -->
               <div class="row_months user_selected">
                 <div class="col-md-12">
                   Number of days for each month.
@@ -249,6 +252,7 @@ h3:after {
               <div class="clearfix"></div>
               <div class="ln_solid"></div>
 
+              <!-- Row with Project details -->
               <div class="row">
                 <div class="col-md-6">
                   <div class="row">
@@ -707,7 +711,9 @@ h3:after {
                 <div class="row"></div>
                 <div class="row"></div>
               </div>
+              {!! Form::close() !!}
             </div>
+            
             <!-- Project -->
 
             @if($action == 'update')
@@ -746,26 +752,25 @@ h3:after {
                   </div>
                 </div>
               </div>
-              @endcan
               <!-- Table -->
 
               <!-- Modal -->
-              <div class="modal fade" id="revenueModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal fade" id="modal_revenue" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                   <div class="modal-dialog modal-dialog-centered" style="display:table;">
                       <div class="modal-content">
                         <!-- Modal Header -->
                         <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title" id="revenue_title_modal"></h4>
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                          <h4 class="modal-title" id="modal_revenue_title"></h4>
                         </div>
                         <!-- Modal Header -->
                       
                         <!-- Modal Body -->
                         <div class="modal-body">
-                          <form id="form_revenue_modal" role="form" method="POST" action="">
-                            <div class="form-group">
-                                <label class="control-label" for="year_revenue_modal">Year</label>
-                                <select class="form-control select2" style="width: 100%;" id="year_revenue_modal" name="year_revenue_modal" data-placeholder="Select a year">
+                          <form id="modal_revenue_form" role="form" method="POST" action="">
+                            <div id="modal_revenue_formgroup_year" class="form-group">
+                                <label class="control-label" for="modal_revenue_form_year">Year</label>
+                                <select class="form-control select2" style="width: 100%;" id="modal_revenue_form_year" data-placeholder="Select a year">
                                   <option value="" ></option>
                                   @foreach(config('select.year') as $key => $value)
                                   <option value="{{ $key }}" @if($key == date("Y")) selected @endif>
@@ -773,20 +778,23 @@ h3:after {
                                   </option>
                                   @endforeach
                                 </select>
+                                <span id="modal_revenue_form_year_error" class="help-block"></span>
                             </div>
-                            <div class="form-group">
-                                <label  class="control-label" for="fpc_revenue_modal">FPC</label>
-                                <input type="text" name="fpc_revenue_modal" class="form-control" placeholder="FPC"></input>
+                            <div id="modal_revenue_formgroup_product_code" class="form-group">
+                                <label  class="control-label" for="modal_revenue_form_product_code">FPC</label>
+                                <input type="text" id="modal_revenue_form_product_code" class="form-control" placeholder="FPC"></input>
+                                <span id="modal_revenue_form_product_code_error" class="help-block"></span>
                             </div>
                             @foreach(config('select.available_months') as $key => $month)
-                            <div class="form-group">
-                                <label  class="control-label" for="{{ $month }}_revenue_modal">{{ $month }}</label>
-                                <input type="text" name="{{ $month }}_revenue_modal" class="form-control" placeholder="{{ $month }}" value="0"></input>
+                            <div id="modal_revenue_formgroup_{{ $month }}" class="form-group">
+                                <label  class="control-label" for="modal_revenue_form_{{ $month }}">{{ $month }}</label>
+                                <input type="text" id="modal_revenue_form_{{ $month }}" class="form-control" placeholder="{{ $month }}"></input>
+                                <span id="modal_revenue_form_{{ $month }}_error" class="help-block"></span>
                             </div>
                             @endforeach
 
                             <div class="form-group">
-                                <div id="revenue_hidden"></div>
+                                <div id="modal_revenue_form_hidden"></div>
                             </div>
                           </form>
                         </div>
@@ -794,13 +802,13 @@ h3:after {
                         <!-- Modal Footer -->
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="button" id="revenue_create_update_button_modal" class="btn btn-success">Update</button>
+                            <button type="button" id="modal_revenue_create_update_button" class="btn btn-success"></button>
                         </div>
                       </div>
                   </div>
               </div>
               <!-- Modal -->
-
+              @endcan
               <!-- Revenues -->
 
               <!-- LoE -->
@@ -842,78 +850,72 @@ h3:after {
               <!-- Table -->
 
               <!-- Modal -->
-              <div class="modal fade" id="loeModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal fade" id="modal_loe" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                   <div class="modal-dialog modal-dialog-centered" style="display:table;">
                       <div class="modal-content">
                         <!-- Modal Header -->
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title" id="loe_title_modal"></h4>
+                            <h4 class="modal-title" id="modal_loe_title"></h4>
                         </div>
                         <!-- Modal Header -->
                       
                         <!-- Modal Body -->
                         <div class="modal-body">
-                          <form id="form_loe_modal" role="form" method="POST" action="">
-                            <div class="form-group">
-                                <label  class="control-label" for="domain_loe_modal">Domain</label>
-                                <div>
-                                  <select class="form-control select2" style="width: 100%;" id="domain_loe_modal" name="domain_loe_modal" data-placeholder="Select a domain">
+                          <form id="modal_loe_form" role="form" method="POST" action="">
+                            <div id="modal_loe_formgroup_domain" class="form-group">
+                                <label class="control-label" for="modal_loe_form_domain">Domain</label>
+                                <select class="form-control select2" style="width: 100%;" id="modal_loe_form_domain" data-placeholder="Select a domain">
+                                  <option value="" ></option>
+                                  @foreach(config('select.domain-users') as $key => $value)
+                                  <option value="{{ $key }}">
+                                    {{ $value }}
+                                  </option>
+                                  @endforeach
+                                </select>
+                                <span id="modal_loe_form_domain_error" class="help-block"></span>
+                            </div>
+                            <div id="modal_loe_formgroup_type" class="form-group">
+                                <label class="control-label" for="modal_loe_form_type">Type</label>
+                                <select class="form-control select2" style="width: 100%;" id="modal_loe_form_type" data-placeholder="Select a resource type">
                                     <option value="" ></option>
-                                    @foreach(config('select.domain-users') as $key => $value)
+                                    @foreach(config('select.loe_type') as $key => $value)
                                     <option value="{{ $key }}">
                                       {{ $value }}
                                     </option>
                                     @endforeach
-                                  </select>
-                                </div>
+                                </select>
+                                <span id="modal_loe_form_type_error" class="help-block"></span>
+                            </div>
+                            <div id="modal_loe_formgroup_location" class="form-group">
+                                <label  class="control-label" for="modal_loe_form_location">Location</label>
+                                <select class="form-control select2" style="width: 100%;" id="modal_loe_form_location" data-placeholder="Select a location">
+                                    <option value="" ></option>
+                                    @foreach(config('countries.country') as $key => $value)
+                                    <option value="{{ $key }}">
+                                      {{ $value }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                                <span id="modal_loe_form_location_error" class="help-block"></span>
+                            </div>
+                            <div id="modal_loe_formgroup_mandays" class="form-group">
+                                <label  class="control-label" for="modal_loe_form_mandays">Mandays</label>
+                                <input type="text" id="modal_loe_form_mandays" class="form-control" placeholder="Mandays"></input>
+                                <span id="modal_loe_form_mandays_error" class="help-block"></span>
+                            </div>
+                            <div id="modal_loe_formgroup_description" class="form-group">
+                                <label  class="control-label" for="modal_loe_form_description">Description</label>
+                                <textarea type="text" id="modal_loe_form_description" class="form-control" placeholder="Enter a description" rows="4"></textarea>
+                                <span id="modal_loe_form_description_error" class="help-block"></span>
+                            </div>
+                            <div id="modal_loe_formgroup_date" class="form-group">
+                                <label  class="control-label" for="modal_loe_form_date">Start to end date</label>
+                                <input type="text" id="modal_loe_form_date" class="form-control"></input>
+                                <span id="modal_loe_form_date_error" class="help-block"></span>
                             </div>
                             <div class="form-group">
-                                <label  class="control-label" for="type_loe_modal">Type</label>
-                                <div>
-                                  <select class="form-control select2" style="width: 100%;" id="type_loe_modal" name="type_loe_modal" data-placeholder="Select a resource type">
-                                      <option value="" ></option>
-                                      @foreach(config('select.loe_type') as $key => $value)
-                                      <option value="{{ $key }}">
-                                        {{ $value }}
-                                      </option>
-                                      @endforeach
-                                  </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label  class="control-label" for="location_loe_modal">Location</label>
-                                <div>
-                                  <select class="form-control select2" style="width: 100%;" id="location_loe_modal" name="location_loe_modal" data-placeholder="Select a location">
-                                      <option value="" ></option>
-                                      @foreach(config('countries.country') as $key => $value)
-                                      <option value="{{ $key }}">
-                                        {{ $value }}
-                                      </option>
-                                      @endforeach
-                                  </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label  class="control-label" for="mandays_loe_modal">Mandays</label>
-                                <div>
-                                    <input type="text" name="mandays_loe_modal" class="form-control" placeholder="Mandays"></input>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label  class="control-label" for="description_loe_modal">Description</label>
-                                <div>
-                                    <textarea type="text" name="description_loe_modal" class="form-control" placeholder="Enter a description" rows="4"></textarea>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label  class="control-label" for="date_loe_modal">Start to end date</label>
-                                <div>
-                                    <input type="text" id="date_loe_modal" name="date_loe_modal" class="form-control"></input>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div id="loe_hidden"></div>
+                                <div id="modal_loe_form_hidden"></div>
                             </div>
                           </form>
                         </div>
@@ -921,7 +923,7 @@ h3:after {
                         <!-- Modal Footer -->
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="button" id="loe_create_update_button_modal" class="btn btn-success">Update</button>
+                            <button type="button" id="modal_loe_create_update_button" class="btn btn-success">Update</button>
                         </div>
                       </div>
                   </div>
@@ -1110,10 +1112,10 @@ h3:after {
                       {{$comment->user->name}} said <small class="text-primary">{{$comment->updated_at->diffForHumans()}}</small>
                       @if($comment->user_id == Auth::user()->id || Auth::user()->can('comment-all'))
                         @can('comment-edit')
-                          <a id="{{ $comment->id }}" class="pull-right comment_edit"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+                          <a data-id="{{ $comment->id }}" class="pull-right comment_edit"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
                         @endcan
                         @can('comment-delete')
-                          <a id="{{ $comment->id }}" style="margin-right: 10px;" class="pull-right comment_delete"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+                          <a data-id="{{ $comment->id }}" style="margin-right: 10px;" class="pull-right comment_delete"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></a>
                         @endcan
                       @endif
                     </div>
@@ -1154,7 +1156,7 @@ h3:after {
                     <!-- Modal Footer -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" id="modal_comment_create_update_button" class="btn btn-success">Update</button>
+                        <button type="button" id="modal_comment_create_update_button" class="btn btn-success"></button>
                     </div>
                   </div>
                 </div>
@@ -1165,7 +1167,6 @@ h3:after {
             @endif
           </div>
         </div>
-        {!! Form::close() !!}
       </div>
       <!-- Window content -->
 
@@ -1301,7 +1302,7 @@ $(document).ready(function() {
   // Now this is important so that we send the value of all disabled fields
   // What it does is when you try to submit, it will remove the disabled property on all fields with disabled
   jQuery(function ($) {
-    $('form').bind('submit', function () {
+    $('#projectForm').bind('submit', function () {
       $(this).find(':input').prop('disabled', false);
     });
   });
@@ -1421,8 +1422,8 @@ $(document).ready(function() {
             $('<input />').attr('type', 'hidden')
               .attr('name', 'action')
               .attr('value', 'Remove')
-              .appendTo('#myForm');
-            $('#myForm').submit();
+              .appendTo('#projectForm');
+            $('#projectForm').submit();
           }
       });
   });
@@ -1444,9 +1445,44 @@ $(document).ready(function() {
   @if($action == 'update')
 
     // Init select2 boxes in the modal
-    $("#year_revenue_modal").select2({
+    $("#modal_revenue_form_year").select2({
         allowClear: false
     });
+
+    function modal_revenue_form_clean(title) {
+      $('#modal_revenue_title').text(title+' Revenue');
+      $('#modal_revenue_create_update_button').text(title);
+      $('#modal_revenue_form_hidden').empty();
+
+      // Set date to today's year
+      var d = new Date();
+      var year = d.getFullYear()
+      $('select#modal_revenue_form_year').val(year);
+      $('select#modal_revenue_form_year').select2().trigger('change');
+
+      $('#modal_revenue_form_product_code').val('');
+
+      all_inputs = $('#form#modal_revenue_form input');
+      console.log(all_inputs);
+
+      // Set all months value to 0
+      @foreach(config('select.available_months') as $key => $month)
+        $('#modal_revenue_form_{{ $month }}').val(0);
+      @endforeach
+
+      modal_revenue_form_error_clean();
+    }
+
+    function modal_revenue_form_error_clean() {
+      // Clean all error class
+      $("form#modal_revenue_form  div.form-group").each(function(){
+        $(this).removeClass('has-error');
+      });
+      // Clean all error message
+      $("form#modal_revenue_form span.help-block").each(function(){
+        $(this).empty();
+      });
+    }
 
     projectRevenue = $('#projectRevenue').DataTable({
         serverSide: true,
@@ -1537,87 +1573,79 @@ $(document).ready(function() {
 
     // Click add new
     $(document).on('click', '#new_revenue', function () {
-      $('#revenue_title_modal').text('Create revenue');
-      $('#revenue_create_update_button_modal').text('Create');
-      $('#revenue_hidden').empty();
+      modal_revenue_form_clean('Create');
+
       var hidden = '';
-      hidden += '<input class="form-control" id="project_id_revenue_modal" name="project_id_revenue_modal" type="hidden" value="'+{{ $project->id }}+'">';
-      hidden += '<input class="form-control" id="action_revenue_modal" name="action_revenue_modal" type="hidden" value="create">';
-      $('#revenue_hidden').append(hidden);
-      $('#revenueModal').modal("show");
+      hidden += '<input class="form-control" id="modal_revenue_form_project_id" type="hidden" value="'+{{ $project->id }}+'">';
+      hidden += '<input class="form-control" id="modal_revenue_form_action" type="hidden" value="create">';
+      $('#modal_revenue_form_hidden').append(hidden);
+      $('#modal_revenue').modal("show");
     });
 
     // Click edit
     $(document).on('click', '.buttonRevenueEdit', function () {
-      $('#revenue_title_modal').text('Update revenue');
-      $('#revenue_create_update_button_modal').text('Update');
+      modal_revenue_form_clean('Update');
 
       var table = projectRevenue;
       var tr = $(this).closest('tr');
       var row = table.row(tr);
-      //console.log('the revenue id is '+row.data().revenue_id);
 
-      $('#revenue_hidden').empty();
       var hidden = '';
-      hidden += '<input class="form-control" id="project_id_revenue_modal" name="project_id_revenue_modal" type="hidden" value="'+{{ $project->id }}+'">';
-      hidden += '<input class="form-control" id="action_revenue_modal" name="action_revenue_modal" type="hidden" value="update">';
-      hidden += '<input class="form-control" id="revenue_id" name="revenue_id" type="hidden" value="'+row.data().id+'">';
-      $('#revenue_hidden').append(hidden);
+      hidden += '<input class="form-control" id="modal_revenue_form_revenue_id" type="hidden" value="'+row.data().id+'">';
+      hidden += '<input class="form-control" id="modal_revenue_form_action" type="hidden" value="update">';
+      $('#modal_revenue_form_hidden').append(hidden);
 
-      $('select[name="year_revenue_modal"]').val(row.data().year);
-      $('select[name="year_revenue_modal"]').select2().trigger('change');
+      $('select#modal_revenue_form_year').val(row.data().year);
+      $('select#modal_revenue_form_year').select2().trigger('change');
       
-      $('input[name="fpc_revenue_modal"]').val(row.data().product_code);
+      $('input#modal_revenue_form_product_code').val(row.data().product_code);
 
       @foreach(config('select.available_months') as $key => $month)
-        $('input[name="{{ $month }}_revenue_modal"]').val(row.data().{{ $month }});
+        $('input#modal_revenue_form_{{ $month }}').val(row.data().{{ $month }});
       @endforeach
 
-      $('#revenueModal').modal("show");
+      $('#modal_revenue').modal("show");
     });
 
     // click send info ajax to create or update
-    $(document).on('click', '#revenue_create_update_button_modal', function () {
-
-      // hidden input
-      var action_revenue_modal = $('input#action_revenue_modal').val();
-      var project_id_revenue_modal = $('input#project_id_revenue_modal').val();
-      if (action_revenue_modal == "update") {
-        var revenue_id = $('input#revenue_id').val();
-      }
-
-      // filled in
-      var year = $('select[name="year_revenue_modal"]').children("option:selected").val();
-      var product_code = $('input[name="fpc_revenue_modal"]').val();
+    $(document).on('click', '#modal_revenue_create_update_button', function () {
+      // Getting inputs
+      var action_revenue_modal = $('input#modal_revenue_form_action').val();
+      var year = $('select#modal_revenue_form_year').children("option:selected").val();
+      var product_code = $('input#modal_revenue_form_product_code').val();
       @foreach(config('select.available_months') as $key => $month)
-        var input_revenue_{{ $month }} = $('input[name="{{ $month }}_revenue_modal"]').val();
+        var input_revenue_{{ $month }} = $('input#modal_revenue_form_{{ $month }}').val();
       @endforeach
-
-      if (action_revenue_modal == "create") {
-        var data = {'project_id':project_id_revenue_modal,'year':year,'product_code':product_code
-          @foreach(config('select.available_months') as $key => $month)
-            ,'{{ $month }}':  input_revenue_{{ $month }}
-          @endforeach
+ 
+      switch (action_revenue_modal) {
+        case 'create':
+          var project_id_revenue_modal = $('input#modal_revenue_form_project_id').val();
+          var data = {'project_id':project_id_revenue_modal,'year':year,'product_code':product_code
+                      @foreach(config('select.available_months') as $key => $month)
+                        ,'{{ $month }}':  input_revenue_{{ $month }}
+                      @endforeach
           };
-        var revenue_create_update_route = "{!! route('ProjectsRevenueAddAjax') !!}";
-      } else {
-        var data = {'project_id':project_id_revenue_modal,'year':year,'product_code':product_code
-          @foreach(config('select.available_months') as $key => $month)
-          ,'{{ $month }}':  input_revenue_{{ $month }}
-          @endforeach
+          var revenue_create_update_route = "{!! route('ProjectsRevenueAddAjax') !!}";
+          var type = 'post';
+          break;
+        case 'update':
+          var revenue_id = $('input#modal_revenue_form_revenue_id').val();
+          var data = {'year':year,'product_code':product_code
+                      @foreach(config('select.available_months') as $key => $month)
+                      ,'{{ $month }}':  input_revenue_{{ $month }}
+                      @endforeach
           };
-        var revenue_create_update_route = "{{ route('ProjectsRevenueUpdateAjax',['']) }}/"+revenue_id;
+          var revenue_create_update_route = "{{ route('ProjectsRevenueUpdateAjax',['']) }}/"+revenue_id;
+          var type = 'patch';
+          break;
       }
-
-      //console.log(data);console.log(revenue_create_update_route);return;
       
       $.ajax({
-            type: 'post',
+            type: type,
             url: revenue_create_update_route,
             data:data,
             dataType: 'json',
             success: function(data) {
-              //console.log(data);
               if (data.result == 'success'){
                   box_type = 'success';
                   message_type = 'success';
@@ -1633,16 +1661,31 @@ $(document).ready(function() {
               $('#delete-message').delay(2000).queue(function () {
                   $(this).addClass('animated flipOutX')
               });
+              $('#modal_revenue').modal('hide');
               projectRevenue.ajax.reload();
+            },
+            error: function (data, ajaxOptions, thrownError) {
+              modal_revenue_form_error_clean();
+              var errors = data.responseJSON.errors;
+              var status = data.status;
+
+              if (status === 422) {
+                console.log(errors);
+                $.each(errors, function (key, value) {
+                  $('#modal_revenue_formgroup_'+key).addClass('has-error');
+                  $('#modal_revenue_form_'+key+'_error').text(value);
+                });
+              } else if (status === 403 || status === 500) {
+                $('#modal_comment_formgroup_'+key).addClass('has-error');
+                $('#modal_comment_form_'+key+'_error').text('No Authorization!');
+              }
             }
       });
-
-      $('#revenueModal').modal('hide');
 
     });
 
     $(document).on('click', '.buttonRevenueDelete', function () {
-      record_id = $(this).data("id");
+      record_id = $(this).attr('data-id');
       bootbox.confirm("Are you sure want to delete this record?", function(result) {
         if (result){
           $.ajax({
@@ -1701,25 +1744,25 @@ $(document).ready(function() {
       });
     }
 
-    // Click edit
-    $(document).on('click', '.comment_edit', function () {
-      modal_comment_form_clean('Update');
-      comment_id = this.id;
-      comment_comment = $(this).parent().next().find(".comment_textarea").text();
-      $('#modal_comment_form_comment').val(comment_comment);
-      var hidden = '';
-      hidden += '<input class="form-control" id="comment_id" name="comment_id" type="hidden" value="'+comment_id+'">';
-      hidden += '<input class="form-control" id="action_comment_modal" name="action_comment_modal" type="hidden" value="update">';
-      $('#modal_comment_form_hidden').append(hidden);
-      $('#modal_comment').modal();
-    });
-
     // Click add new
     $(document).on('click', '#new_comment', function () {
       modal_comment_form_clean('Create');
       var hidden = '';
-      hidden += '<input class="form-control" id="project_id_comment_modal" name="project_id_comment_modal" type="hidden" value="'+{{ $project->id }}+'">';
-      hidden += '<input class="form-control" id="action_comment_modal" name="action_comment_modal" type="hidden" value="create">';
+      hidden += '<input class="form-control" id="modal_comment_form_project_id" type="hidden" value="'+{{ $project->id }}+'">';
+      hidden += '<input class="form-control" id="modal_comment_form_action" type="hidden" value="create">';
+      $('#modal_comment_form_hidden').append(hidden);
+      $('#modal_comment').modal("show");
+    });
+
+    // Click edit
+    $(document).on('click', '.comment_edit', function () {
+      modal_comment_form_clean('Update');
+      comment_id = $(this).attr('data-id');
+      comment_comment = $(this).parent().next().find(".comment_textarea").text();
+      $('#modal_comment_form_comment').val(comment_comment);
+      var hidden = '';
+      hidden += '<input class="form-control" id="modal_comment_form_comment_id" type="hidden" value="'+comment_id+'">';
+      hidden += '<input class="form-control" id="modal_comment_form_action" type="hidden" value="update">';
       $('#modal_comment_form_hidden').append(hidden);
       $('#modal_comment').modal("show");
     });
@@ -1741,10 +1784,10 @@ $(document).ready(function() {
                     comments += value.user_name +' said <small class="text-primary">'+value.time+'</small>';
                     if (value.id > 0) {
                       @can('comment-edit')
-                        comments += '<a id="'+value.id+'" class="pull-right comment_edit"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span></a>';
+                        comments += '<a data-id="'+value.id+'" class="pull-right comment_edit"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span></a>';
                       @endcan
                       @can('comment-delete')
-                        comments += '<a id="'+value.id+'" style="margin-right: 10px;" class="pull-right comment_delete"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></a>';
+                        comments += '<a data-id="'+value.id+'" style="margin-right: 10px;" class="pull-right comment_delete"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></a>';
                       @endcan
                     }
                     comments += '</div>';
@@ -1764,25 +1807,27 @@ $(document).ready(function() {
 
     // click send info ajax to create or update
     $(document).on('click', '#modal_comment_create_update_button', function () {
-      // hidden input
-      var action_comment_modal = $('input#action_comment_modal').val();
-      var project_id_comment_modal = $('input#project_id_comment_modal').val();
-      if (action_comment_modal == "update") {
-        var comment_id = $('input#comment_id').val();
-      }
-
-      // filled in
+      // Getting inputs
+      var action_comment_modal = $('input#modal_comment_form_action').val();
       var comment_comment = $('#modal_comment_form_comment').val();
-      if (action_comment_modal == "update") {
-        var data = {'comment':comment_comment
-          };
-        var comment_create_update_route = "{!! route('comment_edit','') !!}/"+comment_id;
-        var type = 'patch';
-      } else if (action_comment_modal == "create"){
-        var data = {'project_id':project_id_comment_modal,'comment':comment_comment
-          };
-        var comment_create_update_route = "{!! route('commentInsert') !!}";
-        var type = 'post'
+      switch (action_comment_modal) {
+        case 'create':
+          // Data
+          var project_id_comment_modal = $('input#modal_comment_form_project_id').val();
+          var data = {'project_id':project_id_comment_modal,'comment':comment_comment};
+          // Route info
+          var comment_create_update_route = "{!! route('commentInsert') !!}";
+          var type = 'post';
+          break;
+
+        case 'update':
+          // Data
+          var comment_id = $('input#modal_comment_form_comment_id').val();
+          var data = {'comment':comment_comment};
+          // Route info
+          var comment_create_update_route = "{!! route('comment_edit','') !!}/"+comment_id;
+          var type = 'patch';
+          break;
       }
       
       $.ajax({
@@ -1830,7 +1875,7 @@ $(document).ready(function() {
 
     // Click delete
     $(document).on('click', '.comment_delete', function () {
-      var comment_id = this.id;
+      var comment_id = $(this).attr('data-id');
       bootbox.confirm("Are you sure want to delete this message?", function(result) {
         if (result){
           $.ajax({
@@ -1867,7 +1912,7 @@ $(document).ready(function() {
   //region Loe
   @if($action == 'update')
     // Init daterange in input field
-    $('#date_loe_modal').daterangepicker({
+    $('#modal_loe_form_date').daterangepicker({
       showISOWeekNumbers: true,
       showDropdowns: true,
       autoUpdateInput: false,
@@ -1877,24 +1922,24 @@ $(document).ready(function() {
       }
     });
 
-    $('#date_loe_modal').on('apply.daterangepicker', function(ev, picker) {
+    $('#modal_loe_form_date').on('apply.daterangepicker', function(ev, picker) {
       $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
     });
 
-    $('#date_loe_modal').on('cancel.daterangepicker', function(ev, picker) {
+    $('#modal_loe_form_date').on('cancel.daterangepicker', function(ev, picker) {
       $(this).val('');
     });
 
     // Init select2 boxes in the modal
-    $("#domain_loe_modal").select2({
+    $("#modal_loe_form_domain").select2({
       allowClear: true
     });
 
-    $("#type_loe_modal").select2({
+    $("#modal_loe_form_type").select2({
       allowClear: true
     });
 
-    $("#location_loe_modal").select2({
+    $("#modal_loe_form_location").select2({
       allowClear: true
     });
 
@@ -1988,88 +2033,123 @@ $(document).ready(function() {
         ]   
     });
 
+    function modal_loe_form_clean(title) {
+      $('#modal_loe_title').text(title+' LoE');
+      $('#modal_loe_create_update_button').text(title);
+      $('#modal_loe_form_hidden').empty();
+      // Clean all input
+      $("form#modal_loe_form input").each(function(){ 
+        $(this).val('');
+      });
+      // Clean all textarea
+      $("form#modal_loe_form textarea").each(function(){
+        $(this).val('');
+      });
+      // Clean all select
+      $("form#modal_loe_form select").each(function(){
+        $(this).val('');
+        $(this).select2().trigger('change');
+      });
+
+      modal_loe_form_error_clean();
+    }
+
+    function modal_loe_form_error_clean() {
+      // Clean all error class
+      $("form#modal_loe_form  div.form-group").each(function(){
+        $(this).removeClass('has-error');
+      });
+      // Clean all error message
+      $("form#modal_loe_form span.help-block").each(function(){
+        $(this).empty();
+      });
+    }
+
     // Click add new
     $(document).on('click', '#new_loe', function () {
-      $('#loe_title_modal').text('Create LoE');
-      $('#loe_create_update_button_modal').text('Create');
-      $('#loe_hidden').empty();
+      modal_loe_form_clean('Create');
       var hidden = '';
-      hidden += '<input class="form-control" id="project_id_loe_modal" name="project_id_loe_modal" type="hidden" value="'+{{ $project->id }}+'">';
-      hidden += '<input class="form-control" id="action_loe_modal" name="action_loe_modal" type="hidden" value="create">';
-      $('#loe_hidden').append(hidden);
-      $('#loeModal').modal("show");
+      hidden += '<input class="form-control" id="modal_loe_form_project_id" type="hidden" value="'+{{ $project->id }}+'">';
+      hidden += '<input class="form-control" id="modal_loe_form_action" type="hidden" value="create">';
+      $('#modal_loe_form_hidden').append(hidden);
+      $('#modal_loe').modal("show");
     });
 
     // Click edit
     $(document).on('click', '.buttonLoeEdit', function () {
-      $('#loe_title_modal').text('Update LoE');
-      $('#loe_create_update_button_modal').text('Update');
+      modal_loe_form_clean('Update');
 
       var table = projectLoe;
       var tr = $(this).closest('tr');
       var row = table.row(tr);
-      //console.log('the loe id is '+row.data().loe_id);
 
-      $('#loe_hidden').empty();
       var hidden = '';
-      hidden += '<input class="form-control" id="project_id_loe_modal" name="project_id_loe_modal" type="hidden" value="'+{{ $project->id }}+'">';
-      hidden += '<input class="form-control" id="action_loe_modal" name="action_loe_modal" type="hidden" value="update">';
-      hidden += '<input class="form-control" id="loe_id" name="loe_id" type="hidden" value="'+row.data().loe_id+'">';
-      $('#loe_hidden').append(hidden);
+      hidden += '<input class="form-control" id="modal_loe_form_loe_id" type="hidden" value="'+row.data().loe_id+'">';
+      hidden += '<input class="form-control" id="modal_loe_form_action" type="hidden" value="update">';
+      $('#modal_loe_form_hidden').append(hidden);
       
-      $('input[name="mandays_loe_modal"]').val(row.data().mandays);
-      $('textarea[name="description_loe_modal"]').val(row.data().description);
+      $('input#modal_loe_form_mandays').val(row.data().mandays);
+      $('textarea#modal_loe_form_description').val(row.data().description);
       if (row.data().start_date) {
-        $('input[name="date_loe_modal"]').val(row.data().start_date+" - "+row.data().end_date);
+        $('input#modal_loe_form_date').val(row.data().start_date+" - "+row.data().end_date);
       } else {
-        $('input[name="date_loe_modal"]').val('');
+        $('input#modal_loe_form_date').val('');
       }
       
 
-      $('select[name="domain_loe_modal"]').val(row.data().domain);
-      $('select[name="domain_loe_modal"]').select2().trigger('change');
+      $('select#modal_loe_form_domain').val(row.data().domain);
+      $('select#modal_loe_form_domain').select2().trigger('change');
 
-      $('select[name="type_loe_modal"]').val(row.data().type);
-      $('select[name="type_loe_modal"]').select2().trigger('change');
+      $('select#modal_loe_form_type').val(row.data().type);
+      $('select#modal_loe_form_type').select2().trigger('change');
 
-      $('select[name="location_loe_modal"]').val(row.data().location);
-      $('select[name="location_loe_modal"]').select2().trigger('change');
+      $('select#modal_loe_form_location').val(row.data().location);
+      $('select#modal_loe_form_location').select2().trigger('change');
 
-      $('#loeModal').modal("show");
+      $('#modal_loe').modal("show");
     });
 
     // click send info ajax to create or update
-    $(document).on('click', '#loe_create_update_button_modal', function () {
+    $(document).on('click', '#modal_loe_create_update_button', function () {
       // hidden input
-      var action_loe_modal = $('input#action_loe_modal').val();
-      var project_id_loe_modal = $('input#project_id_loe_modal').val();
-      if (action_loe_modal == "update") {
-        var loe_id = $('input#loe_id').val();
-      }
+      var action_loe_modal = $('input#modal_loe_form_action').val();
+      var domain_loe_modal = $('select#modal_loe_form_domain').children("option:selected").val();
+      var type_loe_modal = $('select#modal_loe_form_type').children("option:selected").val();
+      var location_loe_modal = $('select#modal_loe_form_location').children("option:selected").val();
+      var mandays_loe_modal = $('input#modal_loe_form_mandays').val();
+      var description_loe_modal = $('textarea#modal_loe_form_description').val();
+      var date_loe_modal = $('input#modal_loe_form_date').val().split(" - ");
+      var start_date = date_loe_modal[0];
+      var end_date = date_loe_modal[1];
 
-      // filled in
-      var domain_loe_modal = $('select[name="domain_loe_modal"]').children("option:selected").val();
-      var type_loe_modal = $('select[name="type_loe_modal"]').children("option:selected").val();
-      var location_loe_modal = $('select[name="location_loe_modal"]').children("option:selected").val();
-      var mandays_loe_modal = $('input[name="mandays_loe_modal"]').val();
-      var description_loe_modal = $('textarea[name="description_loe_modal"]').val();
-      var date_loe_modal = $('input[name="date_loe_modal"]').val();
-      if (action_loe_modal == "update") {
-        var data = {'action':action_loe_modal,'project_id':project_id_loe_modal,'domain':domain_loe_modal,
-          'type':type_loe_modal,'location':location_loe_modal,'mandays':mandays_loe_modal,'description':description_loe_modal,
-          'date':date_loe_modal,'loe_id':loe_id
+      switch (action_loe_modal) {
+        case 'create':
+          // Data
+          var project_id_loe_modal = $('input#modal_loe_form_project_id').val();
+          var data = {'project_id':project_id_loe_modal,'domain':domain_loe_modal,
+                      'type':type_loe_modal,'location':location_loe_modal,'mandays':mandays_loe_modal,'description':description_loe_modal,
+                      'start_date':start_date,'end_date':end_date
           };
-        var loe_create_update_route = "{!! route('ProjectsLoeUpdateAjax') !!}";
-      } else {
-        var data = {'action':action_loe_modal,'project_id':project_id_loe_modal,'domain':domain_loe_modal,
-          'type':type_loe_modal,'location':location_loe_modal,'mandays':mandays_loe_modal,'description':description_loe_modal,
-          'date':date_loe_modal
+          // Route info
+          var loe_create_update_route = "{!! route('ProjectsLoeAddAjax') !!}";
+          var type = 'post';
+          break;
+
+        case 'update':
+          // Data
+          var loe_id = $('input#modal_loe_form_loe_id').val();
+          var data = {'domain':domain_loe_modal,
+                      'type':type_loe_modal,'location':location_loe_modal,'mandays':mandays_loe_modal,'description':description_loe_modal,
+                      'start_date':start_date,'end_date':end_date
           };
-        var loe_create_update_route = "{!! route('ProjectsLoeAddAjax') !!}";
+          // Route info
+          var loe_create_update_route = "{!! route('ProjectsLoeUpdateAjax','') !!}/"+loe_id;
+          var type = 'patch';
+          break;
       }
       
       $.ajax({
-            type: 'post',
+            type: type,
             url: loe_create_update_route,
             data:data,
             dataType: 'json',
@@ -2090,12 +2170,25 @@ $(document).ready(function() {
               $('#delete-message').delay(2000).queue(function () {
                   $(this).addClass('animated flipOutX')
               });
+              $('#modal_loe').modal('hide');
               projectLoe.ajax.reload();
+            },
+            error: function (data, ajaxOptions, thrownError) {
+              modal_loe_form_error_clean();
+              var errors = data.responseJSON.errors;
+              var status = data.status;
+
+              if (status === 422) {
+                $.each(errors, function (key, value) {
+                  $('#modal_loe_formgroup_'+key).addClass('has-error');
+                  $('#modal_loe_form_'+key+'_error').text(value);
+                });
+              } else if (status === 403 || status === 500) {
+                $('#modal_loe_formgroup_'+key).addClass('has-error');
+                $('#modal_loe_form_'+key+'_error').text('No Authorization!');
+              }
             }
       });
-
-      $('#loeModal').modal('hide');
-
     });
 
     // Click delete

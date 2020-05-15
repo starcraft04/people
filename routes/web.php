@@ -171,13 +171,13 @@ Route::group(['middleware' => ['auth', 'general']], function () {
     //  AJAX
     Route::get('ProjectsRevenueAjax/{id}', ['uses' => 'ProjectController@listOfProjectsRevenue', 'as' => 'listOfProjectsRevenueAjax', 'middleware' => ['permission:projectRevenue-create']]);
     Route::post('ProjectsRevenueAddAjax', ['uses' => 'ProjectController@addRevenue', 'as' => 'ProjectsRevenueAddAjax', 'middleware' => ['permission:projectRevenue-create']]);
-    Route::post('ProjectsRevenueUpdateAjax/{id?}', ['uses' => 'ProjectController@updateRevenue', 'as' => 'ProjectsRevenueUpdateAjax', 'middleware' => ['permission:projectRevenue-edit']]);
+    Route::patch('ProjectsRevenueUpdateAjax/{id}', ['uses' => 'ProjectController@updateRevenue', 'as' => 'ProjectsRevenueUpdateAjax', 'middleware' => ['permission:projectRevenue-edit']]);
     Route::get('projectRevenueDelete/{n}', ['uses' => 'ProjectController@deleteRevenue', 'as' => 'projectRevenueDelete', 'middleware' => ['permission:projectRevenue-delete']]);
     Route::get('ProjectsLoeAjax/{id}', ['uses' => 'ProjectController@listOfProjectsLoe', 'as' => 'listOfProjectsLoeAjax', 'middleware' => ['permission:projectLoe-view']]);
     Route::get('ProjectsLoeSignoffAjax/{id}', ['uses' => 'ProjectController@listOfProjectsLoeSignoff', 'as' => 'listOfProjectsLoeSignoffAjax', 'middleware' => ['permission:projectLoe-signoff']]);
     Route::get('AllProjectsLoeAjax/{year}', ['uses' => 'ProjectController@listOfAllProjectsLoe', 'as' => 'listOfAllProjectsLoeAjax', 'middleware' => ['permission:projectLoe-view']]);
     Route::post('ProjectsLoeAddAjax', ['uses' => 'ProjectController@addLoe', 'as' => 'ProjectsLoeAddAjax', 'middleware' => ['permission:projectLoe-create']]);
-    Route::post('ProjectsLoeUpdateAjax', ['uses' => 'ProjectController@updateLoe', 'as' => 'ProjectsLoeUpdateAjax', 'middleware' => ['permission:projectLoe-edit|projectLoe-editAll']]);
+    Route::patch('ProjectsLoeUpdateAjax/{id}', ['uses' => 'ProjectController@updateLoe', 'as' => 'ProjectsLoeUpdateAjax', 'middleware' => ['permission:projectLoe-edit|projectLoe-editAll']]);
     Route::get('projectLoeDelete/{n}', ['uses' => 'ProjectController@deleteLoe', 'as' => 'projectLoeDelete', 'middleware' => ['permission:projectLoe-delete|projectLoe-deleteAll']]);
     Route::post('listOfActivitiesPerUserAjax', ['uses' => 'ActivityController@listOfActivitiesPerUser', 'as' => 'listOfActivitiesPerUserAjax', 'middleware' => ['permission:tools-activity-view']]);
     Route::get('listOfProjectsMissingInfoAjax', ['uses' => 'ProjectController@listOfProjectsMissingInfo', 'as' => 'listOfProjectsMissingInfoAjax', 'middleware' => ['permission:tools-missing_info-view']]);
