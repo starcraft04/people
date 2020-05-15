@@ -151,7 +151,8 @@ Route::group(['middleware' => ['auth', 'general']], function () {
     Route::get('toolsProjectsMissingOTL', ['uses' => 'ToolsController@projectsMissingOTL', 'as' => 'projectsMissingOTL', 'middleware' => ['permission:tools-missing_info-view']]);
     Route::get('actionListAjax/{project_id?}', ['uses' => 'ActionController@actionListAjax', 'as' => 'actionListAjax', 'middleware' => ['permission:action-view']]);
     Route::get('projectActionDelete/{action_id}', ['uses' => 'ActionController@projectActionDelete', 'as' => 'projectActionDelete', 'middleware' => ['permission:action-delete']]);
-    Route::post('projectActionInsertUpdate', ['uses' => 'ActionController@projectActionInsertUpdate', 'as' => 'projectActionInsertUpdate', 'middleware' => ['permission:action-create|action-edit']]);
+    Route::post('ActionAddAjax', ['uses' => 'ActionController@store', 'as' => 'ActionAddAjax', 'middleware' => ['permission:action-create']]);
+    Route::patch('ActionUpdateAjax/{id}', ['uses' => 'ActionController@update', 'as' => 'ActionUpdateAjax', 'middleware' => ['permission:action-edit']]);
 
     //  Create new activity
     Route::get('toolsFormCreate/{y}/{tab?}', ['uses' => 'ToolsController@getFormCreate', 'as' => 'toolsFormCreate', 'middleware' => ['permission:tools-activity-new']]);
