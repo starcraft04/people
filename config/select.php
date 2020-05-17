@@ -2,6 +2,7 @@
 
 return [
     'employee_type' => [
+        '' => '',
         'employee' => 'employee',
         'contractor' => 'contractor',
     ],
@@ -11,6 +12,7 @@ return [
         'Senior' => 'Senior',
     ],
     'region' => [
+        '' => '',
         'Europe' => 'Europe',
         'MEA' => 'MEA',
         'NAM' => 'NAM',
@@ -18,6 +20,7 @@ return [
         'APAC' => 'APAC',
     ],
     'job_role' => [
+        '' => '',
         'ASC' => 'ASC',
         'ISC' => 'ISC',
     ],
@@ -75,6 +78,7 @@ return [
         'Closed Won' => 'Closed Won',
     ],
     'activity_type' => [
+        '' => '',
         'ISC' => 'ISC',
         'ASC' => 'ASC',
     ],
@@ -132,6 +136,7 @@ return [
     ],
     'defaultRole' => 'User',
     'activity_status' => [
+        '' => '',
         'active' => 'active',
         'inactive' => 'inactive',
     ],

@@ -14,11 +14,7 @@ class User extends Authenticatable
 
     protected $table = 'users';
     public $timestamps = true;
-    protected $fillable = [
-      'name', 'email', 'password', 'created_at', 'is_manager', 'updated_at',
-      'from_otl', 'region', 'country', 'domain', 'management_code', 'job_role',
-      'employee_type',
-      ];
+    protected $guarded = ['id'];
     protected $hidden = [
         'remember_token', 'password',
       ];

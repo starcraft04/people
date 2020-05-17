@@ -173,9 +173,49 @@ class UserController extends Controller
     public function postFormCreate(UserCreateRequest $request)
     {
         $inputs = $request->all();
-        $inputs['clusterboard_top'] = 5;
+        //dd($inputs['user']);
 
-        $user = $this->userRepository->create($inputs);
+        $user = User::create($inputs['user']);
+
+        //dd($user);
+
+        $user->update_password($inputs['password'],true);
+
+        // Now we have to treat the manager
+        if (isset($inputs['manager']['manager_id'])) {
+            /* We need first to check that there is not already a manager defined in which case we have to delete it
+            *   Because we want to remove all traces of previous managers, we do a detach without giving
+            *   the manager_id as parameter.
+            **/
+            $user->managers()->detach();
+            /* Now we need to create the link in the pivot table
+            *   For this we have a function defined in our model User.php called managers()
+            *   We only need to say we want to attach the manager_id to this user_id.
+            **/
+            $user->managers()->attach($inputs['manager']['manager_id']);
+        } else {
+            // In this case, we need to remove any trace of manager for this user
+            $user->managers()->detach();
+        }
+
+        // Now we need to save the clusters
+        if (isset($inputs['managed_clusters'])) {
+            $user->clusters()->delete();
+            foreach ($inputs['managed_clusters'] as $key => $value) {
+                $cluster = new Cluster;
+                $cluster->user_id = $user->id;
+                $cluster->cluster_owner = $value;
+                $cluster->save();
+            }
+        } else {
+            //DB::table('cluster_user')->where('user_id',$user->id)->delete();
+            $user->clusters()->delete();
+        }
+
+        // Now we need to save the roles
+        if (isset($inputs['roles'])) {
+            $user->syncRoles($inputs['roles']);
+        }
 
         return redirect('userList')->with('success', 'Record created successfully');
     }
