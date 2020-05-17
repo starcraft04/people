@@ -108,12 +108,7 @@ class UserRepository
 
         // Now we need to save the roles
         if (isset($inputs['roles'])) {
-            DB::table('role_user')->where('user_id', $user->id)->delete();
-            foreach ($inputs['roles'] as $key => $value) {
-                $user->attachRole($value);
-            }
-        } else {
-            DB::table('role_user')->where('user_id', $user->id)->delete();
+            $user->syncRoles($inputs['roles']);
         }
 
         // Now we need to save the clusters

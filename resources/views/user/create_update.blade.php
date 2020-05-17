@@ -82,30 +82,6 @@
           </div>
 
           <div class="row">
-              <div class="form-group {!! $errors->has('password') ? 'has-error' : '' !!} col-md-12">
-                  <div class="col-md-2">
-                      {!! Form::label('password', 'Password', ['class' => 'control-label']) !!}
-                  </div>
-                  <div class="col-md-10">
-                      {!! Form::password('password', ['class' => 'form-control']) !!}
-                      {!! $errors->first('password', '<small class="help-block">:message</small>') !!}
-                  </div>
-              </div>
-          </div>
-
-          <div class="row">
-              <div class="form-group {!! $errors->has('confirm-password') ? 'has-error' : '' !!} col-md-12">
-                  <div class="col-md-2">
-                      {!! Form::label('confirm-password', 'Confirm', ['class' => 'control-label']) !!}
-                  </div>
-                  <div class="col-md-10">
-                      {!! Form::password('confirm-password', ['class' => 'form-control']) !!}
-                      {!! $errors->first('confirm-password', '<small class="help-block">:message</small>') !!}
-                  </div>
-              </div>
-          </div>
-
-          <div class="row">
               <div class="form-group {!! $errors->has('manager_id') ? 'has-error' : '' !!} col-md-12">
                   <div class="col-md-2">
                       {!! Form::label('manager_id', 'Manager', ['class' => 'control-label']) !!}
@@ -274,7 +250,7 @@
                   </div>
                   <div class="col-md-10">
                       {!! Form::checkbox('is_manager', '1', (isset($user)) ? $user->is_manager : '', ['class' => 'checkbox']) !!}
-                      {!! $errors->first('manager_id', '<small class="help-block">:message</small>') !!}
+                      {!! $errors->first('is_manager', '<small class="help-block">:message</small>') !!}
                   </div>
               </div>
           </div>

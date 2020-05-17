@@ -13,7 +13,6 @@ use App\Loe;
 use App\Project;
 use App\ProjectRevenue;
 use App\Repositories\ProjectRepository;
-use App\Role;
 use Auth;
 use Datatables;
 use DB;

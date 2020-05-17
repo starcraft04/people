@@ -10,8 +10,8 @@ use App\Http\Requests\PasswordUpdateRequest;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Repositories\UserRepository;
-use App\Role;
 use App\User;
+use Spatie\Permission\Models\Role;
 use Auth;
 use DB;
 use Illuminate\Http\Request;
@@ -30,15 +30,6 @@ class UserController extends Controller
         return view('user/list');
     }
 
-    public function show($id)
-    {
-        $user = User::find($id);
-        $manager = $this->userRepository->getMyManagersList($id);
-        $userCluster = $user->clusters->pluck('cluster_owner')->toArray();
-
-        return view('user/show', compact('user', 'manager', 'userCluster'));
-    }
-
     public function profile($id)
     {
         $user = User::find($id);
@@ -49,16 +40,60 @@ class UserController extends Controller
         return view('user/profile', compact('user'));
     }
 
-    public function passwordUpdate(PasswordUpdateRequest $request, $id)
+    public function updatePasswordGet(User $user)
     {
-        $user = User::find($id);
-        if (Auth::user()->id != $id) {
-            return redirect('userList')->with('error', 'You are not user '.$user->name.'!!!');
+        if (Auth::user()->id != $user->id) {
+            return redirect()->route('updatePasswordGet',[Auth::user()->id])->with('error', 'You are not user '.$user->name.'!!!');
         }
-        $inputs = $request->only('password');
-        $password = $user->update_password($inputs['password'], true);
 
-        return redirect('profile/'.$id)->with('success', 'Password updated successfully');
+        return view('user/updatePassword', compact('user'));
+    }
+
+    public function updatePasswordStore(PasswordUpdateRequest $request, User $user)
+    {
+        $inputs = $request->only('password');
+
+        if (Auth::user()->id != $user->id) {
+            return redirect()->route('updatePasswordGet',[Auth::user()->id])->with('error', 'You are not user '.$user->name.'!!!');
+        }
+
+        $user->update_password($inputs['password'],true);
+
+        return redirect()->route('updatePasswordGet',[Auth::user()->id])->with('success', 'Password updated')->with('user',$user);
+    }
+
+    public function passwordUpdateAjax(Request $request, User $user)
+    {
+        $result = new \stdClass();
+        $inputs = $request->all();
+        $can_reset = false;
+
+        $manager_id = $user->managers()->first()->id;
+        $auth_id = Auth::user()->id;
+
+        if ($user->id == 1) {
+            $result->result = 'error';
+            $result->msg = 'You cannot reset the password of the admin!!!';
+        } elseif (Auth::user()->id == $user->id) {
+            $result->result = 'success';
+            $result->msg = 'Password updated';
+            $can_reset = true;
+        } elseif ($manager_id == $auth_id) {
+            $result->result = 'success';
+            $result->msg = 'Password updated';
+            $can_reset = true;
+        } elseif (Auth::user()->can('user-view-all')) {
+            $result->result = 'success';
+            $result->msg = 'Password updated';
+            $can_reset = true;
+        } else {
+            $result->result = 'error';
+            $result->msg = 'You have no rights to reset the password';
+        }
+        if ($can_reset) {
+            $user->update_password($inputs['password'],true);
+        }
+        return json_encode($result);
     }
 
     public function optionsUpdate(OptionsUpdateRequest $request, $id)
@@ -84,9 +119,9 @@ class UserController extends Controller
         $defaultRole = config('select.defaultRole');
 
         if (Auth::user()->hasRole('Admin')) {
-            $roles = Role::pluck('display_name', 'id');
+            $roles = Role::all()->pluck('name', 'id');
         } else {
-            $roles = Role::where('id', '!=', '1')->pluck('display_name', 'id');
+            $roles = Role::where('id','!=',1)->pluck('name','id');
         }
 
         if (Auth::user()->can('role-assign')) {
@@ -138,7 +173,8 @@ class UserController extends Controller
     public function postFormCreate(UserCreateRequest $request)
     {
         $inputs = $request->all();
-        //dd($inputs);
+        $inputs['clusterboard_top'] = 5;
+
         $user = $this->userRepository->create($inputs);
 
         return redirect('userList')->with('success', 'Record created successfully');

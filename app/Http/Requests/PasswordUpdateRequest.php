@@ -26,7 +26,8 @@ class PasswordUpdateRequest extends FormRequest
     {
         return [
 
-      'password' => 'same:confirm-password',
+      'password' => 'required|same:confirm-password',
+      'confirm-password' => 'required|same:password',
 
         ];
     }

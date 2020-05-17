@@ -53,8 +53,7 @@ Route::group(['middleware' => ['auth', 'general']], function () {
     //User
     //  Main user list
     Route::get('userList', ['uses' => 'UserController@getList', 'as' => 'userList', 'middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
-    //  user information
-    Route::get('user/{n}', ['uses' => 'UserController@show', 'as' => 'user', 'middleware' => ['permission:user-view']]);
+
     //  Create new user
     Route::get('userFormCreate', ['uses' => 'UserController@getFormCreate', 'as' => 'userFormCreate', 'middleware' => ['permission:user-create']]);
     Route::post('userFormCreate', ['uses' => 'UserController@postFormCreate', 'middleware' => ['permission:user-create']]);
@@ -65,7 +64,9 @@ Route::group(['middleware' => ['auth', 'general']], function () {
     Route::get('userDelete/{n}', ['uses' => 'UserController@delete', 'as' => 'userDelete', 'middleware' => ['permission:user-delete']]);
     //  user profile
     Route::get('profile/{n}', ['uses' => 'UserController@profile', 'as' => 'profile']);
-    Route::post('passwordUpdate/{n}', ['uses' => 'UserController@passwordUpdate', 'as' => 'passwordUpdate']);
+    Route::get('updatePassword/{user}', ['uses' => 'UserController@updatePasswordGet', 'as' => 'updatePasswordGet']);
+    Route::post('updatePassword/{user}', ['uses' => 'UserController@updatePasswordStore', 'as' => 'updatePasswordStore']);
+    Route::post('passwordUpdateAjax/{user}', ['uses' => 'UserController@passwordUpdateAjax', 'as' => 'passwordUpdateAjax']);
     Route::post('optionsUpdate/{id}', ['uses' => 'UserController@optionsUpdate', 'as' => 'optionsUpdate']);
     //  AJAX
     Route::get('listOfUsersAjax/{exclude_contractors?}', ['uses' => 'UserController@listOfUsers', 'as' => 'listOfUsersAjax', 'middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);

@@ -14,7 +14,6 @@ use App\ProjectRevenue;
 use App\Repositories\ActivityRepository;
 use App\Repositories\ProjectRepository;
 use App\Repositories\UserRepository;
-use App\Role;
 use App\Skill;
 use App\User;
 use App\UserSkill;

@@ -6,7 +6,6 @@ use App\Customer;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CustomerCreateRequest;
 use App\Http\Requests\CustomerUpdateRequest;
-use App\Role;
 use Auth;
 use Datatables;
 use DB;

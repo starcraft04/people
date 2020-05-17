@@ -13,6 +13,7 @@
       </a>
       <ul class="dropdown-menu dropdown-usermenu" aria-labelledby="navbarDropdown">
         <li><a href="{{ route('profile',Auth::user()->id) }}">Profile</a></li>
+        <li><a href="{{ route('updatePasswordGet',Auth::user()->id) }}">Update password</a></li>
         <li><a href="{{ route('help') }}">Tutorial</a></li>
         <li><a id="logout"><i class="fa fa-sign-out pull-right"></i>Log Out</a></li>
       </ul>
