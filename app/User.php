@@ -13,6 +13,7 @@ class User extends Authenticatable
     use HasRoles;
 
     protected $table = 'users';
+    protected $casts = ["last_login" => "datetime"];
     public $timestamps = true;
     protected $guarded = ['id'];
     protected $hidden = [

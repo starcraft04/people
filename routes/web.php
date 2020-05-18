@@ -21,7 +21,7 @@ Route::post('login', ['as' => 'login', 'uses' => 'Auth\LoginController@login']);
 Route::get('logout', ['as' => 'logout', 'uses' => 'Auth\LoginController@logout']);
 
 // All routes in this function will be protected by user needed to be logged in.
-Route::group(['middleware' => ['auth', 'general']], function () {
+Route::group(['middleware' => ['auth', 'general','last_login']], function () {
     Route::get('/home', ['uses' => 'HomeController@index', 'as' => 'home']);
     Route::get('/', ['uses' => 'HomeController@index']);
 
