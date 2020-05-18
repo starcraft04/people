@@ -4,12 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Customer;
 use App\Http\Requests\OtlUploadRequest;
-use App\Project;
 use App\Repositories\ActivityRepository;
 use App\Repositories\ProjectRepository;
 use App\Repositories\UserRepository;
 use Auth;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class OtlUploadController extends Controller
 {
@@ -35,11 +34,11 @@ class OtlUploadController extends Controller
     public function postForm(OtlUploadRequest $request)
     {
         $color = [
-      'error' => 'text-danger',
-      'info' => 'text-info',
-      'update' => 'text-warning',
-      'add' => 'text-primary',
-    ];
+            'error' => 'text-danger',
+            'info' => 'text-info',
+            'update' => 'text-warning',
+            'add' => 'text-primary',
+        ];
 
         $result = new \stdClass();
         $result->result = 'success';
@@ -49,34 +48,34 @@ class OtlUploadController extends Controller
 
         // now we will need a association between months written in letters and numbers because in the activites table it is in numbers and in the excel file it is in letters
         $months_converted = [
-      'jan' => 1,
-      'feb' => 2,
-      'mar' => 3,
-      'apr' => 4,
-      'may' => 5,
-      'jun' => 6,
-      'jul' => 7,
-      'aug' => 8,
-      'sep' => 9,
-      'oct' => 10,
-      'nov' => 11,
-      'dec' => 12,
-    ];
+            'jan' => 1,
+            'feb' => 2,
+            'mar' => 3,
+            'apr' => 4,
+            'may' => 5,
+            'jun' => 6,
+            'jul' => 7,
+            'aug' => 8,
+            'sep' => 9,
+            'oct' => 10,
+            'nov' => 11,
+            'dec' => 12,
+        ];
 
         $months_prime = [
-      1 => 'jan',
-      2 => 'feb',
-      3 => 'mar',
-      4 => 'apr',
-      5 => 'may',
-      6 => 'jun',
-      7 => 'jul',
-      8 => 'aug',
-      9 => 'sep',
-      10 => 'oct',
-      11 => 'nov',
-      12 => 'dec',
-    ];
+            1 => 'jan',
+            2 => 'feb',
+            3 => 'mar',
+            4 => 'apr',
+            5 => 'may',
+            6 => 'jun',
+            7 => 'jul',
+            8 => 'aug',
+            9 => 'sep',
+            10 => 'oct',
+            11 => 'nov',
+            12 => 'dec',
+        ];
 
         //First we need to get all employees for this manager
         $all_users = $this->userRepository->getAllUsersFromManager(Auth::user()->id);
@@ -89,11 +88,25 @@ class OtlUploadController extends Controller
 
         $file = $request->file('uploadfile');
         if ($file->isValid()) {
-            $filename = $file->getClientOriginalName();
-            $fileextension = $file->getClientOriginalExtension();
+            $file_path = Storage::disk('local')->put('excel-temp', $file);
+            $full_path = Storage::disk('local')->path($file_path);
 
-            $sheet = \Excel::selectSheetsByIndex(0)
-      ->load($file);
+            //Storage::delete($file_path);
+
+            /** Create a new Xls Reader  **/
+            $reader = new \PhpOffice\PhpSpreadsheet\Reader\Csv();
+            //    $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xls();
+            //    $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+            //    $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xml();
+            //    $reader = new \PhpOffice\PhpSpreadsheet\Reader\Ods();
+            //    $reader = new \PhpOffice\PhpSpreadsheet\Reader\Slk();
+            //    $reader = new \PhpOffice\PhpSpreadsheet\Reader\Gnumeric();
+            //    $reader = new \PhpOffice\PhpSpreadsheet\Reader\Csv();
+            /** Load $inputFileName to a Spreadsheet Object  **/
+            $spreadsheet = $reader->load($full_path);
+            $sheetData   = $spreadsheet->getActiveSheet()->toArray();
+
+            dd($sheetData);
 
             // Now we need to check we have the right columns
             $headerRow = $sheet->first()->keys()->toArray();
