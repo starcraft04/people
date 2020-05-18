@@ -63,6 +63,7 @@
             </p>
           @elseif($action == 'update')
             {!! Form::open(['url' => 'userFormUpdate/'.$user->id, 'method' => 'post', 'class' => 'form-horizontal']) !!}
+            {!! Form::hidden('user_id', $user->id) !!}
           @endif
 
           <div class="row">
@@ -95,7 +96,7 @@
                       {!! Form::label('manager[manager_id]', 'Manager', ['class' => 'control-label']) !!}
                   </div>
                   <div class="col-md-10">
-                      {!! Form::select('manager[manager_id]', $manager_list, (isset($manager[0])) ? $manager[0]->manager_id : '', ['id' => 'user_manager','class' => 'form-control']) !!}
+                      {!! Form::select('manager[manager_id]', $manager_list, (isset($manager[0])) ? $manager[0] : '', ['id' => 'user_manager','class' => 'form-control']) !!}
                       {!! $errors->first('manager.manager_id', '<small class="help-block">:message</small>') !!}
                   </div>
               </div>
@@ -119,7 +120,7 @@
                   <label class="control-label" for="user[date_started]">Date started</label>
                 </div>
                 <div class="col-md-10">
-                  <input type="text" id="user_start_date" name="user[date_started]" class="form-control"></input>
+                  <input type="text" id="user_start_date" name="user[date_started]" class="form-control" value="@if(isset($user->date_started)) {{ $user->date_started }} @endif"></input>
                   {!! $errors->first('user.date_started', '<small class="help-block">:message</small>') !!}
                 </div>
             </div>
@@ -131,7 +132,7 @@
                   <label class="control-label" for="user[date_ended]">Date ended</label>
                 </div>
                 <div class="col-md-10">
-                  <input type="text" id="user_end_date" name="user[date_ended]" class="form-control"></input>
+                  <input type="text" id="user_end_date" name="user[date_ended]" class="form-control" value="@if(isset($user->date_ended)) {{ $user->date_ended }} @endif"></input>
                   {!! $errors->first('user.date_ended', '<small class="help-block">:message</small>') !!}
                 </div>
             </div>
@@ -276,7 +277,7 @@
                   <option value="{{ $key }}" 
                   @if(isset($defaultRole) && $value == $defaultRole)
                   selected
-                  @elseif(isset($userRole) && in_array($key,$userRole))
+                  @elseif(isset($userRole) && in_array($value,$userRole))
                   selected
                   @endif>
                   {{ $value }}

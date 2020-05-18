@@ -138,14 +138,13 @@ class UserController extends Controller
         return view('user/create_update', compact('manager_list', 'clusters', 'roles', 'role_select_disabled', 'defaultRole'))->with('action', 'create');
     }
 
-    public function getFormUpdate($id)
+    public function getFormUpdate(User $user)
     {
-        $user = User::find($id);
 
         if (Auth::user()->hasRole('Admin')) {
-            $roles = Role::pluck('display_name', 'id');
+            $roles = Role::all()->pluck('name', 'id');
         } else {
-            $roles = Role::where('id', '!=', '1')->pluck('display_name', 'id');
+            $roles = Role::where('id','!=',1)->pluck('name','id');
         }
 
         if (Auth::user()->can('role-assign')) {
@@ -154,19 +153,16 @@ class UserController extends Controller
             $role_select_disabled = 'true';
         }
 
-        $userRole = $user->roles->pluck('id')->toArray();
-
         $manager_list = User::orderBy('name')->where('is_manager', '1')->pluck('name', 'id');
         $manager_list->prepend('', '');
 
-        $user = $this->userRepository->getById($id);
-        $manager = $this->userRepository->getMyManagersList($id);
+        $manager = $user->managers()->pluck('manager_id');
 
         $clusters = Customer::where('cluster_owner', '!=', '')->groupBy('cluster_owner')->pluck('cluster_owner');
-        $userCluster = $user->clusters->pluck('cluster_owner')->toArray();
-        //dd($userCluster);
+        $userCluster = $user->clusters()->pluck('cluster_owner')->toArray();
 
-        //\Debugbar::info($manager_list);
+        $userRole = $user->getRoleNames()->toArray();
+
         return view('user/create_update', compact('manager_list', 'user', 'manager', 'roles', 'userRole', 'clusters', 'userCluster', 'role_select_disabled'))->with('action', 'update');
     }
 
@@ -220,10 +216,49 @@ class UserController extends Controller
         return redirect('userList')->with('success', 'Record created successfully');
     }
 
-    public function postFormUpdate(UserUpdateRequest $request, $id)
+    public function postFormUpdate(UserUpdateRequest $request, User $user)
     {
         $inputs = $request->all();
-        $user = $this->userRepository->update($id, $inputs);
+
+        $user->update($inputs['user']);
+
+
+
+        // Now we have to treat the manager
+        if (isset($inputs['manager']['manager_id'])) {
+            /* We need first to check that there is not already a manager defined in which case we have to delete it
+            *   Because we want to remove all traces of previous managers, we do a detach without giving
+            *   the manager_id as parameter.
+            **/
+            $user->managers()->detach();
+            /* Now we need to create the link in the pivot table
+            *   For this we have a function defined in our model User.php called managers()
+            *   We only need to say we want to attach the manager_id to this user_id.
+            **/
+            $user->managers()->attach($inputs['manager']['manager_id']);
+        } else {
+            // In this case, we need to remove any trace of manager for this user
+            $user->managers()->detach();
+        }
+
+        // Now we need to save the clusters
+        if (isset($inputs['managed_clusters'])) {
+            $user->clusters()->delete();
+            foreach ($inputs['managed_clusters'] as $key => $value) {
+                $cluster = new Cluster;
+                $cluster->user_id = $user->id;
+                $cluster->cluster_owner = $value;
+                $cluster->save();
+            }
+        } else {
+            //DB::table('cluster_user')->where('user_id',$user->id)->delete();
+            $user->clusters()->delete();
+        }
+
+        // Now we need to save the roles
+        if (isset($inputs['roles'])) {
+            $user->syncRoles($inputs['roles']);
+        }
 
         return redirect('userList')->with('success', 'Record updated successfully');
     }

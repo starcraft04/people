@@ -371,7 +371,7 @@
       var tr = $(this).closest('tr');
       var row = table.row(tr);
 
-      var password = randString('a-z,A-Z,0-9',8);
+      var password = 'Welcome1';
 
       $('#modal_reset_password_title').text('Reset password for user '+row.data().name);
       $('#modal_reset_password_email').text(row.data().email);

@@ -58,8 +58,8 @@ Route::group(['middleware' => ['auth', 'general']], function () {
     Route::get('userFormCreate', ['uses' => 'UserController@getFormCreate', 'as' => 'userFormCreate', 'middleware' => ['permission:user-create']]);
     Route::post('userFormCreate', ['uses' => 'UserController@postFormCreate', 'middleware' => ['permission:user-create']]);
     //  Update user
-    Route::get('userFormUpdate/{n}', ['uses' => 'UserController@getFormUpdate', 'as' => 'userFormUpdate', 'middleware' => ['permission:user-edit']]);
-    Route::post('userFormUpdate/{n}', ['uses' => 'UserController@postFormUpdate', 'middleware' => ['permission:user-edit']]);
+    Route::get('userFormUpdate/{user}', ['uses' => 'UserController@getFormUpdate', 'as' => 'userFormUpdate', 'middleware' => ['permission:user-edit']]);
+    Route::post('userFormUpdate/{user}', ['uses' => 'UserController@postFormUpdate', 'middleware' => ['permission:user-edit']]);
     //  Delete user
     Route::get('userDelete/{n}', ['uses' => 'UserController@delete', 'as' => 'userDelete', 'middleware' => ['permission:user-delete']]);
     //  user profile
