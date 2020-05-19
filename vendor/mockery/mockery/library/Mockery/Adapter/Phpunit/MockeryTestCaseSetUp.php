@@ -18,12 +18,21 @@
  * @license    https://github.com/mockery/mockery/blob/master/LICENSE New BSD License
  */
 
+declare(strict_types=1);
+
 namespace Mockery\Adapter\Phpunit;
 
-trait MockeryPHPUnitIntegrationAssertPostConditionsForV7AndPrevious
+trait MockeryTestCaseSetUp
 {
-    protected function assertPostConditions()
+    protected function setUp(): void
     {
-        $this->mockeryAssertPostConditions();
+        parent::setUp();
+        $this->mockeryTestSetUp();
+    }
+
+    protected function tearDown(): void
+    {
+        $this->mockeryTestTearDown();
+        parent::tearDown();
     }
 }
