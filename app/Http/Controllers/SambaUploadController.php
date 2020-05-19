@@ -11,6 +11,9 @@ use App\SambaName;
 use Auth;
 use DateTime;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ImportExcelToArray;
+
 
 class SambaUploadController extends Controller
 {
@@ -31,11 +34,11 @@ class SambaUploadController extends Controller
     public function postForm(SambaUploadRequest $request)
     {
         $color = [
-      'error' => 'text-danger',
-      'info' => 'text-info',
-      'update' => 'text-warning',
-      'add' => 'text-primary',
-    ];
+            'error' => 'text-danger',
+            'info' => 'text-info',
+            'update' => 'text-warning',
+            'add' => 'text-primary',
+        ];
 
         $result = new \stdClass();
         $result->result = 'success';
@@ -63,30 +66,37 @@ class SambaUploadController extends Controller
 
                 return view('dataFeed/sambaupload', compact('messages_only_errors', 'messages', 'color'));
             }
-            $sheet = \Excel::selectSheetsByIndex(0)
-      ->load($file);
+            // In case we send a CSV file, the worksheet name is : Worksheet
+            $reader = new ImportExcelToArray();
+            $reader->startingRow = 1;
+            $temp = Excel::import($reader,$file);
+            //dd($reader->sheetData);
+            $result = $reader->sheetData['Worksheet'];
 
             // Now we need to check we have the right columns
-            $headerRow = $sheet->first()->keys()->toArray();
+            $headerRow = $reader->getHeaders('Worksheet');
+
+            //dd($headerRow);
             $columns_needed = [
-        'owners_sales_cluster',
-        'opportunity_domain',
-        'account_name',
-        'opportunity_name',
-        'public_opportunity_id',
-        'opportunity_owner',
-        'created_date',
-        'close_date',
-        'stage',
-        'probability',
-        'amount_tcv_converted_currency',
-        'amount_tcv_converted', ];
+                'owners_sales_cluster',
+                'opportunity_domain',
+                'account_name',
+                'opportunity_name',
+                'public_opportunity_id',
+                'opportunity_owner',
+                'created_date',
+                'close_date',
+                'stage',
+                'probability',
+                'amount_tcv_converted_currency',
+                'amount_tcv_converted', 
+            ];
 
             //print_r($headerRow);echo "</BR>";print_r($columns_needed);die();
             //dd($headerRow);
 
             // If the columns are not all present then we have an error and go back
-            if (count(array_intersect($headerRow, $columns_needed)) != count($columns_needed)) {
+            if (!$reader->checkMinHeaders('Worksheet',$columns_needed)) {
                 array_push($messages, ['status'=>'error', 'msg'=>'Some columns are required but not present in the file, please see the sample file and upload again.']);
                 $messages_only_errors = $messages;
 
@@ -96,7 +106,6 @@ class SambaUploadController extends Controller
             // This command helps getting a view on what we get from $sheet
             //$sheet->dd();
 
-            $result = $sheet->toArray();
             //dd($result);
             // First we need to modify the dates so that they will be understandable by MySQL
             foreach ($result as &$row) {

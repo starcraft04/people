@@ -6,8 +6,8 @@ use App\Customer;
 use App\CustomerOtherName;
 use App\Http\Requests\RevenueUploadRequest;
 use App\Revenue;
-use Config;
-use Excel;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ImportExcelToArray;
 
 class RevenueUploadController extends Controller
 {
@@ -34,18 +34,16 @@ class RevenueUploadController extends Controller
         if ($file->isValid()) {
             $messages = [];
             $customers_missing = [];
-            $filename = $file->getClientOriginalName();
-            $fileextension = $file->getClientOriginalExtension();
+            // In case we send a CSV file, the worksheet name is : Worksheet
+            $reader = new ImportExcelToArray();
+            $reader->startingRow = 6;
+            $temp = Excel::import($reader,$file);
+            $result = $reader->sheetData['05-Revenues_FPC_Customer'];
 
-            // Which row is the row with the headers
-            config(['excel.import.startRow' => config('options.revenue_upload_starting_row')]);
-            // Ignore empty cells
-            config(['excel.import.ignoreEmpty' => true]);
-
-            $sheet = Excel::selectSheets('05-Revenues_FPC_Customer')->load($file);
+            $columns_needed_minimum = ['customer_name', 'fpc'];
 
             // Now we need to check we have the right columns
-            $headerRow = $sheet->first()->keys()->toArray();
+            $headerRow = $reader->getHeaders('05-Revenues_FPC_Customer');
 
             // Now we need to check all the columns headers that are used for the month and year
             $months_in_file = [];
@@ -63,15 +61,10 @@ class RevenueUploadController extends Controller
             }
             //dd($all_years);
             //dd($months_in_file);
-
-            // And here is the array with all the rows
-            $result = $sheet->toArray();
             //dd($result);
 
-            // Checking if we have the minimum of columns
-            $columns_needed_minimum = ['customer_name', 'fpc'];
             // If the columns are not all present then we have an error and go back
-            if (! array_diff($columns_needed_minimum, $headerRow)) {
+            if ($reader->checkMinHeaders('05-Revenues_FPC_Customer',$columns_needed_minimum)) {
                 // Now we need to rearrange the table so that we have a column year and 12 columns month
                 $result_organised = [];
                 foreach ($result as $key => $row) {
@@ -88,7 +81,7 @@ class RevenueUploadController extends Controller
                                     $month = $header_exploded[0];
                                     $year_short = $header_exploded[1];
                                     if ($year_short == $year) {
-                                        $new_row[$month] = $value;
+                                        $new_row[$month] = round($value, 2);
                                     }
                                 }
                             }
@@ -101,9 +94,10 @@ class RevenueUploadController extends Controller
                     $customer_found = false;
                     // Let s see if the customer is in Dolphin DB
                     $Customer_in_dolphin = Customer::where('name', $row['customer_name'])->first();
-                    if (count($Customer_in_dolphin) == 0) {
+
+                    if (!$Customer_in_dolphin) {
                         $Customer_in_dolphin_other_name = CustomerOtherName::where('other_name', $row['customer_name'])->first();
-                        if (count($Customer_in_dolphin_other_name) == 0) {
+                        if (!$Customer_in_dolphin_other_name) {
                             if (! in_array($row['customer_name'], $customers_missing)) {
                                 array_push($customers_missing, $row['customer_name']);
                             }
