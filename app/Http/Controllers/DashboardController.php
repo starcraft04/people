@@ -12,11 +12,9 @@ use App\Repositories\ProjectRepository;
 use App\Repositories\ProjectTableRepository;
 use App\Repositories\RevenueRepository;
 use App\Repositories\UserRepository;
-use App\Role;
 use App\User;
 use Auth;
 use DB;
-use Entrust;
 use Illuminate\Http\Request;
 use Session;
 

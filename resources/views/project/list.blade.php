@@ -87,9 +87,9 @@
               <th>Project status</th>
               <th>Win ratio (%)</th>
               <th class="last_column">
-                @permission('project-create')
+                @can('project-create')
                 <a href="{{ route('projectFormCreate') }}" class="btn btn-info btn-xs" align="right"><span class="glyphicon glyphicon-plus"> New</span></a>
-                @endpermission
+                @endcan
               </th>
             </tr>
           </thead>
@@ -136,19 +136,6 @@ var projectTable;
 var record_id;
 var unassigned = 'no_use';
 
-// Here we are going to get from PHP the list of roles and their value for the logged in project
-
-<?php
-  $options = [
-    'validate_all' => true,
-    'return_type' => 'both'
-  ];
-  list($validate, $allValidations) = Entrust::ability(null,['project-view','project-edit','project-delete','project-create'],$options);
-  echo "var permissions = jQuery.parseJSON('".json_encode($allValidations['permissions'])."');";
-?>
-// Roles check finished.
-
-//console.log(permissions);
 function ajaxData(){
   var obj = {
     'unassigned': unassigned
@@ -208,13 +195,13 @@ $(document).ready(function() {
         render: function (data) {
           var actions = '';
           actions += '<div class="btn-group btn-group-xs">';
-          if (permissions['project-view']){
+          if ({{ Auth::user()->can('project-view') ? 'true' : 'false' }}){
             actions += '<button id="'+data.id+'" class="buttonView btn btn-success"><span class="glyphicon glyphicon-eye-open"></span></button>';
           };
-          if (permissions['project-edit']){
+          if ({{ Auth::user()->can('project-edit') ? 'true' : 'false' }}){
             actions += '<button id="'+data.id+'" class="buttonUpdate btn btn-primary"><span class="glyphicon glyphicon-pencil"></span></button>';
           };
-          if (permissions['project-delete']){
+          if ({{ Auth::user()->can('project-delete') ? 'true' : 'false' }}){
             actions += '<button id="'+data.id+'" class="buttonDelete btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
           };
           actions += '</div>';

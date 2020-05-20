@@ -4,13 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Customer;
 use App\Http\Requests\OtlUploadRequest;
-use App\Project;
 use App\Repositories\ActivityRepository;
 use App\Repositories\ProjectRepository;
 use App\Repositories\UserRepository;
 use Auth;
-use Entrust;
-use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ImportExcelToArray;
 
 class OtlUploadController extends Controller
 {
@@ -36,11 +35,11 @@ class OtlUploadController extends Controller
     public function postForm(OtlUploadRequest $request)
     {
         $color = [
-      'error' => 'text-danger',
-      'info' => 'text-info',
-      'update' => 'text-warning',
-      'add' => 'text-primary',
-    ];
+            'error' => 'text-danger',
+            'info' => 'text-info',
+            'update' => 'text-warning',
+            'add' => 'text-primary',
+        ];
 
         $result = new \stdClass();
         $result->result = 'success';
@@ -50,34 +49,34 @@ class OtlUploadController extends Controller
 
         // now we will need a association between months written in letters and numbers because in the activites table it is in numbers and in the excel file it is in letters
         $months_converted = [
-      'jan' => 1,
-      'feb' => 2,
-      'mar' => 3,
-      'apr' => 4,
-      'may' => 5,
-      'jun' => 6,
-      'jul' => 7,
-      'aug' => 8,
-      'sep' => 9,
-      'oct' => 10,
-      'nov' => 11,
-      'dec' => 12,
-    ];
+            'jan' => 1,
+            'feb' => 2,
+            'mar' => 3,
+            'apr' => 4,
+            'may' => 5,
+            'jun' => 6,
+            'jul' => 7,
+            'aug' => 8,
+            'sep' => 9,
+            'oct' => 10,
+            'nov' => 11,
+            'dec' => 12,
+        ];
 
         $months_prime = [
-      1 => 'jan',
-      2 => 'feb',
-      3 => 'mar',
-      4 => 'apr',
-      5 => 'may',
-      6 => 'jun',
-      7 => 'jul',
-      8 => 'aug',
-      9 => 'sep',
-      10 => 'oct',
-      11 => 'nov',
-      12 => 'dec',
-    ];
+            1 => 'jan',
+            2 => 'feb',
+            3 => 'mar',
+            4 => 'apr',
+            5 => 'may',
+            6 => 'jun',
+            7 => 'jul',
+            8 => 'aug',
+            9 => 'sep',
+            10 => 'oct',
+            11 => 'nov',
+            12 => 'dec',
+        ];
 
         //First we need to get all employees for this manager
         $all_users = $this->userRepository->getAllUsersFromManager(Auth::user()->id);
@@ -90,29 +89,21 @@ class OtlUploadController extends Controller
 
         $file = $request->file('uploadfile');
         if ($file->isValid()) {
-            $filename = $file->getClientOriginalName();
-            $fileextension = $file->getClientOriginalExtension();
+            // In case we send a CSV file, the worksheet name is : Worksheet
+            $reader = new ImportExcelToArray();
+            $reader->startingRow = 1;
+            $temp = Excel::import($reader,$file);
+            $result = $reader->sheetData['Worksheet'];
 
-            $sheet = \Excel::selectSheetsByIndex(0)
-      ->load($file);
-
-            // Now we need to check we have the right columns
-            $headerRow = $sheet->first()->keys()->toArray();
-            //dd($headerRow);
-
-            // This command helps getting a view on what we get from $sheet
-            //$sheet->dd();
-
-            $result = $sheet->toArray();
-
-            //dd($result);
-
-            $columns_needed_CTV = ['customer_name', 'project_name', 'meta_activity', 'employee_name', 'year', 'month', 'converted_time', 'unit'];
             $columns_needed_PRIME = ['project_name', 'billable_task', 'name', 'year', 'month', 'time_entered_in_days'];
 
+            //dd($reader->sheetData);
+            //dd($reader->checkMinHeaders('Worksheet',$columns_needed_PRIME));
+
             // If the columns are not all present then we have an error and go back
-            if (! array_diff($columns_needed_CTV, $headerRow)) {
-            } elseif (! array_diff($columns_needed_PRIME, $headerRow)) {
+            if ($reader->checkMinHeaders('Worksheet',$columns_needed_PRIME)) {
+                // First thing we need to do is to go over each line and sum the column time entered in days for each
+                // Row with the same column project_name, billable_task, name, year and month
                 $header_already_used = [];
                 $new_result = [];
                 foreach ($result as $r) {
@@ -157,8 +148,8 @@ class OtlUploadController extends Controller
             //dd($result);
             } else {
                 array_push($messages, ['status'=>'error',
-          'user' =>'',
-          'msg'=>'Some columns are required but not present in the file, please see the sample file and upload again.', ]);
+                'user' =>'',
+                'msg'=>'Some columns are required but not present in the file, please see the sample file and upload again.', ]);
 
                 return view('dataFeed/otlupload', compact('messages', 'color'));
             }
@@ -171,16 +162,16 @@ class OtlUploadController extends Controller
                 if (empty($userInDB)) {
                     if (! in_array(['status'=>'error', 'msg'=>'User is not in DB', 'user' =>$row['employee_name']], $messages, true)) {
                         array_push($messages, ['status'=>'error',
-            'msg'=>'User is not in DB',
-            'user' =>$row['employee_name'],
-            ]);
+                            'msg'=>'User is not in DB',
+                            'user' =>$row['employee_name'],
+                        ]);
                     }
                     continue;
                 }
                 // END check user
 
                 // Checking if you have the rights to modify this user
-                if (! Entrust::can('otl-upload-all') && ! in_array($userInDB->id, $users_id)) {
+                if (! Auth::user()->can('otl-upload-all') && ! in_array($userInDB->id, $users_id)) {
                     if (! in_array(['status'=>'error', 'msg'=>'User not your employee', 'user' =>$row['employee_name']], $messages, true)) {
                         array_push($messages, ['status'=>'error',
             'msg'=>'User not your employee',

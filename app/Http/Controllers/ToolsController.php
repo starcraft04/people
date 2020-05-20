@@ -14,14 +14,12 @@ use App\ProjectRevenue;
 use App\Repositories\ActivityRepository;
 use App\Repositories\ProjectRepository;
 use App\Repositories\UserRepository;
-use App\Role;
 use App\Skill;
 use App\User;
 use App\UserSkill;
 use Auth;
 use Datatables;
 use DB;
-use Entrust;
 use Illuminate\Http\Request;
 use Session;
 
@@ -51,7 +49,7 @@ class ToolsController extends Controller
     {
         $year = date('Y');
         $manager_list = [];
-        if (Entrust::can('tools-activity-all-edit')) {
+        if (Auth::user()->can('tools-activity-all-edit')) {
             $user_id_for_update = '0';
         } elseif (Auth::user()->is_manager == 1) {
             $user_id_for_update = '0';
@@ -67,7 +65,7 @@ class ToolsController extends Controller
     {
         $year = date('Y');
         $manager_list = [];
-        if (Entrust::can('tools-activity-all-edit')) {
+        if (Auth::user()->can('tools-activity-all-edit')) {
             $user_id_for_update = '0';
         } elseif (Auth::user()->is_manager == 1) {
             $user_id_for_update = '0';
@@ -83,7 +81,7 @@ class ToolsController extends Controller
     {
         $year = date('Y');
         $manager_list = [];
-        if (Entrust::can('tools-activity-all-edit')) {
+        if (Auth::user()->can('tools-activity-all-edit')) {
             $user_id_for_update = '0';
         } elseif (Auth::user()->is_manager == 1) {
             $user_id_for_update = '0';
@@ -99,7 +97,7 @@ class ToolsController extends Controller
     {
         $year = date('Y');
         $manager_list = [];
-        if (Entrust::can('tools-activity-all-edit')) {
+        if (Auth::user()->can('tools-activity-all-edit')) {
             $user_id_for_update = '0';
         } elseif (Auth::user()->is_manager == 1) {
             $user_id_for_update = '0';
@@ -115,7 +113,7 @@ class ToolsController extends Controller
     {
         $year = date('Y');
         $manager_list = [];
-        if (Entrust::can('tools-activity-all-edit')) {
+        if (Auth::user()->can('tools-activity-all-edit')) {
             $user_id_for_update = '0';
         } elseif (Auth::user()->is_manager == 1) {
             $user_id_for_update = '0';
@@ -159,7 +157,7 @@ class ToolsController extends Controller
 
         $created_by_user_id = Auth::user()->id;
 
-        if (Entrust::can('tools-activity-all-view')) {
+        if (Auth::user()->can('tools-activity-all-view')) {
             $user_list = $this->userRepository->getAllUsersList();
             $user_select_disabled = 'false';
         } elseif (Auth::user()->is_manager == 1) {
@@ -292,7 +290,7 @@ class ToolsController extends Controller
         // Here we find the information about the project
         $project = $this->projectRepository->getById($project_id);
 
-        if (Entrust::can('tools-all_projects-edit') || (isset($project->created_by_user_id) && (Auth::user()->id == $project->created_by_user_id))) {
+        if (Auth::user()->can('tools-all_projects-edit') || (isset($project->created_by_user_id) && (Auth::user()->id == $project->created_by_user_id))) {
             $project_name_disabled = '';
             $customer_id_select_disabled = 'false';
             $otl_name_disabled = '';
@@ -319,7 +317,7 @@ class ToolsController extends Controller
             $win_ratio_disabled = '';
         }
 
-        if ($project->otl_validated == 1 && ! Entrust::can('tools-update-existing_prime_code')) {
+        if ($project->otl_validated == 1 && ! Auth::user()->can('tools-update-existing_prime_code')) {
             $otl_name_disabled = 'disabled';
             $meta_activity_select_disabled = 'true';
         }
@@ -331,7 +329,7 @@ class ToolsController extends Controller
 
         // Here we will define if we can select a user for this project and activity or not
         // Attention, we need to prevent in the user_list to have ids when already assigned to a project
-        if (Entrust::can('tools-activity-all-edit')) {
+        if (Auth::user()->can('tools-activity-all-edit')) {
             $user_list_temp = $this->userRepository->getAllUsersList();
 
             if ($user_id == '0') {
@@ -414,7 +412,7 @@ class ToolsController extends Controller
 
         //here is the check to see if we need the change user button
         $has_otl_activities = $this->activityRepository->getNumberOfOTLPerUserAndProject($user_id, $project_id);
-        if (Entrust::can('tools-user_assigned-change') && $user_id != 0 && $has_otl_activities == 0) {
+        if (Auth::user()->can('tools-user_assigned-change') && $user_id != 0 && $has_otl_activities == 0) {
             $show_change_button = true;
         }
 
@@ -474,7 +472,7 @@ class ToolsController extends Controller
 
         // Now we need to check if the user has been flagged for remove from project
         if ($inputs['action'] == 'Remove') {
-            if (Entrust::can('tools-user_assigned-remove')) {
+            if (Auth::user()->can('tools-user_assigned-remove')) {
                 $activity = $this->activityRepository->removeUserFromProject($inputs['user_id'], $inputs['project_id'], $inputs['year']);
 
                 return redirect($redirect)->with('success', 'User removed from project successfully');
@@ -490,7 +488,7 @@ class ToolsController extends Controller
         $project = $this->projectRepository->update($inputs['project_id'], $inputs);
 
         // if user_id_url = 0 then it is only project update and we don't need to add or update tasks
-        if ($inputs['user_id_url'] != 0 && Entrust::can('tools-user_assigned-change')) {
+        if ($inputs['user_id_url'] != 0 && Auth::user()->can('tools-user_assigned-change')) {
             // Let's check first if we changed the user
             if ($inputs['user_id_url'] != $inputs['user_id']) {
                 // Let's check if the user we changed to has already some activities on this project
@@ -577,7 +575,7 @@ class ToolsController extends Controller
           ->leftjoin('users AS m', 'm.id', '=', 'uu.manager_id')
           ->where('skills.certification', '=', $cert);
 
-        if (! Entrust::can('tools-usersskills-view-all')) {
+        if (! Auth::user()->can('tools-usersskills-view-all')) {
             $skillList->where('u.id', '=', Auth::user()->id);
         }
         $data = Datatables::of($skillList)->make(true);
@@ -603,7 +601,7 @@ class ToolsController extends Controller
 
         // Do a check first to see if you can delete this or not
         $userskill = UserSkill::find($id);
-        if ((Auth::user()->id == $userskill->user_id) or (Entrust::can('tools-usersskills-editall'))) {
+        if ((Auth::user()->id == $userskill->user_id) or (Auth::user()->can('tools-usersskills-editall'))) {
             $userskill = UserSkill::destroy($id);
             $result->result = 'success';
             $result->msg = 'Record deleted successfully';
@@ -627,7 +625,7 @@ class ToolsController extends Controller
                 $select = config('select.userskill_rating');
             }
 
-            if (Entrust::can('tools-usersskills-editall')) {
+            if (Auth::user()->can('tools-usersskills-editall')) {
                 $user_list = [];
                 $user_list_temp = $this->userRepository->getAllUsersList();
                 foreach ($user_list_temp as $key => $value) {
@@ -663,7 +661,7 @@ class ToolsController extends Controller
         }
 
         $user_list = User::where('id', $userskill->user_id)->pluck('name', 'id');
-        if (Entrust::can('tools-usersskills-editall') or (Auth::user()->id == $userskill->user_id)) {
+        if (Auth::user()->can('tools-usersskills-editall') or (Auth::user()->id == $userskill->user_id)) {
             return view('tools/userskill_create_update', compact('userskill', 'skill', 'user_list', 'select'))->with('action', 'update');
         } else {
             return redirect('toolsUsersSkills')->with('error', 'You don\'t have the rights to modify this record');

@@ -7,7 +7,6 @@ use App\User;
 use Auth;
 use Datatables;
 use DB;
-use Entrust;
 use Illuminate\Support\Facades\Hash;
 
 class UserRepository
@@ -109,12 +108,7 @@ class UserRepository
 
         // Now we need to save the roles
         if (isset($inputs['roles'])) {
-            DB::table('role_user')->where('user_id', $user->id)->delete();
-            foreach ($inputs['roles'] as $key => $value) {
-                $user->attachRole($value);
-            }
-        } else {
-            DB::table('role_user')->where('user_id', $user->id)->delete();
+            $user->syncRoles($inputs['roles']);
         }
 
         // Now we need to save the clusters
@@ -157,15 +151,15 @@ class UserRepository
          *   Then we will need to use in the view page the name of the table.column. This is so that it knows how to do proper sorting or search.
          **/
         $userList = DB::table('users')
-    ->select('users.id', 'users.name','users.email','users.is_manager', 'users.region',
-    'users.country', 'users.domain', 'users.management_code', 'users.job_role','users.from_otl',
-    'users.employee_type', 'users_users.manager_id', 'u2.name AS manager_name', 'users.activity_status', 'users.date_started', 'users.date_ended')
-    ->leftjoin('users_users', 'users.id', '=', 'users_users.user_id')
-    ->leftjoin('users AS u2', 'u2.id', '=', 'users_users.manager_id');
+            ->select('users.id', 'users.name','users.email','users.is_manager', 'users.region',
+            'users.country', 'users.domain', 'users.management_code', 'users.job_role','users.from_otl',
+            'users.employee_type', 'users_users.manager_id', 'u2.name AS manager_name', 'users.activity_status', 'users.date_started', 'users.date_ended')
+            ->leftjoin('users_users', 'users.id', '=', 'users_users.user_id')
+            ->leftjoin('users AS u2', 'u2.id', '=', 'users_users.manager_id');
         if (Auth::user()->id != 1) {
             $userList->where('users.id', '!=', '1');
         }
-        if (! Entrust::can('user-view-all')) {
+        if (! Auth::user()->can('user-view-all')) {
             $userList->where('users_users.manager_id', '=', Auth::user()->id);
         }
         if ($exclude_contractors == '1') {

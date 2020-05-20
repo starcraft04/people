@@ -7,15 +7,15 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\PasswordUpdateRequest;
 use App\Http\Requests\ProjectCreateRequest;
 use App\Http\Requests\ProjectUpdateRequest;
+use App\Http\Requests\ProjectRevenueCreateRequest;
+use App\Http\Requests\ProjectRevenueUpdateRequest;
 use App\Loe;
 use App\Project;
 use App\ProjectRevenue;
 use App\Repositories\ProjectRepository;
-use App\Role;
 use Auth;
 use Datatables;
 use DB;
-use Entrust;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
@@ -93,47 +93,38 @@ class ProjectController extends Controller
         }
     }
 
-    public function addRevenue(Request $request)
+    public function listOfProjectsRevenue($id)
+    {
+        $project_revenues = Project::findOrFail($id)->revenues();
+        $data = Datatables::of($project_revenues)->make(true);
+
+        return $data;
+    }
+
+
+    public function addRevenue(ProjectRevenueCreateRequest $request)
     {
         // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
         $result = new \stdClass();
         $inputs = $request->all();
-        $projectRevenue = ProjectRevenue::where('project_id', '=', $inputs['project_id'])->where('year', '=', $inputs['year'])->where('product_code', '=', $inputs['product_code'])->first();
-        if ($projectRevenue === null) {
-            DB::table('project_revenues')->insert($inputs);
-            $result->result = 'success';
-            $result->msg = 'Record added successfully';
-        } else {
-            $result->result = 'error';
-            $result->msg = 'Record already in DB';
-        }
+
+        ProjectRevenue::create($inputs);
+
+        $result->result = 'success';
+        $result->msg = 'Record added successfully';
 
         return json_encode($result);
     }
 
-    public function updateRevenue(Request $request)
+    public function updateRevenue(ProjectRevenueUpdateRequest $request,$id)
     {
         // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
         $result = new \stdClass();
         $inputs = $request->all();
-        $projectRevenueToUpdate = ProjectRevenue::find($inputs['id']);
-        if ($inputs['column_name'] == 'year') {
-            $projectRevenue = ProjectRevenue::where('project_id', '=', $projectRevenueToUpdate->project_id)->where('year', '=', $inputs['value'])->where('product_code', '=', $projectRevenueToUpdate->product_code)->first();
-        } elseif ($inputs['column_name'] == 'product_code') {
-            $projectRevenue = ProjectRevenue::where('project_id', '=', $projectRevenueToUpdate->project_id)->where('year', '=', $projectRevenueToUpdate->year)->where('product_code', '=', $inputs['value'])->first();
-        } else {
-            $projectRevenue = null;
-        }
-
-        if ($projectRevenue === null) {
-            $projectRevenueToUpdate->{$inputs['column_name']} = $inputs['value'];
-            $projectRevenueToUpdate->save();
-            $result->result = 'success';
-            $result->msg = 'Record updated successfully';
-        } else {
-            $result->result = 'error';
-            $result->msg = 'Record already in DB';
-        }
+        $projectRevenueToUpdate = ProjectRevenue::find($id);
+        $projectRevenueToUpdate->update($inputs);
+        $result->result = 'success';
+        $result->msg = 'Record updated successfully';
 
         return json_encode($result);
     }
@@ -165,34 +156,6 @@ class ProjectController extends Controller
         }
 
         $data = Datatables::of($projectList)->make(true);
-
-        return $data;
-    }
-
-    public function listOfProjectsRevenue($id)
-    {
-        $project_revenues = Project::findOrFail($id)->revenues();
-
-        if (Auth::user()->can('projectRevenue-edit')) {
-            $data = Datatables::of($project_revenues)
-                ->editColumn('year', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="year">{{$year}}</div>')
-                ->editColumn('product_code', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="product_code">{{$product_code}}</div>')
-                ->editColumn('jan', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="jan">{{$jan}}</div>')
-                ->editColumn('feb', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="feb">{{$feb}}</div>')
-                ->editColumn('mar', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="mar">{{$mar}}</div>')
-                ->editColumn('apr', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="apr">{{$apr}}</div>')
-                ->editColumn('may', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="may">{{$may}}</div>')
-                ->editColumn('jun', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="jun">{{$jun}}</div>')
-                ->editColumn('jul', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="jul">{{$jul}}</div>')
-                ->editColumn('aug', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="aug">{{$aug}}</div>')
-                ->editColumn('sep', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="sep">{{$sep}}</div>')
-                ->editColumn('oct', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="oct">{{$oct}}</div>')
-                ->editColumn('nov', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="nov">{{$nov}}</div>')
-                ->editColumn('dec', '<div contenteditable class="rev_update" data-id="{{$id}}" data-column="dec">{{$dec}}</div>')
-                ->make(true);
-        } else {
-            $data = Datatables::of($project_revenues)->make(true);
-        }
 
         return $data;
     }
@@ -269,16 +232,12 @@ class ProjectController extends Controller
         // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
         $result = new \stdClass();
         $loe_result = Loe::find($id);
-        if ($loe_result->user_id == Auth::user()->id || Entrust::can('projectLoe-deleteAll')) {
+        if ($loe_result->user_id == Auth::user()->id || Auth::user()->can('projectLoe-deleteAll')) {
             $loe_result->delete();
             $result->result = 'success';
-            $result->box_type = 'success';
-            $result->message_type = 'success';
             $result->msg = 'Record deleted successfully';
         } else {
             $result->result = 'error';
-            $result->box_type = 'danger';
-            $result->message_type = 'error';
             $result->msg = 'No permission to delete record';
         }
 
@@ -287,30 +246,26 @@ class ProjectController extends Controller
 
     public function addLoe(Request $request)
     {
+        // First we need to validate the data we received
+        $data = $request->validate([
+            'domain' => 'required',
+            'mandays' => 'required',
+            'project_id' => 'required',
+        ]);
         // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
         $result = new \stdClass();
+
         $inputs = $request->all();
-        $Loe = new Loe;
-        $startdate = explode(' - ', $inputs['date'])[0];
-        $enddate = explode(' - ', $inputs['date'])[1];
+
+        $inputs["user_id"] = Auth::user()->id;
+        
         if (Auth::user()->is_manager == 1) {
-            $signoff = 1;
+            $inputs["signoff"] = 1;
         } else {
-            $signoff = 0;
+            $inputs["signoff"] = 0;
         }
 
-        $Loe->project_id = $inputs['project_id'];
-        $Loe->user_id = Auth::user()->id;
-        $Loe->start_date = $startdate;
-        $Loe->end_date = $enddate;
-        $Loe->domain = $inputs['domain'];
-        $Loe->type = $inputs['type'];
-        $Loe->location = $inputs['location'];
-        $Loe->mandays = $inputs['mandays'];
-        $Loe->description = $inputs['description'];
-        $Loe->signoff = $signoff;
-
-        $Loe->save();
+        Loe::create($inputs);
 
         $result->result = 'success';
         $result->msg = 'Record added successfully';
@@ -318,23 +273,27 @@ class ProjectController extends Controller
         return json_encode($result);
     }
 
-    public function updateLoe(Request $request)
+    public function updateLoe(Request $request, $id)
     {
+        // First we need to validate the data we received
+        $data = $request->validate([
+            'domain' => 'required',
+            'mandays' => 'required'
+        ]);
         // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
         $result = new \stdClass();
         $inputs = $request->all();
-        $today = date('Y-m-d H:i:s');
-        $Loe = Loe::find($inputs['loe_id']);
 
-        if ($Loe->user_id == Auth::user()->id || Entrust::can('projectLoe-editAll')) {
-            $startdate = explode(' - ', $inputs['date'])[0];
-            $enddate = explode(' - ', $inputs['date'])[1];
+        $today = date('Y-m-d H:i:s');
+        $Loe = Loe::find($id);
+
+        if ($Loe->user_id == Auth::user()->id || Auth::user()->can('projectLoe-editAll')) {
 
             if (Auth::user()->is_manager == 1) {
-                $signoff = 1;
+                $inputs['signoff'] = 1;
                 $history_signoff = 'Date of change: '.$today.'</BR>-- Changed by: '.Auth::user()->name.'</BR>-- MANAGER SIGNOFF</BR>';
             } else {
-                $signoff = 0;
+                $inputs['signoff'] = 0;
                 $history_signoff = '';
             }
 
@@ -343,27 +302,14 @@ class ProjectController extends Controller
             } else {
                 $history = '';
             }
-            $Loe->history = $history.'Date of change: '.$today.'</BR>-- Changed by: '.Auth::user()->name.'</BR>-- Mandays: '.$Loe->mandays.' to '.$inputs['mandays'].'</BR>'.$history_signoff;
+            $inputs['history'] = $history.'Date of change: '.$today.'</BR>-- Changed by: '.Auth::user()->name.'</BR>-- Mandays: '.$Loe->mandays.' to '.$inputs['mandays'].'</BR>'.$history_signoff;
 
-            $Loe->start_date = $startdate;
-            $Loe->end_date = $enddate;
-            $Loe->domain = $inputs['domain'];
-            $Loe->type = $inputs['type'];
-            $Loe->location = $inputs['location'];
-            $Loe->mandays = $inputs['mandays'];
-            $Loe->description = $inputs['description'];
-            $Loe->signoff = $signoff;
-
-            $Loe->save();
+            $Loe->update($inputs);
 
             $result->result = 'success';
-            $result->box_type = 'success';
-            $result->message_type = 'success';
             $result->msg = 'Record edited successfully';
         } else {
             $result->result = 'error';
-            $result->box_type = 'danger';
-            $result->message_type = 'error';
             $result->msg = 'No permission to edit record';
         }
 
@@ -377,7 +323,7 @@ class ProjectController extends Controller
         $today = date('Y-m-d H:i:s');
         $Loe = Loe::find($loe_id);
 
-        if (($Loe->user_id == Auth::user()->id || Entrust::can('projectLoe-editAll')) && Entrust::can('projectLoe-signoff')) {
+        if (($Loe->user_id == Auth::user()->id || Auth::user()->can('projectLoe-editAll')) && Auth::user()->can('projectLoe-signoff')) {
             if (! empty($Loe->history)) {
                 $history = $Loe->history;
             } else {

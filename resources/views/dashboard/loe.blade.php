@@ -152,11 +152,6 @@
 @section('script')
 <script>
 
-<?php
-  list($validate, $allValidations) = Entrust::ability(null,['projectLoe-signoff'],['validate_all' => true,'return_type' => 'both']);
-  echo "var permissions = jQuery.parseJSON('".json_encode($allValidations['permissions'])."');";
-?>
-
 $(document).ready(function() {
   var year = "{!! $year !!}";
 
@@ -322,7 +317,7 @@ $(document).ready(function() {
     }
   });
 
-
+  @can('projectLoe-signoff')
   // Click on the signoff button to change its status
   $(document).on('click', '.buttonLoeSignoff', function () {
       var table = projectLoe;
@@ -330,8 +325,6 @@ $(document).ready(function() {
       var row = table.row(tr);
       var loe_id = row.data().loe_id;
       // console.log('the loe id is '+row.data().loe_id);
-      //console.log(permissions['projectLoe-signoff']);
-      if (permissions['projectLoe-signoff']) {
         data = {};
         $.ajax({
             type: 'get',
@@ -358,8 +351,8 @@ $(document).ready(function() {
               projectLoe.ajax.reload();
             }
         });
-      }
     });
+    @endcan
 
   // This part is to make sure that datatables can adjust the columns size when it is hidden because on non active tab when created
   $('a[data-toggle="tab"]').on('shown.bs.tab', function(e){

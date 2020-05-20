@@ -90,8 +90,6 @@ h3:after {
 <script src="{{ asset('/plugins/gentelella/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js') }}" type="text/javascript"></script>
 <!-- Range slider -->
 <script src="{{ asset('/plugins/gentelella/vendors/ion.rangeSlider/js/ion.rangeSlider.min.js') }}" type="text/javascript"></script>
-<!-- Form validator -->
-<script src="{{ asset('/plugins/gentelella/vendors/parsleyjs/dist/parsley.min.js') }}" type="text/javascript"></script>
 @stop
 
 @section('content')
@@ -118,67 +116,73 @@ h3:after {
 
       <!-- Window content -->
       <div class="x_content">
-        @if($action == 'create')
-          {!! Form::open(['url' => 'toolsFormCreate', 'method' => 'post', 'id' => 'myForm']) !!}
-          {!! Form::hidden('created_by_user_id', $created_by_user_id, ['class' => 'form-control']) !!}
-          @elseif($action == 'update')
-          {!! Form::open(['url' => 'toolsFormUpdate', 'method' => 'post', 'id' => 'myForm']) !!}
-          {!! Form::hidden('project_id', $project->id, ['class' => 'form-control']) !!}
-          <!-- Now we need also to set up id so that it can be used for the ProjectUpdateRequest.php -->
-          {!! Form::hidden('id', $project->id, ['class' => 'form-control']) !!}
-          {!! Form::hidden('user_id_url', $user_id, ['class' => 'form-control']) !!}
-        @endif
-        <div class="row">
-          <div class="col-md-1">
-            <a href="javascript:history.back()" class="btn btn-primary btn-sm">
-              <span class="glyphicon glyphicon-circle-arrow-left"></span> Back
-            </a>
-          </div>
-          <div class="col-md-offset-8 col-md-1" style="text-align: right;">
-            @if($action == 'update')
-            @if(Entrust::can('tools-user_assigned-remove') && $user_id != 0)
-            <button type="button" id="remove_user" class="btn btn-danger btn-sm">Remove user</button>
-            @endif
-            @endif
-          </div>
-          <div class="col-md-1" style="text-align: right;">
-            @if($action == 'update')
-            @if(Entrust::can('tools-user_assigned-transfer') && $user_id != 0)
-            <button type="button" id="transfer_user" class="btn btn-info btn-sm">Transfer</button>
-            @endif
-            @endif
-          </div>
-          <div class="col-md-1" style="text-align: right;">
-            @if($action == 'create')
-            <input class="btn btn-success btn-sm" type="submit" name="action" value="Create" />
-            @elseif($action == 'update')
-            <input class="btn btn-success btn-sm" type="submit" name="action" value="Update" />
-            @endif
-          </div>
-        </div>
-
         <div class="" role="tabpanel" data-example-id="togglable-tabs">
           <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
             <li role="presentation" class="active"><a href="#tab_content1" id="tab_main" role="tab" data-toggle="tab" aria-expanded="true">Project</a></li>
             @if($action == 'update')
-              @permission(['projectRevenue-create'])
+              @can('projectRevenue-create')
               <li role="presentation"><a href="#tab_content2" id="tab_revenue" role="tab" data-toggle="tab" aria-expanded="true">Revenue</a></li>
-              @endpermission
-              @permission(['projectLoe-view'])
+              @endcan
+              @can('projectLoe-view')
               <li role="presentation"><a href="#tab_content4" id="tab_loe" role="tab" data-toggle="tab" aria-expanded="true">LoE</a></li>
-              @endpermission
-              @permission(['action-view'])
+              @endcan
+              @can('action-view')
               <li role="presentation"><a href="#tab_content5" id="tab_action" role="tab" data-toggle="tab" aria-expanded="true">Actions (<span id="num_of_actions">{{ $num_of_actions }}</span>)</a></li>
-              @endpermission
-              @permission('tools-projects-comments')
+              @endcan
+              @can('tools-projects-comments')
               <li role="presentation"><a href="#tab_content3" id="tab_comment" role="tab" data-toggle="tab" aria-expanded="true">Comments (<span id="num_of_comments">{{ $num_of_comments }}</span>)</a></li>
-              @endpermission
+              @endcan
             @endif
           </ul>
 
           <div id="myTabContent" class="tab-content">
             <!-- Project -->
             <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="tab_main">
+              @if($action == 'create')
+                {!! Form::open(['url' => 'toolsFormCreate', 'method' => 'post', 'id' => 'projectForm']) !!}
+                {!! Form::hidden('created_by_user_id', $created_by_user_id, ['class' => 'form-control']) !!}
+              @elseif($action == 'update')
+                {!! Form::open(['url' => 'toolsFormUpdate', 'method' => 'post', 'id' => 'projectForm']) !!}
+                {!! Form::hidden('project_id', $project->id, ['class' => 'form-control']) !!}
+                <!-- Now we need also to set up id so that it can be used for the ProjectUpdateRequest.php -->
+                {!! Form::hidden('id', $project->id, ['class' => 'form-control']) !!}
+                {!! Form::hidden('user_id_url', $user_id, ['class' => 'form-control']) !!}
+              @endif
+              <!-- Row with buttons -->
+              <div class="row">
+                <div class="col-md-1">
+                  <a href="javascript:history.back()" class="btn btn-primary btn-sm">
+                    <span class="glyphicon glyphicon-circle-arrow-left"></span> Back
+                  </a>
+                </div>
+                <div class="col-md-offset-8 col-md-1" style="text-align: right;">
+                  @if($action == 'update')
+                  @can('tools-user_assigned-remove')
+                  @if($user_id != 0)
+                  <button type="button" id="remove_user" class="btn btn-danger btn-sm">Remove user</button>
+                  @endif
+                  @endcan
+                  @endif
+                </div>
+                <div class="col-md-1" style="text-align: right;">
+                  @if($action == 'update')
+                  @can('tools-user_assigned-transfer')
+                  @if($user_id != 0)
+                  <button type="button" id="transfer_user" class="btn btn-info btn-sm">Transfer</button>
+                  @endif
+                  @endcan
+                  @endif
+                </div>
+                <div class="col-md-1" style="text-align: right;">
+                  @if($action == 'create')
+                  <input class="btn btn-success btn-sm" type="submit" name="action" value="Create" />
+                  @elseif($action == 'update')
+                  <input class="btn btn-success btn-sm" type="submit" name="action" value="Update" />
+                  @endif
+                </div>
+              </div>
+
+              <!-- Row with User and Year -->
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group {!! $errors->has('user_id') ? 'has-error' : '' !!} col-md-12">
@@ -219,6 +223,7 @@ h3:after {
                 </div>
               </div>
 
+              <!-- Row with months and values -->
               <div class="row_months user_selected">
                 <div class="col-md-12">
                   Number of days for each month.
@@ -247,6 +252,7 @@ h3:after {
               <div class="clearfix"></div>
               <div class="ln_solid"></div>
 
+              <!-- Row with Project details -->
               <div class="row">
                 <div class="col-md-6">
                   <div class="row">
@@ -705,12 +711,15 @@ h3:after {
                 <div class="row"></div>
                 <div class="row"></div>
               </div>
+              {!! Form::close() !!}
             </div>
+            
             <!-- Project -->
 
             @if($action == 'update')
               <!-- Revenues -->
-              @permission(['projectRevenue-create'])
+              <!-- Table -->
+              @can('projectRevenue-create')
               <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="tab_revenue">
                 <div class="row">
                   <div class="table-responsive">
@@ -733,9 +742,9 @@ h3:after {
                           <th>Nov</th>
                           <th>Dec</th>
                           <th>
-                            @permission('projectRevenue-create')
+                            @can('projectRevenue-create')
                               <button type="button" id="new_revenue" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span></button>
-                            @endpermission
+                            @endcan
                           </th>
                         </tr>
                       </thead>
@@ -743,11 +752,67 @@ h3:after {
                   </div>
                 </div>
               </div>
-              @endpermission
+              <!-- Table -->
+
+              <!-- Modal -->
+              <div class="modal fade" id="modal_revenue" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" style="display:table;">
+                      <div class="modal-content">
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                          <h4 class="modal-title" id="modal_revenue_title"></h4>
+                        </div>
+                        <!-- Modal Header -->
+                      
+                        <!-- Modal Body -->
+                        <div class="modal-body">
+                          <form id="modal_revenue_form" role="form" method="POST" action="">
+                            <div id="modal_revenue_formgroup_year" class="form-group">
+                                <label class="control-label" for="modal_revenue_form_year">Year</label>
+                                <select class="form-control select2" style="width: 100%;" id="modal_revenue_form_year" data-placeholder="Select a year">
+                                  <option value="" ></option>
+                                  @foreach(config('select.year') as $key => $value)
+                                  <option value="{{ $key }}" @if($key == date("Y")) selected @endif>
+                                    {{ $value }}
+                                  </option>
+                                  @endforeach
+                                </select>
+                                <span id="modal_revenue_form_year_error" class="help-block"></span>
+                            </div>
+                            <div id="modal_revenue_formgroup_product_code" class="form-group">
+                                <label  class="control-label" for="modal_revenue_form_product_code">FPC</label>
+                                <input type="text" id="modal_revenue_form_product_code" class="form-control" placeholder="FPC"></input>
+                                <span id="modal_revenue_form_product_code_error" class="help-block"></span>
+                            </div>
+                            @foreach(config('select.available_months') as $key => $month)
+                            <div id="modal_revenue_formgroup_{{ $month }}" class="form-group">
+                                <label  class="control-label" for="modal_revenue_form_{{ $month }}">{{ $month }}</label>
+                                <input type="text" id="modal_revenue_form_{{ $month }}" class="form-control" placeholder="{{ $month }}"></input>
+                                <span id="modal_revenue_form_{{ $month }}_error" class="help-block"></span>
+                            </div>
+                            @endforeach
+
+                            <div class="form-group">
+                                <div id="modal_revenue_form_hidden"></div>
+                            </div>
+                          </form>
+                        </div>
+                          
+                        <!-- Modal Footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" id="modal_revenue_create_update_button" class="btn btn-success"></button>
+                        </div>
+                      </div>
+                  </div>
+              </div>
+              <!-- Modal -->
+              @endcan
               <!-- Revenues -->
 
               <!-- LoE -->
-              @permission(['projectLoe-view'])
+              @can('projectLoe-view')
               <!-- Table -->
               <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="tab_loe">
                 <div class="row">
@@ -772,9 +837,9 @@ h3:after {
                         <th>Updated at</th>
                         <th>Manager signoff</th>
                         <th>
-                          @permission('projectLoe-create')
+                          @can('projectLoe-create')
                             <button type="button" id="new_loe" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span></button>
-                          @endpermission
+                          @endcan
                         </th>
                       </tr>
                     </thead>
@@ -785,78 +850,72 @@ h3:after {
               <!-- Table -->
 
               <!-- Modal -->
-              <div class="modal fade" id="loeModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal fade" id="modal_loe" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                   <div class="modal-dialog modal-dialog-centered" style="display:table;">
                       <div class="modal-content">
                         <!-- Modal Header -->
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title" id="loe_title_modal"></h4>
+                            <h4 class="modal-title" id="modal_loe_title"></h4>
                         </div>
                         <!-- Modal Header -->
                       
                         <!-- Modal Body -->
                         <div class="modal-body">
-                          <form id="form_loe_modal" role="form" method="POST" action="">
-                            <div class="form-group">
-                                <label  class="control-label" for="domain_loe_modal">Domain</label>
-                                <div>
-                                  <select class="form-control select2" style="width: 100%;" id="domain_loe_modal" name="domain_loe_modal" data-placeholder="Select a domain">
+                          <form id="modal_loe_form" role="form" method="POST" action="">
+                            <div id="modal_loe_formgroup_domain" class="form-group">
+                                <label class="control-label" for="modal_loe_form_domain">Domain</label>
+                                <select class="form-control select2" style="width: 100%;" id="modal_loe_form_domain" data-placeholder="Select a domain">
+                                  <option value="" ></option>
+                                  @foreach(config('select.domain-users') as $key => $value)
+                                  <option value="{{ $key }}">
+                                    {{ $value }}
+                                  </option>
+                                  @endforeach
+                                </select>
+                                <span id="modal_loe_form_domain_error" class="help-block"></span>
+                            </div>
+                            <div id="modal_loe_formgroup_type" class="form-group">
+                                <label class="control-label" for="modal_loe_form_type">Type</label>
+                                <select class="form-control select2" style="width: 100%;" id="modal_loe_form_type" data-placeholder="Select a resource type">
                                     <option value="" ></option>
-                                    @foreach(config('select.domain-users') as $key => $value)
+                                    @foreach(config('select.loe_type') as $key => $value)
                                     <option value="{{ $key }}">
                                       {{ $value }}
                                     </option>
                                     @endforeach
-                                  </select>
-                                </div>
+                                </select>
+                                <span id="modal_loe_form_type_error" class="help-block"></span>
+                            </div>
+                            <div id="modal_loe_formgroup_location" class="form-group">
+                                <label  class="control-label" for="modal_loe_form_location">Location</label>
+                                <select class="form-control select2" style="width: 100%;" id="modal_loe_form_location" data-placeholder="Select a location">
+                                    <option value="" ></option>
+                                    @foreach(config('countries.country') as $key => $value)
+                                    <option value="{{ $key }}">
+                                      {{ $value }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                                <span id="modal_loe_form_location_error" class="help-block"></span>
+                            </div>
+                            <div id="modal_loe_formgroup_mandays" class="form-group">
+                                <label  class="control-label" for="modal_loe_form_mandays">Mandays</label>
+                                <input type="text" id="modal_loe_form_mandays" class="form-control" placeholder="Mandays"></input>
+                                <span id="modal_loe_form_mandays_error" class="help-block"></span>
+                            </div>
+                            <div id="modal_loe_formgroup_description" class="form-group">
+                                <label  class="control-label" for="modal_loe_form_description">Description</label>
+                                <textarea type="text" id="modal_loe_form_description" class="form-control" placeholder="Enter a description" rows="4"></textarea>
+                                <span id="modal_loe_form_description_error" class="help-block"></span>
+                            </div>
+                            <div id="modal_loe_formgroup_date" class="form-group">
+                                <label  class="control-label" for="modal_loe_form_date">Start to end date</label>
+                                <input type="text" id="modal_loe_form_date" class="form-control"></input>
+                                <span id="modal_loe_form_date_error" class="help-block"></span>
                             </div>
                             <div class="form-group">
-                                <label  class="control-label" for="type_loe_modal">Type</label>
-                                <div>
-                                  <select class="form-control select2" style="width: 100%;" id="type_loe_modal" name="type_loe_modal" data-placeholder="Select a resource type">
-                                      <option value="" ></option>
-                                      @foreach(config('select.loe_type') as $key => $value)
-                                      <option value="{{ $key }}">
-                                        {{ $value }}
-                                      </option>
-                                      @endforeach
-                                  </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label  class="control-label" for="location_loe_modal">Location</label>
-                                <div>
-                                  <select class="form-control select2" style="width: 100%;" id="location_loe_modal" name="location_loe_modal" data-placeholder="Select a location">
-                                      <option value="" ></option>
-                                      @foreach(config('countries.country') as $key => $value)
-                                      <option value="{{ $key }}">
-                                        {{ $value }}
-                                      </option>
-                                      @endforeach
-                                  </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label  class="control-label" for="mandays_loe_modal">Mandays</label>
-                                <div>
-                                    <input type="text" name="mandays_loe_modal" class="form-control" placeholder="Mandays"></input>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label  class="control-label" for="description_loe_modal">Description</label>
-                                <div>
-                                    <textarea type="text" name="description_loe_modal" class="form-control" placeholder="Enter a description" rows="4"></textarea>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label  class="control-label" for="date_loe_modal">Start to end date</label>
-                                <div>
-                                    <input type="text" id="date_loe_modal" name="date_loe_modal" class="form-control"></input>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div id="loe_hidden"></div>
+                                <div id="modal_loe_form_hidden"></div>
                             </div>
                           </form>
                         </div>
@@ -864,17 +923,17 @@ h3:after {
                         <!-- Modal Footer -->
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="button" id="loe_create_update_button_modal" class="btn btn-success">Update</button>
+                            <button type="button" id="modal_loe_create_update_button" class="btn btn-success">Update</button>
                         </div>
                       </div>
                   </div>
               </div>
               <!-- Modal -->
-              @endpermission
+              @endcan
               <!-- LoE -->
 
               <!-- Actions -->
-              @permission(['action-view'])
+              @can('action-view')
               <!-- Table -->
               <div role="tabpanel" class="tab-pane fade" id="tab_content5" aria-labelledby="tab_action">
                 <div class="row">
@@ -900,9 +959,9 @@ h3:after {
                         <th>Created at</th>
                         <th>Updated at</th>
                         <th>
-                          @permission('action-create')
+                          @can('action-create')
                             <button type="button" id="new_action" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-plus"></span></button>
-                          @endpermission
+                          @endcan
                         </th>
                       </tr>
                     </thead>
@@ -913,111 +972,100 @@ h3:after {
               <!-- Table -->
 
               <!-- Modal -->
-              <div class="modal fade" id="actionModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal fade" id="modal_action" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                   <div class="modal-dialog modal-dialog-centered" style="display:table;">
                       <div class="modal-content">
                         <!-- Modal Header -->
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title" id="action_title_modal"></h4>
+                            <h4 class="modal-title" id="modal_action_title"></h4>
                         </div>
                         <!-- Modal Header -->
                       
                         <!-- Modal Body -->
                         <div class="modal-body">
-                          <form id="form_action_modal" role="form" method="POST" action="" data-parsley-validate>
-                            <div class="form-group">
-                              <label  class="control-label" for="assigned_to_action_modal">Assigned to</label>
-                              <div>
-                                <select class="form-control select2" style="width: 100%;" id="assigned_to_action_modal" name="assigned_to_action_modal" data-placeholder="Select a user" required>
-                                  <option value="" ></option>
-                                  @foreach($users_on_project as $key => $value)
-                                  <option value="{{ $key }}">
-                                    {{ $value }}
-                                  </option>
-                                  @endforeach
-                                </select>
-                              </div>
+                          <form id="modal_action_form" role="form" method="POST" action="">
+                            <div id="modal_action_formgroup_assigned_user_id" class="form-group">
+                              <label  class="control-label" for="modal_action_form_assigned_user_id">Assigned to</label>
+                              <select class="form-control select2" style="width: 100%;" id="modal_action_form_assigned_user_id" data-placeholder="Select a user">
+                                <option value="" ></option>
+                                @foreach($users_on_project as $key => $value)
+                                <option value="{{ $key }}">
+                                  {{ $value }}
+                                </option>
+                                @endforeach
+                              </select>
+                              <span id="modal_action_form_assigned_user_id_error" class="help-block"></span>
                             </div>
-                            <div class="form-group">
-                                <label  class="control-label" for="action_name_modal" required>Name</label>
-                                <div>
-                                    <input type="text" name="action_name_modal" class="form-control" placeholder="Name" required></input>
-                                </div>
+                            <div id="modal_action_formgroup_name" class="form-group">
+                                <label  class="control-label" for="modal_action_form_name">Name</label>
+                                <input type="text" id="modal_action_form_name" class="form-control" placeholder="Name"></input>
+                                <span id="modal_action_form_name_error" class="help-block"></span>
                             </div>
-                            <div class="form-group">
-                                <label  class="control-label" for="action_requestor_modal" required>Requestor</label>
-                                <div>
-                                    <input type="text" name="action_requestor_modal" class="form-control" placeholder="Requestor"></input>
-                                </div>
+                            <div id="modal_action_formgroup_requestor" class="form-group">
+                                <label  class="control-label" for="modal_action_form_requestor">Requestor</label>
+                                <input type="text" id="modal_action_form_requestor" class="form-control" placeholder="Requestor"></input>
+                                <span id="modal_action_form_requestor_error" class="help-block"></span>
                             </div>
                             <div class="row">
-                              <div class="col-md-6 col-sm-12 form-group">
-                                  <label  class="control-label" for="status_action_modal">Status</label>
-                                  <div>
-                                    <select class="form-control select2" style="width: 100%;" id="status_action_modal" name="status_action_modal" data-placeholder="Select a status">
-                                      <option value="" ></option>
-                                      @foreach(config('select.action_status') as $key => $value)
-                                      <option value="{{ $key }}">
-                                        {{ $value }}
-                                      </option>
-                                      @endforeach
-                                    </select>
-                                  </div>
-                              </div>
-                              <div class="col-md-6 col-sm-12 form-group">
-                                <label  class="control-label" for="priority_action_modal">Priority</label>
-                                <div>
-                                  <select class="form-control select2" style="width: 100%;" id="priority_action_modal" name="priority_action_modal" data-placeholder="Select a priority">
+                              <div id="modal_action_formgroup_status" class="col-md-6 col-sm-12 form-group">
+                                  <label class="control-label" for="modal_action_form_status">Status</label>
+                                  <select class="form-control select2" style="width: 100%;" id="modal_action_form_status" data-placeholder="Select a status">
                                     <option value="" ></option>
-                                    @foreach(config('select.action_severity') as $key => $value)
+                                    @foreach(config('select.action_status') as $key => $value)
                                     <option value="{{ $key }}">
                                       {{ $value }}
                                     </option>
                                     @endforeach
                                   </select>
-                                </div>
+                                  <span id="modal_action_form_status_error" class="help-block"></span>
+                              </div>
+                              <div id="modal_action_formgroup_severity" class="col-md-6 col-sm-12 form-group">
+                                <label class="control-label" for="modal_action_form_severity">Priority</label>
+                                <select class="form-control select2" style="width: 100%;" id="modal_action_form_severity" data-placeholder="Select a priority">
+                                  <option value="" ></option>
+                                  @foreach(config('select.action_severity') as $key => $value)
+                                  <option value="{{ $key }}">
+                                    {{ $value }}
+                                  </option>
+                                  @endforeach
+                                </select>
+                                <span id="modal_action_form_severity_error" class="help-block"></span>
                               </div>
                             </div>
-                            <div class="form-group">
-                                <label  class="control-label" for="action_percentage_modal">Percent complete</label>
-                                <div>
-                                    <input type="text" name="action_percentage_modal" class="form-control" placeholder=""></input>
-                                </div>
+                            <div id="modal_action_formgroup_percent_complete" class="form-group">
+                                <label  class="control-label" for="modal_action_form_percent_complete">Percent complete</label>
+                                <input type="text" id="modal_action_form_percent_complete" class="form-control" placeholder=""></input>
+                                <span id="modal_action_form_percent_complete_error" class="help-block"></span>
                             </div>
-                            <div class="form-group">
-                                <label  class="control-label" for="date_action_modal">Start to end date</label>
-                                <div>
-                                    <input type="text" id="date_action_modal" name="date_action_modal" class="form-control"></input>
-                                </div>
+                            <div id="modal_action_formgroup_start_to_end_date" class="form-group">
+                                <label  class="control-label" for="modal_action_form_start_to_end_date">Start to end date</label>
+                                <input type="text" id="modal_action_form_start_to_end_date" class="form-control"></input>
+                                <span id="modal_action_form_start_to_end_date_error" class="help-block"></span>
                             </div>
-                            <div class="form-group">
-                                <label  class="control-label" for="description_action_modal">Description</label>
-                                <div>
-                                    <textarea type="text" name="description_action_modal" class="form-control" placeholder="Enter a description" rows="4"></textarea>
-                                </div>
+                            <div id="modal_action_formgroup_description" class="form-group">
+                                <label  class="control-label" for="modal_action_form_description">Description</label>
+                                <textarea type="text" id="modal_action_form_description" class="form-control" placeholder="Enter a description" rows="4"></textarea>
+                                <span id="modal_action_form_description_error" class="help-block"></span>
                             </div>
                             <h3>Next action</h3>
-                            <div class="form-group">
-                                <label  class="control-label" for="description_next_action_modal">Next action description</label>
-                                <div>
-                                    <textarea type="text" name="description_next_action_modal" class="form-control" placeholder="Enter a description" rows="4"></textarea>
-                                </div>
+                            <div id="modal_action_formgroup_next_action_description" class="form-group">
+                                <label  class="control-label" for="modal_action_form_next_action_description">Next action description</label>
+                                <textarea type="text" id="modal_action_form_next_action_description" class="form-control" placeholder="Enter a description" rows="4"></textarea>
+                                <span id="modal_action_form_next_action_description_error" class="help-block"></span>
+                              </div>
+                            <div id="modal_action_formgroup_next_action_dependency" class="form-group">
+                                <label  class="control-label" for="modal_action_form_next_action_dependency">Next action dependency</label>
+                                <input type="text" id="modal_action_form_next_action_dependency" class="form-control" placeholder="Next action dependency"></input>
+                                <span id="modal_action_form_next_action_dependency_error" class="help-block"></span>
+                            </div>
+                            <div id="modal_action_formgroup_next_action_due_date" class="form-group">
+                                <label  class="control-label" for="modal_action_form_next_action_due_date">Next action due datedate</label>
+                                <input type="text" id="modal_action_form_next_action_due_date" class="form-control"></input>
+                                <span id="modal_action_form_next_action_due_date_error" class="help-block"></span>
                             </div>
                             <div class="form-group">
-                                <label  class="control-label" for="next_action_dependency_modal">Next action dependency</label>
-                                <div>
-                                    <input type="text" name="next_action_dependency_modal" class="form-control" placeholder="Next action dependency"></input>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label  class="control-label" for="next_action_due_date_modal">Next action due datedate</label>
-                                <div>
-                                    <input type="text" id="next_action_due_date_modal" name="next_action_due_date_modal" class="form-control"></input>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div id="action_hidden"></div>
+                                <div id="modal_action_form_hidden"></div>
                             </div>
                           </form>
                         </div>
@@ -1025,39 +1073,39 @@ h3:after {
                         <!-- Modal Footer -->
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="button" id="action_create_update_button_modal" class="btn btn-success">Update</button>
+                            <button type="button" id="modal_action_create_update_button" class="btn btn-success">Update</button>
                         </div>
                       </div>
                   </div>
               </div>
               <!-- Modal -->
-              @endpermission
+              @endcan
               <!-- Actions -->
 
               <!-- Comments -->
-              @permission('tools-projects-comments')
+              @can('tools-projects-comments')
               <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="tab_comment">
-                @permission('comment-create')
+                @can('comment-create')
                 <div class="row">
                   <div class="col-md-1">
                     <button type="button" id="new_comment" class="btn btn-info btn-xl"><span class="glyphicon glyphicon-plus"></span> Add comment</button>
                   </div>
                 </div>
                 <div class="ln_solid"></div>
-                @endpermission
+                @endcan
                 <div id="all_comments">
                 @if($action == 'update')
                 @foreach ($comments as $comment)
                   <div class="panel panel-default">
                     <div class="panel-heading">
                       {{$comment->user->name}} said <small class="text-primary">{{$comment->updated_at->diffForHumans()}}</small>
-                      @if($comment->user_id == Auth::user()->id || Entrust::can('comment-all'))
-                        @if(Entrust::can('comment-edit'))
-                          <a id="{{ $comment->id }}" class="pull-right comment_edit"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
-                        @endif
-                        @if(Entrust::can('comment-delete'))
-                          <a id="{{ $comment->id }}" style="margin-right: 10px;" class="pull-right comment_delete"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></a>
-                        @endif
+                      @if($comment->user_id == Auth::user()->id || Auth::user()->can('comment-all'))
+                        @can('comment-edit')
+                          <a data-id="{{ $comment->id }}" class="pull-right comment_edit"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+                        @endcan
+                        @can('comment-delete')
+                          <a data-id="{{ $comment->id }}" style="margin-right: 10px;" class="pull-right comment_delete"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+                        @endcan
                       @endif
                     </div>
                     <div class="panel-body">
@@ -1069,27 +1117,26 @@ h3:after {
                 </div>
               </div>
               <!-- Modal -->
-              <div class="modal fade" id="commentModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal fade" id="modal_comment" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" style="display:table;">
                   <div class="modal-content">
                     <!-- Modal Header -->
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title" id="comment_title_modal"></h4>
+                        <h4 class="modal-title" id="modal_comment_title"></h4>
                     </div>
                     <!-- Modal Header -->
                       
                     <!-- Modal Body -->
                     <div class="modal-body">
-                      <form id="form_comment_modal" role="form" method="POST" action="">
-                        <div class="form-group">
-                          <label  class="control-label" for="project_comment_modal">Comment</label>
-                          <div>
-                              <textarea type="text" name="project_comment_modal" class="form-control" placeholder="Enter a comment" rows="4"></textarea>
-                          </div>
+                      <form id="modal_comment_form" role="form" method="POST" action="">
+                        <div id="modal_comment_formgroup_comment" class="form-group">
+                          <label  class="control-label" for="modal_comment_form_comment">Comment</label>
+                          <textarea type="text" id="modal_comment_form_comment" class="form-control" placeholder="Enter a comment" rows="4"></textarea>
+                          <span id="modal_comment_form_comment_error" class="help-block"></span>
                         </div>
                         <div class="form-group">
-                          <div id="comment_hidden">
+                          <div id="modal_comment_form_hidden">
                           </div>
                         </div>
                       </form>  
@@ -1098,18 +1145,17 @@ h3:after {
                     <!-- Modal Footer -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="button" id="comment_create_update_button_modal" class="btn btn-success">Update</button>
+                        <button type="button" id="modal_comment_create_update_button" class="btn btn-success"></button>
                     </div>
                   </div>
                 </div>
               </div>
               <!-- Modal -->
-              @endpermission
+              @endcan
               <!-- Comments -->
             @endif
           </div>
         </div>
-        {!! Form::close() !!}
       </div>
       <!-- Window content -->
 
@@ -1128,14 +1174,9 @@ var projectRevenue;
 // If we set up the tab to be selected in the url it will be in variable tab_origin
 var tab_origin = "{{ $tab }}";
 
-// Create the permission variable based on Laravel permission model
-<?php
-  list($validate, $allValidations) = Entrust::ability(null,['action-all','action-edit','action-delete','projectRevenue-delete','projectLoe-edit','projectLoe-delete','projectLoe-editAll','projectLoe-deleteAll'],['validate_all' => true,'return_type' => 'both']);
-  echo "var permissions = jQuery.parseJSON('".json_encode($allValidations['permissions'])."');";
-?>
-
 $(document).ready(function() {
   //region Init Main interface
+
   // Ajax setup needed in case there is an update for revenue, comment, loe, ... tabs
   @if($action == 'update')
     $.ajaxSetup({
@@ -1250,7 +1291,7 @@ $(document).ready(function() {
   // Now this is important so that we send the value of all disabled fields
   // What it does is when you try to submit, it will remove the disabled property on all fields with disabled
   jQuery(function ($) {
-    $('form').bind('submit', function () {
+    $('#projectForm').bind('submit', function () {
       $(this).find(':input').prop('disabled', false);
     });
   });
@@ -1370,8 +1411,8 @@ $(document).ready(function() {
             $('<input />').attr('type', 'hidden')
               .attr('name', 'action')
               .attr('value', 'Remove')
-              .appendTo('#myForm');
-            $('#myForm').submit();
+              .appendTo('#projectForm');
+            $('#projectForm').submit();
           }
       });
   });
@@ -1391,6 +1432,47 @@ $(document).ready(function() {
 
   //region Revenue
   @if($action == 'update')
+
+    // Init select2 boxes in the modal
+    $("#modal_revenue_form_year").select2({
+        allowClear: false
+    });
+
+    function modal_revenue_form_clean(title) {
+      $('#modal_revenue_title').text(title+' Revenue');
+      $('#modal_revenue_create_update_button').text(title);
+      $('#modal_revenue_form_hidden').empty();
+
+      // Set date to today's year
+      var d = new Date();
+      var year = d.getFullYear()
+      $('select#modal_revenue_form_year').val(year);
+      $('select#modal_revenue_form_year').select2().trigger('change');
+
+      $('#modal_revenue_form_product_code').val('');
+
+      all_inputs = $('#form#modal_revenue_form input');
+      console.log(all_inputs);
+
+      // Set all months value to 0
+      @foreach(config('select.available_months') as $key => $month)
+        $('#modal_revenue_form_{{ $month }}').val(0);
+      @endforeach
+
+      modal_revenue_form_error_clean();
+    }
+
+    function modal_revenue_form_error_clean() {
+      // Clean all error class
+      $("form#modal_revenue_form  div.form-group").each(function(){
+        $(this).removeClass('has-error');
+      });
+      // Clean all error message
+      $("form#modal_revenue_form span.help-block").each(function(){
+        $(this).empty();
+      });
+    }
+
     projectRevenue = $('#projectRevenue').DataTable({
         serverSide: true,
         processing: true,
@@ -1426,8 +1508,11 @@ $(document).ready(function() {
                 render: function (data) {
               var actions = '';
               actions += '<div class="btn-group btn-group-xs">';
-              if (permissions['projectRevenue-delete']){
-                actions += '<button type="button" id="'+data.id+'" class="buttonRevenueDelete btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
+              if ({{ Auth::user()->can('projectRevenue-edit') ? 'true' : 'false' }}){
+                actions += '<button type="button" data-id="'+data.id+'" class="buttonRevenueEdit btn btn-success"><span class="glyphicon glyphicon-pencil"></span></button>';
+              };
+              if ({{ Auth::user()->can('projectRevenue-delete') ? 'true' : 'false' }}){
+                actions += '<button type="button" data-id="'+data.id+'" class="buttonRevenueDelete btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
               };
               actions += '</div>';
               return actions;
@@ -1475,85 +1560,121 @@ $(document).ready(function() {
         ]   
     });
 
-    $('#new_revenue').click(function(){
-      var currentTime = new Date();
+    // Click add new
+    $(document).on('click', '#new_revenue', function () {
+      modal_revenue_form_clean('Create');
 
-      var html = '<tr>';
-      html += '<td contenteditable id="rev_year">'+currentTime.getFullYear()+'</td>';
-      html += '<td contenteditable id="rev_fpc"></td>';
-      html += '<td contenteditable id="rev_jan">0</td>';
-      html += '<td contenteditable id="rev_feb">0</td>';
-      html += '<td contenteditable id="rev_mar">0</td>';
-      html += '<td contenteditable id="rev_apr">0</td>';
-      html += '<td contenteditable id="rev_may">0</td>';
-      html += '<td contenteditable id="rev_jun">0</td>';
-      html += '<td contenteditable id="rev_jul">0</td>';
-      html += '<td contenteditable id="rev_aug">0</td>';
-      html += '<td contenteditable id="rev_sep">0</td>';
-      html += '<td contenteditable id="rev_oct">0</td>';
-      html += '<td contenteditable id="rev_nov">0</td>';
-      html += '<td contenteditable id="rev_dec">0</td>';
-      html += '<td><button type="button" name="rev_insert" id="rev_insert" class="btn btn-success btn-xs"><span class="glyphicon glyphicon-log-in"></span></button></td>';
-      html += '</tr>';
-      $('#projectRevenue tbody').prepend(html);
+      var hidden = '';
+      hidden += '<input class="form-control" id="modal_revenue_form_project_id" type="hidden" value="'+{{ $project->id }}+'">';
+      hidden += '<input class="form-control" id="modal_revenue_form_action" type="hidden" value="create">';
+      $('#modal_revenue_form_hidden').append(hidden);
+      $('#modal_revenue').modal("show");
     });
 
-    $(document).on('click', '#rev_insert', function(){
-      var rev_proj_id = {!! $project->id !!};
-      var rev_year = $('#rev_year').text();
-      var rev_fpc = $('#rev_fpc').text();
-      var rev_jan = $('#rev_jan').text();
-      var rev_feb = $('#rev_feb').text();
-      var rev_mar = $('#rev_mar').text();
-      var rev_apr = $('#rev_apr').text();
-      var rev_may = $('#rev_may').text();
-      var rev_jun = $('#rev_jun').text();
-      var rev_jul = $('#rev_jul').text();
-      var rev_aug = $('#rev_aug').text();
-      var rev_sep = $('#rev_sep').text();
-      var rev_oct = $('#rev_oct').text();
-      var rev_nov = $('#rev_nov').text();
-      var rev_dec = $('#rev_dec').text();
+    // Click edit
+    $(document).on('click', '.buttonRevenueEdit', function () {
+      modal_revenue_form_clean('Update');
 
-      if(rev_year != '' && rev_fpc != '' && rev_jan != '' && rev_feb != '' && rev_mar != '' && rev_apr != '' && rev_may != '' && rev_jun != '' && rev_jul != '' && rev_aug != '' && rev_sep != '' && rev_oct != '' && rev_nov != '' && rev_dec != '')
-      {
-        $.ajax({
-              type: 'post',
-              url: "{!! route('ProjectsRevenueAddAjax') !!}",
-              data:{project_id:rev_proj_id, year:rev_year, product_code:rev_fpc, 
-                    jan:rev_jan, feb:rev_feb, mar:rev_mar, apr:rev_apr, 
-                    may:rev_may, jun:rev_jun, jul:rev_jul, aug:rev_aug,
-                    sep:rev_sep, oct:rev_oct, nov:rev_nov, dec:rev_dec},
-              dataType: 'json',
-              success: function(data) {
-                //console.log(data);
-                if (data.result == 'success'){
-                    box_type = 'success';
-                    message_type = 'success';
-                }
-                else {
-                    box_type = 'danger';
-                    message_type = 'error';
-                }
+      var table = projectRevenue;
+      var tr = $(this).closest('tr');
+      var row = table.row(tr);
 
-                $('#flash-message').empty();
-                var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
-                $('#flash-message').append(box);
-                $('#delete-message').delay(2000).queue(function () {
-                    $(this).addClass('animated flipOutX')
-                });
-                projectRevenue.ajax.reload();
+      var hidden = '';
+      hidden += '<input class="form-control" id="modal_revenue_form_revenue_id" type="hidden" value="'+row.data().id+'">';
+      hidden += '<input class="form-control" id="modal_revenue_form_action" type="hidden" value="update">';
+      $('#modal_revenue_form_hidden').append(hidden);
+
+      $('select#modal_revenue_form_year').val(row.data().year);
+      $('select#modal_revenue_form_year').select2().trigger('change');
+      
+      $('input#modal_revenue_form_product_code').val(row.data().product_code);
+
+      @foreach(config('select.available_months') as $key => $month)
+        $('input#modal_revenue_form_{{ $month }}').val(row.data().{{ $month }});
+      @endforeach
+
+      $('#modal_revenue').modal("show");
+    });
+
+    // click send info ajax to create or update
+    $(document).on('click', '#modal_revenue_create_update_button', function () {
+      // Getting inputs
+      var action_revenue_modal = $('input#modal_revenue_form_action').val();
+      var year = $('select#modal_revenue_form_year').children("option:selected").val();
+      var product_code = $('input#modal_revenue_form_product_code').val();
+      @foreach(config('select.available_months') as $key => $month)
+        var input_revenue_{{ $month }} = $('input#modal_revenue_form_{{ $month }}').val();
+      @endforeach
+ 
+      switch (action_revenue_modal) {
+        case 'create':
+          var project_id_revenue_modal = $('input#modal_revenue_form_project_id').val();
+          var data = {'project_id':project_id_revenue_modal,'year':year,'product_code':product_code
+                      @foreach(config('select.available_months') as $key => $month)
+                        ,'{{ $month }}':  input_revenue_{{ $month }}
+                      @endforeach
+          };
+          var revenue_create_update_route = "{!! route('ProjectsRevenueAddAjax') !!}";
+          var type = 'post';
+          break;
+        case 'update':
+          var revenue_id = $('input#modal_revenue_form_revenue_id').val();
+          var data = {'year':year,'product_code':product_code
+                      @foreach(config('select.available_months') as $key => $month)
+                      ,'{{ $month }}':  input_revenue_{{ $month }}
+                      @endforeach
+          };
+          var revenue_create_update_route = "{{ route('ProjectsRevenueUpdateAjax',['']) }}/"+revenue_id;
+          var type = 'patch';
+          break;
+      }
+      
+      $.ajax({
+            type: type,
+            url: revenue_create_update_route,
+            data:data,
+            dataType: 'json',
+            success: function(data) {
+              if (data.result == 'success'){
+                  box_type = 'success';
+                  message_type = 'success';
               }
-            });
-      }
-      else
-      {
-        alert("All Fields are required");
-      }
+              else {
+                  box_type = 'danger';
+                  message_type = 'error';
+              }
+
+              $('#flash-message').empty();
+              var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+              $('#flash-message').append(box);
+              $('#delete-message').delay(2000).queue(function () {
+                  $(this).addClass('animated flipOutX')
+              });
+              $('#modal_revenue').modal('hide');
+              projectRevenue.ajax.reload();
+            },
+            error: function (data, ajaxOptions, thrownError) {
+              modal_revenue_form_error_clean();
+              var errors = data.responseJSON.errors;
+              var status = data.status;
+
+              if (status === 422) {
+                console.log(errors);
+                $.each(errors, function (key, value) {
+                  $('#modal_revenue_formgroup_'+key).addClass('has-error');
+                  $('#modal_revenue_form_'+key+'_error').text(value);
+                });
+              } else if (status === 403 || status === 500) {
+                $('#modal_comment_formgroup_'+key).addClass('has-error');
+                $('#modal_comment_form_'+key+'_error').text('No Authorization!');
+              }
+            }
+      });
+
     });
 
     $(document).on('click', '.buttonRevenueDelete', function () {
-      record_id = this.id;
+      record_id = $(this).attr('data-id');
       bootbox.confirm("Are you sure want to delete this record?", function(result) {
         if (result){
           $.ajax({
@@ -1583,67 +1704,56 @@ $(document).ready(function() {
         }
       });
     });
-
-    $(document).on('blur', '.rev_update', function(){
-      var id = $(this).data("id");
-      var column_name = $(this).data("column");
-      var value = $(this).text();
-      $.ajax({
-            type: 'post',
-            url: "{!! route('ProjectsRevenueUpdateAjax') !!}",
-            data:{id:id, column_name:column_name, value:value},
-            dataType: 'json',
-            success: function(data) {
-              //console.log(data);
-              if (data.result == 'success'){
-                  box_type = 'success';
-                  message_type = 'success';
-              }
-              else {
-                  box_type = 'danger';
-                  message_type = 'error';
-              }
-
-              $('#flash-message').empty();
-              var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
-              $('#flash-message').append(box);
-              $('#delete-message').delay(2000).queue(function () {
-                  $(this).addClass('animated flipOutX')
-              });
-              projectRevenue.ajax.reload();
-            }
-      });
-    });
   @endif
   //endregion
 
   //region Comment
   @if($action == 'update')
-    // Click edit
-    $(document).on('click', '.comment_edit', function () {
-      $('#comment_title_modal').text('Update Comment');
-      $('#comment_create_update_button_modal').text('Update');
-      comment_id = this.id;
-      comment_comment = $(this).parent().next().find(".comment_textarea").text();
-      $('textarea[name="project_comment_modal"]').val(comment_comment);
-      $('#comment_hidden').empty();
-      var hidden = '';
-      hidden += '<input class="form-control" id="comment_id" name="comment_id" type="hidden" value="'+comment_id+'">';
-      hidden += '<input class="form-control" id="action_comment_modal" name="action_comment_modal" type="hidden" value="update">';
-      $('#comment_hidden').append(hidden);
-      $('#commentModal').modal();
-    });
+
+    function modal_comment_form_clean(title) {
+      $('#modal_comment_title').text(title+' Comment');
+      $('#modal_comment_create_update_button').text(title);
+      $('#modal_comment_form_hidden').empty();
+      // Clean all textarea
+      $("form#modal_comment_form textarea").each(function(){
+        $(this).val('');
+      });
+
+      modal_comment_form_error_clean();
+    }
+
+    function modal_comment_form_error_clean() {
+      // Clean all error class
+      $("form#modal_comment_form  div.form-group").each(function(){
+        $(this).removeClass('has-error');
+      });
+      // Clean all error message
+      $("form#modal_comment_form span.help-block").each(function(){
+        $(this).empty();
+      });
+    }
 
     // Click add new
     $(document).on('click', '#new_comment', function () {
-      $('#comment_title_modal').text('Create Comment');
-      $('#comment_create_update_button_modal').text('Create');
-      $('#comment_hidden').empty();
+      modal_comment_form_clean('Create');
       var hidden = '';
-      hidden += '<input class="form-control" id="project_id_comment_modal" name="project_id_comment_modal" type="hidden" value="'+{{ $project->id }}+'">';
-      hidden += '<input class="form-control" id="action_comment_modal" name="action_comment_modal" type="hidden" value="create">';
-      $('#comment_hidden').append(hidden);
-      $('#commentModal').modal("show");
+      hidden += '<input class="form-control" id="modal_comment_form_project_id" type="hidden" value="'+{{ $project->id }}+'">';
+      hidden += '<input class="form-control" id="modal_comment_form_action" type="hidden" value="create">';
+      $('#modal_comment_form_hidden').append(hidden);
+      $('#modal_comment').modal("show");
+    });
+
+    // Click edit
+    $(document).on('click', '.comment_edit', function () {
+      modal_comment_form_clean('Update');
+      comment_id = $(this).attr('data-id');
+      comment_comment = $(this).parent().next().find(".comment_textarea").text();
+      $('#modal_comment_form_comment').val(comment_comment);
+      var hidden = '';
+      hidden += '<input class="form-control" id="modal_comment_form_comment_id" type="hidden" value="'+comment_id+'">';
+      hidden += '<input class="form-control" id="modal_comment_form_action" type="hidden" value="update">';
+      $('#modal_comment_form_hidden').append(hidden);
+      $('#modal_comment').modal("show");
     });
 
     // Function to refresh comments from ajax request
@@ -1662,12 +1772,12 @@ $(document).ready(function() {
                     comments += '<div class="panel-heading">';
                     comments += value.user_name +' said <small class="text-primary">'+value.time+'</small>';
                     if (value.id > 0) {
-                      @if(Entrust::can('comment-edit'))
-                        comments += '<a id="'+value.id+'" class="pull-right comment_edit"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span></a>';
-                      @endif
-                      @if(Entrust::can('comment-delete'))
-                        comments += '<a id="'+value.id+'" style="margin-right: 10px;" class="pull-right comment_delete"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></a>';
-                      @endif
+                      @can('comment-edit')
+                        comments += '<a data-id="'+value.id+'" class="pull-right comment_edit"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span></a>';
+                      @endcan
+                      @can('comment-delete')
+                        comments += '<a data-id="'+value.id+'" style="margin-right: 10px;" class="pull-right comment_delete"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span></a>';
+                      @endcan
                     }
                     comments += '</div>';
                     comments += '<div class="panel-body">';
@@ -1685,28 +1795,32 @@ $(document).ready(function() {
     }
 
     // click send info ajax to create or update
-    $(document).on('click', '#comment_create_update_button_modal', function () {
-      // hidden input
-      var action_comment_modal = $('input#action_comment_modal').val();
-      var project_id_comment_modal = $('input#project_id_comment_modal').val();
-      if (action_comment_modal == "update") {
-        var comment_id = $('input#comment_id').val();
-      }
+    $(document).on('click', '#modal_comment_create_update_button', function () {
+      // Getting inputs
+      var action_comment_modal = $('input#modal_comment_form_action').val();
+      var comment_comment = $('#modal_comment_form_comment').val();
+      switch (action_comment_modal) {
+        case 'create':
+          // Data
+          var project_id_comment_modal = $('input#modal_comment_form_project_id').val();
+          var data = {'project_id':project_id_comment_modal,'comment':comment_comment};
+          // Route info
+          var comment_create_update_route = "{!! route('commentInsert') !!}";
+          var type = 'post';
+          break;
 
-      // filled in
-      var comment_comment = $('textarea[name="project_comment_modal"]').val();
-      if (action_comment_modal == "update") {
-        var data = {'comment':comment_comment
-          };
-        var comment_create_update_route = "{!! route('comment_edit','') !!}/"+comment_id;
-      } else {
-        var data = {'project_id':project_id_comment_modal,'comment':comment_comment
-          };
-        var comment_create_update_route = "{!! route('commentInsert') !!}";
+        case 'update':
+          // Data
+          var comment_id = $('input#modal_comment_form_comment_id').val();
+          var data = {'comment':comment_comment};
+          // Route info
+          var comment_create_update_route = "{!! route('comment_edit','') !!}/"+comment_id;
+          var type = 'patch';
+          break;
       }
       
       $.ajax({
-            type: 'post',
+            type: type,
             url: comment_create_update_route,
             data:data,
             dataType: 'json',
@@ -1727,21 +1841,34 @@ $(document).ready(function() {
               $('#delete-message').delay(2000).queue(function () {
                   $(this).addClass('animated flipOutX')
               });
+              $('#modal_comment').modal('hide');
               projectLoe.ajax.reload();
+            },
+            error: function (data, ajaxOptions, thrownError) {
+              modal_comment_form_error_clean();
+              var errors = data.responseJSON.errors;
+              var status = data.status;
+
+              if (status === 422) {
+                $.each(errors, function (key, value) {
+                  $('#modal_comment_formgroup_'+key).addClass('has-error');
+                  $('#modal_comment_form_'+key+'_error').text(value);
+                });
+              } else if (status === 403 || status === 500) {
+                $('#modal_comment_formgroup_'+key).addClass('has-error');
+                $('#modal_comment_form_'+key+'_error').text('No Authorization!');
+              }
             }
       });
-
-      $('#commentModal').modal('hide');
-
     });
 
     // Click delete
     $(document).on('click', '.comment_delete', function () {
-      var comment_id = this.id;
+      var comment_id = $(this).attr('data-id');
       bootbox.confirm("Are you sure want to delete this message?", function(result) {
         if (result){
           $.ajax({
-            type: 'get',
+            type: 'delete',
             url: "{!! route('comment_delete','') !!}/"+comment_id,
             dataType: 'json',
             success: function(data) {
@@ -1774,7 +1901,7 @@ $(document).ready(function() {
   //region Loe
   @if($action == 'update')
     // Init daterange in input field
-    $('#date_loe_modal').daterangepicker({
+    $('#modal_loe_form_date').daterangepicker({
       showISOWeekNumbers: true,
       showDropdowns: true,
       autoUpdateInput: false,
@@ -1784,24 +1911,24 @@ $(document).ready(function() {
       }
     });
 
-    $('#date_loe_modal').on('apply.daterangepicker', function(ev, picker) {
+    $('#modal_loe_form_date').on('apply.daterangepicker', function(ev, picker) {
       $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
     });
 
-    $('#date_loe_modal').on('cancel.daterangepicker', function(ev, picker) {
+    $('#modal_loe_form_date').on('cancel.daterangepicker', function(ev, picker) {
       $(this).val('');
     });
 
     // Init select2 boxes in the modal
-    $("#domain_loe_modal").select2({
+    $("#modal_loe_form_domain").select2({
       allowClear: true
     });
 
-    $("#type_loe_modal").select2({
+    $("#modal_loe_form_type").select2({
       allowClear: true
     });
 
-    $("#location_loe_modal").select2({
+    $("#modal_loe_form_location").select2({
       allowClear: true
     });
 
@@ -1843,10 +1970,10 @@ $(document).ready(function() {
                 render: function (data) {
                   var actions = '';
                   actions += '<div class="btn-group btn-group-xs">';
-                  if (permissions['projectLoe-edit'] || permissions['projectLoe-editAll']){
+                  if ({{ Auth::user()->can('projectLoe-edit') ? 'true' : 'false' }} || {{ Auth::user()->can('projectLoe-editAll') ? 'true' : 'false' }}){
                     actions += '<button type="button" data-id="'+data.loe_id+'" class="buttonLoeEdit btn btn-success"><span class="glyphicon glyphicon-pencil"></span></button>';
                   };
-                  if (permissions['projectLoe-delete'] || permissions['projectLoe-deleteAll']){
+                  if ({{ Auth::user()->can('projectLoe-delete') ? 'true' : 'false' }} || {{ Auth::user()->can('projectLoe-deleteAll') ? 'true' : 'false' }}){
                     actions += '<button type="button" data-id="'+data.loe_id+'" class="buttonLoeDelete btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
                   };
                   actions += '</div>';
@@ -1895,83 +2022,128 @@ $(document).ready(function() {
         ]   
     });
 
+    function modal_loe_form_clean(title) {
+      $('#modal_loe_title').text(title+' LoE');
+      $('#modal_loe_create_update_button').text(title);
+      $('#modal_loe_form_hidden').empty();
+      // Clean all input
+      $("form#modal_loe_form input").each(function(){ 
+        $(this).val('');
+      });
+      // Clean all textarea
+      $("form#modal_loe_form textarea").each(function(){
+        $(this).val('');
+      });
+      // Clean all select
+      $("form#modal_loe_form select").each(function(){
+        $(this).val('');
+        $(this).select2().trigger('change');
+      });
+
+      modal_loe_form_error_clean();
+    }
+
+    function modal_loe_form_error_clean() {
+      // Clean all error class
+      $("form#modal_loe_form  div.form-group").each(function(){
+        $(this).removeClass('has-error');
+      });
+      // Clean all error message
+      $("form#modal_loe_form span.help-block").each(function(){
+        $(this).empty();
+      });
+    }
+
     // Click add new
     $(document).on('click', '#new_loe', function () {
-      $('#loe_title_modal').text('Create LoE');
-      $('#loe_create_update_button_modal').text('Create');
-      $('#loe_hidden').empty();
+      modal_loe_form_clean('Create');
       var hidden = '';
-      hidden += '<input class="form-control" id="project_id_loe_modal" name="project_id_loe_modal" type="hidden" value="'+{{ $project->id }}+'">';
-      hidden += '<input class="form-control" id="action_loe_modal" name="action_loe_modal" type="hidden" value="create">';
-      $('#loe_hidden').append(hidden);
-      $('#loeModal').modal("show");
+      hidden += '<input class="form-control" id="modal_loe_form_project_id" type="hidden" value="'+{{ $project->id }}+'">';
+      hidden += '<input class="form-control" id="modal_loe_form_action" type="hidden" value="create">';
+      $('#modal_loe_form_hidden').append(hidden);
+      $('#modal_loe').modal("show");
     });
 
     // Click edit
     $(document).on('click', '.buttonLoeEdit', function () {
-      $('#loe_title_modal').text('Update LoE');
-      $('#loe_create_update_button_modal').text('Update');
+      modal_loe_form_clean('Update');
 
       var table = projectLoe;
       var tr = $(this).closest('tr');
       var row = table.row(tr);
-      //console.log('the loe id is '+row.data().loe_id);
 
-      $('#loe_hidden').empty();
       var hidden = '';
-      hidden += '<input class="form-control" id="project_id_loe_modal" name="project_id_loe_modal" type="hidden" value="'+{{ $project->id }}+'">';
-      hidden += '<input class="form-control" id="action_loe_modal" name="action_loe_modal" type="hidden" value="update">';
-      hidden += '<input class="form-control" id="loe_id" name="loe_id" type="hidden" value="'+row.data().loe_id+'">';
-      $('#loe_hidden').append(hidden);
+      hidden += '<input class="form-control" id="modal_loe_form_loe_id" type="hidden" value="'+row.data().loe_id+'">';
+      hidden += '<input class="form-control" id="modal_loe_form_action" type="hidden" value="update">';
+      $('#modal_loe_form_hidden').append(hidden);
       
-      $('input[name="mandays_loe_modal"]').val(row.data().mandays);
-      $('textarea[name="description_loe_modal"]').val(row.data().description);
-      $('input[name="date_loe_modal"]').val(row.data().start_date+" - "+row.data().end_date);
+      $('input#modal_loe_form_mandays').val(row.data().mandays);
+      $('textarea#modal_loe_form_description').val(row.data().description);
+      if (row.data().start_date) {
+        $('input#modal_loe_form_date').val(row.data().start_date+" - "+row.data().end_date);
+      } else {
+        $('input#modal_loe_form_date').val('');
+      }
+      
 
-      $('select[name="domain_loe_modal"]').val(row.data().domain);
-      $('select[name="domain_loe_modal"]').select2().trigger('change');
+      $('select#modal_loe_form_domain').val(row.data().domain);
+      $('select#modal_loe_form_domain').select2().trigger('change');
 
-      $('select[name="type_loe_modal"]').val(row.data().type);
-      $('select[name="type_loe_modal"]').select2().trigger('change');
+      $('select#modal_loe_form_type').val(row.data().type);
+      $('select#modal_loe_form_type').select2().trigger('change');
 
-      $('select[name="location_loe_modal"]').val(row.data().location);
-      $('select[name="location_loe_modal"]').select2().trigger('change');
+      $('select#modal_loe_form_location').val(row.data().location);
+      $('select#modal_loe_form_location').select2().trigger('change');
 
-      $('#loeModal').modal("show");
+      $('#modal_loe').modal("show");
     });
 
     // click send info ajax to create or update
-    $(document).on('click', '#loe_create_update_button_modal', function () {
+    $(document).on('click', '#modal_loe_create_update_button', function () {
       // hidden input
-      var action_loe_modal = $('input#action_loe_modal').val();
-      var project_id_loe_modal = $('input#project_id_loe_modal').val();
-      if (action_loe_modal == "update") {
-        var loe_id = $('input#loe_id').val();
+      var action_loe_modal = $('input#modal_loe_form_action').val();
+      var domain_loe_modal = $('select#modal_loe_form_domain').children("option:selected").val();
+      var type_loe_modal = $('select#modal_loe_form_type').children("option:selected").val();
+      var location_loe_modal = $('select#modal_loe_form_location').children("option:selected").val();
+      var mandays_loe_modal = $('input#modal_loe_form_mandays').val();
+      var description_loe_modal = $('textarea#modal_loe_form_description').val();
+      if ($('input#modal_loe_form_date').val()) {
+        var date_loe_modal = $('input#modal_loe_form_date').val().split(" - ");
+        var start_date = date_loe_modal[0];
+        var end_date = date_loe_modal[1];
+      } else {
+        var start_date = '';
+        var end_date = '';
       }
 
-      // filled in
-      var domain_loe_modal = $('select[name="domain_loe_modal"]').children("option:selected").val();
-      var type_loe_modal = $('select[name="type_loe_modal"]').children("option:selected").val();
-      var location_loe_modal = $('select[name="location_loe_modal"]').children("option:selected").val();
-      var mandays_loe_modal = $('input[name="mandays_loe_modal"]').val();
-      var description_loe_modal = $('textarea[name="description_loe_modal"]').val();
-      var date_loe_modal = $('input[name="date_loe_modal"]').val();
-      if (action_loe_modal == "update") {
-        var data = {'action':action_loe_modal,'project_id':project_id_loe_modal,'domain':domain_loe_modal,
-          'type':type_loe_modal,'location':location_loe_modal,'mandays':mandays_loe_modal,'description':description_loe_modal,
-          'date':date_loe_modal,'loe_id':loe_id
+      switch (action_loe_modal) {
+        case 'create':
+          // Data
+          var project_id_loe_modal = $('input#modal_loe_form_project_id').val();
+          var data = {'project_id':project_id_loe_modal,'domain':domain_loe_modal,
+                      'type':type_loe_modal,'location':location_loe_modal,'mandays':mandays_loe_modal,'description':description_loe_modal,
+                      'start_date':start_date,'end_date':end_date
           };
-        var loe_create_update_route = "{!! route('ProjectsLoeUpdateAjax') !!}";
-      } else {
-        var data = {'action':action_loe_modal,'project_id':project_id_loe_modal,'domain':domain_loe_modal,
-          'type':type_loe_modal,'location':location_loe_modal,'mandays':mandays_loe_modal,'description':description_loe_modal,
-          'date':date_loe_modal
+          // Route info
+          var loe_create_update_route = "{!! route('ProjectsLoeAddAjax') !!}";
+          var type = 'post';
+          break;
+
+        case 'update':
+          // Data
+          var loe_id = $('input#modal_loe_form_loe_id').val();
+          var data = {'domain':domain_loe_modal,
+                      'type':type_loe_modal,'location':location_loe_modal,'mandays':mandays_loe_modal,'description':description_loe_modal,
+                      'start_date':start_date,'end_date':end_date
           };
-        var loe_create_update_route = "{!! route('ProjectsLoeAddAjax') !!}";
+          // Route info
+          var loe_create_update_route = "{!! route('ProjectsLoeUpdateAjax','') !!}/"+loe_id;
+          var type = 'patch';
+          break;
       }
       
       $.ajax({
-            type: 'post',
+            type: type,
             url: loe_create_update_route,
             data:data,
             dataType: 'json',
@@ -1992,12 +2164,25 @@ $(document).ready(function() {
               $('#delete-message').delay(2000).queue(function () {
                   $(this).addClass('animated flipOutX')
               });
+              $('#modal_loe').modal('hide');
               projectLoe.ajax.reload();
+            },
+            error: function (data, ajaxOptions, thrownError) {
+              modal_loe_form_error_clean();
+              var errors = data.responseJSON.errors;
+              var status = data.status;
+
+              if (status === 422) {
+                $.each(errors, function (key, value) {
+                  $('#modal_loe_formgroup_'+key).addClass('has-error');
+                  $('#modal_loe_form_'+key+'_error').text(value);
+                });
+              } else if (status === 403 || status === 500) {
+                $('#modal_loe_formgroup_'+key).addClass('has-error');
+                $('#modal_loe_form_'+key+'_error').text('No Authorization!');
+              }
             }
       });
-
-      $('#loeModal').modal('hide');
-
     });
 
     // Click delete
@@ -2038,374 +2223,401 @@ $(document).ready(function() {
 
   //region Action
   @if($action == 'update')
-  // Init select2 boxes in the modal
-  $("#assigned_to_action_modal").select2({
-      allowClear: true
-  });
-  $("#status_action_modal").select2({
-      allowClear: true
-  });
-  $("#priority_action_modal").select2({
-      allowClear: true
-  });
+    // Init select2 boxes in the modal
+    $("#modal_action_form_assigned_user_id").select2({
+        allowClear: true
+    });
+    $("#modal_action_form_status").select2({
+        allowClear: true
+    });
+    $("#modal_action_form_severity").select2({
+        allowClear: true
+    });
 
-  // Init Date range
-  $('#date_action_modal').daterangepicker({
-      showISOWeekNumbers: true,
-      showDropdowns: false,
-      autoUpdateInput: false,
-      locale: {
-        format: 'YYYY-MM-DD',
-        cancelLabel: 'Clear'
-      }
-  });
+    // Init Date range
+    $('#modal_action_form_start_to_end_date').daterangepicker({
+        showISOWeekNumbers: true,
+        showDropdowns: false,
+        autoUpdateInput: false,
+        locale: {
+          format: 'YYYY-MM-DD',
+          cancelLabel: 'Clear'
+        }
+    });
 
-  $('#date_action_modal').on('apply.daterangepicker', function(ev, picker) {
-    $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
-  });
+    $('#modal_action_form_start_to_end_date').on('apply.daterangepicker', function(ev, picker) {
+      $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
+    });
 
-  $('#date_action_modal').on('cancel.daterangepicker', function(ev, picker) {
-      $(this).val('');
-  });
+    $('#modal_action_form_start_to_end_date').on('cancel.daterangepicker', function(ev, picker) {
+        $(this).val('');
+    });
 
-  $('#next_action_due_date_modal').daterangepicker({
-      singleDatePicker: true,
-      autoUpdateInput: false,
-      locale: {
-        format: 'YYYY-MM-DD',
-        cancelLabel: 'Clear'
-      }
-  });
+    $('#modal_action_form_next_action_due_date').daterangepicker({
+        singleDatePicker: true,
+        autoUpdateInput: false,
+        locale: {
+          format: 'YYYY-MM-DD',
+          cancelLabel: 'Clear'
+        }
+    });
 
-  $('#next_action_due_date_modal').on('apply.daterangepicker', function(ev, picker) {
-    $(this).val(picker.startDate.format('YYYY-MM-DD'));
-  });
+    $('#modal_action_form_next_action_due_date').on('apply.daterangepicker', function(ev, picker) {
+      $(this).val(picker.startDate.format('YYYY-MM-DD'));
+    });
 
-  $('#next_action_due_date_modal').on('cancel.daterangepicker', function(ev, picker) {
-      $(this).val('');
-  });
+    $('#modal_action_form_next_action_due_date').on('cancel.daterangepicker', function(ev, picker) {
+        $(this).val('');
+    });
 
-  // Init slider
-  $("input[name='action_percentage_modal']").ionRangeSlider({
-        min: 0,
-        max: 100,
-        from: 0,
-        step: 5,
-        postfix: '%',
-        grid: true
-  });
+    // Init slider
+    $("input#modal_action_form_percent_complete").ionRangeSlider({
+          min: 0,
+          max: 100,
+          from: 0,
+          step: 5,
+          postfix: '%',
+          grid: true
+    });
 
-  var action_percentage_modal = $("input[name='action_percentage_modal']").data("ionRangeSlider");
+    // We need to define this so that we can change the values with the ionRangeSlider functions
+    var action_percentage_modal = $("input#modal_action_form_percent_complete").data("ionRangeSlider");
 
-  // Ajax datatables to create the table
-  var actionsTable = $('#actionsTable').DataTable({
-      serverSide: true,
-      processing: true,
-      scrollX: true,
-      stateSave: true,
-      responsive: false,
-      ajax: {
-              url: "{!! route('actionListAjax',$project->id) !!}",
-              type: "GET",
-              dataType: "JSON"
-          },
-      columns: [
-          { name: 'actions.id', data: 'action_id' , searchable: false , visible: false },
-          { name: 'assigned.id', data: 'assigned_to_user_id' , searchable: false , visible: false },
-          { name: 'created_by.name', data: 'created_by_name' , searchable: true , visible: true },
-          { name: 'assigned.name', data: 'assigned_to_name' , searchable: true , visible: true },
-          { name: 'actions.name', data: 'action_name' , searchable: true , visible: true },
-          { name: 'actions.requestor', data: 'action_requestor' , searchable: true , visible: true },
-          { name: 'actions.status', data: 'action_status' , searchable: true , visible: true },
-          { 
-            name: 'actions.percent_complete', 
-            data: 'percent_complete', 
-            searchable: true, 
-            visible: true,
-            render: function (data, type, row) {
-                  //console.log(data);
+    // Ajax datatables to create the table
+    var actionsTable = $('#actionsTable').DataTable({
+        serverSide: true,
+        processing: true,
+        scrollX: true,
+        stateSave: true,
+        responsive: false,
+        ajax: {
+                url: "{!! route('actionListAjax',$project->id) !!}",
+                type: "GET",
+                dataType: "JSON"
+            },
+        columns: [
+            { name: 'actions.id', data: 'action_id' , searchable: false , visible: false },
+            { name: 'assigned.id', data: 'assigned_to_user_id' , searchable: false , visible: false },
+            { name: 'created_by.name', data: 'created_by_name' , searchable: true , visible: true },
+            { name: 'assigned.name', data: 'assigned_to_name' , searchable: true , visible: true },
+            { name: 'actions.name', data: 'action_name' , searchable: true , visible: true },
+            { name: 'actions.requestor', data: 'action_requestor' , searchable: true , visible: true },
+            { name: 'actions.status', data: 'action_status' , searchable: true , visible: true },
+            { 
+              name: 'actions.percent_complete', 
+              data: 'percent_complete', 
+              searchable: true, 
+              visible: true,
+              render: function (data, type, row) {
+                    //console.log(data);
+                    var actions = '';
+                    actions += '<small>'+data+'% Complete</small>';
+                    actions += '<div class="progress">';
+                    actions += '<div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="'+data+'" aria-valuemin="0" aria-valuemax="100" style="width:'+data+'%">';
+                    actions += '</div>';
+                    actions += '</div>';
+                    return type === 'export' ? data : actions;
+                  },
+              width: '150px'
+            },
+            { name: 'actions.severity', data: 'action_severity' , searchable: true , visible: true },
+            { name: 'actions.estimated_start_date', data: 'action_start_date' , searchable: true , visible: true },
+            { name: 'actions.estimated_end_date', data: 'action_end_date' , searchable: true , visible: true },
+            { name: 'actions.description', data: 'action_description' , searchable: true , visible: true },
+            { name: 'actions.next_action_description', data: 'next_action_description' , searchable: true , visible: true },
+            { name: 'actions.next_action_dependency', data: 'next_action_dependency' , searchable: true , visible: true },
+            { name: 'actions.next_action_due_date', data: 'next_action_due_date' , searchable: true , visible: true },
+            { name: 'actions.created_at', data: 'created_at' , searchable: true , visible: true },
+            { name: 'actions.updated_at', data: 'updated_at' , searchable: true , visible: true },
+            {
+                name: 'actions',
+                data: null,
+                sortable: false,
+                searchable: false,
+                render: function (data) {
                   var actions = '';
-                  actions += '<small>'+data+'% Complete</small>';
-                  actions += '<div class="progress">';
-                  actions += '<div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="'+data+'" aria-valuemin="0" aria-valuemax="100" style="width:'+data+'%">';
+                  actions += '<div class="btn-group btn-group-xs">';
+                  if ({{ Auth::user()->can('action-edit') ? 'true' : 'false' }} || {{ Auth::user()->can('action-all') ? 'true' : 'false' }}){
+                    actions += '<button type="button" data-id="'+data.action_id+'" class="buttonActionEdit btn btn-success"><span class="glyphicon glyphicon-pencil"></span></button>';
+                  };
+                  if ({{ Auth::user()->can('action-delete') ? 'true' : 'false' }} || {{ Auth::user()->can('action-all') ? 'true' : 'false' }}){
+                    actions += '<button type="button" data-id="'+data.action_id+'" class="buttonActionDelete btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
+                  };
                   actions += '</div>';
-                  actions += '</div>';
-                  return type === 'export' ? data : actions;
+                  return actions;
                 },
-            width: '150px'
-          },
-          { name: 'actions.severity', data: 'action_severity' , searchable: true , visible: true },
-          { name: 'actions.estimated_start_date', data: 'action_start_date' , searchable: true , visible: true },
-          { name: 'actions.estimated_end_date', data: 'action_end_date' , searchable: true , visible: true },
-          { name: 'actions.description', data: 'action_description' , searchable: true , visible: true },
-          { name: 'actions.next_action_description', data: 'next_action_description' , searchable: true , visible: true },
-          { name: 'actions.next_action_dependency', data: 'next_action_dependency' , searchable: true , visible: true },
-          { name: 'actions.next_action_due_date', data: 'next_action_due_date' , searchable: true , visible: true },
-          { name: 'actions.created_at', data: 'created_at' , searchable: true , visible: true },
-          { name: 'actions.updated_at', data: 'updated_at' , searchable: true , visible: true },
+                width: '70px'
+            }
+            ],
+        order: [[2, 'desc']],
+        lengthMenu: [
+            [ 10, 25, 50, -1 ],
+            [ '10 rows', '25 rows', '50 rows', 'Show all' ]
+        ],
+        dom: 'Bfrtip',
+        buttons: [
           {
-              name: 'actions',
-              data: null,
-              sortable: false,
-              searchable: false,
-              render: function (data) {
-                var actions = '';
-                actions += '<div class="btn-group btn-group-xs">';
-                if (permissions['action-edit'] || permissions['action-all']){
-                  actions += '<button type="button" data-id="'+data.action_id+'" class="buttonActionEdit btn btn-success"><span class="glyphicon glyphicon-pencil"></span></button>';
-                };
-                if (permissions['action-delete'] || permissions['action-all']){
-                  actions += '<button type="button" data-id="'+data.action_id+'" class="buttonActionDelete btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
-                };
-                actions += '</div>';
-                return actions;
-              },
-              width: '70px'
-          }
-          ],
-      order: [[2, 'desc']],
-      lengthMenu: [
-          [ 10, 25, 50, -1 ],
-          [ '10 rows', '25 rows', '50 rows', 'Show all' ]
-      ],
-      dom: 'Bfrtip',
-      buttons: [
-        {
-          extend: "colvis",
-          className: "btn-sm",
-          columns: [ 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
-        },
-        {
-          extend: "pageLength",
-          className: "btn-sm"
-        },
-        {
-          extend: "csv",
-          className: "btn-sm",
-          exportOptions: {
-              columns: ':visible',
-              orthogonal: 'export'
-          }
-        },
-        {
-          extend: "excel",
-          className: "btn-sm",
-          exportOptions: {
-              columns: ':visible'
-          }
-        },
-        {
-          extend: "print",
-          className: "btn-sm",
-          exportOptions: {
-              columns: ':visible'
-          }
-        },
-      ]   
-  });
+            extend: "colvis",
+            className: "btn-sm",
+            columns: [ 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+          },
+          {
+            extend: "pageLength",
+            className: "btn-sm"
+          },
+          {
+            extend: "csv",
+            className: "btn-sm",
+            exportOptions: {
+                columns: ':visible',
+                orthogonal: 'export'
+            }
+          },
+          {
+            extend: "excel",
+            className: "btn-sm",
+            exportOptions: {
+                columns: ':visible'
+            }
+          },
+          {
+            extend: "print",
+            className: "btn-sm",
+            exportOptions: {
+                columns: ':visible'
+            }
+          },
+        ]   
+    });
 
-  // Click add new
-  $(document).on('click', '#new_action', function () {
-      $('#action_title_modal').text('Create Action');
-      $('#action_create_update_button_modal').text('Create');
-      $('#action_hidden').empty();
+    function modal_action_form_clean(title) {
+      $('#modal_action_title').text(title+' Action');
+      $('#modal_action_create_update_button').text(title);
+      $('#modal_action_form_hidden').empty();
+
+      // Clean all input
+      $("form#modal_action_form input").each(function(){ 
+        $(this).val('');
+      });
+      // Clean all textarea
+      $("form#modal_action_form textarea").each(function(){
+        $(this).val('');
+      });
+      // Clean all select
+      $("form#modal_action_form select").each(function(){
+        $(this).val('');
+        $(this).select2().trigger('change');
+      });
+
+      action_percentage_modal.update({
+            from: 0
+        });
+
+      modal_action_form_error_clean();
+    }
+
+    function modal_action_form_error_clean() {
+      // Clean all error class
+      $("form#modal_action_form  div.form-group").each(function(){
+        $(this).removeClass('has-error');
+      });
+      // Clean all error message
+      $("form#modal_action_form span.help-block").each(function(){
+        $(this).empty();
+      });
+    }
+
+    // Click add new
+    $(document).on('click', '#new_action', function () {
+        modal_action_form_clean('Create');
+        var hidden = '';
+        hidden += '<input class="form-control" id="modal_action_form_project_id" type="hidden" value="'+{{ $project->id }}+'">';
+        hidden += '<input class="form-control" id="modal_action_form_action" type="hidden" value="create">';
+        $('#modal_action_form_hidden').append(hidden);
+        $('#modal_action').modal("show");
+    });
+
+    // Click edit
+    $(document).on('click', '.buttonActionEdit', function () {
+      modal_action_form_clean('Update');
+
+      var table = actionsTable;
+      var tr = $(this).closest('tr');
+      var row = table.row(tr);
+
       var hidden = '';
-      hidden += '<input class="form-control" id="project_id_action_modal" name="project_id_action_modal" type="hidden" value="'+{{ $project->id }}+'">';
-      hidden += '<input class="form-control" id="user_id_action_modal" name="user_id_action_modal" type="hidden" value="'+{{ Auth::user()->id }}+'">';
-      hidden += '<input class="form-control" id="section_action_modal" name="user_id_action_modal" type="hidden" value="project">';
-      hidden += '<input class="form-control" id="action_action_modal" name="action_action_modal" type="hidden" value="create">';
-      $('#action_hidden').append(hidden);
+      hidden += '<input class="form-control" id="modal_action_form_action_id" type="hidden" value="'+row.data().action_id+'">';
+      hidden += '<input class="form-control" id="modal_action_form_action" type="hidden" value="update">';
+      $('#modal_action_form_hidden').append(hidden);
 
       // Init fields
 
-      $('select[name="assigned_to_action_modal"]').val('');
-      $('select[name="assigned_to_action_modal"]').select2().trigger('change');
+      $('select#modal_action_form_assigned_user_id').val(row.data().assigned_to_user_id);
+      $('select#modal_action_form_assigned_user_id').select2().trigger('change');
       
-      $('input[name="action_name_modal"]').val('');
+      $('input#modal_action_form_name').val(row.data().action_name);
+      $('input#modal_action_form_requestor').val(row.data().action_requestor);
 
-      $('select[name="status_action_modal"]').val('OPEN');
-      $('select[name="status_action_modal"]').select2().trigger('change');
+      $('select#modal_action_form_status').val(row.data().action_status);
+      $('select#modal_action_form_status').select2().trigger('change');
 
-      $('select[name="priority_action_modal"]').val('LOW');
-      $('select[name="priority_action_modal"]').select2().trigger('change');
+      $('select#modal_action_form_severity').val(row.data().action_severity);
+      $('select#modal_action_form_severity').select2().trigger('change');
 
       action_percentage_modal.update({
-          from: 0
+          from: row.data().percent_complete
       });
 
-      $('input[name="date_action_modal"]').val('');
-
-      $('textarea[name="description_action_modal"]').val('');
-
-      $('textarea[name="description_next_action_modal"]').val('');
-
-      $('input[name="next_action_dependency_modal"]').val('');
-
-      $('input[name="next_action_due_date_modal"]').val('');
-
-
-      $('#actionModal').modal("show");
-  });
-
-  // Click edit
-  $(document).on('click', '.buttonActionEdit', function () {
-    $('#action_title_modal').text('Update Action');
-    $('#action_create_update_button_modal').text('Update');
-
-    var table = actionsTable;
-    var tr = $(this).closest('tr');
-    var row = table.row(tr);
-    //console.log('the loe id is '+row.data().loe_id);
-
-    $('#action_hidden').empty();
-    var hidden = '';
-    hidden += '<input class="form-control" id="action_action_modal" name="action_action_modal" type="hidden" value="update">';
-    hidden += '<input class="form-control" id="action_id" name="action_id" type="hidden" value="'+row.data().action_id+'">';
-    hidden += '<input class="form-control" id="section_action_modal" name="user_id_action_modal" type="hidden" value="project">';
-    $('#action_hidden').append(hidden);
-
-    // Init fields
-
-    $('select[name="assigned_to_action_modal"]').val(row.data().assigned_to_user_id);
-    $('select[name="assigned_to_action_modal"]').select2().trigger('change');
-    
-    $('input[name="action_name_modal"]').val(row.data().action_name);
-    $('input[name="action_requestor_modal"]').val(row.data().action_requestor);
-
-    $('select[name="status_action_modal"]').val(row.data().action_status);
-    $('select[name="status_action_modal"]').select2().trigger('change');
-
-    $('select[name="priority_action_modal"]').val(row.data().action_severity);
-    $('select[name="priority_action_modal"]').select2().trigger('change');
-
-    action_percentage_modal.update({
-        from: row.data().percent_complete
-    });
-
-    $('input[name="date_action_modal"]').val(row.data().action_start_date+" - "+row.data().action_end_date);
-
-    $('textarea[name="description_action_modal"]').val(row.data().action_description);
-
-    $('textarea[name="description_next_action_modal"]').val(row.data().next_action_description);
-
-    $('input[name="next_action_dependency_modal"]').val(row.data().next_action_dependency);
-
-    $('input[name="next_action_due_date_modal"]').val(row.data().next_action_due_date);
-
-    $('#actionModal').modal("show");
-  });
-
-  // Click delete
-  $(document).on('click', '.buttonActionDelete', function () {
-    record_id = $(this).attr('data-id');
-
-    bootbox.confirm("Are you sure want to delete this record?", function(result) {
-      if (result){
-        $.ajax({
-          type: 'get',
-          url: "{!! route('projectActionDelete','') !!}/"+record_id,
-          dataType: 'json',
-          success: function(data) {
-            $('#num_of_actions').text(data.num_of_actions);
-            //console.log(data);
-            if (data.result == 'success'){
-                box_type = 'success';
-                message_type = 'success';
-            }
-            else {
-                box_type = 'danger';
-                message_type = 'error';
-            }
-
-            $('#flash-message').empty();
-            var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
-            $('#flash-message').append(box);
-            $('#delete-message').delay(2000).queue(function () {
-                $(this).addClass('animated flipOutX')
-            });
-            actionsTable.ajax.reload();
-          }
-        });
+      if (row.data().action_start_date) {
+        $('input#modal_action_form_start_to_end_date').val(row.data().action_start_date+" - "+row.data().action_end_date);
+      } else {
+          $('input#modal_action_form_start_to_end_date').val('');
       }
-    });
-  } );
+      $('textarea#modal_action_form_description').val(row.data().action_description);
 
-  // click send info ajax to create or update
-  $(document).on('click', '#action_create_update_button_modal', function () {
-    // Checking validation rules
-    if (!$('#form_action_modal').parsley().validate()) {
-      return;
-    }
+      $('textarea#modal_action_form_next_action_description').val(row.data().next_action_description);
 
-    // hidden input
-    var action_action_modal = $('input#action_action_modal').val();
-    var section_action_modal = $('input#section_action_modal').val();
-    if (action_action_modal == 'create') {
-      var project_id_action_modal = $('input#project_id_action_modal').val();
-      var user_id_action_modal = $('input#user_id_action_modal').val();
-    } else if (action_action_modal == 'update') {
-      var action_id = $('input#action_id').val();
-    }
+      $('input#modal_action_form_next_action_dependency').val(row.data().next_action_dependency);
 
-    // filled in
-    var assigned_to_action_modal = $('select[name="assigned_to_action_modal"]').children("option:selected").val();
-    var action_name_modal = $('input[name="action_name_modal"]').val();
-    var action_requestor_modal = $('input[name="action_requestor_modal"]').val();
-    var status_action_modal = $('select[name="status_action_modal"]').children("option:selected").val();
-    var priority_action_modal = $('select[name="priority_action_modal"]').children("option:selected").val();
-    var action_percentage_modal = $('input[name="action_percentage_modal"]').val();
-    var date_action_modal = $('input[name="date_action_modal"]').val().split(" - ");
-    var estimated_start_date = date_action_modal[0];
-    var estimated_end_date = date_action_modal[1];
-    var description_action_modal = $('textarea[name="description_action_modal"]').val();
-    var description_next_action_modal = $('textarea[name="description_next_action_modal"]').val();
-    var next_action_dependency_modal = $('input[name="next_action_dependency_modal"]').val();
-    var next_action_due_date_modal = $('input[name="next_action_due_date_modal"]').val();
-
-    var data = {'assigned_user_id':assigned_to_action_modal,'name':action_name_modal,'requestor':action_requestor_modal,'status':status_action_modal,
-      'severity':priority_action_modal,'percent_complete':action_percentage_modal,
-      'estimated_start_date':estimated_start_date,'estimated_end_date':estimated_end_date,
-      'description':description_action_modal,'next_action_description':description_next_action_modal,'next_action_dependency':next_action_dependency_modal,
-      'next_action_due_date':next_action_due_date_modal,'section':section_action_modal
-      };
-    if (action_action_modal == "create") {
-      data.project_id = project_id_action_modal;
-      data.user_id = user_id_action_modal;
-    } else if (action_action_modal == "update") {
-      data.id = action_id;
-    }
-    //console.log(data);
-
-    $.ajax({
-          type: 'post',
-          url: "{!! route('projectActionInsertUpdate') !!}",
-          data:data,
-          dataType: 'json',
-          success: function(data) {
-            $('#num_of_actions').text(data.num_of_actions);
-            //console.log(data);
-            if (data.result == 'success'){
-                box_type = 'success';
-                message_type = 'success';
-            }
-            else {
-                box_type = 'danger';
-                message_type = 'error';
-            }
-
-            $('#flash-message').empty();
-            var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
-            $('#flash-message').append(box);
-            $('#delete-message').delay(2000).queue(function () {
-                $(this).addClass('animated flipOutX')
-            });
-            actionsTable.ajax.reload();
-          }
+      if (row.data().next_action_due_date) {
+        $('input#modal_action_form_next_action_due_date').val(row.data().next_action_due_date);
+      } else {
+        $('input#modal_action_form_next_action_due_date').val('');
+      }
+      $('#modal_action').modal("show");
     });
 
-    $('#actionModal').modal('hide');
+    // Click delete
+    $(document).on('click', '.buttonActionDelete', function () {
+      record_id = $(this).attr('data-id');
 
-  });
+      bootbox.confirm("Are you sure want to delete this record?", function(result) {
+        if (result){
+          $.ajax({
+            type: 'get',
+            url: "{!! route('projectActionDelete','') !!}/"+record_id,
+            dataType: 'json',
+            success: function(data) {
+              $('#num_of_actions').text(data.num_of_actions);
+              //console.log(data);
+              if (data.result == 'success'){
+                  box_type = 'success';
+                  message_type = 'success';
+              }
+              else {
+                  box_type = 'danger';
+                  message_type = 'error';
+              }
+
+              $('#flash-message').empty();
+              var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+              $('#flash-message').append(box);
+              $('#delete-message').delay(2000).queue(function () {
+                  $(this).addClass('animated flipOutX')
+              });
+              actionsTable.ajax.reload();
+            }
+          });
+        }
+      });
+    } );
+
+    // click send info ajax to create or update
+    $(document).on('click', '#modal_action_create_update_button', function () {
+      // hidden input
+      var action_action_modal = $('input#modal_action_form_action').val();
+
+      var section_action_modal = 'project';
+      var assigned_to_action_modal = $('select#modal_action_form_assigned_user_id').children("option:selected").val();
+      var action_name_modal = $('input#modal_action_form_name').val();
+      var action_requestor_modal = $('input#modal_action_form_requestor').val();
+      var status_action_modal = $('select#modal_action_form_status').children("option:selected").val();
+      var priority_action_modal = $('select#modal_action_form_severity').children("option:selected").val();
+      var action_percentage_modal = $('input#modal_action_form_percent_complete').val();
+      if ($('input#modal_action_form_start_to_end_date').val()) {
+        var date_action_modal = $('input#modal_action_form_start_to_end_date').val().split(" - ");
+        var estimated_start_date = date_action_modal[0];
+        var estimated_end_date = date_action_modal[1];
+      } else {
+        var estimated_start_date = '';
+        var estimated_end_date = '';
+      }
+      var description_action_modal = $('textarea#modal_action_form_description').val();
+      var description_next_action_modal = $('textarea#modal_action_form_next_action_description').val();
+      var next_action_dependency_modal = $('input#modal_action_form_next_action_dependency').val();
+      var next_action_due_date_modal = $('input#modal_action_form_next_action_due_date').val();
+
+      var data = {'assigned_user_id':assigned_to_action_modal,'name':action_name_modal,'requestor':action_requestor_modal,'status':status_action_modal,
+        'severity':priority_action_modal,'percent_complete':action_percentage_modal,
+        'estimated_start_date':estimated_start_date,'estimated_end_date':estimated_end_date,
+        'description':description_action_modal,'next_action_description':description_next_action_modal,'next_action_dependency':next_action_dependency_modal,
+        'next_action_due_date':next_action_due_date_modal,'section':section_action_modal
+        };
+
+      switch (action_action_modal) {
+        case 'create':
+          // Data
+          data.project_id = $('input#modal_action_form_project_id').val();;
+          // Route info
+          var action_create_update_route = "{!! route('ActionAddAjax') !!}";
+          var type = 'post';
+          break;
+
+        case 'update':
+          // Data
+          action_id = $('input#modal_action_form_action_id').val();;
+          // Route info
+          var action_create_update_route = "{!! route('ActionUpdateAjax','') !!}/"+action_id;
+          var type = 'patch';
+          break;
+      }
+
+      $.ajax({
+            type: type,
+            url: action_create_update_route,
+            data:data,
+            dataType: 'json',
+            success: function(data) {
+              $('#num_of_actions').text(data.num_of_actions);
+              //console.log(data);
+              if (data.result == 'success'){
+                  box_type = 'success';
+                  message_type = 'success';
+              }
+              else {
+                  box_type = 'danger';
+                  message_type = 'error';
+              }
+
+              $('#flash-message').empty();
+              var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+              $('#flash-message').append(box);
+              $('#delete-message').delay(2000).queue(function () {
+                  $(this).addClass('animated flipOutX')
+              });
+              $('#modal_action').modal('hide');
+              actionsTable.ajax.reload();
+            },
+            error: function (data, ajaxOptions, thrownError) {
+              modal_action_form_error_clean();
+              var errors = data.responseJSON.errors;
+              var status = data.status;
+
+              if (status === 422) {
+                $.each(errors, function (key, value) {
+                  $('#modal_action_formgroup_'+key).addClass('has-error');
+                  $('#modal_action_form_'+key+'_error').text(value);
+                });
+              } else if (status === 403 || status === 500) {
+                $('#modal_action_formgroup_'+key).addClass('has-error');
+                $('#modal_action_form_'+key+'_error').text('No Authorization!');
+              }
+            }
+      });
+
+      
+
+    });
 
   @endif
   //endregion

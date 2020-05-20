@@ -10,11 +10,10 @@ use App\Http\Requests\PasswordUpdateRequest;
 use App\Http\Requests\UserCreateRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Repositories\UserRepository;
-use App\Role;
 use App\User;
+use Spatie\Permission\Models\Role;
 use Auth;
 use DB;
-use Entrust;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -31,15 +30,6 @@ class UserController extends Controller
         return view('user/list');
     }
 
-    public function show($id)
-    {
-        $user = User::find($id);
-        $manager = $this->userRepository->getMyManagersList($id);
-        $userCluster = $user->clusters->pluck('cluster_owner')->toArray();
-
-        return view('user/show', compact('user', 'manager', 'userCluster'));
-    }
-
     public function profile($id)
     {
         $user = User::find($id);
@@ -50,16 +40,60 @@ class UserController extends Controller
         return view('user/profile', compact('user'));
     }
 
-    public function passwordUpdate(PasswordUpdateRequest $request, $id)
+    public function updatePasswordGet(User $user)
     {
-        $user = User::find($id);
-        if (Auth::user()->id != $id) {
-            return redirect('userList')->with('error', 'You are not user '.$user->name.'!!!');
+        if (Auth::user()->id != $user->id) {
+            return redirect()->route('updatePasswordGet',[Auth::user()->id])->with('error', 'You are not user '.$user->name.'!!!');
         }
-        $inputs = $request->only('password');
-        $password = $user->update_password($inputs['password'], true);
 
-        return redirect('profile/'.$id)->with('success', 'Password updated successfully');
+        return view('user/updatePassword', compact('user'));
+    }
+
+    public function updatePasswordStore(PasswordUpdateRequest $request, User $user)
+    {
+        $inputs = $request->only('password');
+
+        if (Auth::user()->id != $user->id) {
+            return redirect()->route('updatePasswordGet',[Auth::user()->id])->with('error', 'You are not user '.$user->name.'!!!');
+        }
+
+        $user->update_password($inputs['password'],true);
+
+        return redirect()->route('updatePasswordGet',[Auth::user()->id])->with('success', 'Password updated')->with('user',$user);
+    }
+
+    public function passwordUpdateAjax(Request $request, User $user)
+    {
+        $result = new \stdClass();
+        $inputs = $request->all();
+        $can_reset = false;
+
+        $manager_id = $user->managers()->first()->id;
+        $auth_id = Auth::user()->id;
+
+        if ($user->id == 1) {
+            $result->result = 'error';
+            $result->msg = 'You cannot reset the password of the admin!!!';
+        } elseif (Auth::user()->id == $user->id) {
+            $result->result = 'success';
+            $result->msg = 'Password updated';
+            $can_reset = true;
+        } elseif ($manager_id == $auth_id) {
+            $result->result = 'success';
+            $result->msg = 'Password updated';
+            $can_reset = true;
+        } elseif (Auth::user()->can('user-view-all')) {
+            $result->result = 'success';
+            $result->msg = 'Password updated';
+            $can_reset = true;
+        } else {
+            $result->result = 'error';
+            $result->msg = 'You have no rights to reset the password';
+        }
+        if ($can_reset) {
+            $user->update_password($inputs['password'],true);
+        }
+        return json_encode($result);
     }
 
     public function optionsUpdate(OptionsUpdateRequest $request, $id)
@@ -84,13 +118,13 @@ class UserController extends Controller
     {
         $defaultRole = config('select.defaultRole');
 
-        if (Entrust::hasRole('Admin')) {
-            $roles = Role::pluck('display_name', 'id');
+        if (Auth::user()->hasRole('Admin')) {
+            $roles = Role::all()->pluck('name', 'id');
         } else {
-            $roles = Role::where('id', '!=', '1')->pluck('display_name', 'id');
+            $roles = Role::where('id','!=',1)->pluck('name','id');
         }
 
-        if (Entrust::can('role-assign')) {
+        if (Auth::user()->can('role-assign')) {
             $role_select_disabled = 'false';
         } else {
             $role_select_disabled = 'true';
@@ -104,51 +138,127 @@ class UserController extends Controller
         return view('user/create_update', compact('manager_list', 'clusters', 'roles', 'role_select_disabled', 'defaultRole'))->with('action', 'create');
     }
 
-    public function getFormUpdate($id)
+    public function getFormUpdate(User $user)
     {
-        $user = User::find($id);
 
-        if (Entrust::hasRole('Admin')) {
-            $roles = Role::pluck('display_name', 'id');
+        if (Auth::user()->hasRole('Admin')) {
+            $roles = Role::all()->pluck('name', 'id');
         } else {
-            $roles = Role::where('id', '!=', '1')->pluck('display_name', 'id');
+            $roles = Role::where('id','!=',1)->pluck('name','id');
         }
 
-        if (Entrust::can('role-assign')) {
+        if (Auth::user()->can('role-assign')) {
             $role_select_disabled = 'false';
         } else {
             $role_select_disabled = 'true';
         }
 
-        $userRole = $user->roles->pluck('id')->toArray();
-
         $manager_list = User::orderBy('name')->where('is_manager', '1')->pluck('name', 'id');
         $manager_list->prepend('', '');
 
-        $user = $this->userRepository->getById($id);
-        $manager = $this->userRepository->getMyManagersList($id);
+        $manager = $user->managers()->pluck('manager_id');
 
         $clusters = Customer::where('cluster_owner', '!=', '')->groupBy('cluster_owner')->pluck('cluster_owner');
-        $userCluster = $user->clusters->pluck('cluster_owner')->toArray();
-        //dd($userCluster);
+        $userCluster = $user->clusters()->pluck('cluster_owner')->toArray();
 
-        //\Debugbar::info($manager_list);
+        $userRole = $user->getRoleNames()->toArray();
+
         return view('user/create_update', compact('manager_list', 'user', 'manager', 'roles', 'userRole', 'clusters', 'userCluster', 'role_select_disabled'))->with('action', 'update');
     }
 
     public function postFormCreate(UserCreateRequest $request)
     {
         $inputs = $request->all();
-        //dd($inputs);
-        $user = $this->userRepository->create($inputs);
+        //dd($inputs['user']);
+
+        $user = User::create($inputs['user']);
+
+        //dd($user);
+
+        $user->update_password($inputs['password'],true);
+
+        // Now we have to treat the manager
+        if (isset($inputs['manager']['manager_id'])) {
+            /* We need first to check that there is not already a manager defined in which case we have to delete it
+            *   Because we want to remove all traces of previous managers, we do a detach without giving
+            *   the manager_id as parameter.
+            **/
+            $user->managers()->detach();
+            /* Now we need to create the link in the pivot table
+            *   For this we have a function defined in our model User.php called managers()
+            *   We only need to say we want to attach the manager_id to this user_id.
+            **/
+            $user->managers()->attach($inputs['manager']['manager_id']);
+        } else {
+            // In this case, we need to remove any trace of manager for this user
+            $user->managers()->detach();
+        }
+
+        // Now we need to save the clusters
+        if (isset($inputs['managed_clusters'])) {
+            $user->clusters()->delete();
+            foreach ($inputs['managed_clusters'] as $key => $value) {
+                $cluster = new Cluster;
+                $cluster->user_id = $user->id;
+                $cluster->cluster_owner = $value;
+                $cluster->save();
+            }
+        } else {
+            //DB::table('cluster_user')->where('user_id',$user->id)->delete();
+            $user->clusters()->delete();
+        }
+
+        // Now we need to save the roles
+        if (isset($inputs['roles'])) {
+            $user->syncRoles($inputs['roles']);
+        }
 
         return redirect('userList')->with('success', 'Record created successfully');
     }
 
-    public function postFormUpdate(UserUpdateRequest $request, $id)
+    public function postFormUpdate(UserUpdateRequest $request, User $user)
     {
         $inputs = $request->all();
-        $user = $this->userRepository->update($id, $inputs);
+
+        $user->update($inputs['user']);
+
+
+
+        // Now we have to treat the manager
+        if (isset($inputs['manager']['manager_id'])) {
+            /* We need first to check that there is not already a manager defined in which case we have to delete it
+            *   Because we want to remove all traces of previous managers, we do a detach without giving
+            *   the manager_id as parameter.
+            **/
+            $user->managers()->detach();
+            /* Now we need to create the link in the pivot table
+            *   For this we have a function defined in our model User.php called managers()
+            *   We only need to say we want to attach the manager_id to this user_id.
+            **/
+            $user->managers()->attach($inputs['manager']['manager_id']);
+        } else {
+            // In this case, we need to remove any trace of manager for this user
+            $user->managers()->detach();
+        }
+
+        // Now we need to save the clusters
+        if (isset($inputs['managed_clusters'])) {
+            $user->clusters()->delete();
+            foreach ($inputs['managed_clusters'] as $key => $value) {
+                $cluster = new Cluster;
+                $cluster->user_id = $user->id;
+                $cluster->cluster_owner = $value;
+                $cluster->save();
+            }
+        } else {
+            //DB::table('cluster_user')->where('user_id',$user->id)->delete();
+            $user->clusters()->delete();
+        }
+
+        // Now we need to save the roles
+        if (isset($inputs['roles'])) {
+            $user->syncRoles($inputs['roles']);
+        }
 
         return redirect('userList')->with('success', 'Record updated successfully');
     }
@@ -201,7 +311,7 @@ class UserController extends Controller
         return json_encode($result);
     }
 
-    public function ListOfusers($exclude_contractors = null)
+    public function ListOfusers($exclude_contractors = 0)
     {
         return $this->userRepository->getListOfUsers($exclude_contractors);
     }

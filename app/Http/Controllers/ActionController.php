@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use Auth;
 use Datatables;
 use DB;
-use Entrust;
 use Illuminate\Http\Request;
 
 class ActionController extends Controller
@@ -134,7 +133,7 @@ class ActionController extends Controller
         $result = new \stdClass();
         $delete_result = Action::find($inputs['id']);
 
-        if ($delete_result->user_id == Auth::user()->id || Entrust::can('action-all')) {
+        if ($delete_result->user_id == Auth::user()->id || Auth::user()->can('action-all')) {
             $delete_result->delete();
             $result->result = 'success';
             $result->box_type = 'success';
@@ -154,7 +153,7 @@ class ActionController extends Controller
         $delete_result = Action::find($action_id);
         $project_id = $delete_result->project_id;
 
-        if ($delete_result->user_id == Auth::user()->id || Entrust::can('action-all')) {
+        if ($delete_result->user_id == Auth::user()->id || Auth::user()->can('action-all')) {
             $delete_result->delete();
             $result->result = 'success';
             $result->box_type = 'success';
@@ -172,45 +171,58 @@ class ActionController extends Controller
         return json_encode($result);
     }
 
-    public function projectActionInsertUpdate(Request $request)
+    public function store(Request $request)
     {
-        $inputs = $request->all();
+        // First we need to validate the data we received
+        $data = $request->validate([
+            'assigned_user_id' => 'required',
+            'name' => 'required',
+            'section' => 'required',
+            'project_id' => 'required',
+        ]);
+        
         $result = new \stdClass();
+        $inputs = $request->all();
 
-        if (! isset($inputs['id'])) {
-            // Create a new record
-            $insert_result = Action::create($inputs);
-            $project_id = $insert_result->project_id;
-            if ($insert_result != null) {
-                $result->result = 'success';
-                $result->box_type = 'success';
-                $result->message_type = 'success';
-                $result->msg = 'Record added successfully';
-            } else {
-                $result->result = 'error';
-                $result->box_type = 'danger';
-                $result->message_type = 'error';
-                $result->msg = 'Record issue';
-            }
+        $inputs["user_id"] = Auth::user()->id;
+
+        // Create a new record
+        Action::create($inputs);
+
+        $result->result = 'success';
+        $result->msg = 'Record added successfully';
+
+        $num_of_actions = Action::where('project_id', '=', $inputs["project_id"])->get()->count();
+        $result->num_of_actions = $num_of_actions;
+
+        return json_encode($result);
+    }
+
+    public function update(Request $request, $id)
+    {
+        // First we need to validate the data we received
+        $data = $request->validate([
+            'assigned_user_id' => 'required',
+            'name' => 'required',
+            'section' => 'required'
+        ]);
+
+        $result = new \stdClass();
+        $inputs = $request->all();
+
+        // Update a record
+        $update_result = Action::find($id);
+
+        if ($update_result->user_id == Auth::user()->id || $update_result->assigned_user_id == Auth::user()->id || Auth::user()->can('action-all')) {
+            $update_result->update($inputs);
+            $result->result = 'success';
+            $result->msg = 'Record updated successfully';
         } else {
-            // Update a record
-            $update_result = Action::find($inputs['id']);
-            $project_id = $update_result->project_id;
-            unset($inputs['id']);
-            if ($update_result->user_id == Auth::user()->id || $update_result->assigned_user_id == Auth::user()->id || Entrust::can('action-all')) {
-                $update_result->update($inputs);
-                $result->result = 'success';
-                $result->box_type = 'success';
-                $result->message_type = 'success';
-                $result->msg = 'Record updated successfully';
-            } else {
-                $result->result = 'error';
-                $result->box_type = 'danger';
-                $result->message_type = 'error';
-                $result->msg = 'No permission to update record';
-            }
+            $result->result = 'error';
+            $result->msg = 'No permission to update record';
         }
 
+        $project_id = $update_result->project_id;
         $num_of_actions = Action::where('project_id', '=', $project_id)->get()->count();
         $result->num_of_actions = $num_of_actions;
 

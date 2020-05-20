@@ -49,7 +49,7 @@
 </div>
 <!-- Window -->
 
-@permission(['home-extrainfo'])
+@can('home-extrainfo')
 <!-- Window -->
 <div class="row">
   <div class="col-md-12 col-sm-12 col-xs-12">
@@ -106,6 +106,6 @@
   </div>
 </div>
 <!-- Window -->
-@endpermission
+@endcan
 
 @endsection

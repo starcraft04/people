@@ -21,7 +21,7 @@ Route::post('login', ['as' => 'login', 'uses' => 'Auth\LoginController@login']);
 Route::get('logout', ['as' => 'logout', 'uses' => 'Auth\LoginController@logout']);
 
 // All routes in this function will be protected by user needed to be logged in.
-Route::group(['middleware' => ['auth', 'general']], function () {
+Route::group(['middleware' => ['auth', 'general','last_login']], function () {
     Route::get('/home', ['uses' => 'HomeController@index', 'as' => 'home']);
     Route::get('/', ['uses' => 'HomeController@index']);
 
@@ -53,34 +53,30 @@ Route::group(['middleware' => ['auth', 'general']], function () {
     //User
     //  Main user list
     Route::get('userList', ['uses' => 'UserController@getList', 'as' => 'userList', 'middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
-    //  user information
-    Route::get('user/{n}', ['uses' => 'UserController@show', 'as' => 'user', 'middleware' => ['permission:user-view']]);
+
     //  Create new user
     Route::get('userFormCreate', ['uses' => 'UserController@getFormCreate', 'as' => 'userFormCreate', 'middleware' => ['permission:user-create']]);
     Route::post('userFormCreate', ['uses' => 'UserController@postFormCreate', 'middleware' => ['permission:user-create']]);
     //  Update user
-    Route::get('userFormUpdate/{n}', ['uses' => 'UserController@getFormUpdate', 'as' => 'userFormUpdate', 'middleware' => ['permission:user-edit']]);
-    Route::post('userFormUpdate/{n}', ['uses' => 'UserController@postFormUpdate', 'middleware' => ['permission:user-edit']]);
+    Route::get('userFormUpdate/{user}', ['uses' => 'UserController@getFormUpdate', 'as' => 'userFormUpdate', 'middleware' => ['permission:user-edit']]);
+    Route::post('userFormUpdate/{user}', ['uses' => 'UserController@postFormUpdate', 'middleware' => ['permission:user-edit']]);
     //  Delete user
     Route::get('userDelete/{n}', ['uses' => 'UserController@delete', 'as' => 'userDelete', 'middleware' => ['permission:user-delete']]);
     //  user profile
     Route::get('profile/{n}', ['uses' => 'UserController@profile', 'as' => 'profile']);
-    Route::post('passwordUpdate/{n}', ['uses' => 'UserController@passwordUpdate', 'as' => 'passwordUpdate']);
+    Route::get('updatePassword/{user}', ['uses' => 'UserController@updatePasswordGet', 'as' => 'updatePasswordGet']);
+    Route::post('updatePassword/{user}', ['uses' => 'UserController@updatePasswordStore', 'as' => 'updatePasswordStore']);
+    Route::post('passwordUpdateAjax/{user}', ['uses' => 'UserController@passwordUpdateAjax', 'as' => 'passwordUpdateAjax']);
     Route::post('optionsUpdate/{id}', ['uses' => 'UserController@optionsUpdate', 'as' => 'optionsUpdate']);
     //  AJAX
-    Route::get('listOfUsersAjax/{exclude_contractors}', ['uses' => 'UserController@listOfUsers', 'as' => 'listOfUsersAjax', 'middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
+    Route::get('listOfUsersAjax/{exclude_contractors?}', ['uses' => 'UserController@listOfUsers', 'as' => 'listOfUsersAjax', 'middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
 
     //ProfileToolsController
     Route::get('ajax_git_pull', ['uses' => 'ProfileToolsController@ajax_git_pull', 'as' => 'ajax_git_pull']);
     Route::get('ajax_env_app_debug/{n}', ['uses' => 'ProfileToolsController@ajax_env_app_debug', 'as' => 'ajax_env_app_debug']);
 
     // Roles
-    Route::get('roles', ['as' => 'roles.index', 'uses' => 'RoleController@index', 'middleware' => ['permission:role-view|role-create|role-edit|role-delete']]);
-    Route::get('roles/create', ['as' => 'roles.create', 'uses' => 'RoleController@create', 'middleware' => ['permission:role-create']]);
-    Route::post('roles/create', ['as' => 'roles.store', 'uses' => 'RoleController@store', 'middleware' => ['permission:role-create']]);
-    Route::get('roles/{id}/edit', ['as' => 'roles.edit', 'uses' => 'RoleController@edit', 'middleware' => ['permission:role-edit']]);
-    Route::patch('roles/{id}', ['as' => 'roles.update', 'uses' => 'RoleController@update', 'middleware' => ['permission:role-edit']]);
-    Route::delete('roles/{id}', ['as' => 'roles.destroy', 'uses' => 'RoleController@destroy', 'middleware' => ['permission:role-delete']]);
+    Route::resource('roles','RoleController');
 
     //Project
     //  Main project list
@@ -136,10 +132,11 @@ Route::group(['middleware' => ['auth', 'general']], function () {
     //Comment
     Route::get('comment/{id}', ['uses' => 'CommentController@show', 'as' => 'comment_show', 'middleware' => ['permission:tools-projects-comments']]);
     Route::get('comments/{project_id}', ['uses' => 'CommentController@getList', 'as' => 'comment_list', 'middleware' => ['permission:tools-projects-comments']]);
-    Route::post('comment/edit/{id}', ['uses' => 'CommentController@edit', 'as' => 'comment_edit', 'middleware' => ['permission:comment-edit']]);
-    Route::get('comment/delete/{id}', ['uses' => 'CommentController@delete', 'as' => 'comment_delete', 'middleware' => ['permission:comment-delete']]);
+    Route::post('comments', ['uses' => 'CommentController@store', 'as' => 'commentInsert', 'middleware' => ['permission:comment-create']]);
+    Route::patch('comments/{id}', ['uses' => 'CommentController@update', 'as' => 'comment_edit', 'middleware' => ['permission:comment-edit']]);
+    Route::delete('comment/{id}', ['uses' => 'CommentController@destroy', 'as' => 'comment_delete', 'middleware' => ['permission:comment-delete']]);
     Route::post('commentList', ['uses' => 'CommentController@commentList', 'as' => 'commentList', 'middleware' => ['permission:tools-projects-comments']]);
-    Route::post('commentInsert', ['uses' => 'CommentController@commentInsert', 'as' => 'commentInsert', 'middleware' => ['permission:comment-create']]);
+    
 
     //Tools
     Route::get('toolsActivities', ['uses' => 'ToolsController@activities', 'as' => 'toolsActivities', 'middleware' => ['permission:tools-activity-view']]);
@@ -155,7 +152,8 @@ Route::group(['middleware' => ['auth', 'general']], function () {
     Route::get('toolsProjectsMissingOTL', ['uses' => 'ToolsController@projectsMissingOTL', 'as' => 'projectsMissingOTL', 'middleware' => ['permission:tools-missing_info-view']]);
     Route::get('actionListAjax/{project_id?}', ['uses' => 'ActionController@actionListAjax', 'as' => 'actionListAjax', 'middleware' => ['permission:action-view']]);
     Route::get('projectActionDelete/{action_id}', ['uses' => 'ActionController@projectActionDelete', 'as' => 'projectActionDelete', 'middleware' => ['permission:action-delete']]);
-    Route::post('projectActionInsertUpdate', ['uses' => 'ActionController@projectActionInsertUpdate', 'as' => 'projectActionInsertUpdate', 'middleware' => ['permission:action-create|action-edit']]);
+    Route::post('ActionAddAjax', ['uses' => 'ActionController@store', 'as' => 'ActionAddAjax', 'middleware' => ['permission:action-create']]);
+    Route::patch('ActionUpdateAjax/{id}', ['uses' => 'ActionController@update', 'as' => 'ActionUpdateAjax', 'middleware' => ['permission:action-edit']]);
 
     //  Create new activity
     Route::get('toolsFormCreate/{y}/{tab?}', ['uses' => 'ToolsController@getFormCreate', 'as' => 'toolsFormCreate', 'middleware' => ['permission:tools-activity-new']]);
@@ -175,13 +173,13 @@ Route::group(['middleware' => ['auth', 'general']], function () {
     //  AJAX
     Route::get('ProjectsRevenueAjax/{id}', ['uses' => 'ProjectController@listOfProjectsRevenue', 'as' => 'listOfProjectsRevenueAjax', 'middleware' => ['permission:projectRevenue-create']]);
     Route::post('ProjectsRevenueAddAjax', ['uses' => 'ProjectController@addRevenue', 'as' => 'ProjectsRevenueAddAjax', 'middleware' => ['permission:projectRevenue-create']]);
-    Route::post('ProjectsRevenueUpdateAjax', ['uses' => 'ProjectController@updateRevenue', 'as' => 'ProjectsRevenueUpdateAjax', 'middleware' => ['permission:projectRevenue-edit']]);
+    Route::patch('ProjectsRevenueUpdateAjax/{id}', ['uses' => 'ProjectController@updateRevenue', 'as' => 'ProjectsRevenueUpdateAjax', 'middleware' => ['permission:projectRevenue-edit']]);
     Route::get('projectRevenueDelete/{n}', ['uses' => 'ProjectController@deleteRevenue', 'as' => 'projectRevenueDelete', 'middleware' => ['permission:projectRevenue-delete']]);
     Route::get('ProjectsLoeAjax/{id}', ['uses' => 'ProjectController@listOfProjectsLoe', 'as' => 'listOfProjectsLoeAjax', 'middleware' => ['permission:projectLoe-view']]);
     Route::get('ProjectsLoeSignoffAjax/{id}', ['uses' => 'ProjectController@listOfProjectsLoeSignoff', 'as' => 'listOfProjectsLoeSignoffAjax', 'middleware' => ['permission:projectLoe-signoff']]);
     Route::get('AllProjectsLoeAjax/{year}', ['uses' => 'ProjectController@listOfAllProjectsLoe', 'as' => 'listOfAllProjectsLoeAjax', 'middleware' => ['permission:projectLoe-view']]);
     Route::post('ProjectsLoeAddAjax', ['uses' => 'ProjectController@addLoe', 'as' => 'ProjectsLoeAddAjax', 'middleware' => ['permission:projectLoe-create']]);
-    Route::post('ProjectsLoeUpdateAjax', ['uses' => 'ProjectController@updateLoe', 'as' => 'ProjectsLoeUpdateAjax', 'middleware' => ['permission:projectLoe-edit|projectLoe-editAll']]);
+    Route::patch('ProjectsLoeUpdateAjax/{id}', ['uses' => 'ProjectController@updateLoe', 'as' => 'ProjectsLoeUpdateAjax', 'middleware' => ['permission:projectLoe-edit|projectLoe-editAll']]);
     Route::get('projectLoeDelete/{n}', ['uses' => 'ProjectController@deleteLoe', 'as' => 'projectLoeDelete', 'middleware' => ['permission:projectLoe-delete|projectLoe-deleteAll']]);
     Route::post('listOfActivitiesPerUserAjax', ['uses' => 'ActivityController@listOfActivitiesPerUser', 'as' => 'listOfActivitiesPerUserAjax', 'middleware' => ['permission:tools-activity-view']]);
     Route::get('listOfProjectsMissingInfoAjax', ['uses' => 'ProjectController@listOfProjectsMissingInfo', 'as' => 'listOfProjectsMissingInfoAjax', 'middleware' => ['permission:tools-missing_info-view']]);
@@ -221,3 +219,5 @@ Route::group(['middleware' => ['auth', 'general']], function () {
     Route::post('listOfSkillsAjax', ['uses' => 'SkillController@listOfSkills', 'as' => 'listOfSkillsAjax', 'middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
     Route::get('test', ['uses' => 'ActivityController@test', 'middleware' => ['permission:user-view']]);
 });
+
+Route::get('/home', 'HomeController@index')->name('home');

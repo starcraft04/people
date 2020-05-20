@@ -5,20 +5,17 @@ namespace App;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
-use Trebol\Entrust\Traits\EntrustUserTrait;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     use Notifiable;
-    use EntrustUserTrait; // add this trait to your user model
+    use HasRoles;
 
     protected $table = 'users';
+    protected $casts = ["last_login" => "datetime"];
     public $timestamps = true;
-    protected $fillable = [
-      'name', 'email', 'password', 'created_at', 'is_manager', 'updated_at',
-      'from_otl', 'region', 'country', 'domain', 'management_code', 'job_role',
-      'employee_type',
-      ];
+    protected $guarded = ['id'];
     protected $hidden = [
         'remember_token', 'password',
       ];

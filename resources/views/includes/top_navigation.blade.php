@@ -13,12 +13,13 @@
       </a>
       <ul class="dropdown-menu dropdown-usermenu" aria-labelledby="navbarDropdown">
         <li><a href="{{ route('profile',Auth::user()->id) }}">Profile</a></li>
+        <li><a href="{{ route('updatePasswordGet',Auth::user()->id) }}">Update password</a></li>
         <li><a href="{{ route('help') }}">Tutorial</a></li>
         <li><a id="logout"><i class="fa fa-sign-out pull-right"></i>Log Out</a></li>
       </ul>
     </li>
 
-    @permission(['action-view'])
+    @can('action-view')
     @if(isset($num_of_actions_logged_in_user))
     <!-- Logged in user and drop down -->
     <li class="nav-item dropdown" style="padding-left: 15px; padding-right: 15px;">
@@ -51,7 +52,7 @@
       </ul>
     </li>
     @endif
-    @endpermission
+    @endcan
 
   </ul>
 </nav>

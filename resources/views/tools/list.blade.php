@@ -109,13 +109,13 @@
         <!-- Selections for the table -->
 
         <!-- Create new button -->
-        @permission('tools-activity-new')
+        @can('tools-activity-new')
         <div class="row button_in_row">
           <div class="col-md-12">
             <button id="new_project" class="btn btn-info btn-xs" align="right"><span class="glyphicon glyphicon-plus"> New Project</span></button>
           </div>
         </div>
-        @endpermission
+        @endcan
         <!-- Create new button -->
 
         <!-- Main table -->
@@ -886,7 +886,7 @@
       }
     });
 
-    @permission('tools-activity-edit')
+    @can('tools-activity-edit')
     $('#activitiesTable').on('click', 'tbody td', function() {
       var table = activitiesTable;
       var tr = $(this).closest('tr');
@@ -907,13 +907,13 @@
       });
       window.location.href = "{!! route('toolsFormUpdate',['','','']) !!}/"+row.data().user_id+"/"+row.data().project_id+"/"+year[0];
     });
-    @endpermission
+    @endcan
 
-    @permission('tools-activity-new')
+    @can('tools-activity-new')
     $('#new_project').on('click', function() {
       window.location.href = "{!! route('toolsFormCreate',['']) !!}/"+year[0];
     });
-    @endpermission
+    @endcan
 
     $(document).on('click', '#legendButton', function () {
     $('#legendModal').modal();

@@ -24,7 +24,7 @@ class UserUpdateRequest extends FormRequest
      */
     public function rules()
     {
-        $id = $this->id;
+        $id = $this->user_id;
 
         return [
 
@@ -40,9 +40,8 @@ class UserUpdateRequest extends FormRequest
 *          'email' => 'unique:users,email_address,'.$user->id.',user_id'
 **/
 
-            'name' => 'required|max:255|unique:users,name,'.$id.',id',
-      'email' => 'email|required|max:255|unique:users,email,'.$id.',id',
-      'password' => 'same:confirm-password',
+            'user.name' => 'required|max:255|unique:users,name,'.$id.',id',
+            'user.email' => 'required|email|max:255|unique:users,email,'.$id.',id'
 
         ];
     }

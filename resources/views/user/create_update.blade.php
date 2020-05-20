@@ -5,6 +5,9 @@
     <!-- Select2 -->
     <link href="{{ asset('/plugins/select2/select2.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('/css/forms.css') }}" rel="stylesheet" />
+    <!-- bootstrap-daterangepicker -->
+    <link href="{{ asset('/plugins/gentelella/vendors/bootstrap-daterangepicker/daterangepicker.css') }}" rel="stylesheet" />
+    <link href="{{ asset('/plugins/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" />
 
 @stop
 
@@ -12,6 +15,9 @@
     <!-- JS -->
     <!-- Select2 -->
     <script src="{{ asset('/plugins/select2/select2.full.min.js') }}" type="text/javascript"></script>
+    <!-- bootstrap-daterangepicker -->
+    <script src="{{ asset('/plugins/gentelella/vendors/moment/min/moment.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('/plugins/gentelella/vendors/bootstrap-daterangepicker/daterangepicker.js') }}" type="text/javascript"></script>
 @stop
 
 @section('content')
@@ -50,152 +56,131 @@
 
           @if($action == 'create')
             {!! Form::open(['url' => 'userFormCreate', 'method' => 'post', 'class' => 'form-horizontal']) !!}
-            {!! Form::hidden('from_otl', 0, ['class' => 'form-control']) !!}
+            {!! Form::hidden('user[from_otl]', 0) !!}
+            {!! Form::hidden('password', 'Welcome1') !!}
+            <p>
+              The user will be created with a password of <b>Welcome1</b>
+            </p>
           @elseif($action == 'update')
             {!! Form::open(['url' => 'userFormUpdate/'.$user->id, 'method' => 'post', 'class' => 'form-horizontal']) !!}
-            {!! Form::hidden('id', $user->id, ['class' => 'form-control']) !!}
-            {!! Form::hidden('from_otl', $user->from_otl, ['class' => 'form-control']) !!}
+            {!! Form::hidden('user_id', $user->id) !!}
           @endif
 
           <div class="row">
-              <div class="form-group {!! $errors->has('name') ? 'has-error' : '' !!} col-md-12">
+              <div class="form-group {!! $errors->has('user.name') ? 'has-error' : '' !!} col-md-12">
                   <div class="col-md-2">
-                      {!! Form::label('name', 'Name', ['class' => 'control-label']) !!}
+                      {!! Form::label('user[name]', 'Name', ['class' => 'control-label']) !!}
                   </div>
                   <div class="col-md-10">
-                      {!! Form::text('name', (isset($user)) ? $user->name : '', ['class' => 'form-control', 'placeholder' => 'name']) !!}
-                      {!! $errors->first('name', '<small class="help-block">:message</small>') !!}
+                      {!! Form::text('user[name]', (isset($user)) ? $user->name : '', ['class' => 'form-control', 'placeholder' => 'name']) !!}
+                      {!! $errors->first('user.name', '<small class="help-block">:message</small>') !!}
                   </div>
               </div>
           </div>
 
           <div class="row">
-              <div class="form-group {!! $errors->has('email') ? 'has-error' : '' !!} col-md-12">
+              <div class="form-group {!! $errors->has('user.email') ? 'has-error' : '' !!} col-md-12">
                   <div class="col-md-2">
-                      {!! Form::label('email', 'Email', ['class' => 'control-label']) !!}
+                      {!! Form::label('user[email]', 'Email', ['class' => 'control-label']) !!}
                   </div>
                   <div class="col-md-10">
-                      {!! Form::text('email', (isset($user)) ? $user->email : '', ['class' => 'form-control', 'placeholder' => 'email']) !!}
-                      {!! $errors->first('email', '<small class="help-block">:message</small>') !!}
+                      {!! Form::text('user[email]', (isset($user)) ? $user->email : '', ['class' => 'form-control', 'placeholder' => 'email']) !!}
+                      {!! $errors->first('user.email', '<small class="help-block">:message</small>') !!}
                   </div>
               </div>
           </div>
 
           <div class="row">
-              <div class="form-group {!! $errors->has('password') ? 'has-error' : '' !!} col-md-12">
+              <div class="form-group {!! $errors->has('manager.manager_id') ? 'has-error' : '' !!} col-md-12">
                   <div class="col-md-2">
-                      {!! Form::label('password', 'Password', ['class' => 'control-label']) !!}
+                      {!! Form::label('manager[manager_id]', 'Manager', ['class' => 'control-label']) !!}
                   </div>
                   <div class="col-md-10">
-                      {!! Form::password('password', ['class' => 'form-control']) !!}
-                      {!! $errors->first('password', '<small class="help-block">:message</small>') !!}
+                      {!! Form::select('manager[manager_id]', $manager_list, (isset($manager[0])) ? $manager[0] : '', ['id' => 'user_manager','class' => 'form-control']) !!}
+                      {!! $errors->first('manager.manager_id', '<small class="help-block">:message</small>') !!}
                   </div>
               </div>
           </div>
 
           <div class="row">
-              <div class="form-group {!! $errors->has('confirm-password') ? 'has-error' : '' !!} col-md-12">
+              <div class="form-group {!! $errors->has('user.activity_status') ? 'has-error' : '' !!} col-md-12">
                   <div class="col-md-2">
-                      {!! Form::label('confirm-password', 'Confirm', ['class' => 'control-label']) !!}
+                      {!! Form::label('user[activity_status]', 'Activity status', ['class' => 'control-label']) !!}
                   </div>
                   <div class="col-md-10">
-                      {!! Form::password('confirm-password', ['class' => 'form-control']) !!}
-                      {!! $errors->first('confirm-password', '<small class="help-block">:message</small>') !!}
+                      {!! Form::select('user[activity_status]', config('select.activity_status'), (isset($user)) ? $user->activity_status : '', ['id' => 'user_status','class' => 'form-control']) !!}
+                      {!! $errors->first('user.activity_status', '<small class="help-block">:message</small>') !!}
                   </div>
               </div>
           </div>
 
           <div class="row">
-              <div class="form-group {!! $errors->has('manager_id') ? 'has-error' : '' !!} col-md-12">
-                  <div class="col-md-2">
-                      {!! Form::label('manager_id', 'Manager', ['class' => 'control-label']) !!}
-                  </div>
-                  <div class="col-md-10">
-                      {!! Form::select('manager_id', $manager_list, (isset($manager[0])) ? $manager[0]->manager_id : '', ['class' => 'form-control']) !!}
-                      {!! $errors->first('manager_id', '<small class="help-block">:message</small>') !!}
-                  </div>
-              </div>
-          </div>
-
-          <div class="row">
-              <div class="form-group {!! $errors->has('activity_status') ? 'has-error' : '' !!} col-md-12">
-                  <div class="col-md-2">
-                      {!! Form::label('activity_status', 'Activity status', ['class' => 'control-label']) !!}
-                  </div>
-                  <div class="col-md-10">
-                      {!! Form::select('activity_status', config('select.activity_status'), (isset($user)) ? $user->activity_status : '', ['class' => 'form-control']) !!}
-                      {!! $errors->first('activity_status', '<small class="help-block">:message</small>') !!}
-                  </div>
-              </div>
-          </div>
-
-          <div class="row">
-            <div class="form-group {!! $errors->has('date_started') ? 'has-error' : '' !!} col-md-12">
-              <div class="col-md-2">
-                {!! Form::label('date_started', 'Date started', ['class' => 'control-label']) !!}
-              </div>
-              <div class="col-md-10">
-                {!! Form::date('date_started', (isset($user->date_started)) ? $user->date_started : '', ['class' => 'form-control']) !!}
-                {!! $errors->first('date_started', '<small class="help-block">:message</small>') !!}
-              </div>
+            <div class="form-group {!! $errors->has('user.date_started') ? 'has-error' : '' !!} col-md-12">
+                <div class="col-md-2">
+                  <label class="control-label" for="user[date_started]">Date started</label>
+                </div>
+                <div class="col-md-10">
+                  <input type="text" id="user_start_date" name="user[date_started]" class="form-control" value="@if(isset($user->date_started)) {{ $user->date_started }} @endif"></input>
+                  {!! $errors->first('user.date_started', '<small class="help-block">:message</small>') !!}
+                </div>
             </div>
           </div>
 
           <div class="row">
-            <div class="form-group {!! $errors->has('date_ended') ? 'has-error' : '' !!} col-md-12">
-              <div class="col-md-2">
-                {!! Form::label('date_ended', 'Date ended', ['class' => 'control-label']) !!}
-              </div>
-              <div class="col-md-10">
-                {!! Form::date('date_ended', (isset($user->date_ended)) ? $user->date_ended : '', ['class' => 'form-control']) !!}
-                {!! $errors->first('date_ended', '<small class="help-block">:message</small>') !!}
-              </div>
+            <div class="form-group {!! $errors->has('user.date_ended') ? 'has-error' : '' !!} col-md-12">
+                <div class="col-md-2">
+                  <label class="control-label" for="user[date_ended]">Date ended</label>
+                </div>
+                <div class="col-md-10">
+                  <input type="text" id="user_end_date" name="user[date_ended]" class="form-control" value="@if(isset($user->date_ended)) {{ $user->date_ended }} @endif"></input>
+                  {!! $errors->first('user.date_ended', '<small class="help-block">:message</small>') !!}
+                </div>
             </div>
           </div>
 
           <div class="row">
-              <div class="form-group {!! $errors->has('employee_type') ? 'has-error' : '' !!} col-md-12">
+              <div class="form-group {!! $errors->has('user.employee_type') ? 'has-error' : '' !!} col-md-12">
                   <div class="col-md-2">
-                      {!! Form::label('employee_type', 'Type', ['class' => 'control-label']) !!}
+                      {!! Form::label('user[employee_type]', 'Type', ['class' => 'control-label']) !!}
                   </div>
                   <div class="col-md-10">
-                      {!! Form::select('employee_type', config('select.employee_type'), (isset($user)) ? $user->employee_type : '', ['class' => 'form-control']) !!}
-                      {!! $errors->first('employee_type', '<small class="help-block">:message</small>') !!}
+                      {!! Form::select('user[employee_type]', config('select.employee_type'), (isset($user)) ? $user->employee_type : '', ['id' => 'user_type','class' => 'form-control']) !!}
+                      {!! $errors->first('user.employee_type', '<small class="help-block">:message</small>') !!}
                   </div>
               </div>
           </div>
 
           <div class="row">
-              <div class="form-group {!! $errors->has('job_role') ? 'has-error' : '' !!} col-md-12">
+              <div class="form-group {!! $errors->has('user.job_role') ? 'has-error' : '' !!} col-md-12">
                   <div class="col-md-2">
-                      {!! Form::label('job_role', 'Team', ['class' => 'control-label']) !!}
+                      {!! Form::label('user[job_role]', 'Team', ['class' => 'control-label']) !!}
                   </div>
                   <div class="col-md-10">
-                      {!! Form::select('job_role', config('select.job_role'), (isset($user)) ? $user->job_role : '', ['class' => 'form-control']) !!}
-                      {!! $errors->first('job_role', '<small class="help-block">:message</small>') !!}
+                      {!! Form::select('user[job_role]', config('select.job_role'), (isset($user)) ? $user->job_role : '', ['id' => 'user_job_role','class' => 'form-control']) !!}
+                      {!! $errors->first('user.job_role', '<small class="help-block">:message</small>') !!}
                   </div>
               </div>
           </div>
 
           <div class="row">
-              <div class="form-group {!! $errors->has('region') ? 'has-error' : '' !!} col-md-12">
+              <div class="form-group {!! $errors->has('user.region') ? 'has-error' : '' !!} col-md-12">
                   <div class="col-md-2">
-                      {!! Form::label('region', 'Region', ['class' => 'control-label']) !!}
+                      {!! Form::label('user[region]', 'Region', ['class' => 'control-label']) !!}
                   </div>
                   <div class="col-md-10">
-                      {!! Form::select('region', config('select.region'), (isset($user)) ? $user->region : '', ['class' => 'form-control']) !!}
-                      {!! $errors->first('region', '<small class="help-block">:message</small>') !!}
+                      {!! Form::select('user[region]', config('select.region'), (isset($user)) ? $user->region : '', ['id' => 'user_region','class' => 'form-control']) !!}
+                      {!! $errors->first('user.region', '<small class="help-block">:message</small>') !!}
                   </div>
               </div>
           </div>
 
           <div class="row">
-            <div class="form-group {!! $errors->has('country') ? 'has-error' : '' !!} col-md-12">
+            <div class="form-group {!! $errors->has('user.country') ? 'has-error' : '' !!} col-md-12">
               <div class="col-md-2">
-                  {!! Form::label('country', 'Country', ['class' => 'control-label']) !!}
+                  {!! Form::label('user[country]', 'Country', ['class' => 'control-label']) !!}
               </div>
               <div class="col-md-10">
-                <select class="form-control select2" style="width: 100%;" id="country" name="country" data-placeholder="Select a country">
+                <select class="form-control select2" style="width: 100%;" id="country" name="user[country]" data-placeholder="Select a country">
                 <option value="" ></option>
                 @foreach(config('countries.country') as $key => $value)
                 <option value="{{ $key }}"
@@ -206,75 +191,76 @@
                 </option>
                 @endforeach
                 </select>
-                {!! $errors->first('country', '<small class="help-block">:message</small>') !!}
+                {!! $errors->first('user.country', '<small class="help-block">:message</small>') !!}
               </div>
             </div>
           </div>
 
           <div class="row">
-            <div class="form-group {!! $errors->has('managed_cluster') ? 'has-error' : '' !!} col-md-12">
+            <div class="form-group {!! $errors->has('managed_clusters.0') ? 'has-error' : '' !!} col-md-12">
               <div class="col-md-2">
-                {!! Form::label('managed_cluster', 'Managed Clusters', ['class' => 'control-label']) !!}
+                {!! Form::label('managed_clusters[]', 'Managed Clusters', ['class' => 'control-label']) !!}
               </div>
               <div class="col-md-10">
-                <select class="form-control select2" style="width: 100%;" id="managed_cluster" name="managed_cluster[]" data-placeholder="Select a Cluster"  multiple="multiple">
+                <select class="form-control select2" style="width: 100%;" id="managed_clusters" name="managed_clusters[]" data-placeholder="Select a Cluster"  multiple="multiple">
                   <option value="" ></option>
                   @foreach($clusters as $cluster)
                   <option value="{{ $cluster }}" 
-                  @if (old('managed_cluster') == $cluster) selected
+                  @if (old('managed_clusters') == $cluster) selected
                   @elseif(isset($userCluster) && in_array($cluster,$userCluster)) selected
                   @endif>
                   {{ $cluster }}
                   </option>
                   @endforeach
                 </select>
-                {!! $errors->first('managed_cluster', '<small class="help-block">:message</small>') !!}
+                {!! $errors->first('managed_clusters.0', '<small class="help-block">:message</small>') !!}
               </div>
             </div>
           </div>
 
           <div class="row">
-              <div class="form-group {!! $errors->has('domain') ? 'has-error' : '' !!} col-md-12">
+              <div class="form-group {!! $errors->has('user.domain') ? 'has-error' : '' !!} col-md-12">
                   <div class="col-md-2">
-                      {!! Form::label('domain', 'Domain', ['class' => 'control-label']) !!}
+                      {!! Form::label('user[domain]', 'Domain', ['class' => 'control-label']) !!}
                   </div>
                   <div class="col-md-10">
-                      {!! Form::select('domain', config('domains.domain-users'), (isset($user)) ? $user->domain : '', ['class' => 'form-control']) !!}
-                      {!! $errors->first('domain', '<small class="help-block">:message</small>') !!}
+                      {!! Form::select('user[domain]', config('domains.domain-users'), (isset($user)) ? $user->domain : '', ['id' => 'user_domain','class' => 'form-control']) !!}
+                      {!! $errors->first('user.domain', '<small class="help-block">:message</small>') !!}
                   </div>
               </div>
           </div>
 
           <div class="row">
-            <div class="form-group {!! $errors->has('management_code') ? 'has-error' : '' !!} col-md-12">
+            <div class="form-group {!! $errors->has('user.management_code') ? 'has-error' : '' !!} col-md-12">
               <div class="col-md-2">
-                  {!! Form::label('management_code', 'MC', ['class' => 'control-label']) !!}
+                  {!! Form::label('user[management_code]', 'MC', ['class' => 'control-label']) !!}
               </div>
               <div class="col-md-10">
-                <select class="form-control select2" style="width: 100%;" id="management_code" name="management_code" data-placeholder="Select a management code">
+                <select class="form-control select2" style="width: 100%;" id="user_management_code" name="user[management_code]" data-placeholder="Select a management code">
                 <option value="" ></option>
                 @foreach(config('select.users-mc') as $key => $value)
                 <option value="{{ $key }}"
-                    @if (old('management_code') == $key) selected
+                    @if (old('user[management_code]') == $key) selected
                     @elseif (isset($user->management_code) && $value == $user->management_code) selected
                     @endif>
                     {{ $value }}
                 </option>
                 @endforeach
                 </select>
-                {!! $errors->first('management_code', '<small class="help-block">:message</small>') !!}
+                {!! $errors->first('user.management_code', '<small class="help-block">:message</small>') !!}
               </div>
             </div>
           </div>
 
           <div class="row">
-              <div class="form-group {!! $errors->has('is_manager') ? 'has-error' : '' !!} col-md-12">
+              <div class="form-group {!! $errors->has('user.is_manager') ? 'has-error' : '' !!} col-md-12">
                   <div class="col-md-2">
                       {!! Form::label('is_manager', 'Is manager?', ['class' => 'control-label']) !!}
                   </div>
                   <div class="col-md-10">
-                      {!! Form::checkbox('is_manager', '1', (isset($user)) ? $user->is_manager : '', ['class' => 'checkbox']) !!}
-                      {!! $errors->first('manager_id', '<small class="help-block">:message</small>') !!}
+                      <input type="hidden" name="user[is_manager]" value="0">
+                      {!! Form::checkbox('user[is_manager]', '1', (isset($user)) ? $user->is_manager : '', ['class' => 'checkbox']) !!}
+                      {!! $errors->first('user.is_manager', '<small class="help-block">:message</small>') !!}
                   </div>
               </div>
           </div>
@@ -285,13 +271,13 @@
                 {!! Form::label('roles', 'Roles', ['class' => 'control-label']) !!}
               </div>
               <div class="col-md-10">
-                <select class="form-control select2" style="width: 100%;" id="roles" name="roles[]" data-placeholder="Select a role"  multiple="multiple">
+                <select class="form-control select2" style="width: 100%;" id="roles" name="roles[]" data-placeholder="Select a role" multiple="multiple">
                   <option value="" ></option>
                   @foreach($roles as $key => $value)
                   <option value="{{ $key }}" 
                   @if(isset($defaultRole) && $value == $defaultRole)
                   selected
-                  @elseif(isset($userRole) && in_array($key,$userRole))
+                  @elseif(isset($userRole) && in_array($value,$userRole))
                   selected
                   @endif>
                   {{ $value }}
@@ -344,8 +330,79 @@ $(document).ready(function() {
     allowClear: true
   });
 
-  $("#managed_cluster").select2({
+  $("#managed_clusters").select2({
+    placeholder: 'Select a cluster',
     allowClear: true
+  });
+
+  $("#user_management_code").select2({
+    allowClear: true
+  });
+
+  $("#user_domain").select2({
+    placeholder: 'Select a domain',
+    allowClear: true
+  });
+
+  $("#user_region").select2({
+    placeholder: 'Select a region',
+    allowClear: true
+  });
+
+  $("#user_job_role").select2({
+    placeholder: 'Select a job role',
+    allowClear: true
+  });
+
+  $("#user_type").select2({
+    placeholder: 'Select a user type',
+    allowClear: true
+  });
+
+  $("#user_status").select2({
+    placeholder: 'Select a user status',
+    allowClear: true
+  });
+
+  $("#user_manager").select2({
+    placeholder: 'Select a manager',
+    allowClear: true
+  });
+
+  // Init Date range
+  $('#user_start_date').daterangepicker({
+      singleDatePicker: true,
+      autoUpdateInput: false,
+      locale: {
+        format: 'YYYY-MM-DD',
+        cancelLabel: 'Clear'
+      }
+  });
+
+  $('#user_start_date').on('apply.daterangepicker', function(ev, picker) {
+    $(this).val(picker.startDate.format('YYYY-MM-DD'));
+  });
+
+  $('#user_start_date').on('cancel.daterangepicker', function(ev, picker) {
+      $(this).val('');
+  });
+
+  // Init Date range
+  $('#user_end_date').daterangepicker({
+      singleDatePicker: true,
+      autoUpdateInput: false,
+      locale: {
+        format: 'YYYY-MM-DD',
+        cancelLabel: 'Clear'
+      }
+  });
+
+  $('#user_end_date').on('apply.daterangepicker', function(ev, picker) {
+    $(this).val(picker.startDate.format('YYYY-MM-DD'));
+  });
+
+  $('#user_end_date').on('cancel.daterangepicker', function(ev, picker) {
+      $(this).val('');
   });
 
 
