@@ -739,7 +739,6 @@
         { name: 'dec_from_otl', data: 'dec_from_otl', width: '10px', searchable: false , visible: false}
       ],
       order: [[1, 'asc'],[3, 'asc'],[7, 'asc'],[12, 'asc']],
-
       lengthMenu: [
           [ 10, 25, 50, -1 ],
           [ '10 rows', '25 rows', '50 rows', 'Show all' ]

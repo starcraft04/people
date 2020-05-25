@@ -116,6 +116,8 @@
                       <th>Win ratio (%)</th>
                       <th>CL lead domain</th>
                       <th>CL stage</th>
+                      <th>Start date</th>
+                      <th>End date</th>
                       <th>Order intake</th>
                       <th>Consulting TCV</th>
                       <th>Pull-Thru TCV</th>
@@ -140,6 +142,8 @@
                       <td>{!! $order->win_ratio !!}</td>
                       <td>{!! $order->samba_lead_domain !!}</td>
                       <td>{!! $order->samba_stage !!}</td>
+                      <td>{!! $order->estimated_start_date !!}</td>
+                      <td>{!! $order->estimated_end_date !!}</td>
                       <td>{!! number_format($order->revenue, 1, '.', ',') !!}</td>
                       <td>{!! number_format($order->samba_consulting_product_tcv, 1, '.', ',') !!}</td>
                       <td>{!! number_format($order->samba_pullthru_tcv, 1, '.', ',') !!}</td>
@@ -148,6 +152,8 @@
                   </tbody>
                   <tfoot>
                     <tr>
+                      <th></th>
+                      <th></th>
                       <th></th>
                       <th></th>
                       <th></th>
@@ -211,6 +217,7 @@
 
 @section('script')
 <script>
+var orderTable;
 
 // Remove the formatting to get integer data for summation
 var intVal = function ( i ) {
@@ -237,7 +244,7 @@ $(document).ready(function() {
     window.location.href = "{!! route('orderdashboard') !!}/"+year+"/"+manager;
   });
 
-  var sum_col = [16,17,18];
+  var sum_col = [18,19,20];
 
   orderTable = $('#orderTable').DataTable({
     scrollX: true,
@@ -245,8 +252,8 @@ $(document).ready(function() {
     scrollY: '{!! $table_height !!}vh',
     scrollCollapse: true,
     @endif
+    processing: true,
     stateSave: true,
-    order: [[0, 'asc']],
     columns: [
         { name: 'cluster_owner', data: 'cluster_owner' , searchable: true , visible: true, className: "dt-nowrap"},
         { name: 'customer_name', data: 'customer_name' , searchable: true , visible: true, className: "dt-nowrap"},
@@ -264,10 +271,13 @@ $(document).ready(function() {
         { name: 'win_ratio', data: 'win_ratio' , searchable: true , visible: true, className: "dt-nowrap"},
         { name: 'samba_lead_domain', data: 'samba_lead_domain' , searchable: true , visible: true, className: "dt-nowrap"},
         { name: 'samba_stage', data: 'samba_stage' , searchable: true , visible: true, className: "dt-nowrap"},
-        { name: 'order', data: 'order' , searchable: true , visible: true, className: "dt-nowrap"},
-        { name: 'samba_consulting_product_tcv', data: 'samba_consulting_product_tcv' , searchable: true , visible: true, className: "dt-nowrap"},
-        { name: 'samba_pullthru_tcv', data: 'samba_pullthru_tcv' , searchable: true , visible: true, className: "dt-nowrap"}
+        { name: 'estimated_start_date', data: 'estimated_start_date' , searchable: true , visible: true, className: "dt-nowrap"},
+        { name: 'estimated_end_date', data: 'estimated_end_date' , searchable: true , visible: true, className: "dt-nowrap"},
+        { name: 'order', data: 'order' , searchable: false , visible: true, className: "dt-nowrap"},
+        { name: 'samba_consulting_product_tcv', data: 'samba_consulting_product_tcv' , searchable: false , visible: true, className: "dt-nowrap"},
+        { name: 'samba_pullthru_tcv', data: 'samba_pullthru_tcv' , searchable: false , visible: true, className: "dt-nowrap"}
     ],
+    order: [[0, 'asc']],
     lengthMenu: [
         [ 10, 25, 50, -1 ],
         [ '10 rows', '25 rows', '50 rows', 'Show all' ]
@@ -277,7 +287,7 @@ $(document).ready(function() {
       {
         extend: "colvis",
         className: "btn-sm",
-        columns: [0,1,3,4,5,6,7,8,9,10,12,13,14,15,16,17,18]
+        columns: [0,1,3,4,5,6,7,8,9,10,12,13,14,15,16,17,18,19,20]
       },
       {
         extend: "pageLength",
@@ -327,13 +337,51 @@ $(document).ready(function() {
 
         // Update footer
         $( api.column( value ).footer() ).html(
-            '<div style="font-size: 120%;">'+pageTotal+'('+total+')</div>'
+            '<div style="font-size: 120%;">'+pageTotal.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })+'</div>'
         );
       });
       
-    }
+    },
+    initComplete: function () {
+      var columns = this.api().init().columns;
+      this.api().columns().every(function () {
+        var column = this;
+        // this will get us the index of the column
+        index = column[0][0];
+        //console.log(columns[index].searchable);
 
+        // Now we need to skip the column if it is not searchable and we return true, meaning we go to next iteration
+        if (columns[index].searchable == false) {
+          return true;
+        }
+        else {
+          var input = document.createElement("input");
+          $(input).appendTo($(column.footer()).empty())
+          .on('keyup change', function () {
+            column.search($(this).val(), false, false, true).draw();
+          });
+        };
+      });
+    }
   });
+
+  // This is to restore the value of the saved search text in the footer
+  function restoreSearchState(table) {
+    // Restore state
+    var state = table.state.loaded();
+    if (state) {
+        table.columns().eq(0).each(function (colIdx) {
+            var colSearch = state.columns[colIdx].search;
+
+            if (colSearch.search) {
+                $('input', table.column(colIdx).footer()).val(colSearch.search);
+            }
+        });
+        table.draw();
+    }
+  }
+
+  restoreSearchState(orderTable);
 
   $('#orderTable').on('click', 'tbody td', function() {
     var table = orderTable;

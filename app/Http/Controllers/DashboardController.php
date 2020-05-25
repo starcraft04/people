@@ -371,14 +371,14 @@ class DashboardController extends Controller
         $orders->select('users.id as user_id', 'users.name as user_name', 'projects.id as project_id', 'customers.name as customer_name', 'customers.cluster_owner as cluster_owner',
                       'projects.project_name as project_name', 'projects.project_type as project_type', 'projects.project_subtype as project_subtype', 'projects.project_status as project_status',
                       'projects.gold_order_number as gold_order', 'projects.samba_id as samba_id', 'projects.pullthru_samba_id as pullthru_samba_id', 'projects.samba_opportunit_owner as samba_opportunit_owner',
-                      'projects.samba_lead_domain as samba_lead_domain', 'projects.samba_stage as samba_stage',
+                      'projects.samba_lead_domain as samba_lead_domain', 'projects.samba_stage as samba_stage','projects.estimated_start_date as estimated_start_date','projects.estimated_end_date as estimated_end_date',
                       'projects.revenue as revenue', 'projects.samba_consulting_product_tcv as samba_consulting_product_tcv', 'projects.samba_pullthru_tcv as samba_pullthru_tcv',
                       DB::raw('IF(projects.win_ratio IS NULL,100,projects.win_ratio) as win_ratio')
                       );
         $orders->leftjoin('customers', 'projects.customer_id', '=', 'customers.id');
         $orders->leftjoin('activities', 'activities.project_id', '=', 'projects.id');
         $orders->leftjoin('users', 'activities.user_id', '=', 'users.id');
-        $orders->where('activities.year', '=', $year);
+        $orders->where('projects.estimated_end_date', 'LIKE', '%'.$year.'%');
         $orders->where('projects.project_type', '=', 'Pre-sales');
         $orders->where('customers.name', '!=', 'Orange Business Services');
         $orders->whereIn('users.id', $users_id);
