@@ -60,6 +60,7 @@ class SambaUploadController extends Controller
         if ($file->isValid()) {
             $filename = $file->getClientOriginalName();
             $fileextension = $file->getClientOriginalExtension();
+
             if ($fileextension != 'csv') {
                 array_push($messages, ['status'=>'error', 'msg'=>'The only extension authorized is CSV']);
                 $messages_only_errors = $messages;
@@ -241,8 +242,10 @@ class SambaUploadController extends Controller
         }
         \Session::flash('success', 'File uploaded');
 
-        if (isset($request->create_in_db)) {
+        if ($request->create_in_db == "on") {
             $create_records = true;
+        } else {
+            $create_records = false;
         }
 
         $customers_list = Customer::orderBy('name')->pluck('name', 'id');

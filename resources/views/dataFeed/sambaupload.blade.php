@@ -82,7 +82,11 @@
                 Download 
                 <a href="{{ asset('/Samples/samba_upload_sample.csv') }}" style="text-decoration: underline;">this file</a> to get the structure needed.
               </div>
-              <div class="col-md-5"><input name="create_in_db" type="checkbox" id="create_in_db" class="form-group js-switch-small" checked /> Create new record in DB if no CL ID found</div>
+              <div class="col-md-5">
+                <input type="hidden" name="create_in_db" value="off">
+                <input type="checkbox" name="create_in_db" id="create_in_db" class="form-group js-switch-small" checked> 
+                Create new record in DB if no CL ID found
+              </div>
             </div>
           </div>
 
