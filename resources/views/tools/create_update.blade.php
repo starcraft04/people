@@ -824,13 +824,17 @@ h3:after {
                         <th>Project ID</th>
                         <th>Customer</th>
                         <th>Project</th>
+                        <th>Sub Project</th>
+                        <th>Stage</th>
                         <th>Created by</th>
                         <th>Start date</th>
                         <th>End date</th>
                         <th>Domain</th>
                         <th>Type</th>
-                        <th>Location</th>
-                        <th>Man days</th>
+                        <th>Consultant location</th>
+                        <th>recurring</th>
+                        <th>MD/FTE</th>
+                        <th>Total MD</th>
                         <th>Description</th>
                         <th>History</th>
                         <th>Created at</th>
@@ -843,6 +847,31 @@ h3:after {
                         </th>
                       </tr>
                     </thead>
+                    <tfoot>
+                      <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                      </tr>
+                    </tfoot>
                   </table>
                 </div>
                 </div>
@@ -856,13 +885,30 @@ h3:after {
                         <!-- Modal Header -->
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title" id="modal_loe_title"></h4>
+                            <h4 class="modal-title" id="modal_loe_title"></h4><span class="small text-danger" id="modal_loe_title_small"></span>
                         </div>
                         <!-- Modal Header -->
                       
                         <!-- Modal Body -->
                         <div class="modal-body">
                           <form id="modal_loe_form" role="form" method="POST" action="">
+                            <div id="modal_loe_formgroup_sub_project" class="form-group">
+                                <label  class="control-label" for="modal_loe_form_sub_project">Sub Project</label>
+                                <input type="text" id="modal_loe_form_sub_project" class="form-control" placeholder="Sub Project"></input>
+                                <span id="modal_loe_form_sub_project_error" class="help-block"></span>
+                            </div>
+                            <div id="modal_loe_formgroup_stage" class="form-group">
+                                <label class="control-label" for="modal_loe_form_stage">Stage</label>
+                                <select class="form-control select2" style="width: 100%;" id="modal_loe_form_stage" data-placeholder="Select a stage">
+                                  <option value="" ></option>
+                                  @foreach(config('select.loe_stage') as $key => $value)
+                                  <option value="{{ $key }}">
+                                    {{ $value }}
+                                  </option>
+                                  @endforeach
+                                </select>
+                                <span id="modal_loe_form_stage_error" class="help-block"></span>
+                            </div>
                             <div id="modal_loe_formgroup_domain" class="form-group">
                                 <label class="control-label" for="modal_loe_form_domain">Domain</label>
                                 <select class="form-control select2" style="width: 100%;" id="modal_loe_form_domain" data-placeholder="Select a domain">
@@ -899,8 +945,13 @@ h3:after {
                                 </select>
                                 <span id="modal_loe_form_location_error" class="help-block"></span>
                             </div>
+                            <div id="modal_loe_formgroup_recurring" class="form-group">
+                                <label  class="control-label" for="modal_loe_form_recurring">Recurring</label>
+                                <input type="checkbox" id="modal_loe_form_recurring" class="form-group loe-js-switch-small">
+                                <span id="modal_loe_form_recurring_error" class="help-block"></span>
+                            </div>
                             <div id="modal_loe_formgroup_mandays" class="form-group">
-                                <label  class="control-label" for="modal_loe_form_mandays">Mandays</label>
+                                <label  class="control-label" for="modal_loe_form_mandays">Mandays / FTE</label>
                                 <input type="text" id="modal_loe_form_mandays" class="form-control" placeholder="Mandays"></input>
                                 <span id="modal_loe_form_mandays_error" class="help-block"></span>
                             </div>
@@ -909,10 +960,10 @@ h3:after {
                                 <textarea type="text" id="modal_loe_form_description" class="form-control" placeholder="Enter a description" rows="4"></textarea>
                                 <span id="modal_loe_form_description_error" class="help-block"></span>
                             </div>
-                            <div id="modal_loe_formgroup_date" class="form-group">
+                            <div id="modal_loe_formgroup_start_date" class="form-group">
                                 <label  class="control-label" for="modal_loe_form_date">Start to end date</label>
                                 <input type="text" id="modal_loe_form_date" class="form-control"></input>
-                                <span id="modal_loe_form_date_error" class="help-block"></span>
+                                <span id="modal_loe_form_start_date_error" class="help-block"></span>
                             </div>
                             <div class="form-group">
                                 <div id="modal_loe_form_hidden"></div>
@@ -1932,6 +1983,37 @@ $(document).ready(function() {
       allowClear: true
     });
 
+    // Init switchery
+    // switchery
+    var small = document.querySelector('.loe-js-switch-small');
+    var init = new Switchery(small, { size: 'small' });
+
+    // Function to calculate number of working days in a week
+    
+
+    function getBusinessDatesCount(start, end) {
+      var startDate = new Date(start);
+      var endDate = new Date(end);
+      var count = 0;
+      var curDate = startDate;
+      while (curDate <= endDate) {
+          var dayOfWeek = curDate.getDay();
+          if(!((dayOfWeek == 6) || (dayOfWeek == 0)))
+            count++;
+          curDate.setDate(curDate.getDate() + 1);
+      }
+      return count;
+    }
+
+    // Remove the formatting to get integer data for summation
+    var intVal = function ( i ) {
+      return typeof i === 'string' ?
+        i.replace(/[\$,]/g, '')*1 :
+        typeof i === 'number' ?
+            i : 0;
+    };
+
+    var sum_col = [14];
 
     // Ajax datatables to create the table
     projectLoe = $('#projectLoe').DataTable({
@@ -1950,13 +2032,25 @@ $(document).ready(function() {
             { name: 'project_loe.project_id', data: 'p_id' , searchable: false , visible: false },
             { name: 'customers.name', data: 'customer_name' , searchable: true , visible: false },
             { name: 'projects.project_name', data: 'project_name' , searchable: true , visible: false },
+            { name: 'project_loe.sub_project', data: 'sub_project' , searchable: true , visible: true },
+            { name: 'project_loe.stage', data: 'loe_stage' , searchable: true , visible: true },
             { name: 'users.name', data: 'user_name' , searchable: true , visible: true },
             { name: 'project_loe.start_date', data: 'start_date' , searchable: true , visible: true },
             { name: 'project_loe.end_date', data: 'end_date' , searchable: true , visible: true },
             { name: 'project_loe.domain', data: 'domain' , searchable: true , visible: true },
             { name: 'project_loe.type', data: 'type' , searchable: true , visible: true },
             { name: 'project_loe.location', data: 'location' , searchable: true , visible: true },
+            { name: 'project_loe.recurrent', data: 'recurrent' , searchable: true , visible: true },
             { name: 'project_loe.mandays', data: 'mandays' , searchable: true , visible: true },
+            { data: function ( row, type, val, meta ) {
+                if (row.recurrent == 0){  
+                  return row.mandays;
+                } else {
+                  number_of_working_days = getBusinessDatesCount(row.start_date,row.end_date);
+                  mandays = number_of_working_days*row.mandays;
+                  return mandays.toLocaleString();
+                }
+              }, searchable: false, visible: true },
             { name: 'project_loe.description', data: 'description' , searchable: true , visible: true },
             { name: 'project_loe.history', data: 'history' , searchable: true , visible: false },
             { name: 'project_loe.created_at', data: 'created_at' , searchable: true , visible: false },
@@ -1970,6 +2064,9 @@ $(document).ready(function() {
                 render: function (data) {
                   var actions = '';
                   actions += '<div class="btn-group btn-group-xs">';
+                  if ({{ Auth::user()->can('projectLoe-create') ? 'true' : 'false' }} || {{ Auth::user()->can('projectLoe-editAll') ? 'true' : 'false' }}){
+                    actions += '<button type="button" data-id="'+data.loe_id+'" class="buttonLoeDuplicate btn btn-warning"><span class="glyphicon glyphicon-duplicate"></span></button>';
+                  };
                   if ({{ Auth::user()->can('projectLoe-edit') ? 'true' : 'false' }} || {{ Auth::user()->can('projectLoe-editAll') ? 'true' : 'false' }}){
                     actions += '<button type="button" data-id="'+data.loe_id+'" class="buttonLoeEdit btn btn-success"><span class="glyphicon glyphicon-pencil"></span></button>';
                   };
@@ -1992,7 +2089,7 @@ $(document).ready(function() {
           {
             extend: "colvis",
             className: "btn-sm",
-            columns: [ 2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+            columns: [ 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
           },
           {
             extend: "pageLength",
@@ -2019,11 +2116,38 @@ $(document).ready(function() {
                 columns: ':visible'
             }
           },
-        ]   
+        ],
+        footerCallback: function ( row, data, start, end, display ) {
+          var api = this.api(), data;
+
+          $.each(sum_col, function( index, value ) {
+            // Total over all pages
+            total = api
+              .column( value )
+              .data()
+              .reduce( function (a, b) {
+                  return intVal(a) + intVal(b);
+              }, 0 );
+
+            // Total over this page
+            pageTotal = api
+              .column( value, { page: 'current'} )
+              .data()
+              .reduce( function (a, b) {
+                return intVal(a) + intVal(b);
+              }, 0 );
+
+            // Update footer
+            $( api.column( value ).footer() ).html(
+                '<div style="font-size: 120%;">'+pageTotal.toLocaleString()+'</div>'
+            );
+          });
+        }, 
     });
 
     function modal_loe_form_clean(title) {
       $('#modal_loe_title').text(title+' LoE');
+      $('#modal_loe_title_small').text('');
       $('#modal_loe_create_update_button').text(title);
       $('#modal_loe_form_hidden').empty();
       // Clean all input
@@ -2038,6 +2162,12 @@ $(document).ready(function() {
       $("form#modal_loe_form select").each(function(){
         $(this).val('');
         $(this).select2().trigger('change');
+      });
+      // Clean all switchery
+      $(".loe-js-switch-small").each(function(){
+        if ($(this).prop('checked')) {
+          $(this).click();
+        }
       });
 
       modal_loe_form_error_clean();
@@ -2078,13 +2208,16 @@ $(document).ready(function() {
       $('#modal_loe_form_hidden').append(hidden);
       
       $('input#modal_loe_form_mandays').val(row.data().mandays);
+      $('input#modal_loe_form_sub_project').val(row.data().sub_project);
       $('textarea#modal_loe_form_description').val(row.data().description);
       if (row.data().start_date) {
         $('input#modal_loe_form_date').val(row.data().start_date+" - "+row.data().end_date);
       } else {
         $('input#modal_loe_form_date').val('');
       }
-      
+
+      $('select#modal_loe_form_stage').val(row.data().loe_stage);
+      $('select#modal_loe_form_stage').select2().trigger('change');
 
       $('select#modal_loe_form_domain').val(row.data().domain);
       $('select#modal_loe_form_domain').select2().trigger('change');
@@ -2094,6 +2227,53 @@ $(document).ready(function() {
 
       $('select#modal_loe_form_location').val(row.data().location);
       $('select#modal_loe_form_location').select2().trigger('change');
+
+      if (row.data().recurrent == 1) {
+        $("#modal_loe_form_recurring").click();
+      }
+
+      $('#modal_loe').modal("show");
+    });
+
+    // Click duplicate
+    $(document).on('click', '.buttonLoeDuplicate', function () {
+      modal_loe_form_clean('Create');
+
+      $('#modal_loe_title_small').text(' Attention, you will create a new record');
+
+      var table = projectLoe;
+      var tr = $(this).closest('tr');
+      var row = table.row(tr);
+
+      var hidden = '';
+      hidden += '<input class="form-control" id="modal_loe_form_project_id" type="hidden" value="'+{{ $project->id }}+'">';
+      hidden += '<input class="form-control" id="modal_loe_form_action" type="hidden" value="create">';
+      $('#modal_loe_form_hidden').append(hidden);
+      
+      $('input#modal_loe_form_mandays').val(row.data().mandays);
+      $('input#modal_loe_form_sub_project').val(row.data().sub_project);
+      $('textarea#modal_loe_form_description').val(row.data().description);
+      if (row.data().start_date) {
+        $('input#modal_loe_form_date').val(row.data().start_date+" - "+row.data().end_date);
+      } else {
+        $('input#modal_loe_form_date').val('');
+      }
+
+      $('select#modal_loe_form_stage').val(row.data().loe_stage);
+      $('select#modal_loe_form_stage').select2().trigger('change');
+
+      $('select#modal_loe_form_domain').val(row.data().domain);
+      $('select#modal_loe_form_domain').select2().trigger('change');
+
+      $('select#modal_loe_form_type').val(row.data().type);
+      $('select#modal_loe_form_type').select2().trigger('change');
+
+      $('select#modal_loe_form_location').val(row.data().location);
+      $('select#modal_loe_form_location').select2().trigger('change');
+
+      if (row.data().recurrent == 1) {
+        $("#modal_loe_form_recurring").click();
+      }
 
       $('#modal_loe').modal("show");
     });
@@ -2106,6 +2286,7 @@ $(document).ready(function() {
       var type_loe_modal = $('select#modal_loe_form_type').children("option:selected").val();
       var location_loe_modal = $('select#modal_loe_form_location').children("option:selected").val();
       var mandays_loe_modal = $('input#modal_loe_form_mandays').val();
+      var sub_project = $('input#modal_loe_form_sub_project').val();
       var description_loe_modal = $('textarea#modal_loe_form_description').val();
       if ($('input#modal_loe_form_date').val()) {
         var date_loe_modal = $('input#modal_loe_form_date').val().split(" - ");
@@ -2115,6 +2296,12 @@ $(document).ready(function() {
         var start_date = '';
         var end_date = '';
       }
+      var stage = $('select#modal_loe_form_stage').children("option:selected").val();
+      if ($('#modal_loe_form_recurring').prop('checked')) {
+        var recurrent = 1;
+      } else {
+        var recurrent = 0;
+      }
 
       switch (action_loe_modal) {
         case 'create':
@@ -2122,7 +2309,7 @@ $(document).ready(function() {
           var project_id_loe_modal = $('input#modal_loe_form_project_id').val();
           var data = {'project_id':project_id_loe_modal,'domain':domain_loe_modal,
                       'type':type_loe_modal,'location':location_loe_modal,'mandays':mandays_loe_modal,'description':description_loe_modal,
-                      'start_date':start_date,'end_date':end_date
+                      'start_date':start_date,'end_date':end_date,'stage':stage,'recurrent':recurrent,'sub_project':sub_project
           };
           // Route info
           var loe_create_update_route = "{!! route('ProjectsLoeAddAjax') !!}";
@@ -2134,13 +2321,15 @@ $(document).ready(function() {
           var loe_id = $('input#modal_loe_form_loe_id').val();
           var data = {'domain':domain_loe_modal,
                       'type':type_loe_modal,'location':location_loe_modal,'mandays':mandays_loe_modal,'description':description_loe_modal,
-                      'start_date':start_date,'end_date':end_date
+                      'start_date':start_date,'end_date':end_date,'stage':stage,'recurrent':recurrent,'sub_project':sub_project
           };
           // Route info
           var loe_create_update_route = "{!! route('ProjectsLoeUpdateAjax','') !!}/"+loe_id;
           var type = 'patch';
           break;
       }
+
+      //console.log(data);return;
       
       $.ajax({
             type: type,

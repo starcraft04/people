@@ -182,7 +182,10 @@ class ProjectController extends Controller
                 'project_loe.history',
                 'project_loe.signoff',
                 'project_loe.created_at',
-                'project_loe.updated_at'
+                'project_loe.updated_at',
+                'project_loe.stage AS loe_stage',
+                'project_loe.recurrent',
+                'project_loe.sub_project'
             )
             ->where('project_id', $id);
 
@@ -218,7 +221,11 @@ class ProjectController extends Controller
                 'project_loe.updated_at',
                 'projects.samba_id',
                 'customers.cluster_owner',
-                'm.name AS manager_name'
+                'm.name AS manager_name',
+                'projects.samba_stage AS CL_stage',
+                'project_loe.stage AS loe_stage',
+                'project_loe.recurrent',
+                'project_loe.sub_project'
             )
             ->where('project_loe.created_at', 'like', '%'.$year.'%');
 
@@ -249,7 +256,37 @@ class ProjectController extends Controller
         // First we need to validate the data we received
         $data = $request->validate([
             'domain' => 'required',
-            'mandays' => 'required',
+            'recurrent' => 'required',
+            'mandays' => [  'required',
+                function($attribute, $value, $fail) use ($request) {
+                    $inputs = $request->all();
+                    $recurrent  = $inputs['recurrent']; // Retrieve recurrent value
+
+                    if ($recurrent == 1 && ($value < 0 || $value > 1 )) {
+                        return $fail($attribute.' must be between 0 and 1 when reccurent is selected.');
+                    }
+                }
+            ],
+            'start_date' => [
+                function($attribute, $value, $fail) use ($request) {
+                    $inputs = $request->all();
+                    $recurrent  = $inputs['recurrent']; // Retrieve recurrent value
+
+                    if ($recurrent == 1 && !isset($inputs['start_date'])) {
+                        return $fail('Start to end date must be set when reccurent is selected.');
+                    }
+                }
+            ],
+            'end_date' => [
+                function($attribute, $value, $fail) use ($request) {
+                    $inputs = $request->all();
+                    $recurrent  = $inputs['recurrent']; // Retrieve recurrent value
+
+                    if ($recurrent == 1 && !isset($inputs['end_date'])) {
+                        return $fail('Start to end date must be set when reccurent is selected.');
+                    }
+                }
+            ],
             'project_id' => 'required',
         ]);
         // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
@@ -278,7 +315,36 @@ class ProjectController extends Controller
         // First we need to validate the data we received
         $data = $request->validate([
             'domain' => 'required',
-            'mandays' => 'required'
+            'recurrent' => 'required',
+            'mandays' => [  'required',
+                function($attribute, $value, $fail) use ($request) {
+                    $recurrent  = $request->only('recurrent')['recurrent']; // Retrieve recurrent value
+
+                    if ($recurrent == 1 && ($value < 0 || $value > 1 )) {
+                        return $fail($attribute.' must be between 0 and 1 when reccurent is selected.');
+                    }
+                }
+            ],
+            'start_date' => [
+                function($attribute, $value, $fail) use ($request) {
+                    $inputs = $request->all();
+                    $recurrent  = $inputs['recurrent']; // Retrieve recurrent value
+
+                    if ($recurrent == 1 && !isset($inputs['start_date'])) {
+                        return $fail('Start to end date must be set when reccurent is selected.');
+                    }
+                }
+            ],
+            'end_date' => [
+                function($attribute, $value, $fail) use ($request) {
+                    $inputs = $request->all();
+                    $recurrent  = $inputs['recurrent']; // Retrieve recurrent value
+
+                    if ($recurrent == 1 && !isset($inputs['end_date'])) {
+                        return $fail('Start to end date must be set when reccurent is selected.');
+                    }
+                }
+            ],
         ]);
         // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
         $result = new \stdClass();

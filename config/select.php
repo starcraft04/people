@@ -157,5 +157,9 @@ return [
         'MEDIUM' => 'MEDIUM',
         'TOP' => 'TOP',
     ],
+    'loe_stage' => [
+        'BUILD' => 'BUILD',
+        'RUN' => 'RUN'
+    ],
 
 ];

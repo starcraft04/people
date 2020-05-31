@@ -93,6 +93,9 @@
                         <th>Cluster</th>
                         <th>Customer</th>
                         <th>Project</th>
+                        <th>Sub Project</th>
+                        <th>Stage</th>
+                        <th>CL stage</th>
                         <th>CL ID</th>
                         <th>Manager</th>
                         <th>Created by</th>
@@ -100,8 +103,10 @@
                         <th>End date</th>
                         <th>Domain</th>
                         <th>Type</th>
-                        <th>Location</th>
-                        <th>Man days</th>
+                        <th>Consultant location</th>
+                        <th>recurring</th>
+                        <th>MD/FTE</th>
+                        <th>Total MD</th>
                         <th>Description</th>
                         <th>History</th>
                         <th>Signoff</th>
@@ -111,6 +116,11 @@
                   </thead>
                   <tfoot>
                     <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
                         <th></th>
                         <th></th>
                         <th></th>
@@ -172,6 +182,30 @@ $(document).ready(function() {
     window.location.href = "{!! route('loedashboard') !!}/"+year;
   });
 
+  function getBusinessDatesCount(start, end) {
+      var startDate = new Date(start);
+      var endDate = new Date(end);
+      var count = 0;
+      var curDate = startDate;
+      while (curDate <= endDate) {
+          var dayOfWeek = curDate.getDay();
+          if(!((dayOfWeek == 6) || (dayOfWeek == 0)))
+            count++;
+          curDate.setDate(curDate.getDate() + 1);
+      }
+      return count;
+  }
+
+  // Remove the formatting to get integer data for summation
+  var intVal = function ( i ) {
+    return typeof i === 'string' ?
+      i.replace(/[\$,]/g, '')*1 :
+      typeof i === 'number' ?
+          i : 0;
+  };
+
+  var sum_col = [18];
+
   var projectLoe = $('#loeTable').DataTable({
         serverSide: true,
         processing: true,
@@ -189,6 +223,9 @@ $(document).ready(function() {
             { name: 'customers.cluster_owner', data: 'cluster_owner' , searchable: true , visible: true },
             { name: 'customers.name', data: 'customer_name' , searchable: true , visible: true },
             { name: 'projects.project_name', data: 'project_name' , searchable: true , visible: true },
+            { name: 'project_loe.sub_project', data: 'sub_project' , searchable: true , visible: true },
+            { name: 'project_loe.stage', data: 'loe_stage' , searchable: true , visible: true },
+            { name: 'projects.samba_stage', data: 'CL_stage' , searchable: true , visible: true },
             { name: 'projects.samba_id', data: 'samba_id' , searchable: true , visible: true },
             { name: 'm.name', data: 'manager_name' , searchable: true , visible: true },
             { name: 'users.name', data: 'user_name' , searchable: true , visible: true },
@@ -197,7 +234,17 @@ $(document).ready(function() {
             { name: 'project_loe.domain', data: 'domain' , searchable: true , visible: true },
             { name: 'project_loe.type', data: 'type' , searchable: true , visible: true },
             { name: 'project_loe.location', data: 'location' , searchable: true , visible: true },
-            { name: 'project_loe.mandays', data: 'mandays' , searchable: true , visible: true },
+            { name: 'project_loe.recurrent', data: 'recurrent' , searchable: true , visible: true },
+            { name: 'project_loe.mandays', data: 'mandays' , searchable: false , visible: true },
+            { data: function ( row, type, val, meta ) {
+                if (row.recurrent == 0){  
+                  return row.mandays;
+                } else {
+                  number_of_working_days = getBusinessDatesCount(row.start_date,row.end_date);
+                  mandays = number_of_working_days*row.mandays;
+                  return mandays.toLocaleString();
+                }
+              }, searchable: false, visible: true },
             { name: 'project_loe.description', data: 'description' , searchable: true , visible: true },
             { name: 'project_loe.history', data: 'history' , searchable: false , visible: false },
             { 
@@ -236,7 +283,7 @@ $(document).ready(function() {
           {
             extend: "colvis",
             className: "btn-sm",
-            columns: [ 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]
+            columns: [ 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]
           },
           {
             extend: "pageLength",
@@ -296,6 +343,32 @@ $(document).ready(function() {
                     }
                 });
             }
+        },
+        footerCallback: function ( row, data, start, end, display ) {
+          var api = this.api(), data;
+
+          $.each(sum_col, function( index, value ) {
+            // Total over all pages
+            total = api
+              .column( value )
+              .data()
+              .reduce( function (a, b) {
+                  return intVal(a) + intVal(b);
+              }, 0 );
+
+            // Total over this page
+            pageTotal = api
+              .column( value, { page: 'current'} )
+              .data()
+              .reduce( function (a, b) {
+                return intVal(a) + intVal(b);
+              }, 0 );
+
+            // Update footer
+            $( api.column( value ).footer() ).html(
+                '<div style="font-size: 120%;">'+pageTotal.toLocaleString()+'</div>'
+            );
+          });
         }
     });
 
