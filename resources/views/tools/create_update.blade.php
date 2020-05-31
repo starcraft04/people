@@ -934,7 +934,7 @@ h3:after {
                                 <span id="modal_loe_form_type_error" class="help-block"></span>
                             </div>
                             <div id="modal_loe_formgroup_location" class="form-group">
-                                <label  class="control-label" for="modal_loe_form_location">Location</label>
+                                <label  class="control-label" for="modal_loe_form_location">Consultant location</label>
                                 <select class="form-control select2" style="width: 100%;" id="modal_loe_form_location" data-placeholder="Select a location">
                                     <option value="" ></option>
                                     @foreach(config('countries.country') as $key => $value)
