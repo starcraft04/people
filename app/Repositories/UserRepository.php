@@ -167,10 +167,10 @@ class UserRepository
         }
         $data = Datatables::of($userList)
             ->addColumn('roles', function ($user) {
-                $roles = User::find($user->id)->roles->pluck('name')->toArray();
+                $roles = User::find($user->id)->roles->pluck('name','id')->toArray();
                 $html = '';
                 foreach ($roles as $key => $role) {
-                    $html .= '<span class="label label-success" style="margin-right: 10px;">'.$role.'</span>';
+                    $html .= '<a href="roles/'.$key.'"><span class="label label-success" style="margin-right: 10px;">'.$role.'</span></a>';
                 }
                 return $html;
             })
