@@ -946,13 +946,13 @@ h3:after {
                                 <span id="modal_loe_form_location_error" class="help-block"></span>
                             </div>
                             <div id="modal_loe_formgroup_recurring" class="form-group">
-                                <label  class="control-label" for="modal_loe_form_recurring">Recurring</label>
+                                <label  class="control-label" for="modal_loe_form_recurring">MD / FTE</label>
                                 <input type="checkbox" id="modal_loe_form_recurring" class="form-group loe-js-switch-small">
                                 <span id="modal_loe_form_recurring_error" class="help-block"></span>
                             </div>
                             <div id="modal_loe_formgroup_mandays" class="form-group">
-                                <label  class="control-label" for="modal_loe_form_mandays">Mandays / FTE</label>
-                                <input type="text" id="modal_loe_form_mandays" class="form-control" placeholder="Mandays"></input>
+                                <label  class="control-label" for="modal_loe_form_mandays" id="modal_loe_form_mandays_label"></label>
+                                <input type="text" id="modal_loe_form_mandays" class="form-control" placeholder="Enter number"></input>
                                 <span id="modal_loe_form_mandays_error" class="help-block"></span>
                             </div>
                             <div id="modal_loe_formgroup_description" class="form-group">
@@ -2169,6 +2169,7 @@ $(document).ready(function() {
           $(this).click();
         }
       });
+      $('#modal_loe_form_mandays_label').text('Mandays');
 
       modal_loe_form_error_clean();
     }
@@ -2407,6 +2408,18 @@ $(document).ready(function() {
         }
       });
     } );
+
+    // Go from mandays to fte in modal
+    $('#modal_loe_form_recurring').on('change', function() {
+      value = $('#modal_loe_form_recurring').prop('checked');
+
+      if (value) {
+        $('#modal_loe_form_mandays_label').text('FTE (must be between 0 and 1)');
+      } else {
+        $('#modal_loe_form_mandays_label').text('Mandays');
+      }
+    });
+    
   @endif
   //endregion Loe
 

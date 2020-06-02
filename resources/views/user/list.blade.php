@@ -84,6 +84,7 @@
                     <th>Job role</th>
                     <th>Type</th>
                     <th>From OTL</th>
+                    <th>Roles</th>
                     <th class="last_column">
                       @can('user-create')
                         <a href="{{ route('userFormCreate') }}" class="btn btn-info btn-xs" align="right"><span class="glyphicon glyphicon-plus"> New</span></a>
@@ -108,6 +109,7 @@
                     <th>Job role</th>
                     <th>Type</th>
                     <th>From OTL</th>
+                    <th></th>
                     <th class="last_column"></th>
                 </tr>
             </tfoot>
@@ -263,6 +265,10 @@
             { name: 'users.job_role', data: 'job_role' , searchable: true , visible: true },
             { name: 'users.employee_type', data: 'employee_type' , searchable: true , visible: true },
             { name: 'users.from_otl', data: 'from_otl' , searchable: false , visible: false },
+            { name: 'roles', data: 'roles' , searchable: false , visible: true, render: function (data, type) {
+                return $('<div/>').html(data).text();
+              } 
+            },
             {
                 name: 'actions',
                 data: null,
@@ -296,7 +302,7 @@
           {
             extend: "colvis",
             className: "btn-sm",
-            columns: [ 1,2,3,4,5,6,7,8,9,10,11,12,13 ]
+            columns: [ 1,2,3,4,5,6,7,8,9,10,11,12,13,15 ]
           },
           {
             extend: "pageLength",

@@ -165,7 +165,16 @@ class UserRepository
         if ($exclude_contractors == '1') {
             $userList->where('users.employee_type', '!=', 'contractor');
         }
-        $data = Datatables::of($userList)->make(true);
+        $data = Datatables::of($userList)
+            ->addColumn('roles', function ($user) {
+                $roles = User::find($user->id)->roles->pluck('name')->toArray();
+                $html = '';
+                foreach ($roles as $key => $role) {
+                    $html .= '<span class="label label-success" style="margin-right: 10px;">'.$role.'</span>';
+                }
+                return $html;
+            })
+            ->make(true);
 
         return $data;
     }

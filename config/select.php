@@ -7,9 +7,10 @@ return [
         'contractor' => 'contractor',
     ],
     'loe_type' => [
-        'Junior' => 'Junior',
-        'Normal' => 'Normal',
-        'Senior' => 'Senior',
+        'Junior Consultant' => 'Junior Consultant',
+        'Consultant' => 'Consultant',
+        'Senior Consultant' => 'Senior Consultant',
+        'Managing Consultant' => 'Managing Consultant',
     ],
     'region' => [
         '' => '',
