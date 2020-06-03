@@ -17,6 +17,37 @@
 <link rel="stylesheet" href="{{ asset('/css/datatables.css') }}">
 <!-- Loader -->
 <link href="{{ asset('/css/loader.css') }}" rel="stylesheet">
+<!-- Document styling -->
+<style>
+h3 {
+  overflow: hidden;
+  text-align: center;
+}
+
+h3:before,
+h3:after {
+  background-color: #000;
+  content: "";
+  display: inline-block;
+  height: 1px;
+  position: relative;
+  vertical-align: middle;
+  width: 50%;
+}
+
+h3:before {
+  right: 0.5em;
+  margin-left: -50%;
+}
+
+h3:after {
+  left: 0.5em;
+  margin-right: -50%;
+}
+.label_error {
+  color: red;
+}
+</style>
 @stop
 
 @section('scriptsrc')
@@ -124,7 +155,7 @@
 
       <!-- Window title -->
       <div class="x_title">
-        <h2>Create records<small>Only records where all select boxes are filled in will be added</small></h2>
+        <h2>Create records</h2>
         <ul class="nav navbar-right panel_toolbox">
           <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
         </ul>
@@ -140,20 +171,6 @@
           <span></span>
           <span></span>
         </div>
-        <div id="year_select" class="row" style="display: none;">
-          <div class="col-xs-11">
-            <label for="year" class="control-label">Year</label>
-            <select style="width: 100px;" class="select2" id="year" name="year" data-placeholder="Select a year">
-              @foreach(config('select.year') as $key => $value)
-              <option value="{{ $key }}"
-                @if($key == date('Y')) selected
-                @endif>
-                {{ $value }}
-              </option>
-              @endforeach
-            </select>
-          </div>
-        </div>
         </br>
         <table id="samba_table" class="table table-striped table-hover table-bordered mytable" width="100%" style="display: none;">
           <thead>
@@ -162,7 +179,8 @@
               <th>Cluster</th>
               <th>CL lead domain</th>
               <th>Customer (CL)</th>
-              <th>Customer (Dolphin)</th>
+              <th>Customer ID (dolphin)</th>
+              <th>Customer (dolphin)</th>
               <th>Project name</th>
               <th>Assigned User</th>
               <th>CL ID</th>
@@ -177,41 +195,28 @@
           </thead>
           <tbody id="table_content">
           @foreach($ids as $key => $project)
-            @if(!$project['in_db'])
-              <tr class="item {!! $project['color'] !!}">
-                <td><button type="button" class="btn btn-info btn-xs add_samba"><span class="glyphicon glyphicon-plus"></span></button></td>
-                <td class="owners_sales_cluster">{!! $project['owners_sales_cluster'] !!}</td>
-                <td class="opportunity_domain">{!! $project['opportunity_domain'] !!}</td>
-                <td class="account_name">{!! $project['account_name'] !!}</td>
-                <td class="customer_name">
-                  <select class="customers dt-select2" style="width: 100%;" data-placeholder="Select a customer name">
-                    @foreach($customers_list as $key => $value)
-                    <option value="{{ $key }}" @if ($value == $project['account_name_modified']) selected @endif>
-                      {{ $value }}
-                    </option>
-                    @endforeach
-                  </select>
-                </td>
-                <td class="opportunity_name"><div contenteditable>{!! $project['opportunity_name'] !!}</div></td>
-                <td class="users_name" style="width: 200px;">
-                  <select class="users dt-select2" style="width: 100%;" data-placeholder="Select a user name">
-                    @foreach($users_select as $key => $value)
-                    <option value="{{ $key }}">
-                      {{ $value }}
-                    </option>
-                    @endforeach
-                  </select>
-                </td>
-                <td class="public_opportunity_id">{!! $project['public_opportunity_id'] !!}</td>
-                <td class="opportunity_owner">{!! $project['opportunity_owner'] !!}</td>
-                <td class="created_date">{!! $project['created_date'] !!}</td>
-                <td class="close_date">{!! $project['close_date'] !!}</td>
-                <td class="stage">{!! $project['stage'] !!}</td>
-                <td class="probability">{!! $project['probability'] !!}</td>
-                <td class="amount_tcv">{!! $project['amount_tcv'] !!}</td>
-                <td class="consulting_tcv">{!! $project['consulting_tcv'] !!}</td>
-              </tr>
-            @endif
+            <tr class="item {!! $project['color'] !!}">
+              <td>@if(!$project['in_db'])<button type="button" class="btn btn-info btn-xs add_samba"><span class="glyphicon glyphicon-plus"></span></button>@endif</td>
+              <td class="owners_sales_cluster">{!! $project['owners_sales_cluster'] !!}</td>
+              <td class="opportunity_domain">{!! $project['opportunity_domain'] !!}</td>
+              <td class="account_name">{!! $project['account_name'] !!}</td>
+              <td>{!! $project['account_name_modified_id'] !!}</td>
+              <td>{!! $project['account_name_modified'] !!}</td>
+              <td class="opportunity_name">{!! $project['opportunity_name'] !!}</td>
+              <td class="users_name" style="width: 200px;">
+                @if($project['in_db'])
+                  {{ $project['user_name'] }}
+                @endif
+              </td>
+              <td class="public_opportunity_id">{!! $project['public_opportunity_id'] !!}</td>
+              <td class="opportunity_owner">{!! $project['opportunity_owner'] !!}</td>
+              <td class="created_date">{!! $project['created_date'] !!}</td>
+              <td class="close_date">{!! $project['close_date'] !!}</td>
+              <td class="stage">{!! $project['stage'] !!}</td>
+              <td class="probability">{!! $project['probability'] !!}</td>
+              <td class="amount_tcv">{!! $project['amount_tcv'] !!}</td>
+              <td class="consulting_tcv">{!! $project['consulting_tcv'] !!}</td>
+            </tr>
           @endforeach
           </tbody>
           <tfoot>
@@ -233,6 +238,121 @@
           </tfoot>
         </table>
       </div>
+
+      <!-- Modal -->
+      <div class="modal fade" id="addProjectModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" style="display:table;">
+          <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add project</h4>
+            </div>
+            <!-- Modal Header -->
+              
+            <!-- Modal Body -->
+            <div class="modal-body">
+              <h4>Update existing project</h4>
+              <div class="row">
+                <div class="col-sm-11">
+                  Select from the project below where your team is working to add to the project selected
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-4">
+                  Customer: <span id="customer_name_title_modal"></span>
+                </div>
+                <div class="col-sm-4">
+                  Project: <span id="project_name_title_modal"></span>
+                </div>
+                <div class="col-sm-4">
+                  CL ID: <span id="CL_ID_title_modal"></span>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                  <label  class="control-label" for="year_modal">Year</label>
+                  <div>
+                    <select class="form-control select2" style="width: 100%;" name="year_modal" data-placeholder="Select a year">
+                        @foreach(config('select.year') as $key => $value)
+                        <option value="{{ $key }}"
+                          @if (date('Y') == $key) selected
+                          @endif
+                        >
+                          {{ $value }}
+                        </option>
+                        @endforeach
+                    </select>
+                  </div>
+                </div>
+              <table id="project_table" class="table table-striped table-hover table-bordered mytable" width="100%">
+                <thead>
+                  <tr>
+                    <th>Customer name</th>
+                    <th>Project id</th>
+                    <th>Project name</th>
+                    <th>User</th>
+                    <th>Project type</th>
+                    <th>Project status</th>
+                    <th>CL ID</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+              </BR></BR></BR>
+              <h3>OR</h3>
+              </BR>
+              <h4>Create new project</h4>
+              <div class="row">
+                <div class="col-sm-11">
+                  Fill in the information then click create
+                </div>
+              </div>
+              <form id="form_addProject_modal" role="form" method="POST" action="">
+                <div class="form-group">
+                  <label id="label_project_name" class="control-label" for="form_addProject_project_name_modal">Project name *</label>
+                  <input type="text" id="form_addProject_project_name_modal" name="form_addProject_project_name_modal" class="form-control" placeholder="Project name"></input>
+                </div>
+                <div class="form-group">
+                  <label id="label_customer_name" class="control-label" for="form_addProject_customer_name_modal">Customer name (CL customer name: <span id="form_customer_title_modal"></span>) *</label>
+                  <select class="form-control select2" id="form_addProject_customer_name_modal" name="form_addProject_customer_name_modal" style="width: 100%;" data-placeholder="Select a customer name">
+                    @foreach($customers_list as $key => $value)
+                    <option value="{{ $key }}">
+                      {{ $value }}
+                    </option>
+                    @endforeach
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label id="label_user_name" class="control-label" for="form_addProject_user_name_modal">Assign to user *</label>
+                  <select class="form-control select2" id="form_addProject_user_name_modal" name="form_addProject_user_name_modal" style="width: 100%;" data-placeholder="Select a user">
+                    <option value="">
+                    </option>
+                    @foreach($users_select as $key => $value)
+                    <option value="{{ $key }}">
+                      {{ $value }}
+                    </option>
+                    @endforeach
+                  </select>
+                </div>
+                <div class="form-group">
+                  <div id="addProject_hidden">
+                  </div>
+                </div>
+              </form>  
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" id="addProject_create_button_modal" class="btn btn-success">Create</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Modal -->
       <!-- Window content -->
 
     </div>
@@ -291,7 +411,6 @@
     var small = document.querySelector('.js-switch-small');
     var switchery = new Switchery(small, { size: 'small' });
 
-    var year;
     var cluster;
     var samba_lead_domain;
     var customer_samba;
@@ -308,24 +427,46 @@
     var consulting_tcv;
     var array_of_data = [];
     var samba_table;
+    var year;
 
     @if (isset($create_records) && $create_records)
+      $(document).ready(function() {
+        //region Page setup
+        //CSRF for ajax
+        $.ajaxSetup({
+          headers: {
+              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          }
+        });
+        // This code will make any modal window draggable
+        $(".modal-header").on("mousedown", function(mousedownEvt) {
+          var $draggable = $(this);
+          var x = mousedownEvt.pageX - $draggable.offset().left,
+              y = mousedownEvt.pageY - $draggable.offset().top;
+          $("body").on("mousemove.draggable", function(mousemoveEvt) {
+              $draggable.closest(".modal-dialog").offset({
+                  "left": mousemoveEvt.pageX - x,
+                  "top": mousemoveEvt.pageY - y
+              });
+          });
+          $("body").one("mouseup", function() {
+              $("body").off("mousemove.draggable");
+          });
+          $draggable.closest(".modal").one("bs.modal.hide", function() {
+              $("body").off("mousemove.draggable");
+          });
+        });
+        //endregion
 
-      $.ajaxSetup({
-                  headers: {
-                      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                  }
-      });
+        //region Init select2 boxes
+        $(".select2").select2({
+          allowClear: false
+        });
+        //endregion
 
-      $(window).load(function(){
-
-        $('#year_select').show();
         $('#samba_table').show();
         $('#loader-6').hide();
 
-        $("#year").select2({
-          allowClear: false
-        });
 
         samba_table = $('#samba_table').DataTable({
           scrollX: true,
@@ -340,7 +481,8 @@
               { name: 'owners_sales_cluster', data: 'owners_sales_cluster' , searchable: true , visible: true},
               { name: 'opportunity_domain', data: 'opportunity_domain' , searchable: true , visible: false},
               { name: 'account_name', data: 'account_name' , searchable: true , visible: true},
-              { name: 'customer_name', data: 'customer_name' , searchable: false , visible: true},
+              { name: 'account_name_modified_id', data: 'account_name_modified_id' , searchable: false , visible: false},
+              { name: 'account_name_modified', data: 'account_name_modified' , searchable: false , visible: false},
               { name: 'opportunity_name', data: 'opportunity_name' , searchable: true , visible: true},
               { name: 'users_name', data: 'users_name' , searchable: false , visible: true},
               { name: 'public_opportunity_id', data: 'public_opportunity_id' , searchable: true , visible: true},
@@ -361,7 +503,7 @@
             {
               extend: "colvis",
               className: "btn-sm",
-              columns: [1,2,3,5,7,8,9,10,11,12,13,14]
+              columns: [1,2,3,6,7,8,9,10,11,12,13]
             },
             {
               extend: "pageLength",
@@ -389,12 +531,6 @@
               }
             },
           ],
-          drawCallback: function() {
-            $('.dt-select2').select2({
-              allowClear: true
-            });
-            $('.users').val(null).trigger('change');
-          },
           initComplete: function () {
             var columns = this.api().init().columns;
             this.api().columns().every(function () {
@@ -418,8 +554,54 @@
           }
         });
 
-        $(document).on('click', '.add_samba', function(){
+        
+
+        // Click plus button from CL upload result
+        $(document).on('click', '.add_samba', function () {
+
+          var table = samba_table;
+          var tr = $(this).closest('tr');
+          var row = table.row(tr);
+
+          // Getting the info from the row
+          var customer_cl = row.data().account_name;
+          var customer_dolphin = row.data().account_name_modified;
+          var customer_dolphin_id = row.data().account_name_modified_id;
+          var project_name = row.data().opportunity_name;
+          var cl_id = row.data().public_opportunity_id;
+          //console.log(year);
+
+          // Clean all select
+          $("#form_addProject_customer_name_modal").val('');
+          $("#form_addProject_customer_name_modal").select2().trigger('change');
+          $("#form_addProject_user_name_modal").val('');
+          $("#form_addProject_user_name_modal").select2().trigger('change');
+
+          // init form
+          $('span#customer_name_title_modal').text(customer_cl);
+          $('span#project_name_title_modal').text(project_name);
+          $('span#CL_ID_title_modal').text(cl_id);
+          $('span#form_customer_title_modal').text(customer_cl);
+          $('input#form_addProject_project_name_modal').val(project_name);
+          if (customer_dolphin_id != 0) {
+            $("#form_addProject_customer_name_modal").val(customer_dolphin_id);
+            $("#form_addProject_customer_name_modal").select2().trigger('change');
+          }
+
+          $('#addProject_hidden').empty();
+          var hidden = '';
+          hidden += '<input class="form-control" name="cl_id" type="hidden" value="'+cl_id+'">';
+          hidden += '<input class="form-control" name="customer_cl" type="hidden" value="'+customer_cl+'">';
+
+          $('#addProject_hidden').append(hidden);
           
+
+          $('#addProjectModal').modal();
+        });
+
+
+
+        $(document).on('click', '.add_samba_update', function(){
           var array_of_data = [];
           year = $("#year option:selected").val();
 
@@ -493,6 +675,70 @@
             }
           });
           array_of_data = [];
+        });
+
+        year = $('select[name="year_modal"] option:selected').val();
+        var projectTable = $('#project_table').DataTable({
+              serverSide: true,
+              processing: true,
+              scrollX: true,
+              responsive: false,
+              ajax: {
+                      url: "{!! route('listOfProjectsNotUsedInCLAjax',['']) !!}"+'/'+year,
+                      type: "GET",
+                      dataType: "JSON"
+                  },
+              columns: [
+                  { name: 'customers.name', data: 'customer_name' , searchable: true , visible: true },
+                  { name: 'projects.id', data: 'project_id' , searchable: false , visible: false },
+                  { name: 'projects.project_name', data: 'project_name' , searchable: true , visible: true },
+                  { name: 'u.name', data: 'user_name' , searchable: true , visible: true },
+                  { name: 'projects.project_type', data: 'project_type' , searchable: true , visible: true },
+                  { name: 'projects.project_status', data: 'project_status' , searchable: true , visible: true },
+                  { name: 'projects.samba_id', data: 'samba_id' , searchable: true , visible: false },
+                  {
+                      name: 'actions',
+                      data: null,
+                      sortable: false,
+                      searchable: false,
+                      render: function (data) {
+                        var actions = '';
+                        actions += '<div class="btn-group btn-group-xs">';
+                        actions += '<button type="button" class="buttonProjectEdit btn btn-success"><span class="glyphicon glyphicon-pencil"></span></button>';
+                        actions += '</div>';
+                        return actions;
+                      },
+                      width: '70px'
+                  }
+                  ],
+              order: [[0, 'asc']],
+              lengthMenu: [
+                  [ 10, 25, 50, -1 ],
+                  [ '10 rows', '25 rows', '50 rows', 'Show all' ]
+              ],
+              dom: 'Bfrtip',
+              buttons: [
+                {
+                  extend: "colvis",
+                  className: "btn-sm",
+                  columns: [ 0,2,3,4,5]
+                },
+                {
+                  extend: "pageLength",
+                  className: "btn-sm"
+                }
+              ]   
+          });
+
+        // This part is to make sure that datatables can adjust the columns size when it is hidden because of non active tab when created
+        $('#addProjectModal').on('shown.bs.modal', function () {
+          projectTable.columns.adjust();
+        });
+
+        // Year change in modal
+        $('select[name="year_modal"]').on('change', function() {
+          year = $(this).val();
+          projectTable.ajax.url("{!! route('listOfProjectsNotUsedInCLAjax',['']) !!}"+'/'+year).load();
         });
       });
     @endif

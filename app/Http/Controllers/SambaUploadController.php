@@ -8,6 +8,7 @@ use App\Repositories\ActivityRepository;
 use App\Repositories\ProjectRepository;
 use App\Repositories\UserRepository;
 use App\SambaName;
+use App\Project;
 use Auth;
 use DateTime;
 use Illuminate\Http\Request;
@@ -132,6 +133,7 @@ class SambaUploadController extends Controller
 
             $ids = [];
 
+            // Here we go over each row and we create a new file that will aggregate all the rows in a single row from the different products on the same CL ID
             foreach ($result as $row) {
                 // First we check if the Samba opp id is empty and if yes, we don't need to execute the script for this line
                 if ($row['public_opportunity_id'] == '') {
@@ -146,13 +148,14 @@ class SambaUploadController extends Controller
                 if (count($projectInDB) < 1) {
                     // Samba ID not found in DB
                     array_push($messages, ['status'=>'error',
-          'msg'=>'LINE '.$i.': '.' <b>Customer</b>: <u>'.$row['account_name'].'</u> / <b>Opportunity</b>: <u>'.$row['opportunity_name'].'</u> / <b>Samba ID</b>: <u>'.$row['public_opportunity_id'].'</u>'.' -> this Samba ID is not found in the DB or it is associated to a project that is not a project type set as Pre-sales.',
-          ]);
+                        'msg'=>'LINE '.$i.': '.' <b>Customer</b>: <u>'.$row['account_name'].'</u> / <b>Opportunity</b>: <u>'.$row['opportunity_name'].'</u> / <b>Samba ID</b>: <u>'.$row['public_opportunity_id'].'</u>'.' -> this Samba ID is not found in the DB or it is associated to a project that is not a project type set as Pre-sales.',
+                    ]);
                     $in_db = false;
                 } else {
                     // Samba ID found in DB
                     array_push($messages, ['status'=>'info',
-          'msg'=>'LINE '.$i.': Found '.count($projectInDB).' instance of Samba ID:'.$row['public_opportunity_id'], ]);
+                        'msg'=>'LINE '.$i.': Found '.count($projectInDB).' instance of Samba ID:'.$row['public_opportunity_id']
+                    ]);
                     $in_db = true;
                 }
                 $i += 1;
@@ -183,34 +186,40 @@ class SambaUploadController extends Controller
                         $color = '';
                     }
                     array_push($ids, [
-            'owners_sales_cluster' => $row['owners_sales_cluster'],
-            'opportunity_domain' => $row['opportunity_domain'],
-            'account_name' => $row['account_name'],
-            'account_name_modified' => $row['account_name'],
-            'public_opportunity_id' => $row['public_opportunity_id'],
-            'opportunity_name' => $row['opportunity_name'],
-            'opportunity_owner' => $row['opportunity_owner'],
-            'created_date' => $row['created_date'],
-            'close_date' => $row['close_date'],
-            'stage' => $row['stage'],
-            'probability' => $row['probability'],
-            'amount_tcv' => $row['amount_tcv_converted'],
-            'consulting_tcv' => $consulting_tcv,
-            'in_db' => $in_db,
-            'color' => $color,
-          ]);
+                        'owners_sales_cluster' => $row['owners_sales_cluster'],
+                        'opportunity_domain' => $row['opportunity_domain'],
+                        'account_name' => $row['account_name'],
+                        'account_name_modified' => $row['account_name'],
+                        'account_name_modified_id' => 0,
+                        'public_opportunity_id' => $row['public_opportunity_id'],
+                        'opportunity_name' => $row['opportunity_name'],
+                        'opportunity_owner' => $row['opportunity_owner'],
+                        'created_date' => $row['created_date'],
+                        'close_date' => $row['close_date'],
+                        'stage' => $row['stage'],
+                        'probability' => $row['probability'],
+                        'amount_tcv' => $row['amount_tcv_converted'],
+                        'consulting_tcv' => $consulting_tcv,
+                        'user_id' => 0,
+                        'user_name' => 'no user from your team',
+                        'in_db' => $in_db,
+                        'color' => $color,
+                    ]);
                 }
             }
             //dd($ids);
+
+
             foreach ($ids as &$row) {
                 if ($row['in_db']) {
-                    $projectInDB = $this->projectRepository->getBySambaID($row['public_opportunity_id']);
+                    $projectInDB = Project::with('activities.user')->where('samba_id',$row['public_opportunity_id'])->get();
                     foreach ($projectInDB as $key => $project) {
                         $customer = $project->customer()->first();
                         //dd($row['probability']);
                         array_push($messages, ['status'=>'update',
-            'msg'=>'LINE '.$i.': '.
-                ' <b>Customer</b>: <u>'.$customer->name.'</u> / <b>Opportunity</b>: <u>'.$project->project_name.'</u> / <b>Samba ID</b>: <u>'.$row['public_opportunity_id'].'</u>'.' -> project updated in the DB.', ]);
+                            'msg'=>'LINE '.$i.': '.
+                            ' <b>Customer</b>: <u>'.$customer->name.'</u> / <b>Opportunity</b>: <u>'.$project->project_name.'</u> / <b>Samba ID</b>: <u>'.$row['public_opportunity_id'].'</u>'.' -> project updated in the DB.'
+                        ]);
                         $project->samba_lead_domain = $row['opportunity_domain'];
                         $project->samba_opportunit_owner = $row['opportunity_owner'];
                         $project->samba_stage = $row['stage'];
@@ -222,11 +231,24 @@ class SambaUploadController extends Controller
                             $project->samba_consulting_product_tcv = $row['consulting_tcv'];
                         }
                         $project->save();
+                        // Now we need to look in our team who is assigned on this project
+                        $user_names = $project->activities->unique('name')->pluck('user.name','user.id');
+                        foreach ($user_names as $key => $user_name) {
+                            if (in_array($user_name,$users_select)) {
+                                $row['user_id'] = $key;
+                                $row['user_name'] = $user_name;
+                            }
+                            continue;
+                        }
                     }
                 } else {
                     $name = SambaName::where('samba_name', $row['account_name'])->first();
                     if ($name != null) {
+                        $customer_id = Customer::where('name',$name->dolphin_name)->first();
                         $row['account_name_modified'] = $name->dolphin_name;
+                        if ($customer_id) {
+                            $row['account_name_modified_id'] = $customer_id->id;
+                        }
                     }
                 }
             }

@@ -471,6 +471,37 @@ class ProjectController extends Controller
         return $projects;
     }
 
+    public function listOfProjectsNotUsedInCL($year)
+    {
+        $projects = DB::table('projects')
+            ->select(
+                'customers.name AS customer_name',
+                'projects.id AS project_id',
+                'projects.project_name AS project_name',
+                'projects.project_type AS project_type',
+                'projects.project_status AS project_status',
+                'u.name AS user_name',
+                'projects.samba_id AS samba_id'
+            )
+            ->leftjoin('customers', 'projects.customer_id', '=', 'customers.id')
+            ->leftjoin('activities', 'activities.project_id', '=', 'projects.id')
+            ->leftjoin('users AS u', 'activities.user_id', '=', 'u.id')
+            ->leftjoin('users_users AS uu', 'u.id', '=', 'uu.user_id')
+            ->leftjoin('users AS m', 'm.id', '=', 'uu.manager_id')
+            ->where('activities.year', '=', $year)
+            ->where('m.id',Auth::user()->id)
+            ->where('project_type','Pre-sales')
+            ->where('customers.name','!=','Orange Business Services')
+            ->whereNull('samba_id')
+            ->groupBy('project_id');
+
+        $data = Datatables::of($projects)->make(true);
+
+    
+
+        return $data;
+}
+
     public function createProjectFromPrimeUpload(Request $request)
     {
         $inputs = $request->all();

@@ -94,6 +94,7 @@ Route::group(['middleware' => ['auth', 'general','last_login']], function () {
     //  AJAX
     Route::post('listOfProjectsAjax', ['uses' => 'ProjectController@listOfProjects', 'as' => 'listOfProjectsAjax', 'middleware' => ['permission:tools-all_projects-view|tools-unassigned-view|tools-activity-edit|project-view|project-create|project-edit|project-delete']]);
     Route::get('listOfProjectsNotUsedInPrimeAjax/{user_name}/{year}', ['uses' => 'ProjectController@listOfProjectsNotUsedInPrime', 'as' => 'listOfProjectsNotUsedInPrimeAjax', 'middleware' => ['permission:tools-all_projects-view']]);
+    Route::get('listOfProjectsNotUsedInCLAjax/{year}', ['uses' => 'ProjectController@listOfProjectsNotUsedInCL', 'as' => 'listOfProjectsNotUsedInCLAjax', 'middleware' => ['permission:tools-all_projects-view']]);
     Route::post('createProjectFromPrimeUpload', ['uses' => 'ProjectController@createProjectFromPrimeUpload', 'as' => 'createProjectFromPrimeUpload', 'middleware' => ['permission:tools-all_projects-edit']]);
     Route::post('editProjectFromPrimeUpload', ['uses' => 'ProjectController@editProjectFromPrimeUpload', 'as' => 'editProjectFromPrimeUpload', 'middleware' => ['permission:tools-all_projects-edit']]);
 
