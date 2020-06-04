@@ -471,7 +471,7 @@ class ProjectController extends Controller
         return $projects;
     }
 
-    public function listOfProjectsNotUsedInCL($year)
+    public function listOfProjectsNotUsedInCL($year, $user_id = null)
     {
         $projects = DB::table('projects')
             ->select(
@@ -492,8 +492,12 @@ class ProjectController extends Controller
             ->where('m.id',Auth::user()->id)
             ->where('project_type','Pre-sales')
             ->where('customers.name','!=','Orange Business Services')
-            ->whereNull('samba_id')
-            ->groupBy('project_id');
+            ->whereNull('samba_id');
+        if ($user_id != null) {
+            $projects->where('u.id',$user_id);
+        }
+        $projects->groupBy('project_id');
+
 
         $data = Datatables::of($projects)->make(true);
 

@@ -11,6 +11,9 @@
           @can('samba-upload')
             <li><a href="{!!route('sambauploadform')!!}">CL upload</a></li>
           @endcan
+          @can('samba-upload')
+            <li><a href="{!!route('sambauserupload')!!}">CL user synch</a></li>
+          @endcan
           @can('revenue-upload')
             <li><a href="{!!route('revenueuploadform')!!}">Revenue upload</a></li>
           @endcan
