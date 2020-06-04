@@ -45,6 +45,8 @@ Route::group(['middleware' => ['auth', 'general','last_login']], function () {
     Route::get('sambaupload', ['uses' => 'SambaUploadController@getForm', 'as' => 'sambauploadform', 'middleware' => ['permission:samba-upload']]);
     Route::post('sambaupload', ['uses' => 'SambaUploadController@postForm', 'as' => 'sambauploadPOST', 'middleware' => ['permission:samba-upload']]);
     Route::post('sambauploadcreate', ['uses' => 'SambaUploadController@postFormCreate', 'as' => 'sambauploadcreatePOST', 'middleware' => ['permission:samba-upload']]);
+    Route::post('sambaUploadUpdateProject/{project}', ['uses' => 'SambaUploadController@sambaUploadUpdateProject', 'as' => 'sambaUploadUpdateProject', 'middleware' => ['permission:samba-upload']]);
+    Route::post('sambaUploadCreateProject', ['uses' => 'SambaUploadController@sambaUploadCreateProject', 'as' => 'sambaUploadCreateProject', 'middleware' => ['permission:samba-upload']]);
 
     //Customer upload
     Route::get('customerupload', ['uses' => 'CustomerUploadController@getForm', 'as' => 'customeruploadform', 'middleware' => ['permission:customer-upload']]);

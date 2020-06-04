@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Customer;
 use App\Http\Requests\SambaUploadRequest;
+use App\Http\Requests\SambaProjectCreateRequest;
 use App\Repositories\ActivityRepository;
 use App\Repositories\ProjectRepository;
 use App\Repositories\UserRepository;
 use App\SambaName;
 use App\Project;
+use App\Activity;
 use Auth;
 use DateTime;
 use Illuminate\Http\Request;
@@ -242,12 +244,17 @@ class SambaUploadController extends Controller
                         }
                     }
                 } else {
-                    $name = SambaName::where('samba_name', $row['account_name'])->first();
-                    if ($name != null) {
-                        $customer_id = Customer::where('name',$name->dolphin_name)->first();
-                        $row['account_name_modified'] = $name->dolphin_name;
-                        if ($customer_id) {
-                            $row['account_name_modified_id'] = $customer_id->id;
+                    $check_customer_name = Customer::where('name',$row['account_name'])->first();
+                    if ($check_customer_name != null) {
+                        $row['account_name_modified_id'] = $check_customer_name->id;
+                    } else {
+                        $name = SambaName::where('samba_name', $row['account_name'])->first();
+                        if ($name != null) {
+                            $customer_id = Customer::where('name',$name->dolphin_name)->first();
+                            $row['account_name_modified'] = $name->dolphin_name;
+                            if ($customer_id) {
+                                $row['account_name_modified_id'] = $customer_id->id;
+                            }
                         }
                     }
                 }
@@ -278,107 +285,70 @@ class SambaUploadController extends Controller
         return view('dataFeed/sambaupload', compact('messages_only_errors', 'messages', 'color', 'create_records', 'customers_list', 'users_select', 'ids', 'table_height'));
     }
 
-    public function postFormCreate(Request $request)
+    public function sambaUploadUpdateProject(Request $request, $project_id = null)
     {
-
-    // When using stdClass(), we need to prepend with \ so that Laravel won't get confused...
         $result = new \stdClass();
-        $result->result = 'success';
-        $result->msg = 'Records added successfully';
-
         $inputs = $request->all();
-        $year = $inputs['year'];
-        $datas = json_decode($inputs['data']);
-        //dd($datas);
-        // datas is in the following form:
-        /* array:2 [
-          0 => {
-            +"samba_lead_domain": "Security"
-            +"customer_samba": "GlaxoSmithKline plc"
-            +"customer_dolphin": "70"
-            +"project_name": "GSK USB Scanning Device"
-            +"assigned_user": "9"
-            +"samba_id": "70165805"
-            +"order_intake": "540990"
-            +"opportunity_owner": "Mike Christodoulou"
-            +"creat_date": "2018-12-13"
-            +"close_date": "2019-10-25"
-            +"samba_stage": "2 Qualification"
-            +"win_ratio": "10"
-          }
-          1 => {...
-          }
-        ] */
-
-        // Now we will loop through the datas
-        // First we need to check if the projects already exists
-
-        //dd($datas);
-
-        foreach ($datas as $key => $data) {
-            // Let's look if we need to update the database for the relation between the samba names and dolphin names
-            $name = SambaName::where('samba_name', $data->customer_samba)->first();
-            if ($name == null) {
-                $dolphin_name = Customer::find($data->customer_dolphin);
-                $name = new SambaName;
-                $name->samba_name = $data->customer_samba;
-                $name->dolphin_name = $dolphin_name->name;
-                $name->save();
-            }
-
-            // Let's assign the right column names
-            $project_inputs = [];
-            $project_inputs['samba_lead_domain'] = trim($data->samba_lead_domain);
-            $project_inputs['customer_id'] = $data->customer_dolphin;
-            $project_inputs['project_name'] = trim($data->project_name);
-            $project_inputs['samba_id'] = trim($data->samba_id);
-            $project_inputs['revenue'] = $data->order_intake;
-            if ($data->consulting_tcv != '') {
-                $project_inputs['samba_consulting_product_tcv'] = $data->consulting_tcv;
-            }
-            $project_inputs['samba_opportunit_owner'] = trim($data->opportunity_owner);
-            $project_inputs['estimated_start_date'] = $data->create_date;
-            $project_inputs['estimated_end_date'] = $data->close_date;
-            $project_inputs['samba_stage'] = trim($data->samba_stage);
-            $project_inputs['win_ratio'] = $data->win_ratio;
-            $project_inputs['meta_activity'] = null;
-            $project_inputs['otl_project_code'] = null;
-            $project_inputs['project_type'] = 'Pre-sales';
-
-            // Let's check if we can find in the DB a record with the same project name and customer id
-            $project_count = $this->projectRepository->getByNameCustomernum($project_inputs['project_name'], $project_inputs['customer_id']);
-            if ($project_count > 0) {
-                $project = $this->projectRepository->getByNameCustomer($project_inputs['project_name'], $project_inputs['customer_id']);
-                $project_inputs_update['samba_lead_domain'] = $project_inputs['samba_lead_domain'];
-                $project_inputs_update['samba_id'] = $project_inputs['samba_id'];
-                $project_inputs_update['revenue'] = $project_inputs['revenue'];
-                if ($data->consulting_tcv != '') {
-                    $project_inputs_update['samba_consulting_product_tcv'] = $project_inputs['samba_consulting_product_tcv'];
-                }
-                $project_inputs_update['samba_opportunit_owner'] = $project_inputs['samba_opportunit_owner'];
-                $project_inputs_update['estimated_start_date'] = $project_inputs['estimated_start_date'];
-                $project_inputs_update['estimated_end_date'] = $project_inputs['estimated_end_date'];
-                $project_inputs_update['samba_stage'] = $project_inputs['samba_stage'];
-                $project_inputs_update['win_ratio'] = $project_inputs['win_ratio'];
-                $project = $this->projectRepository->update($project->id, $project_inputs_update);
-            } else {
-                $project = $this->projectRepository->create($project_inputs);
-            }
-            // Now we need to assign the user
-            $activity_inputs['year'] = $year;
-            $activity_inputs['month'] = 1;
-            $activity_inputs['project_id'] = $project->id;
-            $activity_inputs['user_id'] = $data->assigned_user;
-            $activity_inputs['task_hour'] = 0;
-
-            // Let's check if we can find in the DB a record with the same activity
-            $activity_count = $this->activityRepository->getByYMPUnum($activity_inputs['year'], $activity_inputs['month'], $activity_inputs['project_id'], $activity_inputs['user_id']);
-            if ($activity_count > 0) {
-            } else {
-                $activity = $this->activityRepository->create($activity_inputs);
-            }
+        // Update a record
+        $update_result = Project::find($project_id);
+        if (Auth::user()->can('tools-all_projects-edit')) {
+            $update_result->update($inputs);
+            $result->result = 'success';
+            $result->msg = 'Record updated successfully';
+        } else {
+            $result->result = 'error';
+            $result->msg = 'No permission to update record';
         }
 
         return json_encode($result);
+
+    }
+
+    public function sambaUploadCreateProject(SambaProjectCreateRequest $request)
+    {
+        $result = new \stdClass();
+        $inputs = $request->all();
+
+        //dd($inputs);
+
+        // We need to check if we need to enter a relation between the name from CL and the name in Dolphin
+        $dolphin_name = Customer::find($inputs['customer_id'])->name;
+        if ($dolphin_name != $inputs['customer_cl']) {
+            $name = SambaName::where('samba_name', $inputs['customer_cl'])->first();
+            if ($name == null) {
+                $name = new SambaName;
+                $name->samba_name = $inputs['customer_cl'];
+                $name->dolphin_name = $dolphin_name;
+                $name->save();
+            }
+        }
+
+        if (Auth::user()->can('tools-all_projects-edit')) {
+            $project = new Project;
+            $project->project_name = $inputs['project_name'];
+            $project->customer_id = $inputs['customer_id'];
+            $project->project_type = 'Pre-sales';
+            $project->samba_id = $inputs['samba_id'];
+            $project->created_by_user_id = Auth::user()->id;
+            $project->save();
+
+            $activity = new Activity;
+            $activity->year = $inputs['year'];
+            $activity->month = 1;
+            $activity->project_id = $project->id;
+            $activity->user_id = $inputs['user_id'];
+            $activity->task_hour = 0;
+            $activity->from_otl = 0;
+            $activity->save();
+
+            $result->result = 'success';
+            $result->msg = 'Record updated successfully';
+        } else {
+            $result->result = 'error';
+            $result->msg = 'No permission to update record';
+        }
+
+        return json_encode($result);
+        
     }
 }

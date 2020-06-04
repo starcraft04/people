@@ -196,7 +196,7 @@ h3:after {
           <tbody id="table_content">
           @foreach($ids as $key => $project)
             <tr class="item {!! $project['color'] !!}">
-              <td>@if(!$project['in_db'])<button type="button" class="btn btn-info btn-xs add_samba"><span class="glyphicon glyphicon-plus"></span></button>@endif</td>
+              <td>@if(!$project['in_db'])<button type="button" id="button_{{ $project['public_opportunity_id'] }}" class="btn btn-info btn-xs add_samba"><span class="glyphicon glyphicon-plus"></span></button>@endif</td>
               <td class="owners_sales_cluster">{!! $project['owners_sales_cluster'] !!}</td>
               <td class="opportunity_domain">{!! $project['opportunity_domain'] !!}</td>
               <td class="account_name">{!! $project['account_name'] !!}</td>
@@ -273,7 +273,7 @@ h3:after {
               <div class="form-group">
                   <label  class="control-label" for="year_modal">Year</label>
                   <div>
-                    <select class="form-control select2" style="width: 100%;" name="year_modal" data-placeholder="Select a year">
+                    <select class="form-control select2" style="width: 100%;" id="year_modal" name="year_modal" data-placeholder="Select a year">
                         @foreach(config('select.year') as $key => $value)
                         <option value="{{ $key }}"
                           @if (date('Y') == $key) selected
@@ -311,11 +311,12 @@ h3:after {
                 </div>
               </div>
               <form id="form_addProject_modal" role="form" method="POST" action="">
-                <div class="form-group">
+                <div id="modal_action_formgroup_project_name" class="form-group">
                   <label id="label_project_name" class="control-label" for="form_addProject_project_name_modal">Project name *</label>
                   <input type="text" id="form_addProject_project_name_modal" name="form_addProject_project_name_modal" class="form-control" placeholder="Project name"></input>
+                  <span id="modal_action_form_project_name_error" class="help-block"></span>
                 </div>
-                <div class="form-group">
+                <div id="modal_action_formgroup_customer_id" class="form-group">
                   <label id="label_customer_name" class="control-label" for="form_addProject_customer_name_modal">Customer name (CL customer name: <span id="form_customer_title_modal"></span>) *</label>
                   <select class="form-control select2" id="form_addProject_customer_name_modal" name="form_addProject_customer_name_modal" style="width: 100%;" data-placeholder="Select a customer name">
                     @foreach($customers_list as $key => $value)
@@ -324,8 +325,9 @@ h3:after {
                     </option>
                     @endforeach
                   </select>
+                  <span id="modal_action_form_customer_id_error" class="help-block"></span>
                 </div>
-                <div class="form-group">
+                <div id="modal_action_formgroup_user_id" class="form-group">
                   <label id="label_user_name" class="control-label" for="form_addProject_user_name_modal">Assign to user *</label>
                   <select class="form-control select2" id="form_addProject_user_name_modal" name="form_addProject_user_name_modal" style="width: 100%;" data-placeholder="Select a user">
                     <option value="">
@@ -336,6 +338,7 @@ h3:after {
                     </option>
                     @endforeach
                   </select>
+                  <span id="modal_action_form_user_id_error" class="help-block"></span>
                 </div>
                 <div class="form-group">
                   <div id="addProject_hidden">
@@ -558,7 +561,6 @@ h3:after {
 
         // Click plus button from CL upload result
         $(document).on('click', '.add_samba', function () {
-
           var table = samba_table;
           var tr = $(this).closest('tr');
           var row = table.row(tr);
@@ -569,6 +571,7 @@ h3:after {
           var customer_dolphin_id = row.data().account_name_modified_id;
           var project_name = row.data().opportunity_name;
           var cl_id = row.data().public_opportunity_id;
+          var button_id = $(this).attr('id');
           //console.log(year);
 
           // Clean all select
@@ -590,76 +593,38 @@ h3:after {
 
           $('#addProject_hidden').empty();
           var hidden = '';
-          hidden += '<input class="form-control" name="cl_id" type="hidden" value="'+cl_id+'">';
-          hidden += '<input class="form-control" name="customer_cl" type="hidden" value="'+customer_cl+'">';
+          hidden += '<input class="form-control" id="cl_id_hidden" name="cl_id" type="hidden" value="'+cl_id+'">';
+          hidden += '<input class="form-control" id="customer_cl_hidden" name="customer_cl" type="hidden" value="'+customer_cl+'">';
+          hidden += '<input class="form-control" id="button_id_hidden" name="button_id" type="hidden" value="'+button_id+'">';
 
           $('#addProject_hidden').append(hidden);
           
-
+          modal_form_error_clean();
           $('#addProjectModal').modal();
         });
 
+        $(document).on('click', '.buttonProjectEdit', function () {
+          var table = projectTable;
+          var tr = $(this).closest('tr');
+          var row = table.row(tr);
 
+          var project_id = row.data().project_id;
+          var cl_id = $("#cl_id_hidden").val();
+          var button_id = $("#button_id_hidden").val();
+          //console.log(button_id);
 
-        $(document).on('click', '.add_samba_update', function(){
-          var array_of_data = [];
-          year = $("#year option:selected").val();
-
-          var $row = $(this).closest("tr");
-
-          cluster = $row.find('.owners_sales_cluster').text();
-          samba_lead_domain = $row.find('.opportunity_domain').text();
-          customer_samba = $row.find('.account_name').text();
-          customer_dolphin = $row.find('.customer_name option:selected').val();
-          project_name = $row.find('.opportunity_name').text();
-          assigned_user = $row.find('.users_name option:selected').val();
-          samba_id = $row.find('.public_opportunity_id').text();
-          opportunity_owner = $row.find('.opportunity_owner').text();
-          create_date = $row.find('.created_date').text();
-          close_date = $row.find('.close_date').text();
-          samba_stage = $row.find('.stage').text();
-          win_ratio = $row.find('.probability').text();
-          order_intake = $row.find('.amount_tcv').text();
-          consulting_tcv = $row.find('.consulting_tcv').text();
-
-          if (customer_dolphin != '' && assigned_user != null) {
-            array_of_data.push({'samba_lead_domain':samba_lead_domain,'customer_samba':customer_samba,'customer_dolphin':customer_dolphin,
-              'project_name':project_name,'assigned_user':assigned_user,'samba_id':samba_id,
-              'order_intake':order_intake,'opportunity_owner':opportunity_owner,'create_date':create_date,
-              'close_date':close_date,'samba_stage':samba_stage,'win_ratio':win_ratio,'consulting_tcv':consulting_tcv});
-          } else {
-            box_type = 'danger';
-            message_type = 'error';
-            msg = '<b>Customer (Dolphin)</b> and <b>Assigned User</b> missing'
-            $('#flash-message').empty();
-            var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+msg+'</div>');
-            $('#flash-message').append(box);
-            $('#delete-message').delay(2000).queue(function () {
-                $(this).addClass('animated flipOutX')
-            });
-            return;
-          }
-
-
-          var parameters = {
-            "data": JSON.stringify(array_of_data),
-            "year":year
-          };
-
-          
-          console.log(parameters);
+          var data = {'samba_id': cl_id};
 
           $.ajax({
             type: 'post',
-            url: "{!! route('sambauploadcreatePOST') !!}",
-            data: parameters,
+            url: "{!! route('sambaUploadUpdateProject','') !!}/"+project_id,
+            data:data,
             dataType: 'json',
             success: function(data) {
-              console.log(data);
+              //console.log(data);
               if (data.result == 'success'){
                   box_type = 'success';
                   message_type = 'success';
-                  $row.remove();
               }
               else {
                   box_type = 'danger';
@@ -672,10 +637,87 @@ h3:after {
               $('#delete-message').delay(2000).queue(function () {
                   $(this).addClass('animated flipOutX')
               });
+
+              $('#addProjectModal').modal('hide');
+              td = $("#"+button_id).parent();
+              td.empty();
+              td.append('Added');
             }
           });
-          array_of_data = [];
+          
         });
+
+        $(document).on('click', '#addProject_create_button_modal', function () {
+
+          var cl_id = $("#cl_id_hidden").val();
+          var customer_cl = $("#customer_cl_hidden").val();
+          var button_id = $("#button_id_hidden").val();
+          var year_modal = $('select#year_modal').children("option:selected").val();
+          var project_name = $('input#form_addProject_project_name_modal').val();
+          var customer_id = $('select#form_addProject_customer_name_modal').children("option:selected").val();
+          var user_id = $('select#form_addProject_user_name_modal').children("option:selected").val();
+
+          var data = {'samba_id': cl_id,'customer_cl': customer_cl,'project_name': project_name,'customer_id': customer_id,'user_id': user_id,'year': year_modal};
+
+          //console.log(data);return;
+
+          $.ajax({
+            type: 'post',
+            url: "{!! route('sambaUploadCreateProject') !!}",
+            data:data,
+            dataType: 'json',
+            success: function(data) {
+              //console.log(data);
+              if (data.result == 'success'){
+                  box_type = 'success';
+                  message_type = 'success';
+              }
+              else {
+                  box_type = 'danger';
+                  message_type = 'error';
+              }
+
+              $('#flash-message').empty();
+              var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+              $('#flash-message').append(box);
+              $('#delete-message').delay(2000).queue(function () {
+                  $(this).addClass('animated flipOutX')
+              });
+
+              $('#addProjectModal').modal('hide');
+              td = $("#"+button_id).parent();
+              td.empty();
+              td.append('Added');
+            },
+            error: function (data, ajaxOptions, thrownError) {
+              modal_form_error_clean();
+              var errors = data.responseJSON.errors;
+              var status = data.status;
+
+              if (status === 422) {
+                $.each(errors, function (key, value) {
+                  $('#modal_action_formgroup_'+key).addClass('has-error');
+                  $('#modal_action_form_'+key+'_error').text(value);
+                });
+              } else if (status === 403 || status === 500) {
+                $('#modal_action_formgroup_'+key).addClass('has-error');
+                $('#modal_action_form_'+key+'_error').text('No Authorization!');
+              }
+            }
+          });
+          
+        });
+
+        function modal_form_error_clean() {
+          // Clean all error class
+          $("form#form_addProject_modal  div.form-group").each(function(){
+            $(this).removeClass('has-error');
+          });
+          // Clean all error message
+          $("form#form_addProject_modal span.help-block").each(function(){
+            $(this).empty();
+          });
+        }
 
         year = $('select[name="year_modal"] option:selected').val();
         var projectTable = $('#project_table').DataTable({

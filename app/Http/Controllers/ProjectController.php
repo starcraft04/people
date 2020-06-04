@@ -500,7 +500,7 @@ class ProjectController extends Controller
     
 
         return $data;
-}
+    }
 
     public function createProjectFromPrimeUpload(Request $request)
     {
