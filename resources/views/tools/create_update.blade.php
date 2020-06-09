@@ -1950,7 +1950,7 @@ $(document).ready(function() {
   //endregion
   
   //region Loe
-  @if($action == 'update')
+  @if($action == 'update' && Auth::user()->can('projectLoe-view'))
     // Init daterange in input field
     $('#modal_loe_form_date').daterangepicker({
       showISOWeekNumbers: true,
