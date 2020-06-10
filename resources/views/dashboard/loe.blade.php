@@ -242,13 +242,13 @@ $(document).ready(function() {
                 } else {
                   number_of_working_days = getBusinessDatesCount(row.start_date,row.end_date);
                   mandays = number_of_working_days*row.mandays;
-                  return mandays.toLocaleString();
+                  return mandays.toFixed(1);
                 }
-              }, searchable: false, visible: true },
+              }, searchable: false, visible: true 
+            },
             { name: 'project_loe.description', data: 'description' , searchable: true , visible: true },
             { name: 'project_loe.history', data: 'history' , searchable: false , visible: false },
-            { 
-              name: 'project_loe.signoff',
+            { name: 'project_loe.signoff',
               data: 'signoff',
               sortable: true,
               searchable: true,
@@ -366,7 +366,7 @@ $(document).ready(function() {
 
             // Update footer
             $( api.column( value ).footer() ).html(
-                '<div style="font-size: 120%;">'+pageTotal.toLocaleString()+'</div>'
+                '<div style="font-size: 120%;">'+pageTotal.toFixed(1)+'</div>'
             );
           });
         }
