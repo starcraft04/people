@@ -6,7 +6,8 @@
 <link href="{{ asset('/plugins/select2/select2.min.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('/css/forms.css') }}" rel="stylesheet" />
 <!-- bootstrap-daterangepicker -->
-<link href="{{ asset('/plugins/gentelella/vendors/bootstrap-daterangepicker/daterangepicker.css') }}" rel="stylesheet" />
+<link href="{{ asset('/plugins/daterangepicker/daterangepicker.css') }}" rel="stylesheet" />
+<!-- Sweetalert2 -->
 <link href="{{ asset('/plugins/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" />
 <!-- Switchery -->
 <link href="{{ asset('/plugins/gentelella/vendors/switchery/dist/switchery.min.css') }}" rel="stylesheet">
@@ -59,10 +60,10 @@ h3:after {
 <!-- Select2 -->
 <script src="{{ asset('/plugins/select2/select2.full.min.js') }}" type="text/javascript"></script>
 <!-- bootstrap-daterangepicker -->
-<script src="{{ asset('/plugins/gentelella/vendors/moment/min/moment.min.js') }}" type="text/javascript"></script>
-<script src="{{ asset('/plugins/gentelella/vendors/bootstrap-daterangepicker/daterangepicker.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/daterangepicker/moment.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/daterangepicker/daterangepicker.js') }}" type="text/javascript"></script>
+<!-- Sweetalert2 -->
 <script src="{{ asset('/plugins/sweetalert2/sweetalert2.min.js') }}" type="text/javascript"></script>
-<script src="{{ asset('/plugins/gentelella/vendors/switchery/dist/switchery.min.js') }}" type="text/javascript"></script>
 <!-- Bootbox -->
 <script src="{{ asset('/plugins/bootbox/bootbox.min.js') }}"></script>
 <!-- Balloon -->
@@ -1955,6 +1956,8 @@ $(document).ready(function() {
     $('#modal_loe_form_date').daterangepicker({
       showISOWeekNumbers: true,
       showDropdowns: true,
+      linkedCalendars: false,
+      drops: 'up',
       autoUpdateInput: false,
       locale: {
         format: 'YYYY-MM-DD',
@@ -2439,7 +2442,9 @@ $(document).ready(function() {
     // Init Date range
     $('#modal_action_form_start_to_end_date').daterangepicker({
         showISOWeekNumbers: true,
-        showDropdowns: false,
+        showDropdowns: true,
+        linkedCalendars: false,
+        drops: 'up',
         autoUpdateInput: false,
         locale: {
           format: 'YYYY-MM-DD',
@@ -2457,6 +2462,8 @@ $(document).ready(function() {
 
     $('#modal_action_form_next_action_due_date').daterangepicker({
         singleDatePicker: true,
+        showDropdowns: true,
+        drops: 'up',
         autoUpdateInput: false,
         locale: {
           format: 'YYYY-MM-DD',

@@ -6,7 +6,7 @@
 <link href="{{ asset('/plugins/select2/select2.min.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{ asset('/css/forms.css') }}" rel="stylesheet" />
 <!-- bootstrap-daterangepicker -->
-<link href="{{ asset('/plugins/gentelella/vendors/bootstrap-daterangepicker/daterangepicker.css') }}" rel="stylesheet" />
+<link href="{{ asset('/plugins/daterangepicker/daterangepicker.css') }}" rel="stylesheet" />
 <link href="{{ asset('/plugins/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" />
 <!-- Switchery -->
 <link href="{{ asset('/plugins/gentelella/vendors/switchery/dist/switchery.min.css') }}" rel="stylesheet">
@@ -19,8 +19,8 @@
 <!-- Select2 -->
 <script src="{{ asset('/plugins/select2/select2.full.min.js') }}" type="text/javascript"></script>
 <!-- bootstrap-daterangepicker -->
-<script src="{{ asset('/plugins/gentelella/vendors/moment/min/moment.min.js') }}" type="text/javascript"></script>
-<script src="{{ asset('/plugins/gentelella/vendors/bootstrap-daterangepicker/daterangepicker.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/daterangepicker/moment.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/daterangepicker/daterangepicker.js') }}" type="text/javascript"></script>
 <script src="{{ asset('/plugins/sweetalert2/sweetalert2.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('/plugins/gentelella/vendors/switchery/dist/switchery.min.js') }}" type="text/javascript"></script>
 <!-- Some functions made by John -->
