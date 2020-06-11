@@ -439,11 +439,18 @@ class ProjectController extends Controller
         return $this->projectRepository->getListOfProjectsLost($inputs);
     }
 
-    public function listOfProjectsAll(Request $request)
+    public function listOfProjectsAll()
     {
-        $inputs = $request->all();
+        $projectList = Project::select('projects.id','customers.name AS customer_name','projects.project_name','projects.otl_project_code','projects.project_type',
+                    'projects.activity_type','projects.project_status','projects.meta_activity','projects.region',
+                    'projects.country','projects.technology','projects.description','projects.estimated_start_date','projects.estimated_end_date',
+                    'projects.comments','projects.LoE_onshore','projects.LoE_nearshore','projects.samba_id',
+                    'projects.LoE_offshore', 'projects.LoE_contractor', 'projects.gold_order_number', 'projects.product_code', 'projects.revenue', 'projects.win_ratio');
+        $projectList->leftjoin('customers', 'projects.customer_id', '=', 'customers.id');
 
-        return $this->projectRepository->getListOfProjectsAll($inputs);
+        $data = Datatables::of($projectList)->make(true);
+  
+        return $data;
     }
 
     public function listOfProjectsNotUsedInPrime($user_name, $year)

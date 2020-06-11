@@ -277,7 +277,7 @@ class ProjectRepository
         return $data;
     }
 
-    public function getListOfProjectsAll($where = null)
+    public function getListOfProjectsAll()
     {
         /** We create here a SQL statement and the Datatables function will add the information it got from the AJAX request to have things like search or limit or show.
          *   So we need to have a proper SQL search that the ajax can use via get with parameters given to it.
@@ -290,12 +290,7 @@ class ProjectRepository
                 'projects.country','projects.technology','projects.description','projects.estimated_start_date','projects.estimated_end_date',
                 'projects.comments','projects.LoE_onshore','projects.LoE_nearshore',
                 'projects.LoE_offshore', 'projects.LoE_contractor', 'projects.gold_order_number', 'projects.product_code', 'projects.revenue', 'projects.win_ratio');
-        $projectList->leftjoin('activities', 'project_id', '=', 'projects.id');
-        $projectList->leftjoin('users', 'user_id', '=', 'users.id');
-        $projectList->leftjoin('users_users', 'users.id', '=', 'users_users.user_id');
-        $projectList->leftjoin('users AS u2', 'u2.id', '=', 'users_users.manager_id');
         $projectList->leftjoin('customers', 'projects.customer_id', '=', 'customers.id');
-        $projectList->groupBy('projects.id');
 
         $data = Datatables::of($projectList)->make(true);
 

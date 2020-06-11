@@ -83,6 +83,7 @@
                       <th>Project name</th>
                       <th>OTL project code</th>
                       <th>Meta-activity</th>
+                      <th>CL ID</th>
                       <th>Project type</th>
                       <th>Activity type</th>
                       <th>Project status</th>
@@ -105,6 +106,7 @@
                 </thead>
                 <tfoot>
                     <tr>
+                      <th></th>
                       <th></th>
                       <th></th>
                       <th></th>
@@ -167,6 +169,7 @@
                     { name: 'projects.project_name', data: 'project_name' },
                     { name: 'projects.otl_project_code', data: 'otl_project_code' },
                     { name: 'projects.meta_activity', data: 'meta_activity'},
+                    { name: 'projects.samba_id', data: 'samba_id', searchable: true , visible: true},
                     { name: 'projects.project_type', data: 'project_type'},
                     { name: 'projects.activity_type', data: 'activity_type'},
                     { name: 'projects.project_status', data: 'project_status'},
