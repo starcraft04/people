@@ -83,6 +83,7 @@
                                 <th>Skill</th>
                                 <th>Manager Name</th>
                                 <th>User Name</th>
+                                <th>Email</th>
                                 <th>Region</th>
                                 <th>Country</th>
                                 <th>Role</th>
@@ -95,6 +96,7 @@
                         </thead>
                         <tfoot>
                             <tr>
+                                <th></th>
                                 <th></th>
                                 <th></th>
                                 <th></th>
@@ -124,6 +126,7 @@
                                 <th>Certification</th>
                                 <th>Manager Name</th>
                                 <th>User Name</th>
+                                <th>Email</th>
                                 <th>Region</th>
                                 <th>Country</th>
                                 <th>Role</th>
@@ -136,6 +139,7 @@
                         </thead>
                         <tfoot>
                             <tr>
+                                <th></th>
                                 <th></th>
                                 <th></th>
                                 <th></th>
@@ -199,6 +203,7 @@
                     { name: 'skills.skill', data: 'skill', searchable: true , visible: true },
                     { name: 'm.name', data: 'manager_name', searchable: true , visible: false },
                     { name: 'u.name', data: 'user_name', searchable: true , visible: true },
+                    { name: 'u.email', data: 'user_email', searchable: true , visible: true },
                     { name: 'u.region', data: 'region', searchable: true , visible: false },
                     { name: 'u.country', data: 'country', searchable: true , visible: false },
                     { name: 'u.job_role', data: 'job_role', searchable: true , visible: false },
@@ -235,7 +240,7 @@
                     {
                     extend: "colvis",
                     className: "btn-sm",
-                    columns: [ 1,2,3,4,5,6,7,8,9,10,11 ]
+                    columns: [ 1,2,3,4,5,6,7,8,9,10,11,12 ]
                     },
                     
                   {
@@ -317,6 +322,7 @@
                     { name: 'skills.skill', data: 'skill', searchable: true , visible: true },
                     { name: 'm.name', data: 'manager_name', searchable: true , visible: false },
                     { name: 'u.name', data: 'user_name', searchable: true , visible: true },
+                    { name: 'u.email', data: 'user_email', searchable: true , visible: true },
                     { name: 'u.region', data: 'region', searchable: true , visible: false },
                     { name: 'u.country', data: 'country', searchable: true , visible: false },
                     { name: 'u.job_role', data: 'job_role', searchable: true , visible: false },
@@ -350,7 +356,7 @@
                     {
                     extend: "colvis",
                     className: "btn-sm",
-                    columns: [ 1,2,3,4,5,7,8,9,10 ]
+                    columns: [ 1,2,3,4,5,6,7,8,9,10,11,12 ]
                     },
                     
                   {
