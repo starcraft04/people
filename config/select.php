@@ -139,7 +139,7 @@ return [
     'activity_status' => [
         '' => '',
         'active' => 'active',
-        'inactive' => 'inactive',
+        'inact.' => 'inact.',
     ],
     'users-mc' => [
         'DLP30' => 'DLP30',
