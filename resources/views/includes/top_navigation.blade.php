@@ -30,7 +30,11 @@
       <ul class="dropdown-menu msg_list" style="width:500px;" role="menu" aria-labelledby="navbarDropdown1">
         @foreach($top_actions as $key => $value)
         <li class="nav-item">
-          <a class="dropdown-item" href="{{ route('toolsFormUpdate',[Auth::user()->id,$value->project_id,date('Y'),'tab_action']) }}">
+          <a class="dropdown-item" href="
+          @IF(!empty($value->project_id))
+          {{ route('toolsFormUpdate',[Auth::user()->id,$value->project_id,date('Y'),'tab_action']) }}
+          @ENDIF
+          ">
           <span>
             Action: {{ $value->action_name }}
           </span>
