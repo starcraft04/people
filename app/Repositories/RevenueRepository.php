@@ -22,7 +22,8 @@ class RevenueRepository
         }
         //dd($fpc);
         $revenueList = DB::table('revenues');
-        $revenueList->select('customers.name AS customer_name', 'product_code', 'year', 'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec');
+        $revenueList->select('customers.name AS customer_name', 'product_code', 'year', 'jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'
+        , 'jan_actuals', 'feb_actuals', 'mar_actuals', 'apr_actuals', 'may_actuals', 'jun_actuals', 'jul_actuals', 'aug_actuals', 'sep_actuals', 'oct_actuals', 'nov_actuals', 'dec_actuals');
         $revenueList->leftjoin('customers', 'customers.id', '=', 'revenues.customer_id');
         $revenueList->where('customers.name', '=', $customer_name);
         $revenueList->where('revenues.year', '=', $year);

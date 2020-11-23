@@ -70,7 +70,7 @@
             <li><a href="{!!route('dashboarddscisc')!!}/{{date('Y')}}">ASC vs ISC</a></li>
             @endcan
             @can('cluster-view')
-            <li><a href="{!!route('clusterdashboard')!!}/{{date('Y')}}/0/all">Cluster Dashboard</a></li>
+            <li><a href="{!!route('clusterdashboard')!!}/{{date('Y')}}/0/all/0/0">Cluster Dashboard</a></li>
             @endcan
             @can('dashboardRevenue-view')
             <li><a href="{!!route('revenuedashboard')!!}/{{date('Y')}}/0">Revenue Dashboard</a></li>

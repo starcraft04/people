@@ -201,7 +201,7 @@ Route::group(['middleware' => ['auth', 'general','last_login']], function () {
     //Dashboards
     Route::get('dashboardLoad', ['uses' => 'DashboardController@load', 'as' => 'dashboardLoad', 'middleware' => ['permission:dashboard-view']]);
     Route::get('dashboardLoadChart', ['uses' => 'DashboardController@load_chart', 'as' => 'dashboardLoadChart', 'middleware' => ['permission:dashboard-view']]);
-    Route::get('clusterdashboard/{year?}/{customer_id?}/{domain_selected?}', ['uses' => 'DashboardController@clusterboard', 'as' => 'clusterdashboard', 'middleware' => ['permission:cluster-view']]);
+    Route::get('clusterdashboard/{year?}/{customer_id?}/{domain_selected?}/{manager_id?}/{user_id?}', ['uses' => 'DashboardController@clusterboard', 'as' => 'clusterdashboard', 'middleware' => ['permission:cluster-view']]);
     Route::get('dashboarddscisc/{year?}', ['uses' => 'DashboardController@dscisc', 'as' => 'dashboarddscisc', 'middleware' => ['permission:dashboard-view']]);
     Route::get('revenuedashboard/{year?}/{user_id?}', ['uses' => 'DashboardController@revenue', 'as' => 'revenuedashboard', 'middleware' => ['permission:dashboardRevenue-view']]);
     Route::get('orderdashboard/{year?}/{user_id?}', ['uses' => 'DashboardController@order', 'as' => 'orderdashboard', 'middleware' => ['permission:dashboardOrder-view']]);

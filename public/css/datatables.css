@@ -1,19 +1,50 @@
-td.otl {
+.otl {
   font-size : 16px;
   color : green;
 }
 
-td.forecast {
+.forecast {
   font-size : 16px;
   color : blue;
 }
 
-td.zero {
+.zero {
   font-size : 10px;
   color : grey;
 }
 
-td.too_high {
+.too_high {
   font-size : 16px;
   color : red;
 }
+
+.customer {
+  font-size : 26px !important;
+  font-weight: bold !important;
+}
+
+.cluster {
+  font-size : 30px !important;
+  font-weight: bold !important;
+}
+
+.customer_total {
+  font-size : 14px !important;
+}
+
+.revenue_section {
+  font-size : 22px !important;
+  font-weight: bold !important;
+}
+
+.total_section {
+  font-size : 18px !important;
+}
+.title_section {
+  font-size : 18px !important;
+  font-weight: bold !important;
+}
+.no_revenue {
+  color: red;
+}
+

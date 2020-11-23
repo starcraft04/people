@@ -500,7 +500,7 @@ class ActivityRepository
         return $this->activity->where('user_id', $user_id)->where('project_id', $project_id)->count();
     }
 
-    public function getCustomersPerCluster($cluster, $year, $limit, $domain)
+    public function getCustomersPerCluster($cluster, $year, $limit, $domain,$users_list)
     {
         $customers = DB::table('projects');
 
@@ -509,9 +509,21 @@ class ActivityRepository
         $customers->leftjoin('customers', 'projects.customer_id', '=', 'customers.id');
         $customers->leftjoin('users', 'activities.user_id', '=', 'users.id');
         $customers->where('customers.cluster_owner', '=', $cluster);
+        $customers->where('customers.name', '!=', 'Orange Business Services');
         $customers->where('activities.year', '=', $year);
         if ($domain != 'all') {
             $customers->where('users.domain', '=', $domain);
+        }
+        if (!empty($users_list)) {
+            $customers->where(function($q) use ($users_list) {
+                for($i=0; $i < count($users_list); $i++) {
+                    if ($i == 0) {
+                        $q->where('users.id', '=', $users_list[$i]);
+                    } else {
+                        $q->orWhere('users.id', '=', $users_list[$i]);
+                    }
+                }
+            });
         }
         $customers->groupBy('customers.name');
         $customers->orderBy(DB::raw('sum(task_hour)'), 'DESC');
@@ -528,9 +540,11 @@ class ActivityRepository
         $activityList->leftjoin('users AS u', $temp_table.'.user_id', '=', 'u.id');
         $activityList->leftjoin('customers AS c', 'c.id', '=', 'p.customer_id');
         $activityList->select('year','project_id','user_id','jan_com','feb_com','mar_com','apr_com','may_com','jun_com','jul_com','aug_com','sep_com','oct_com','nov_com','dec_com',
+        'jan_from_otl','feb_from_otl','mar_from_otl','apr_from_otl','may_from_otl','jun_from_otl','jul_from_otl','aug_from_otl','sep_from_otl','oct_from_otl','nov_from_otl','dec_from_otl',
                                 'project_name', 'u.name AS user_name', 'u.domain AS user_domain');
         $activityList->where('c.name', '=', $customer_name);
         $activityList->where('year', '=', $year);
+        $activityList->where('p.project_type', '!=', 'Pre-sales');
         if ($domain != 'all') {
             $activityList->where('u.domain', '=', $domain);
         }
@@ -549,6 +563,7 @@ class ActivityRepository
         $activityList->leftjoin('customers AS c', 'c.id', '=', 'p.customer_id');
         $activityList->select('year', DB::raw('sum(jan_com) AS jan_com'), DB::raw('sum(feb_com) AS feb_com'), DB::raw('sum(mar_com) AS mar_com'), DB::raw('sum(apr_com) AS apr_com'), DB::raw('sum(may_com) AS may_com'), DB::raw('sum(jun_com) AS jun_com'), DB::raw('sum(jul_com) AS jul_com'), DB::raw('sum(aug_com) AS aug_com'), DB::raw('sum(sep_com) AS sep_com'), DB::raw('sum(oct_com) AS oct_com'), DB::raw('sum(nov_com) AS nov_com'), DB::raw('sum(dec_com) AS dec_com'));
         $activityList->where('c.name', '=', $customer_name);
+        $activityList->where('p.project_type', '!=', 'Pre-sales');
         $activityList->where('year', '=', $year);
         if ($domain != 'all') {
             $activityList->where('u.domain', '=', $domain);

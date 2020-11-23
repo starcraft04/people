@@ -117,9 +117,16 @@ class DashboardController extends Controller
         return view('dashboard/dscisc', compact('authUsersForDataView', 'year', 'dscvsisc'));
     }
 
-    public function clusterboard(AuthUsersForDataView $authUsersForDataView, UserRepository $userRepository, ActivityRepository $activityRepository, RevenueRepository $revenueRepository, $year = null, $customer_id = null, $domain_selected = null)
+    public function clusterboard(AuthUsersForDataView $authUsersForDataView, UserRepository $userRepository, ActivityRepository $activityRepository, RevenueRepository $revenueRepository, $year = null, $customer_id = 0, $domain_selected = 'all',$manager_id = 0, $user_id = 0)
     {
         $authUsersForDataView->userCanView('tools-activity-all-view');
+        if ($manager_id != 0) {
+            $authUsersForDataView->manager_selected = $manager_id;
+        }
+        if ($user_id != 0) {
+            $authUsersForDataView->user_selected = $user_id;
+        }
+        //dd($authUsersForDataView->year_list);
         if ($year == null) {
             $year = date('Y');
         }
@@ -144,9 +151,24 @@ class DashboardController extends Controller
         })->pluck('name', 'id');
         //dd($customers_list);
 
-        if (is_null($customer_id) || $customer_id == 0) {
+        // Here we get the list of users in cas the manager is selected
+        if ($manager_id == 0 && $user_id == 0) {
+            $users_list = [];
+        } elseif ($manager_id == 0) {
+            $users_list = [$user_id];
+        } elseif ($user_id == 0) {
+            $users_list_temp = User::find($manager_id)->employees()->pluck('users.id')->toArray();
+            $users_list = [$manager_id];
+            foreach ($users_list_temp as $user) {
+                array_push($users_list,$user);
+            }
+        } else {
+            $users_list = [$user_id];
+        }
+
+        if ($customer_id == 0) {
             foreach ($clusters as $cluster) {
-                $customers_temp = $activityRepository->getCustomersPerCluster($cluster, $year, $top, $domain_selected);
+                $customers_temp = $activityRepository->getCustomersPerCluster($cluster, $year, $top, $domain_selected,$users_list);
                 foreach ($customers_temp as $customer_temp) {
                     array_push($customers, ['name'=>$customer_temp->name, 'cluster'=>$customer_temp->cluster_owner]);
                 }
@@ -192,39 +214,44 @@ class DashboardController extends Controller
             if (! isset($grand_total[$customer['name']])) {
                 $grand_total[$customer['name']] = [];
             }
-            if (isset($revenues_tot[$customer['name']]) && isset($activities_tot[$customer['name']])) {
+            if (isset($revenues_tot[$customer['name']])) {
                 $grand_total[$customer['name']]['revenue'] = floatval($revenues_tot[$customer['name']]->jan)
-        + floatval($revenues_tot[$customer['name']]->feb)
-        + floatval($revenues_tot[$customer['name']]->mar)
-        + floatval($revenues_tot[$customer['name']]->apr)
-        + floatval($revenues_tot[$customer['name']]->may)
-        + floatval($revenues_tot[$customer['name']]->jun)
-        + floatval($revenues_tot[$customer['name']]->jul)
-        + floatval($revenues_tot[$customer['name']]->aug)
-        + floatval($revenues_tot[$customer['name']]->sep)
-        + floatval($revenues_tot[$customer['name']]->oct)
-        + floatval($revenues_tot[$customer['name']]->nov)
-        + floatval($revenues_tot[$customer['name']]->dec);
-                $grand_total[$customer['name']]['activity'] = floatval($activities_tot[$customer['name']]->jan_com)
-          + floatval($activities_tot[$customer['name']]->feb_com)
-          + floatval($activities_tot[$customer['name']]->mar_com)
-          + floatval($activities_tot[$customer['name']]->apr_com)
-          + floatval($activities_tot[$customer['name']]->may_com)
-          + floatval($activities_tot[$customer['name']]->jun_com)
-          + floatval($activities_tot[$customer['name']]->jul_com)
-          + floatval($activities_tot[$customer['name']]->aug_com)
-          + floatval($activities_tot[$customer['name']]->sep_com)
-          + floatval($activities_tot[$customer['name']]->oct_com)
-          + floatval($activities_tot[$customer['name']]->nov_com)
-          + floatval($activities_tot[$customer['name']]->dec_com);
-                $grand_total[$customer['name']]['div'] = $grand_total[$customer['name']]['revenue'] / $grand_total[$customer['name']]['activity'];
+                    + floatval($revenues_tot[$customer['name']]->feb)
+                    + floatval($revenues_tot[$customer['name']]->mar)
+                    + floatval($revenues_tot[$customer['name']]->apr)
+                    + floatval($revenues_tot[$customer['name']]->may)
+                    + floatval($revenues_tot[$customer['name']]->jun)
+                    + floatval($revenues_tot[$customer['name']]->jul)
+                    + floatval($revenues_tot[$customer['name']]->aug)
+                    + floatval($revenues_tot[$customer['name']]->sep)
+                    + floatval($revenues_tot[$customer['name']]->oct)
+                    + floatval($revenues_tot[$customer['name']]->nov)
+                    + floatval($revenues_tot[$customer['name']]->dec);
             } else {
-                $grand_total[$customer['name']]['div'] = null;
+                $grand_total[$customer['name']]['revenue'] = '-';
+            }
+            if (isset($activities_tot[$customer['name']])) {
+                $grand_total[$customer['name']]['activity'] = floatval($activities_tot[$customer['name']]->jan_com)
+                    + floatval($activities_tot[$customer['name']]->feb_com)
+                    + floatval($activities_tot[$customer['name']]->mar_com)
+                    + floatval($activities_tot[$customer['name']]->apr_com)
+                    + floatval($activities_tot[$customer['name']]->may_com)
+                    + floatval($activities_tot[$customer['name']]->jun_com)
+                    + floatval($activities_tot[$customer['name']]->jul_com)
+                    + floatval($activities_tot[$customer['name']]->aug_com)
+                    + floatval($activities_tot[$customer['name']]->sep_com)
+                    + floatval($activities_tot[$customer['name']]->oct_com)
+                    + floatval($activities_tot[$customer['name']]->nov_com)
+                    + floatval($activities_tot[$customer['name']]->dec_com);
+                
+            } else {
+                $grand_total[$customer['name']]['activity'] = '-';
             }
         }
-        //dd($activities);
+        
         unset($temp_table);
 
+        //dd($activities);
         //dd($activities_tot);
         //dd($revenues_tot);
         //dd($grand_total);
