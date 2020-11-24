@@ -242,7 +242,7 @@ class DashboardController extends Controller
                     + floatval($revenues_tot[$customer['name']]->nov)
                     + floatval($revenues_tot[$customer['name']]->dec);
             } else {
-                $grand_total[$customer['name']]['revenue'] = '-';
+                $grand_total[$customer['name']]['revenue'] = 0;
             }
             if (isset($activities_tot[$customer['name']])) {
                 $grand_total[$customer['name']]['activity'] = floatval($activities_tot[$customer['name']]->jan_com)
@@ -259,7 +259,7 @@ class DashboardController extends Controller
                     + floatval($activities_tot[$customer['name']]->dec_com);
                 
             } else {
-                $grand_total[$customer['name']]['activity'] = '-';
+                $grand_total[$customer['name']]['activity'] = 0;
             }
         }
         

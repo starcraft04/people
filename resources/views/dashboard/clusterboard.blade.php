@@ -153,7 +153,7 @@
                     <span class="customer">{{$customer}}</span>
                   </div>
                   <div class="col-md-2">
-                    <span class="customer_total">Bill. Hours Tot.: <b>{{$grand_total[$customer]['activity']}} days</b><BR>Rev. Tot.: <span class="@if($grand_total[$customer]['revenue'] == '-' || $grand_total[$customer]['revenue'] <=0) no_revenue @endif"><b>{{$grand_total[$customer]['revenue']}} k€</b></span></span>
+                    <span class="customer_total">Bill. Hours Tot.: <b>{{number_format($grand_total[$customer]['activity'],0,'.','')}} days</b><BR>Rev. Tot.: <span class="@if($grand_total[$customer]['revenue'] <=0) no_revenue @endif"><b>{{number_format($grand_total[$customer]['revenue'],0,'.','')}} k€</b></span></span>
                   </div>
                   </div>
                   <!-- total -->
