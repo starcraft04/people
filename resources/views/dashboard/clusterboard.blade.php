@@ -179,7 +179,7 @@
                     </thead>
                     <tbody>
                       <tr class="table_customer_{{$customer_i}}" style="display:none;">
-                        <td class="revenue_section">Revenue</td>
+                        <td class="revenue_section">Revenue (k€)</td>
                         <td class="title_section">Product code</td>
                         <td></td>
                         <td></td>
@@ -199,18 +199,18 @@
                       <tr class="table_customer_{{$customer_i}}" style="display:none;">
                         <td></td>
                         <td>{{$revenue->product_code}}</td>
-                        <td class="@if($revenue->jan == 0) zero @elseif($revenue->jan_actuals == 1) otl @else forecast @endif">{{number_format($revenue->jan,0,'.','')}}</td>
-                        <td class="@if($revenue->feb == 0) zero @elseif($revenue->feb_actuals == 1) otl @else forecast @endif">{{number_format($revenue->feb,0,'.','')}}</td>
-                        <td class="@if($revenue->mar == 0) zero @elseif($revenue->mar_actuals == 1) otl @else forecast @endif">{{number_format($revenue->mar,0,'.','')}}</td>
-                        <td class="@if($revenue->apr == 0) zero @elseif($revenue->apr_actuals == 1) otl @else forecast @endif">{{number_format($revenue->apr,0,'.','')}}</td>
-                        <td class="@if($revenue->may == 0) zero @elseif($revenue->may_actuals == 1) otl @else forecast @endif">{{number_format($revenue->may,0,'.','')}}</td>
-                        <td class="@if($revenue->jun == 0) zero @elseif($revenue->jun_actuals == 1) otl @else forecast @endif">{{number_format($revenue->jun,0,'.','')}}</td>
-                        <td class="@if($revenue->jul == 0) zero @elseif($revenue->jul_actuals == 1) otl @else forecast @endif">{{number_format($revenue->jul,0,'.','')}}</td>
-                        <td class="@if($revenue->aug == 0) zero @elseif($revenue->aug_actuals == 1) otl @else forecast @endif">{{number_format($revenue->aug,0,'.','')}}</td>
-                        <td class="@if($revenue->sep == 0) zero @elseif($revenue->sep_actuals == 1) otl @else forecast @endif">{{number_format($revenue->sep,0,'.','')}}</td>
-                        <td class="@if($revenue->oct == 0) zero @elseif($revenue->oct_actuals == 1) otl @else forecast @endif">{{number_format($revenue->oct,0,'.','')}}</td>
-                        <td class="@if($revenue->nov == 0) zero @elseif($revenue->nov_actuals == 1) otl @else forecast @endif">{{number_format($revenue->nov,0,'.','')}}</td>
-                        <td class="@if($revenue->dec == 0) zero @elseif($revenue->dec_actuals == 1) otl @else forecast @endif">{{number_format($revenue->dec,0,'.','')}}</td>                        
+                        <td class="@if($revenue->jan == 0) zero @elseif($revenue->jan_actuals == 1) otl @else forecast @endif">{{number_format($revenue->jan,2,'.','')}}</td>
+                        <td class="@if($revenue->feb == 0) zero @elseif($revenue->feb_actuals == 1) otl @else forecast @endif">{{number_format($revenue->feb,2,'.','')}}</td>
+                        <td class="@if($revenue->mar == 0) zero @elseif($revenue->mar_actuals == 1) otl @else forecast @endif">{{number_format($revenue->mar,2,'.','')}}</td>
+                        <td class="@if($revenue->apr == 0) zero @elseif($revenue->apr_actuals == 1) otl @else forecast @endif">{{number_format($revenue->apr,2,'.','')}}</td>
+                        <td class="@if($revenue->may == 0) zero @elseif($revenue->may_actuals == 1) otl @else forecast @endif">{{number_format($revenue->may,2,'.','')}}</td>
+                        <td class="@if($revenue->jun == 0) zero @elseif($revenue->jun_actuals == 1) otl @else forecast @endif">{{number_format($revenue->jun,2,'.','')}}</td>
+                        <td class="@if($revenue->jul == 0) zero @elseif($revenue->jul_actuals == 1) otl @else forecast @endif">{{number_format($revenue->jul,2,'.','')}}</td>
+                        <td class="@if($revenue->aug == 0) zero @elseif($revenue->aug_actuals == 1) otl @else forecast @endif">{{number_format($revenue->aug,2,'.','')}}</td>
+                        <td class="@if($revenue->sep == 0) zero @elseif($revenue->sep_actuals == 1) otl @else forecast @endif">{{number_format($revenue->sep,2,'.','')}}</td>
+                        <td class="@if($revenue->oct == 0) zero @elseif($revenue->oct_actuals == 1) otl @else forecast @endif">{{number_format($revenue->oct,2,'.','')}}</td>
+                        <td class="@if($revenue->nov == 0) zero @elseif($revenue->nov_actuals == 1) otl @else forecast @endif">{{number_format($revenue->nov,2,'.','')}}</td>
+                        <td class="@if($revenue->dec == 0) zero @elseif($revenue->dec_actuals == 1) otl @else forecast @endif">{{number_format($revenue->dec,2,'.','')}}</td>                        
                       </tr>
                       @endforeach
                       @endif
@@ -218,7 +218,7 @@
                       @if(isset($revenues_tot[$customer]))
                       <tr>
                         <td></td>
-                        <td class="total_section">Total revenue</td>
+                        <td class="total_section">Total revenue (k€)</td>
                         <td class="total_section">{{number_format($revenues_tot[$customer]->jan,0,'.','')}}</td>
                         <td class="total_section">{{number_format($revenues_tot[$customer]->feb,0,'.','')}}</td>
                         <td class="total_section">{{number_format($revenues_tot[$customer]->mar,0,'.','')}}</td>

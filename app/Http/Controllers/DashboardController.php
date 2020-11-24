@@ -267,6 +267,7 @@ class DashboardController extends Controller
 
         //dd($activities);
         //dd($activities_tot);
+        //dd($revenues);
         //dd($revenues_tot);
         //dd($grand_total);
 
