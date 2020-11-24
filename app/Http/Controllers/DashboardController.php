@@ -119,6 +119,18 @@ class DashboardController extends Controller
 
     public function clusterboard(AuthUsersForDataView $authUsersForDataView, UserRepository $userRepository, ActivityRepository $activityRepository, RevenueRepository $revenueRepository, $year = null, $customer_id = 0, $domain_selected = 'all',$manager_id = 0, $user_id = 0)
     {
+        if (!Auth::user()->can('cluster-view-all')) {
+            $customer_id = 0;
+            $user_id = Auth::user()->id;
+            $manager_id = Auth::user()->managers()->first()->id;
+            $customer_disabled = 'true';
+            $user_disabled = 'true';
+            $manager_disabled = 'true';
+        } else {
+            $customer_disabled = 'false';
+            $user_disabled = 'false';
+            $manager_disabled = 'false';
+        }
         $authUsersForDataView->userCanView('tools-activity-all-view');
         if ($manager_id != 0) {
             $authUsersForDataView->manager_selected = $manager_id;
@@ -134,7 +146,7 @@ class DashboardController extends Controller
         $temp_table = new ProjectTableRepository('table_temp_a');
         $customers = [];
         if (Auth::user()->clusterboard_top < 1) {
-            $top = 5;
+            $top = 15;
         } else {
             $top = Auth::user()->clusterboard_top;
         }
@@ -165,6 +177,8 @@ class DashboardController extends Controller
         } else {
             $users_list = [$user_id];
         }
+
+        //dd($users_list);
 
         if ($customer_id == 0) {
             foreach ($clusters as $cluster) {
@@ -256,7 +270,9 @@ class DashboardController extends Controller
         //dd($revenues_tot);
         //dd($grand_total);
 
-        return view('dashboard/clusterboard', compact('authUsersForDataView', 'activities', 'revenues', 'activities_tot', 'revenues_tot', 'grand_total', 'top', 'year', 'customers_list', 'customer_id', 'domain_selected'));
+        return view('dashboard/clusterboard', compact('authUsersForDataView', 'activities', 'revenues', 'activities_tot', 'revenues_tot', 'grand_total', 'top', 'year', 'customers_list', 'customer_id', 'domain_selected',
+                                                        'customer_disabled','manager_disabled','user_disabled'
+        ));
     }
 
     public function revenue(AuthUsersForDataView $authUsersForDataView, UserRepository $userRepository, $year = null, $user_id = null)

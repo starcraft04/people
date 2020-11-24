@@ -1,9 +1,7 @@
 <?php
 
-
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
-
 
 class PermissionTableSeeder26 extends Seeder
 {

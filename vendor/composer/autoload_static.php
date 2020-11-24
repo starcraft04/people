@@ -4066,6 +4066,7 @@ class ComposerStaticInit5a6269b6010239a679d4ab8cef050843
         'PermissionTableSeeder24' => __DIR__ . '/../..' . '/database/seeds/PermissionTableSeeder24.php',
         'PermissionTableSeeder25' => __DIR__ . '/../..' . '/database/seeds/PermissionTableSeeder25.php',
         'PermissionTableSeeder26' => __DIR__ . '/../..' . '/database/seeds/PermissionTableSeeder26.php',
+        'PermissionTableSeeder27' => __DIR__ . '/../..' . '/database/seeds/PermissionTableSeeder27.php',
         'PermissionTableSeeder3' => __DIR__ . '/../..' . '/database/seeds/PermissionTableSeeder3.php',
         'PermissionTableSeeder4' => __DIR__ . '/../..' . '/database/seeds/PermissionTableSeeder4.php',
         'PermissionTableSeeder5' => __DIR__ . '/../..' . '/database/seeds/PermissionTableSeeder5.php',

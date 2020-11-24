@@ -3415,6 +3415,7 @@ return array(
     'PermissionTableSeeder24' => $baseDir . '/database/seeds/PermissionTableSeeder24.php',
     'PermissionTableSeeder25' => $baseDir . '/database/seeds/PermissionTableSeeder25.php',
     'PermissionTableSeeder26' => $baseDir . '/database/seeds/PermissionTableSeeder26.php',
+    'PermissionTableSeeder27' => $baseDir . '/database/seeds/PermissionTableSeeder27.php',
     'PermissionTableSeeder3' => $baseDir . '/database/seeds/PermissionTableSeeder3.php',
     'PermissionTableSeeder4' => $baseDir . '/database/seeds/PermissionTableSeeder4.php',
     'PermissionTableSeeder5' => $baseDir . '/database/seeds/PermissionTableSeeder5.php',

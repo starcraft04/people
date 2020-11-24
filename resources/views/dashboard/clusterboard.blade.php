@@ -410,16 +410,19 @@ $("#year").select2({
   allowClear: false
 });
 $("#customer_list").select2({
-  allowClear: true
+  allowClear: true,
+  disabled: {{ $customer_disabled }}
 });
 $("#domain").select2({
   allowClear: true
 });
 $("#manager").select2({
-  allowClear: true
+  allowClear: true,
+  disabled: {{ $manager_disabled }}
 });
 $("#user").select2({
-  allowClear: true
+  allowClear: true,
+  disabled: {{ $user_disabled }}
 });
 
 $('#year,#customer_list,#domain,#manager,#user').on('change', function() {

@@ -508,6 +508,7 @@ class ActivityRepository
         $customers->leftjoin('activities', 'activities.project_id', '=', 'projects.id');
         $customers->leftjoin('customers', 'projects.customer_id', '=', 'customers.id');
         $customers->leftjoin('users', 'activities.user_id', '=', 'users.id');
+        $customers->where('projects.project_type', '!=', 'Pre-sales');
         $customers->where('customers.cluster_owner', '=', $cluster);
         $customers->where('customers.name', '!=', 'Orange Business Services');
         $customers->where('activities.year', '=', $year);
