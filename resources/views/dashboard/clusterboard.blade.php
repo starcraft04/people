@@ -125,7 +125,7 @@
 
       <!-- Window title -->
       <div class="x_title">
-        <h2>Top {{$top}} accounts per cluster</small></h2>
+        <h2>Top {{$top}} accounts per cluster<small> (in term of man days)</small></h2>
         <button id="legendButton" class="btn btn-success btn-sm" style="margin-left: 10px;">info</button>
         <ul class="nav navbar-right panel_toolbox">
           <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
@@ -153,7 +153,7 @@
                     <span class="customer">{{$customer}}</span>
                   </div>
                   <div class="col-md-2">
-                    <span class="customer_total">Bill. Hours Tot.: <b>{{number_format($grand_total[$customer]['activity'],0,'.','')}} days</b><BR>Rev. Tot.: <span class="@if($grand_total[$customer]['revenue'] <=0) no_revenue @endif"><b>{{number_format($grand_total[$customer]['revenue'],0,'.','')}} k€</b></span></span>
+                    <span class="customer_total">Bill. Days Tot.: <b>{{number_format($grand_total[$customer]['activity'],0,'.','')}} days</b><BR>Rev. Tot.: <span class="@if($grand_total[$customer]['revenue'] <=0) no_revenue @endif"><b>{{number_format($grand_total[$customer]['revenue'],0,'.','')}} k€</b></span></span>
                   </div>
                   </div>
                   <!-- total -->
@@ -360,8 +360,9 @@
             
           <!-- Modal Body -->
           <div class="modal-body">
-          Those are the top {{$top}} accounts per cluster in number of hours spent for this year from consultants.</br>
-        Green means it has been validated by OTL.</br>
+          Those are the top {{$top}} accounts per cluster in number of days spent for this year from consultants.</br>
+          For the revenue (coming from TSPR file), green means it is actuals and blue means it is forecast.</br>
+        For the man days, green means it has been validated by Prime.</br>
         If you need to see more accounts per cluster, please click on your name (top right) and select profile.
           </div>
             
