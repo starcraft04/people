@@ -540,9 +540,10 @@ class ActivityRepository
         $activityList->leftjoin('projects AS p', 'p.id', '=', $temp_table.'.project_id');
         $activityList->leftjoin('users AS u', $temp_table.'.user_id', '=', 'u.id');
         $activityList->leftjoin('customers AS c', 'c.id', '=', 'p.customer_id');
-        $activityList->select('year','project_id','user_id','jan_com','feb_com','mar_com','apr_com','may_com','jun_com','jul_com','aug_com','sep_com','oct_com','nov_com','dec_com',
+        $activityList->select('year','project_id','user_id','u.name AS user_name','u.country AS user_country','u.employee_type',
+        'jan_com','feb_com','mar_com','apr_com','may_com','jun_com','jul_com','aug_com','sep_com','oct_com','nov_com','dec_com',
         'jan_from_otl','feb_from_otl','mar_from_otl','apr_from_otl','may_from_otl','jun_from_otl','jul_from_otl','aug_from_otl','sep_from_otl','oct_from_otl','nov_from_otl','dec_from_otl',
-                                'project_name', 'u.name AS user_name', 'u.domain AS user_domain');
+                                'project_name', 'u.domain AS user_domain');
         $activityList->where('c.name', '=', $customer_name);
         $activityList->where('year', '=', $year);
         $activityList->where('p.project_type', '!=', 'Pre-sales');

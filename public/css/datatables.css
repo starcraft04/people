@@ -37,9 +37,6 @@
   font-weight: bold !important;
 }
 
-.total_section {
-  font-size : 18px !important;
-}
 .title_section {
   font-size : 18px !important;
   font-weight: bold !important;
@@ -48,3 +45,12 @@
   color: red;
 }
 
+.total {
+  font-size : 16px !important;
+  font-weight: bold !important;
+  color : rgba(26, 24, 24, 0.671);
+}
+
+.total-bg {
+  background-color: rgba(190, 216, 255, 0.25);
+}

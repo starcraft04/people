@@ -158,46 +158,73 @@
                   </div>
                   <!-- total -->
                   <div class="row">
-                  <table class="table table-striped table-hover table-bordered">
+                  <table class="table table-hover table-bordered">
+                    <colgroup>
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col class="total-bg" />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col />
+                      <col class="total-bg" />
+                      <col class="total-bg" />
+                    </colgroup>
                     <thead>
                       <tr>
-                        <th style="width: 30%;"></th>
-                        <th style="width: 15%;"></th>
+                        <th style="width: 20%;"></th>
+                        <th style="width: 10%;"></th>
+                        <th style="width: 10%;"></th>
                         <th>Jan</th>
                         <th>Feb</th>
                         <th>Mar</th>
                         <th>Apr</th>
                         <th>May</th>
                         <th>Jun</th>
+                        <th>H1</th>
                         <th>Jul</th>
                         <th>Aug</th>
                         <th>Sep</th>
                         <th>Oct</th>
                         <th>Nov</th>
                         <th>Dec</th>
+                        <th>H2</th>
+                        <th>Year</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr class="table_customer_{{$customer_i}}" style="display:none;">
-                        <td class="revenue_section">Revenue (k€)</td>
+                        <td class="revenue_section" colspan="2">Revenue (k€)</td>
                         <td class="title_section">Product code</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>Jan</td>
+                        <td>Feb</td>
+                        <td>Mar</td>
+                        <td>Apr</td>
+                        <td>May</td>
+                        <td>Jun</td>
+                        <td>H1</td>
+                        <td>Jul</td>
+                        <td>Aug</td>
+                        <td>Sep</td>
+                        <td>Oct</td>
+                        <td>Nov</td>
+                        <td>Dec</td>
+                        <td>H2</td>
+                        <td>Year</td>
                       </tr>
                       @if(isset($revenues[$customer]))
                       @foreach ($revenues[$customer] as $key => $revenue)
                       <tr class="table_customer_{{$customer_i}}" style="display:none;">
-                        <td></td>
+                        <td colspan="2"></td>
                         <td>{{$revenue->product_code}}</td>
                         <td class="@if($revenue->jan == 0) zero @elseif($revenue->jan_actuals == 1) otl @else forecast @endif">{{number_format($revenue->jan,2,'.','')}}</td>
                         <td class="@if($revenue->feb == 0) zero @elseif($revenue->feb_actuals == 1) otl @else forecast @endif">{{number_format($revenue->feb,2,'.','')}}</td>
@@ -205,71 +232,69 @@
                         <td class="@if($revenue->apr == 0) zero @elseif($revenue->apr_actuals == 1) otl @else forecast @endif">{{number_format($revenue->apr,2,'.','')}}</td>
                         <td class="@if($revenue->may == 0) zero @elseif($revenue->may_actuals == 1) otl @else forecast @endif">{{number_format($revenue->may,2,'.','')}}</td>
                         <td class="@if($revenue->jun == 0) zero @elseif($revenue->jun_actuals == 1) otl @else forecast @endif">{{number_format($revenue->jun,2,'.','')}}</td>
+                        <td class="@if($revenue->h1 == 0) zero @else total @endif">{{number_format($revenue->h1,2,'.','')}}</td>
                         <td class="@if($revenue->jul == 0) zero @elseif($revenue->jul_actuals == 1) otl @else forecast @endif">{{number_format($revenue->jul,2,'.','')}}</td>
                         <td class="@if($revenue->aug == 0) zero @elseif($revenue->aug_actuals == 1) otl @else forecast @endif">{{number_format($revenue->aug,2,'.','')}}</td>
                         <td class="@if($revenue->sep == 0) zero @elseif($revenue->sep_actuals == 1) otl @else forecast @endif">{{number_format($revenue->sep,2,'.','')}}</td>
                         <td class="@if($revenue->oct == 0) zero @elseif($revenue->oct_actuals == 1) otl @else forecast @endif">{{number_format($revenue->oct,2,'.','')}}</td>
                         <td class="@if($revenue->nov == 0) zero @elseif($revenue->nov_actuals == 1) otl @else forecast @endif">{{number_format($revenue->nov,2,'.','')}}</td>
-                        <td class="@if($revenue->dec == 0) zero @elseif($revenue->dec_actuals == 1) otl @else forecast @endif">{{number_format($revenue->dec,2,'.','')}}</td>                        
+                        <td class="@if($revenue->dec == 0) zero @elseif($revenue->dec_actuals == 1) otl @else forecast @endif">{{number_format($revenue->dec,2,'.','')}}</td>
+                        <td class="@if($revenue->h2 == 0) zero @else total @endif">{{number_format($revenue->h2,2,'.','')}}</td>
+                        <td class="@if($revenue->full_year == 0) zero @else total @endif">{{number_format($revenue->full_year,2,'.','')}}</td>                       
                       </tr>
                       @endforeach
                       @endif
                       <!-- total revenue -->
                       @if(isset($revenues_tot[$customer]))
                       <tr>
-                        <td></td>
-                        <td class="total_section">Total revenue (k€)</td>
-                        <td class="total_section">{{number_format($revenues_tot[$customer]->jan,0,'.','')}}</td>
-                        <td class="total_section">{{number_format($revenues_tot[$customer]->feb,0,'.','')}}</td>
-                        <td class="total_section">{{number_format($revenues_tot[$customer]->mar,0,'.','')}}</td>
-                        <td class="total_section">{{number_format($revenues_tot[$customer]->apr,0,'.','')}}</td>
-                        <td class="total_section">{{number_format($revenues_tot[$customer]->may,0,'.','')}}</td>
-                        <td class="total_section">{{number_format($revenues_tot[$customer]->jun,0,'.','')}}</td>
-                        <td class="total_section">{{number_format($revenues_tot[$customer]->jul,0,'.','')}}</td>
-                        <td class="total_section">{{number_format($revenues_tot[$customer]->aug,0,'.','')}}</td>
-                        <td class="total_section">{{number_format($revenues_tot[$customer]->sep,0,'.','')}}</td>
-                        <td class="total_section">{{number_format($revenues_tot[$customer]->oct,0,'.','')}}</td>
-                        <td class="total_section">{{number_format($revenues_tot[$customer]->nov,0,'.','')}}</td>
-                        <td class="total_section">{{number_format($revenues_tot[$customer]->dec,0,'.','')}}</td>                        
+                        <td colspan="2"></td>
+                        <td>Total revenue (k€)</td>
+                        <td class="total">{{number_format($revenues_tot[$customer]->jan,0,'.','')}}</td>
+                        <td class="total">{{number_format($revenues_tot[$customer]->feb,0,'.','')}}</td>
+                        <td class="total">{{number_format($revenues_tot[$customer]->mar,0,'.','')}}</td>
+                        <td class="total">{{number_format($revenues_tot[$customer]->apr,0,'.','')}}</td>
+                        <td class="total">{{number_format($revenues_tot[$customer]->may,0,'.','')}}</td>
+                        <td class="total">{{number_format($revenues_tot[$customer]->jun,0,'.','')}}</td>
+                        <td class="total">{{number_format($revenues_tot[$customer]->h1,0,'.','')}}</td>
+                        <td class="total">{{number_format($revenues_tot[$customer]->jul,0,'.','')}}</td>
+                        <td class="total">{{number_format($revenues_tot[$customer]->aug,0,'.','')}}</td>
+                        <td class="total">{{number_format($revenues_tot[$customer]->sep,0,'.','')}}</td>
+                        <td class="total">{{number_format($revenues_tot[$customer]->oct,0,'.','')}}</td>
+                        <td class="total">{{number_format($revenues_tot[$customer]->nov,0,'.','')}}</td>
+                        <td class="total">{{number_format($revenues_tot[$customer]->dec,0,'.','')}}</td>  
+                        <td class="total">{{number_format($revenues_tot[$customer]->h2,0,'.','')}}</td>
+                        <td class="total">{{number_format($revenues_tot[$customer]->full_year,0,'.','')}}</td>                      
                       </tr>
                       @endif
                       <!-- total revenue -->
                       <tr class="table_customer_{{$customer_i}}" style="display:none;">
-                        <td class="revenue_section">Consulting man days</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td class="revenue_section" colspan="18">Consulting man days</td>
                       </tr>
                       <tr class="table_customer_{{$customer_i}}" style="display:none;">
                         <td class="title_section">Project name</td>
                         <td class="title_section">Consultant</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td class="title_section">Location</td>
+                        <td>Jan</td>
+                        <td>Feb</td>
+                        <td>Mar</td>
+                        <td>Apr</td>
+                        <td>May</td>
+                        <td>Jun</td>
+                        <td>H1</td>
+                        <td>Jul</td>
+                        <td>Aug</td>
+                        <td>Sep</td>
+                        <td>Oct</td>
+                        <td>Nov</td>
+                        <td>Dec</td>
+                        <td>H2</td>
+                        <td>Year</td>
                       </tr>
                       @foreach ($users as $key => $activity)
                       <tr class="table_customer_{{$customer_i}}" style="display:none;">
                         <td>{{$activity->project_name}}</td>
-                        <td>{{$activity->user_name}}</td>
+                        <td>{{$activity->user_name}} @if($activity->employee_type == 'contractor') <img src="{{ asset("/img/contractor.png") }}" width="20" height="20"> @endif</td>
+                        <td>{{$activity->user_country}}</td>
                         <td class="@if($activity->jan_com == 0) zero @elseif($activity->jan_from_otl == 1) otl @else forecast @endif">
                           {{$activity->jan_com}} 
                         </td>
@@ -287,6 +312,9 @@
                         </td>
                         <td class="@if($activity->jun_com == 0) zero @elseif($activity->jun_from_otl == 1) otl @else forecast @endif">
                           {{$activity->jun_com}}
+                        </td>
+                        <td class="@if($activity->h1 == 0) zero @else total @endif">
+                          {{$activity->h1}}
                         </td>
                         <td class="@if($activity->jul_com == 0) zero @elseif($activity->jul_from_otl == 1) otl @else forecast @endif">
                           {{$activity->jul_com}}
@@ -306,25 +334,35 @@
                         <td class="@if($activity->dec_com == 0) zero @elseif($activity->dec_from_otl == 1) otl @else forecast @endif">
                           {{$activity->dec_com}}
                         </td>
+                        <td class="@if($activity->h2 == 0) zero @else total @endif">
+                          {{$activity->h2}}
+                        </td>
+                        <td class="@if($activity->full_year == 0) zero @else total @endif">
+                          {{$activity->full_year}}
+                        </td>
                       </tr>
                       @endforeach
                       <!-- total activities -->
                       @if(isset($activities_tot[$customer]))
                       <tr>
                         <td></td>
-                        <td class="total_section">Total man days</td>
-                        <td class="total_section">{{number_format($activities_tot[$customer]->jan_com,0,'.','')}}</td>
-                        <td class="total_section">{{number_format($activities_tot[$customer]->feb_com,0,'.','')}}</td>
-                        <td class="total_section">{{number_format($activities_tot[$customer]->mar_com,0,'.','')}}</td>
-                        <td class="total_section">{{number_format($activities_tot[$customer]->apr_com,0,'.','')}}</td>
-                        <td class="total_section">{{number_format($activities_tot[$customer]->may_com,0,'.','')}}</td>
-                        <td class="total_section">{{number_format($activities_tot[$customer]->jun_com,0,'.','')}}</td>
-                        <td class="total_section">{{number_format($activities_tot[$customer]->jul_com,0,'.','')}}</td>
-                        <td class="total_section">{{number_format($activities_tot[$customer]->aug_com,0,'.','')}}</td>
-                        <td class="total_section">{{number_format($activities_tot[$customer]->sep_com,0,'.','')}}</td>
-                        <td class="total_section">{{number_format($activities_tot[$customer]->oct_com,0,'.','')}}</td>
-                        <td class="total_section">{{number_format($activities_tot[$customer]->nov_com,0,'.','')}}</td>
-                        <td class="total_section">{{number_format($activities_tot[$customer]->dec_com,0,'.','')}}</td>                        
+                        <td></td>
+                        <td>Total man days</td>
+                        <td class="total">{{number_format($activities_tot[$customer]->jan_com,0,'.','')}}</td>
+                        <td class="total">{{number_format($activities_tot[$customer]->feb_com,0,'.','')}}</td>
+                        <td class="total">{{number_format($activities_tot[$customer]->mar_com,0,'.','')}}</td>
+                        <td class="total">{{number_format($activities_tot[$customer]->apr_com,0,'.','')}}</td>
+                        <td class="total">{{number_format($activities_tot[$customer]->may_com,0,'.','')}}</td>
+                        <td class="total">{{number_format($activities_tot[$customer]->jun_com,0,'.','')}}</td>
+                        <td class="total">{{number_format($activities_tot[$customer]->h1,0,'.','')}}</td>
+                        <td class="total">{{number_format($activities_tot[$customer]->jul_com,0,'.','')}}</td>
+                        <td class="total">{{number_format($activities_tot[$customer]->aug_com,0,'.','')}}</td>
+                        <td class="total">{{number_format($activities_tot[$customer]->sep_com,0,'.','')}}</td>
+                        <td class="total">{{number_format($activities_tot[$customer]->oct_com,0,'.','')}}</td>
+                        <td class="total">{{number_format($activities_tot[$customer]->nov_com,0,'.','')}}</td>
+                        <td class="total">{{number_format($activities_tot[$customer]->dec_com,0,'.','')}}</td>
+                        <td class="total">{{number_format($activities_tot[$customer]->h2,0,'.','')}}</td>
+                        <td class="total">{{number_format($activities_tot[$customer]->full_year,0,'.','')}}</td>                      
                       </tr>
                       @endif
                       <!-- total activities -->

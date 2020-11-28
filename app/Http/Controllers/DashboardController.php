@@ -209,20 +209,40 @@ class DashboardController extends Controller
                 $activities[$customer['cluster']][$customer['name']] = [];
             }
             $activities_temp = $activityRepository->getActivitiesPerCustomer($customer['name'], $year, 'table_temp_a', $domain_selected);
+            //dd($activities_temp);
             foreach ($activities_temp as $activitie_temp) {
+                $activitie_temp->h1 = $activitie_temp->jan_com + $activitie_temp->feb_com + $activitie_temp->mar_com + $activitie_temp->apr_com + $activitie_temp->may_com + $activitie_temp->jun_com;
+                $activitie_temp->h2 = $activitie_temp->jul_com + $activitie_temp->aug_com + $activitie_temp->sep_com + $activitie_temp->oct_com + $activitie_temp->nov_com + $activitie_temp->dec_com;
+                $activitie_temp->full_year = $activitie_temp->h1 + $activitie_temp->h2;
                 array_push($activities[$customer['cluster']][$customer['name']], $activitie_temp);
             }
             $activities_tot[$customer['name']] = $activityRepository->getActivitiesPerCustomerTot($customer['name'], $year, 'table_temp_a', $domain_selected);
+            $activities_tot[$customer['name']]->h1 = $activities_tot[$customer['name']]->jan_com + $activities_tot[$customer['name']]->feb_com + $activities_tot[$customer['name']]->mar_com + $activities_tot[$customer['name']]->apr_com + $activities_tot[$customer['name']]->may_com + $activities_tot[$customer['name']]->jun_com;
+            $activities_tot[$customer['name']]->h2 = $activities_tot[$customer['name']]->jul_com + $activities_tot[$customer['name']]->aug_com + $activities_tot[$customer['name']]->sep_com + $activities_tot[$customer['name']]->oct_com + $activities_tot[$customer['name']]->nov_com + $activities_tot[$customer['name']]->dec_com;
+            $activities_tot[$customer['name']]->full_year = $activities_tot[$customer['name']]->h1 + $activities_tot[$customer['name']]->h2;
+            //dd($activities_tot);
 
             // Revenues
             if (! isset($revenues[$customer['name']])) {
                 $revenues[$customer['name']] = [];
             }
             $revenues_temp = $revenueRepository->getRevenuesPerCustomer($customer['name'], $year, $domain_selected);
+            //dd($revenues_temp);
             foreach ($revenues_temp as $revenue_temp) {
+                $revenue_temp->h1 = $revenue_temp->jan + $revenue_temp->feb + $revenue_temp->mar + $revenue_temp->apr + $revenue_temp->may + $revenue_temp->jun;
+                $revenue_temp->h2 = $revenue_temp->jul + $revenue_temp->aug + $revenue_temp->sep + $revenue_temp->oct + $revenue_temp->nov + $revenue_temp->dec;
+                $revenue_temp->full_year = $revenue_temp->h1 + $revenue_temp->h2;
                 array_push($revenues[$customer['name']], $revenue_temp);
             }
+            
             $revenues_tot[$customer['name']] = $revenueRepository->getRevenuesPerCustomerTot($customer['name'], $year, $domain_selected);
+            if (isset($revenues_tot[$customer['name']])) {
+                $revenues_tot[$customer['name']]->h1 = $revenues_tot[$customer['name']]->jan + $revenues_tot[$customer['name']]->feb + $revenues_tot[$customer['name']]->mar + $revenues_tot[$customer['name']]->apr + $revenues_tot[$customer['name']]->may + $revenues_tot[$customer['name']]->jun;
+                $revenues_tot[$customer['name']]->h2 = $revenues_tot[$customer['name']]->jul + $revenues_tot[$customer['name']]->aug + $revenues_tot[$customer['name']]->sep + $revenues_tot[$customer['name']]->oct + $revenues_tot[$customer['name']]->nov + $revenues_tot[$customer['name']]->dec;
+                $revenues_tot[$customer['name']]->full_year = $revenues_tot[$customer['name']]->h1 + $revenues_tot[$customer['name']]->h2;
+            }
+            
+            //dd($revenues_tot);
 
             // Grand total
             if (! isset($grand_total[$customer['name']])) {
