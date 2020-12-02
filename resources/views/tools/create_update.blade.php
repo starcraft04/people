@@ -823,10 +823,6 @@ h3:after {
                 <div class="row">
                   <div class="table-responsive">
                     <table class="table table-striped table-hover table-bordered mytable" width="100%" id="LoeTable">
-                    <thead>  
-                      <th>test</th>
-                      <th>test2</th>
-                    </thead>
                     </table>
                   </div>
                 </div>
@@ -1810,8 +1806,50 @@ $(document).ready(function() {
       dataType: 'json',
       success: function(data) {
         console.log(data);
-        if (data.length > 0) {
+        if (data.length != 0) {
+          // First we need to hide the create button
           $('#create_loe').hide();
+
+          // Then we need to create the headers for the table
+          html = '<thead>';
+          // First header
+          html += '<tr>';
+          html += '<th rowspan="2">'+'Action'+'</th>';
+          html += '<th rowspan="2">'+'Main Phase'+'</th>';
+          html += '<th rowspan="2">'+'Secondary Phase'+'</th>';
+          html += '<th rowspan="2">'+'Domain'+'</th>';
+          html += '<th rowspan="2">'+'Description'+'</th>';
+          html += '<th rowspan="2">'+'Option'+'</th>';
+          html += '<th rowspan="2">'+'Assumption'+'</th>';
+          html += '<th colspan="'+data.col.site.length+'">'+'Site calculation'+'</th>';
+          html += '<th rowspan="2">'+'Quantity'+'</th>';
+          html += '<th rowspan="2">'+'LoE / quantity'+'</th>';
+          html += '<th rowspan="2">'+'Formula'+'</th>';
+          html += '<th rowspan="2">'+'recurrent'+'</th>';
+          html += '<th rowspan="2">'+'Start date'+'</th>';
+          html += '<th rowspan="2">'+'End date'+'</th>';
+          html += '<th colspan="'+data.col.cons.length+'">'+'Consulting type'+'</th>';
+          html += '<th rowspan="2">'+'Total Loe'+'</th>';
+          html += '<th rowspan="2">'+'Total Price'+'</th>';
+          html += '</tr>';
+
+          // Second header
+          html += '<tr>';
+          
+          data.col.site.forEach(function(site){
+            html += '<th data-project-id="'+{{ $project->id }}+'" data-name="'+site.name+'">'+site.name+'</th>';
+          });
+          
+          data.col.cons.forEach(function(cons){
+            html += '<th data-project-id="'+{{ $project->id }}+'" data-name="'+cons.name+'">'+cons.name+'<br>'+cons.seniority+'<br>'+cons.location+'<br>'+cons.price+'€<br>'+'</th>';
+          });
+
+          html += '</tr>';
+
+          html += '</thead>';
+
+          $('#LoeTable').prepend(html);
+
         }
 
       }
