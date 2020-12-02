@@ -23,6 +23,8 @@ class CreateLoeSite extends Migration
             $table->timestamp('updated_at')->nullable();
         });
 
+        DB::statement('ALTER TABLE `project_loe_site` ADD UNIQUE( `project_loe_id`, `name`);');
+
         Schema::table('project_loe_site', function (Blueprint $table) {
             $table->foreign('project_loe_id')->references('id')->on('project_loe')
                         ->onDelete('restrict')

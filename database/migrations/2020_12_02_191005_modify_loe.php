@@ -36,6 +36,7 @@ class ModifyLoe extends Migration
             $table->string('assumption', 255)->nullable();
             $table->float('quantity')->default(1);
             $table->float('loe_per_quantity')->default(1);
+            $table->string('formula', 255)->nullable();
             $table->boolean('recurrent')->default(0);
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();

@@ -25,6 +25,8 @@ class CreateLoeConsultant extends Migration
             $table->timestamp('updated_at')->nullable();
         });
 
+        DB::statement('ALTER TABLE `project_loe_consultant` ADD UNIQUE( `project_loe_id`, `name`);');
+
         Schema::table('project_loe_consultant', function (Blueprint $table) {
             $table->foreign('project_loe_id')->references('id')->on('project_loe')
                         ->onDelete('restrict')

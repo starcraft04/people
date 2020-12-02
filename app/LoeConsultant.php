@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Loe extends Model
+class LoeConsultant extends Model
 {
     protected $table = 'project_loe_consultant';
     public $timestamps = true;
