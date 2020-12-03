@@ -29,7 +29,7 @@ class LoeController extends Controller
 
             // Col Consultants
             $col_cons = DB::table('project_loe');
-            $col_cons->select('consultant.name','consultant.location','consultant.seniority','consultant.price');
+            $col_cons->select('consultant.name','consultant.location','consultant.seniority');
             $col_cons->join('project_loe_consultant AS consultant', 'project_loe.id', '=', 'consultant.project_loe_id');
             $col_cons->where('project_id',$id);
             $col_cons->groupBy('consultant.name');
@@ -43,20 +43,25 @@ class LoeController extends Controller
             $sites->where('project_id',$id);
             $data_sites = $sites->get();
 
+            
                 // Format for easy use
             $data_sites_formatted = array();
             foreach ($data_sites as $key => $row) {
-                if (empty($data_formatted[$row->project_loe_id])) {
+                
+                if (empty($data_sites_formatted[$row->project_loe_id])) {
                     $data_sites_formatted[$row->project_loe_id] = array();
                 }
+                $data_sites_formatted[$row->project_loe_id][$row->name] = array();
                 $data_sites_formatted[$row->project_loe_id][$row->name]['id'] = $row->id;
                 $data_sites_formatted[$row->project_loe_id][$row->name]['quantity'] = $row->quantity;
                 $data_sites_formatted[$row->project_loe_id][$row->name]['loe_per_quantity'] = $row->loe_per_quantity;
             }
 
+            //dd($data_sites_formatted);
+
             // Consultants
             $consultants = DB::table('project_loe');
-            $consultants->select('consultant.id','consultant.project_loe_id','consultant.name','consultant.percentage');
+            $consultants->select('consultant.id','consultant.project_loe_id','consultant.name','consultant.percentage','consultant.price');
             $consultants->join('project_loe_consultant AS consultant', 'project_loe.id', '=', 'consultant.project_loe_id');
             $consultants->where('project_id',$id);
             $consultants->orderBy('consultant.name','asc');
@@ -70,6 +75,7 @@ class LoeController extends Controller
                 }
                 $data_consultants_formatted[$row->project_loe_id][$row->name]['id'] = $row->id;
                 $data_consultants_formatted[$row->project_loe_id][$row->name]['percentage'] = $row->percentage;
+                $data_consultants_formatted[$row->project_loe_id][$row->name]['price'] = $row->price;
             }
 
             
@@ -84,71 +90,25 @@ class LoeController extends Controller
         return $results;
     }
 
-    public function listColSitesFromProjectID($id)
+    public function init($id)
     {
-        $result = DB::table('project_loe');
-        $result->select('site.name');
-        $result->join('project_loe_site AS site', 'project_loe.id', '=', 'site.project_loe_id');
-        $result->where('project_id',$id);
-        $result->groupBy('site.name');
-        $result->orderBy('site.name','asc');
-        $data = $result->get();
-        return $data;
-    }
-
-    public function listColConsFromProjectID($id)
-    {
-        $result = DB::table('project_loe');
-        $result->select('consultant.name','consultant.location','consultant.seniority','consultant.price');
-        $result->join('project_loe_consultant AS consultant', 'project_loe.id', '=', 'consultant.project_loe_id');
-        $result->where('project_id',$id);
-        $result->groupBy('consultant.name');
-        $result->orderBy('consultant.name','asc');
-        $data = $result->get();
-        return $data;
-    }
-
-    public function listSitesFromProjectID($id)
-    {
-        $result = DB::table('project_loe');
-        $result->select('site.id','site.project_loe_id','site.name','site.quantity','site.loe_per_quantity');
-        $result->join('project_loe_site AS site', 'project_loe.id', '=', 'site.project_loe_id');
-        $result->where('project_id',$id);
-        $data = $result->get();
-
-        // Format for easy use
-        $data_formatted = array();
-        foreach ($data as $key => $row) {
-            if (empty($data_formatted[$row->project_loe_id])) {
-                $data_formatted[$row->project_loe_id] = array();
-            }
-            $data_formatted[$row->project_loe_id][$row->name]['id'] = $row->id;
-            $data_formatted[$row->project_loe_id][$row->name]['quantity'] = $row->quantity;
-            $data_formatted[$row->project_loe_id][$row->name]['loe_per_quantity'] = $row->loe_per_quantity;
+        $result = new \stdClass();
+        $inputs = [
+            'project_id' => $id,
+            'user_id' => Auth::user()->id,
+            'quantity' => 0,
+            'loe_per_quantity' => 0
+        ];
+        $insert_result = Loe::create($inputs);
+        if ($insert_result != null) {
+            $result->result = 'success';
+            $result->msg = 'LoE initiated successfuly';
+        } else {
+            $result->result = 'error';
+            $result->msg = 'Record issue';
         }
         
-        return $data_formatted;
-    }
-
-    public function listConsFromProjectID($id)
-    {
-        $result = DB::table('project_loe');
-        $result->select('consultant.id','consultant.project_loe_id','consultant.name','consultant.percentage');
-        $result->join('project_loe_consultant AS consultant', 'project_loe.id', '=', 'consultant.project_loe_id');
-        $result->where('project_id',$id);
-        $result->orderBy('consultant.name','asc');
-        $data = $result->get();
-
-        // Format for easy use
-        $data_formatted = array();
-        foreach ($data as $key => $row) {
-            if (empty($data_formatted[$row->project_loe_id])) {
-                $data_formatted[$row->project_loe_id] = array();
-            }
-            $data_formatted[$row->project_loe_id][$row->name]['id'] = $row->id;
-            $data_formatted[$row->project_loe_id][$row->name]['percentage'] = $row->percentage;
-        }
-        return $data_formatted;
+        return json_encode($result);
     }
 
 }

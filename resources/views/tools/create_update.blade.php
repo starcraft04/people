@@ -817,13 +817,15 @@ h3:after {
               <!-- Table -->
               <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="tab_loe">
                 <div class="row">
-                  <div class="col-md-1"><button id="create_loe" class="btn btn-success"><b>Create</b></button></div>
-                  <div class="col-md-11"></div>
+                  @if(Auth::user()->can('projectLoe-create'))
+                  <div class="col-md-12"><button id="create_loe" class="btn btn-success"><b>Create</b></button></div>
+                  @endif
                 </div>
                 <div class="row">
                   <div class="table-responsive">
                     <table class="table table-striped table-hover table-bordered mytable" width="100%" id="LoeTable">
                     </table>
+                    <br><br><br><br><br><br><br><br><br><br><br>
                   </div>
                 </div>
               </div>
@@ -1798,6 +1800,39 @@ $(document).ready(function() {
   //endregion
   
   //region Loe
+  var loe_data;
+
+  $(document).on('click', '#create_loe', function () {
+    $.ajax({
+      type: 'get',
+      url: "{!! route('loeInit','') !!}/"+{{ $project->id }},
+      dataType: 'json',
+      success: function(data) {
+
+        getLoeList();
+
+        if (data.result == 'success'){
+            box_type = 'success';
+            message_type = 'success';
+        }
+        else {
+            box_type = 'danger';
+            message_type = 'error';
+        }
+
+        $('#flash-message').empty();
+        var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+        $('#flash-message').append(box);
+        $('#delete-message').delay(2000).queue(function () {
+            $(this).addClass('animated flipOutX')
+        });
+      },
+      error: function (jqXhr, textStatus, errorMessage) { // error callback 
+        console.log('Error: ' + errorMessage);
+      }
+    });
+  });
+
   function getLoeList(){
     $('#LoeTable').empty();
     $.ajax({
@@ -1805,7 +1840,10 @@ $(document).ready(function() {
       url: "{!! route('listFromProjectID','') !!}/"+{{ $project->id }},
       dataType: 'json',
       success: function(data) {
+
+        loe_data = data;
         console.log(data);
+
         if (data.length != 0) {
           // First we need to hide the create button
           $('#create_loe').hide();
@@ -1814,39 +1852,254 @@ $(document).ready(function() {
           html = '<thead>';
           // First header
           html += '<tr>';
-          html += '<th rowspan="2">'+'Action'+'</th>';
-          html += '<th rowspan="2">'+'Main Phase'+'</th>';
-          html += '<th rowspan="2">'+'Secondary Phase'+'</th>';
-          html += '<th rowspan="2">'+'Domain'+'</th>';
-          html += '<th rowspan="2">'+'Description'+'</th>';
-          html += '<th rowspan="2">'+'Option'+'</th>';
-          html += '<th rowspan="2">'+'Assumption'+'</th>';
-          html += '<th colspan="'+data.col.site.length+'">'+'Site calculation'+'</th>';
-          html += '<th rowspan="2">'+'Quantity'+'</th>';
-          html += '<th rowspan="2">'+'LoE / quantity'+'</th>';
-          html += '<th rowspan="2">'+'Formula'+'</th>';
-          html += '<th rowspan="2">'+'recurrent'+'</th>';
-          html += '<th rowspan="2">'+'Start date'+'</th>';
-          html += '<th rowspan="2">'+'End date'+'</th>';
-          html += '<th colspan="'+data.col.cons.length+'">'+'Consulting type'+'</th>';
-          html += '<th rowspan="2">'+'Total Loe'+'</th>';
-          html += '<th rowspan="2">'+'Total Price'+'</th>';
+          html += '<th rowspan="3">'+'Action'+'</th>';
+          html += '<th rowspan="3">'+'Main Phase'+'</th>';
+          html += '<th rowspan="3">'+'Secondary Phase'+'</th>';
+          html += '<th rowspan="3">'+'Domain'+'</th>';
+          html += '<th rowspan="3">'+'Description'+'</th>';
+          html += '<th rowspan="3">'+'Option'+'</th>';
+          html += '<th rowspan="3">'+'Assumption'+'</th>';
+          if (data.col.site.length>0) {
+            html += '<th colspan="'+2*data.col.site.length+'">'+'Site calculation'+'</th>';
+          }
+          html += '<th rowspan="3">'+'Quantity'+'</th>';
+          html += '<th rowspan="3">'+'LoE (per unit)'+'</th>';
+          if (data.col.site.length>0) {
+            html += '<th rowspan="3">'+'Formula'+'</th>';
+          }
+          
+          html += '<th rowspan="3">'+'recurrent'+'</th>';
+          html += '<th rowspan="3">'+'Start date'+'</th>';
+          html += '<th rowspan="3">'+'End date'+'</th>';
+          if (data.col.cons.length>0) {
+            html += '<th colspan="'+2*data.col.cons.length+'">'+'Consulting type (%)'+'</th>';
+            html += '<th colspan="'+2*data.col.cons.length+'">'+'Consulting type (MD)'+'</th>';
+          }
+          
+          html += '<th rowspan="3">'+'Total Loe'+'</th>';
+          if (data.col.cons.length>0) {
+            html += '<th rowspan="3">'+'Total Price'+'</th>';
+          }
           html += '</tr>';
 
           // Second header
           html += '<tr>';
           
           data.col.site.forEach(function(site){
-            html += '<th data-project-id="'+{{ $project->id }}+'" data-name="'+site.name+'">'+site.name+'</th>';
+            html += '<th colspan="2">';
+            html += '<div class="row">';
+            html += '<div class="col-sm-6">'+site.name+'</div>';
+            html += '<div class="col-sm-6">';
+            html += `<div class="dropdown">
+                      <button class="btn btn-sm btn-round dropdown-toggle" type="button" data-toggle="dropdown">
+                      <i class="fa fa-sort-desc"></i>
+                      </button>
+                      <ul class="dropdown-menu">
+                        <li class="dropdown-header">Calculation</li>
+                        <li><a href="#">Edit</a></li>
+                        <li><a href="#">Delete</a></li>
+                      </ul>
+                    </div>`;
+            html += '</div>';
+            html += '</div>';
+            html += '</th>';
           });
           
           data.col.cons.forEach(function(cons){
-            html += '<th data-project-id="'+{{ $project->id }}+'" data-name="'+cons.name+'">'+cons.name+'<br>'+cons.seniority+'<br>'+cons.location+'<br>'+cons.price+'€<br>'+'</th>';
+            html += '<th colspan="2">'
+            html += '<div class="row">';
+            html += '<div class="col-sm-6">';
+            html += '<div class="row">';
+            html += cons.name;
+            html += '</div>';
+            html += '<div class="row">';
+            html += cons.seniority;
+            html += '</div>';
+            html += '<div class="row">';
+            html += cons.location;
+            html += '</div>';
+            html += '</div>';
+            html += '<div class="col-sm-6">';
+            html += `<div class="dropdown">
+                      <button class="btn btn-sm btn-round dropdown-toggle" type="button" data-toggle="dropdown">
+                      <i class="fa fa-sort-desc"></i>
+                      </button>
+                      <ul class="dropdown-menu">
+                        <li class="dropdown-header">Consulting type</li>
+                        <li><a href="#">Edit</a></li>
+                        <li><a href="#">Delete</a></li>
+                      </ul>
+                    </div>`;
+            html += '</div>';
+            html += '</div>';
+            html += '</th>';
+          });
+
+          data.col.cons.forEach(function(cons){
+            html += '<th colspan="2">'+cons.name+'<br>'+cons.seniority+'<br>'+cons.location+'</th>';
+          });
+
+          html += '</tr>';
+
+          // Third header
+          html += '<tr>';
+          
+          data.col.site.forEach(function(site){
+            html += '<th>Quantity</th>';
+            html += '<th>LoE (per unit)</th>';
+          });
+          data.col.cons.forEach(function(cons){
+            html += '<th>%</th>';
+            html += '<th>€</th>';
+          });
+          data.col.cons.forEach(function(cons){
+            html += '<th>MD</th>';
+            html += '<th>€</th>';
           });
 
           html += '</tr>';
 
           html += '</thead>';
+
+          // Data filling
+          var grand_total_loe = 0;
+          var grand_total_price = 0;
+
+          html += '<tbody>';
+          data.data.loe.forEach(function(row){
+            function td_no_null(item) {
+              if (item != null) {
+                return '<td>'+item+'</td>';
+              } else {
+                return '<td></td>';
+              }
+            }
+            html += '<tr>';
+            // actions
+            html += '<td>';
+            html += `<div class="dropdown">
+                      <button class="btn btn-success btn-sm btn-round dropdown-toggle" type="button" data-toggle="dropdown">
+                      <i class="fa fa-gear"></i>
+                      </button>
+                      <ul class="dropdown-menu">
+                        <li class="dropdown-header">Line</li>
+                        <li><a href="#">New (below)</a></li>
+                        <li><a href="#">Edit</a></li>
+                        <li><a href="#">Delete</a></li>
+                        <li class="dropdown-header">Calculation</li>
+                        <li><a href="#">New</a></li>
+                        <li class="dropdown-header">Consultant type</li>
+                        <li><a href="#">New</a></li>
+                      </ul>
+                    </div>`;
+            html +='</td>';
+
+            html += td_no_null(row.main_phase);
+            html += td_no_null(row.secondary_phase);
+            html += td_no_null(row.domain);
+            html += td_no_null(row.description);
+            html += td_no_null(row.option);
+            html += td_no_null(row.assumption);
+
+            //console.log('row: '+row.id);
+            data.col.site.forEach(fill_site_data);
+            function fill_site_data (site){
+              
+              if (data.data.site.hasOwnProperty(row.id) && data.data.site[row.id].hasOwnProperty(site.name)) {
+                //console.log(site.name+': '+data.data.site[row.id][site.name]['quantity']);
+                fill_quantity = data.data.site[row.id][site.name].quantity;
+                fill_loe_per_quantity = data.data.site[row.id][site.name].loe_per_quantity;
+              } else {
+                //console.log(site.name+': -');
+                fill_quantity = '';
+                fill_loe_per_quantity = '';
+              }
+              html += '<td>'+fill_quantity+'</td>';
+              html += '<td>'+fill_loe_per_quantity+'</td>';
+            }
+
+            html += '<td>'+row.quantity+'</td>';
+            html += '<td>'+row.loe_per_quantity+'</td>';
+            if (data.col.site.length>0) {
+              html += td_no_null(row.formula);
+            }
+            
+            html += '<td>'+row.recurrent+'</td>';
+            html += td_no_null(row.start_date);
+            html += td_no_null(row.end_date);
+
+            data.col.cons.forEach(fill_cons_data_percent);
+            function fill_cons_data_percent (cons){
+              
+              if (data.data.cons.hasOwnProperty(row.id) && data.data.cons[row.id].hasOwnProperty(cons.name)) {
+                //console.log(site.name+': '+data.data.site[row.id][site.name]['quantity']);
+                fill_percent = data.data.cons[row.id][cons.name].percentage;
+                fill_md = fill_percent*row.quantity*row.loe_per_quantity/100;
+                fill_price = data.data.cons[row.id][cons.name].price;
+              } else {
+                //console.log(site.name+': -');
+                fill_percent = '';
+                fill_price = '';
+              }
+              html += '<td>'+fill_percent+'</td>';
+              html += td_no_null(fill_price);
+            }
+
+            var total_price = 0;
+            data.col.cons.forEach(fill_cons_data_MD);
+
+            function fill_cons_data_MD (cons){
+              if (data.data.cons.hasOwnProperty(row.id) && data.data.cons[row.id].hasOwnProperty(cons.name)) {
+                //console.log(site.name+': '+data.data.site[row.id][site.name]['quantity']);
+                fill_percent = data.data.cons[row.id][cons.name].percentage;
+                fill_md = fill_percent*row.quantity*row.loe_per_quantity/100;
+                fill_price = data.data.cons[row.id][cons.name].price;
+                if (fill_price != null) {
+                  total_price += fill_md*fill_price;
+                }
+                //console.log('fill_md: '+fill_md);
+                //console.log('fill_price: '+fill_price);
+                //console.log('total_price: '+total_price);
+                //console.log('---------------------------: ');
+              } else {
+                //console.log(site.name+': -');
+                fill_md = '';
+                fill_price = '';
+              }
+              html += '<td>'+fill_md+'</td>';
+              html += td_no_null(fill_price);
+            }
+
+            html += '<td>'+row.quantity*row.loe_per_quantity+'</td>';
+            grand_total_loe += row.quantity*row.loe_per_quantity;
+            
+            if (data.col.cons.length>0) {
+              html += td_no_null(total_price);
+            }
+            
+            grand_total_price += total_price;
+
+            html += '</tr>';
+          });
+          html += '</tbody>';
+
+          html += '<tfoot>';
+          number_of_cols = 13+2*data.col.site.length+2*2*data.col.cons.length;
+          //console.log(number_of_cols);
+          //console.log(data.col.site.length);
+          //console.log(data.col.cons.length);
+          // Wen need to remove one column named formula in case there is no calculation
+          if (data.col.site.length == 0) {
+            number_of_cols -= 1;
+          }
+          html += '<td colspan="'+number_of_cols+'">Grand Total</td>';
+          html += '<td>'+grand_total_loe+'</td>';
+          if (data.col.cons.length>0) {
+            html += '<td>'+grand_total_price+'</td>';
+          }
+          
+          html += '</tfoot>';
+
 
           $('#LoeTable').prepend(html);
 
@@ -1856,7 +2109,7 @@ $(document).ready(function() {
     });
   }
 
-  getLoeList()
+  getLoeList();
   
   //endregion
 

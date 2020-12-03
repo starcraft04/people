@@ -223,10 +223,7 @@ Route::group(['middleware' => ['auth', 'general','last_login']], function () {
 
     // LOE
     Route::get('loe/{id}', ['uses' => 'LoeController@listFromProjectID', 'as' => 'listFromProjectID', 'middleware' => ['permission:projectLoe-view']]);
-    Route::get('loe/{id}/sites', ['uses' => 'LoeController@listSitesFromProjectID', 'as' => 'listSitesFromProjectID', 'middleware' => ['permission:projectLoe-view']]);
-    Route::get('loe/{id}/col_sites', ['uses' => 'LoeController@listColSitesFromProjectID', 'as' => 'listColSitesFromProjectID', 'middleware' => ['permission:projectLoe-view']]);
-    Route::get('loe/{id}/consultants', ['uses' => 'LoeController@listConsFromProjectID', 'as' => 'listConsFromProjectID', 'middleware' => ['permission:projectLoe-view']]);
-    Route::get('loe/{id}/col_consultants', ['uses' => 'LoeController@listColConsFromProjectID', 'as' => 'listColConsFromProjectID', 'middleware' => ['permission:projectLoe-view']]);
+    Route::get('loe/init/{id}', ['uses' => 'LoeController@init', 'as' => 'loeInit', 'middleware' => ['permission:projectLoe-create']]);
 });
 
 Route::get('/home', 'HomeController@index')->name('home');
