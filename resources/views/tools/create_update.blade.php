@@ -830,6 +830,41 @@ h3:after {
                 </div>
               </div>
               <!-- Table -->
+
+              <!-- Site Modal -->
+              <div class="modal fade" id="modal_loe_site" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" style="display:table;">
+                      <div class="modal-content">
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title" id="modal_loe_site_title">Edit Calculation</h4>
+                        </div>
+                        <!-- Modal Header -->
+                      
+                        <!-- Modal Body -->
+                        <div class="modal-body">
+                          <form id="modal_loe_site_form" role="form" method="POST" action="">
+                            <div id="modal_loe_site_formgroup_name" class="form-group">
+                                <label  class="control-label" for="modal_loe_site_form_name">Name</label>
+                                <input type="text" id="modal_loe_site_form_name" class="form-control" placeholder="Name"></input>
+                                <span id="modal_loe_site_form_name_error" class="help-block"></span>
+                            </div>
+                            <div class="form-group">
+                                <div id="modal_loe_site_form_hidden"></div>
+                            </div>
+                          </form>
+                        </div>
+                          
+                        <!-- Modal Footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" id="modal_loe_site_create_update_button" class="btn btn-success">Update</button>
+                        </div>
+                      </div>
+                  </div>
+              </div>
+              <!-- Site Modal -->
               @endcan
               <!-- LoE -->
 
@@ -1802,6 +1837,7 @@ $(document).ready(function() {
   //region Loe
   var loe_data;
 
+  // LOE INIT
   $(document).on('click', '#create_loe', function () {
     $.ajax({
       type: 'get',
@@ -1833,6 +1869,199 @@ $(document).ready(function() {
     });
   });
 
+  // SITE DELETE
+  $(document).on('click', '.site_delete', function () {
+    var data = {'name':$(this).data('name')};
+    bootbox.confirm("Are you sure want to delete this calculation?", function(result) {
+      if (result){
+        //console.log($(this).data('name'));
+        $.ajax({
+          type: 'get',
+          url: "{!! route('loeSiteDelete','') !!}/"+{{ $project->id }},
+          data: data,
+          dataType: 'json',
+          success: function(data) {
+            //console.log(data);
+
+            if (data.result == 'success'){
+                box_type = 'success';
+                message_type = 'success';
+                delay = 2000;
+                getLoeList();
+            }
+            else {
+                box_type = 'danger';
+                message_type = 'error';
+                delay = 10000;
+            }
+
+            $('#flash-message').empty();
+            var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+            $('#flash-message').append(box);
+            $('#delete-message').delay(delay).queue(function () {
+                $(this).addClass('animated flipOutX')
+            });
+          },
+          error: function (jqXhr, textStatus, errorMessage) { // error callback 
+            console.log('Error: ' + errorMessage);
+          }
+        });
+      }
+    });
+    
+  });
+
+  // SITE EDIT
+  function modal_loe_site_form_clean(title) {
+    $('#modal_loe_site_title').text(title+' Calculation');
+    $('#modal_loe_site_create_update_button').text(title);
+    $('#modal_loe_site_form_hidden').empty();
+
+    // Clean all input
+    $("form#modal_loe_site_form input").each(function(){ 
+      $(this).val('');
+    });
+    // Clean all textarea
+    $("form#modal_loe_site_form textarea").each(function(){
+      $(this).val('');
+    });
+    // Clean all select
+    $("form#modal_loe_site_form select").each(function(){
+      $(this).val('');
+      $(this).select2().trigger('change');
+    });
+
+    modal_loe_site_form_error_clean();
+  }
+
+  function modal_loe_site_form_error_clean() {
+    // Clean all error class
+    $("form#modal_loe_site_form  div.form-group").each(function(){
+      $(this).removeClass('has-error');
+    });
+    // Clean all error message
+    $("form#modal_loe_site_form span.help-block").each(function(){
+      $(this).empty();
+    });
+  }
+
+  $(document).on('click', '.site_edit', function () {
+    //console.log($(this).data('name'));
+    modal_loe_site_form_clean('Update');
+
+    var hidden = '';
+    hidden += '<input class="form-control" id="modal_loe_site_form_project_id" type="hidden" value="'+{{ $project->id }}+'">';
+    hidden += '<input class="form-control" id="modal_loe_site_form_old_name" type="hidden" value="'+$(this).data('name')+'">';
+    hidden += '<input class="form-control" id="modal_loe_site_form_action" type="hidden" value="update">';
+    $('#modal_loe_site_form_hidden').append(hidden);
+
+    // Init fields
+    
+    $('input#modal_loe_site_form_name').val($(this).data('name'));
+
+    $('#modal_loe_site').modal("show");
+  });
+
+  $(document).on('click', '.site_create', function () {
+    //console.log($(this).data('name'));
+    modal_loe_site_form_clean('Create');
+
+    var hidden = '';
+    hidden += '<input class="form-control" id="modal_loe_site_form_project_id" type="hidden" value="'+{{ $project->id }}+'">';
+    hidden += '<input class="form-control" id="modal_loe_site_form_id" type="hidden" value="'+$(this).data('id')+'">';
+    hidden += '<input class="form-control" id="modal_loe_site_form_action" type="hidden" value="create">';
+    $('#modal_loe_site_form_hidden').append(hidden);
+
+    // Init fields
+
+    $('#modal_loe_site').modal("show");
+  });
+
+  $(document).on('click', '#modal_loe_site_create_update_button', function () {
+    // hidden input
+    var modal_loe_site_form_project_id = $('input#modal_loe_site_form_project_id').val();
+    var modal_loe_site_form_old_name = $('input#modal_loe_site_form_old_name').val();
+    var modal_loe_site_form_action = $('input#modal_loe_site_form_action').val();
+
+    var modal_loe_site_form_name = $('input#modal_loe_site_form_name').val();
+
+
+    switch (modal_loe_site_form_action) {
+      case 'create':
+        var modal_loe_site_form_id = $('input#modal_loe_site_form_id').val();
+        var data = {'name':modal_loe_site_form_name,'project_loe_id':modal_loe_site_form_id
+        };
+        // Route info
+        var loe_site_create_update_route = "{!! route('loeSiteCreate','') !!}/"+modal_loe_site_form_project_id;
+        var type = 'post';
+        break;
+
+      case 'update':
+        var data = {'name':modal_loe_site_form_name,'old_name':modal_loe_site_form_old_name
+        };
+        // Route info
+        var loe_site_create_update_route = "{!! route('loeSiteEdit','') !!}/"+modal_loe_site_form_project_id;
+        var type = 'patch';
+        break;
+    }
+
+    $.ajax({
+          type: type,
+          url: loe_site_create_update_route,
+          data:data,
+          dataType: 'json',
+          success: function(data) {
+            modal_close = false;
+            //console.log(data);
+            if (data.result == 'success'){
+                box_type = 'success';
+                message_type = 'success';
+                modal_close = true;
+            } else if (data.result == 'validation_errors'){
+              modal_loe_site_form_error_clean();
+              //console.log(data.errors);
+              $.each(data.errors, function (key, value) {
+                //console.log(value);
+                $('#modal_loe_site_formgroup_'+value.field).addClass('has-error');
+                $('#modal_loe_site_form_'+value.field+'_error').text(value.msg);
+              });
+            }
+            else {
+                box_type = 'danger';
+                message_type = 'error';
+                modal_close = true;
+            }
+
+            if (modal_close) {
+              $('#flash-message').empty();
+              var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+              $('#flash-message').append(box);
+              $('#delete-message').delay(2000).queue(function () {
+                  $(this).addClass('animated flipOutX')
+              });
+              $('#modal_loe_site').modal('hide');
+              getLoeList();
+            }
+            
+          }
+    });
+
+  });
+
+  // CONS DELETE
+  $(document).on('click', '.cons_delete', function () {
+    //console.log($(this).data('name'));
+    //console.log($(this).data('seniority'));
+    //console.log($(this).data('location'));
+  });
+
+  // CONS EDIT
+  $(document).on('click', '.cons_edit', function () {
+    //console.log($(this).data('name'));
+    //console.log($(this).data('seniority'));
+    //console.log($(this).data('location'));
+  });
+
   function getLoeList(){
     $('#LoeTable').empty();
     $.ajax({
@@ -1842,7 +2071,7 @@ $(document).ready(function() {
       success: function(data) {
 
         loe_data = data;
-        console.log(data);
+        //console.log(data);
 
         if (data.length != 0) {
           // First we need to hide the create button
@@ -1896,8 +2125,8 @@ $(document).ready(function() {
                       </button>
                       <ul class="dropdown-menu">
                         <li class="dropdown-header">Calculation</li>
-                        <li><a href="#">Edit</a></li>
-                        <li><a href="#">Delete</a></li>
+                        <li><a class="site_edit" data-name="`+site.name+`" href="#">Edit</a></li>
+                        <li><a class="site_delete" data-name="`+site.name+`" href="#">Delete</a></li>
                       </ul>
                     </div>`;
             html += '</div>';
@@ -1926,8 +2155,8 @@ $(document).ready(function() {
                       </button>
                       <ul class="dropdown-menu">
                         <li class="dropdown-header">Consulting type</li>
-                        <li><a href="#">Edit</a></li>
-                        <li><a href="#">Delete</a></li>
+                        <li><a class="cons_edit" data-name="`+cons.name+`" data-seniority="`+cons.seniority+`" data-location="`+cons.location+`" href="#">Edit</a></li>
+                        <li><a class="cons_delete" data-name="`+cons.name+`" data-seniority="`+cons.seniority+`" data-location="`+cons.location+`" href="#">Delete</a></li>
                       </ul>
                     </div>`;
             html += '</div>';
@@ -1964,16 +2193,33 @@ $(document).ready(function() {
           // Data filling
           var grand_total_loe = 0;
           var grand_total_price = 0;
+          var total_loe = 0;
+
+          function getBusinessDatesCount(start, end) {
+            var startDate = new Date(start);
+            var endDate = new Date(end);
+            var count = 0;
+            var curDate = startDate;
+            while (curDate <= endDate) {
+                var dayOfWeek = curDate.getDay();
+                if(!((dayOfWeek == 6) || (dayOfWeek == 0)))
+                  count++;
+                curDate.setDate(curDate.getDate() + 1);
+            }
+            return count;
+          }
+
+          function td_no_null(item,end='') {
+            if (item != null && item != '') {
+              return '<td>'+item+end+'</td>';
+            } else {
+              return '<td></td>';
+            }
+          }
 
           html += '<tbody>';
           data.data.loe.forEach(function(row){
-            function td_no_null(item) {
-              if (item != null) {
-                return '<td>'+item+'</td>';
-              } else {
-                return '<td></td>';
-              }
-            }
+
             html += '<tr>';
             // actions
             html += '<td>';
@@ -1983,11 +2229,11 @@ $(document).ready(function() {
                       </button>
                       <ul class="dropdown-menu">
                         <li class="dropdown-header">Line</li>
-                        <li><a href="#">New (below)</a></li>
+                        <li><a href="#">New</a></li>
                         <li><a href="#">Edit</a></li>
                         <li><a href="#">Delete</a></li>
                         <li class="dropdown-header">Calculation</li>
-                        <li><a href="#">New</a></li>
+                        <li><a class="site_create" data-id="`+row.id+`" href="#">New</a></li>
                         <li class="dropdown-header">Consultant type</li>
                         <li><a href="#">New</a></li>
                       </ul>
@@ -2011,8 +2257,8 @@ $(document).ready(function() {
                 fill_loe_per_quantity = data.data.site[row.id][site.name].loe_per_quantity;
               } else {
                 //console.log(site.name+': -');
-                fill_quantity = '';
-                fill_loe_per_quantity = '';
+                fill_quantity = 0;
+                fill_loe_per_quantity = 0;
               }
               html += '<td>'+fill_quantity+'</td>';
               html += '<td>'+fill_loe_per_quantity+'</td>';
@@ -2020,11 +2266,31 @@ $(document).ready(function() {
 
             html += '<td>'+row.quantity+'</td>';
             html += '<td>'+row.loe_per_quantity+'</td>';
+
             if (data.col.site.length>0) {
-              html += td_no_null(row.formula);
+              if (row.formula != null && row.formula != '') {
+                html +=  '<td>';
+                html += `<div class="dropdown">
+                      
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-check"></i></a>
+                      
+                      <ul class="dropdown-menu">
+                        <li class="dropdown-header">Calculation</li>
+                        <li>`+row.formula+`</li>
+                      </ul>
+                    </div>`;
+                  html +=  '</td>';
+              } else {
+                html +=  '<td></td>';
+              }
             }
             
-            html += '<td>'+row.recurrent+'</td>';
+            if (row.recurrent == 1) {
+              html += '<td><i class="fa fa-check"></i></td>';
+            } else {
+              html += '<td></td>';
+            }
+            
             html += td_no_null(row.start_date);
             html += td_no_null(row.end_date);
 
@@ -2038,11 +2304,11 @@ $(document).ready(function() {
                 fill_price = data.data.cons[row.id][cons.name].price;
               } else {
                 //console.log(site.name+': -');
-                fill_percent = '';
-                fill_price = '';
+                fill_percent = 0;
+                fill_price = 0;
               }
-              html += '<td>'+fill_percent+'</td>';
-              html += td_no_null(fill_price);
+              html += '<td>'+fill_percent+' %</td>';
+              html += '<td>'+fill_price+' €</td>';
             }
 
             var total_price = 0;
@@ -2052,7 +2318,11 @@ $(document).ready(function() {
               if (data.data.cons.hasOwnProperty(row.id) && data.data.cons[row.id].hasOwnProperty(cons.name)) {
                 //console.log(site.name+': '+data.data.site[row.id][site.name]['quantity']);
                 fill_percent = data.data.cons[row.id][cons.name].percentage;
-                fill_md = fill_percent*row.quantity*row.loe_per_quantity/100;
+                if (row.recurrent == 0) {
+                  fill_md = row.quantity*row.loe_per_quantity*fill_percent/100;
+                } else {
+                  fill_md = row.quantity*row.loe_per_quantity*getBusinessDatesCount(row.start_date,row.end_date)*fill_percent/100;
+                }
                 fill_price = data.data.cons[row.id][cons.name].price;
                 if (fill_price != null) {
                   total_price += fill_md*fill_price;
@@ -2063,18 +2333,28 @@ $(document).ready(function() {
                 //console.log('---------------------------: ');
               } else {
                 //console.log(site.name+': -');
-                fill_md = '';
-                fill_price = '';
+                fill_md = 0;
+                fill_price = 0;
               }
               html += '<td>'+fill_md+'</td>';
-              html += td_no_null(fill_price);
+              html += '<td>'+fill_price+'</td>';
             }
 
-            html += '<td>'+row.quantity*row.loe_per_quantity+'</td>';
-            grand_total_loe += row.quantity*row.loe_per_quantity;
+            if (row.recurrent == 0) {
+              total_loe = row.quantity*row.loe_per_quantity;
+            } else {
+              total_loe = row.quantity*row.loe_per_quantity*getBusinessDatesCount(row.start_date,row.end_date);
+              //console.log(getBusinessDatesCount(row.start_date,row.end_date));
+            }
+            if (total_loe != null && total_loe != '') {
+              html += '<td>'+total_loe+'</td>';
+            } else {
+              html += '<td></td>';
+            }
+            grand_total_loe += total_loe;
             
             if (data.col.cons.length>0) {
-              html += td_no_null(total_price);
+              html += td_no_null(total_price, ' €');
             }
             
             grand_total_price += total_price;
@@ -2093,9 +2373,20 @@ $(document).ready(function() {
             number_of_cols -= 1;
           }
           html += '<td colspan="'+number_of_cols+'">Grand Total</td>';
-          html += '<td>'+grand_total_loe+'</td>';
+
+          if (grand_total_loe != null && grand_total_loe != '') {
+            html += '<td>'+grand_total_loe+'</td>';
+          } else {
+            html += '<td></td>';
+          }
+
           if (data.col.cons.length>0) {
-            html += '<td>'+grand_total_price+'</td>';
+            if (grand_total_price != null && grand_total_price != '') {
+              html += '<td>'+grand_total_price+' €</td>';
+            } else {
+            html += '<td></td>';
+            }
+            
           }
           
           html += '</tfoot>';

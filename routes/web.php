@@ -224,6 +224,9 @@ Route::group(['middleware' => ['auth', 'general','last_login']], function () {
     // LOE
     Route::get('loe/{id}', ['uses' => 'LoeController@listFromProjectID', 'as' => 'listFromProjectID', 'middleware' => ['permission:projectLoe-view']]);
     Route::get('loe/init/{id}', ['uses' => 'LoeController@init', 'as' => 'loeInit', 'middleware' => ['permission:projectLoe-create']]);
+    Route::get('loe/site_delete/{id}', ['uses' => 'LoeController@site_delete', 'as' => 'loeSiteDelete', 'middleware' => ['permission:projectLoe-delete']]);
+    Route::post('loe/site_create/{id}', ['uses' => 'LoeController@site_create', 'as' => 'loeSiteCreate', 'middleware' => ['permission:projectLoe-create']]);
+    Route::patch('loe/site_edit/{id}', ['uses' => 'LoeController@site_edit', 'as' => 'loeSiteEdit', 'middleware' => ['permission:projectLoe-edit']]);
 });
 
 Route::get('/home', 'HomeController@index')->name('home');
