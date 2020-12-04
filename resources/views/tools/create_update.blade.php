@@ -818,7 +818,19 @@ h3:after {
               <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="tab_loe">
                 <div class="row">
                   @if(Auth::user()->can('projectLoe-create'))
-                  <div class="col-md-12"><button id="create_loe" class="btn btn-success"><b>Create</b></button></div>
+                  <div class="col-md-12">
+                    <button id="create_loe" class="btn btn-success"><b>Create</b></button>
+                    <div class="dropdown">
+                      <button id="options_loe" class="btn btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
+                        <b>Options</b><i class="fa fa-sort-desc"></i>
+                      </button>
+                      <ul class="dropdown-menu">
+                        <li class="dropdown-header">Add column</li>
+                        <li><a class="site_create" href="#">Calculation</a></li>
+                        <li><a class="cons_create" href="#">Consulting type</a></li>
+                      </ul>
+                    </div>
+                  </div>
                   @endif
                 </div>
                 <div class="row">
@@ -865,6 +877,76 @@ h3:after {
                   </div>
               </div>
               <!-- Site Modal -->
+
+              <!-- Cons Modal -->
+              <div class="modal fade" id="modal_loe_cons" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" style="display:table;">
+                      <div class="modal-content">
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title" id="modal_loe_cons_title">Edit Consultant Type</h4>
+                        </div>
+                        <!-- Modal Header -->
+                      
+                        <!-- Modal Body -->
+                        <div class="modal-body">
+                          <form id="modal_loe_cons_form" role="form" method="POST" action="">
+                            <div id="modal_loe_cons_formgroup_name" class="form-group">
+                                <label  class="control-label" for="modal_loe_cons_form_name">Name</label>
+                                <input type="text" id="modal_loe_cons_form_name" class="form-control" placeholder="Name"></input>
+                                <span id="modal_loe_cons_form_name_error" class="help-block"></span>
+                            </div>
+                            <div id="modal_loe_cons_formgroup_country" class="form-group">
+                              <label  class="control-label" for="modal_loe_cons_form_country">Country</label>
+                              <div class="input-group">
+                                <span class="input-group-btn">
+                                  <button type="button" id="modal_loe_cons_clear_country_button" class="btn btn-info">Clear</button>
+                                </span>
+                                <select class="form-control select2" style="width: 100%;" id="modal_loe_cons_form_country" data-placeholder="Select a country">
+                                  <option value="" ></option>
+                                  @foreach(config('countries.country') as $key => $value)
+                                  <option value="{{ $key }}">
+                                    {{ $value }}
+                                  </option>
+                                  @endforeach
+                                </select>
+                              </div>
+                              <span id="modal_loe_cons_form_country_error" class="help-block"></span>
+                            </div>
+                            <div id="modal_loe_cons_formgroup_seniority" class="form-group">
+                              <label  class="control-label" for="modal_loe_cons_form_seniority">Seniority</label>
+                              <div class="input-group">
+                                <span class="input-group-btn">
+                                  <button type="button" id="modal_loe_cons_clear_seniority_button" class="btn btn-info">Clear</button>
+                                </span>
+                                <select class="form-control select2" style="width: 100%;" id="modal_loe_cons_form_seniority" data-placeholder="Select a seniority">
+                                  <option value="" ></option>
+                                  @foreach(config('select.loe_type') as $key => $value)
+                                  <option value="{{ $key }}">
+                                    {{ $value }}
+                                  </option>
+                                  @endforeach
+                                </select>
+                              </div>
+                              <span id="modal_loe_cons_form_seniority_error" class="help-block"></span>
+                            </div>
+                            <div class="form-group">
+                                <div id="modal_loe_cons_form_hidden"></div>
+                            </div>
+                          </form>
+                        </div>
+                          
+                        <!-- Modal Footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" id="modal_loe_cons_create_update_button" class="btn btn-success">Update</button>
+                        </div>
+                      </div>
+                  </div>
+              </div>
+              <!-- Cons Modal -->
+
               @endcan
               <!-- LoE -->
 
@@ -1835,573 +1917,1094 @@ $(document).ready(function() {
   //endregion
   
   //region Loe
-  var loe_data;
+  @if($action == 'update')
+    var loe_data;
 
-  // LOE INIT
-  $(document).on('click', '#create_loe', function () {
-    $.ajax({
-      type: 'get',
-      url: "{!! route('loeInit','') !!}/"+{{ $project->id }},
-      dataType: 'json',
-      success: function(data) {
+    $('#options_loe').hide();
 
-        getLoeList();
-
-        if (data.result == 'success'){
-            box_type = 'success';
-            message_type = 'success';
-        }
-        else {
-            box_type = 'danger';
-            message_type = 'error';
-        }
-
-        $('#flash-message').empty();
-        var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
-        $('#flash-message').append(box);
-        $('#delete-message').delay(2000).queue(function () {
-            $(this).addClass('animated flipOutX')
-        });
-      },
-      error: function (jqXhr, textStatus, errorMessage) { // error callback 
-        console.log('Error: ' + errorMessage);
-      }
+    // Init select2 boxes in the modal
+    $("#modal_loe_cons_form_country").select2({
+        allowClear: true
     });
-  });
+    $("#modal_loe_cons_form_seniority").select2({
+        allowClear: true
+    });
 
-  // SITE DELETE
-  $(document).on('click', '.site_delete', function () {
-    var data = {'name':$(this).data('name')};
-    bootbox.confirm("Are you sure want to delete this calculation?", function(result) {
-      if (result){
-        //console.log($(this).data('name'));
-        $.ajax({
-          type: 'get',
-          url: "{!! route('loeSiteDelete','') !!}/"+{{ $project->id }},
-          data: data,
-          dataType: 'json',
-          success: function(data) {
-            //console.log(data);
+    // LOE INIT
+    $(document).on('click', '#create_loe', function () {
+      $.ajax({
+        type: 'get',
+        url: "{!! route('loeInit','') !!}/"+{{ $project->id }},
+        dataType: 'json',
+        success: function(data) {
 
-            if (data.result == 'success'){
-                box_type = 'success';
-                message_type = 'success';
-                delay = 2000;
-                getLoeList();
-            }
-            else {
-                box_type = 'danger';
-                message_type = 'error';
-                delay = 10000;
-            }
+          getLoeList();
 
-            $('#flash-message').empty();
-            var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
-            $('#flash-message').append(box);
-            $('#delete-message').delay(delay).queue(function () {
-                $(this).addClass('animated flipOutX')
-            });
-          },
-          error: function (jqXhr, textStatus, errorMessage) { // error callback 
-            console.log('Error: ' + errorMessage);
+          if (data.result == 'success'){
+              box_type = 'success';
+              message_type = 'success';
           }
-        });
-      }
-    });
-    
-  });
+          else {
+              box_type = 'danger';
+              message_type = 'error';
+          }
 
-  // SITE EDIT
-  function modal_loe_site_form_clean(title) {
-    $('#modal_loe_site_title').text(title+' Calculation');
-    $('#modal_loe_site_create_update_button').text(title);
-    $('#modal_loe_site_form_hidden').empty();
-
-    // Clean all input
-    $("form#modal_loe_site_form input").each(function(){ 
-      $(this).val('');
-    });
-    // Clean all textarea
-    $("form#modal_loe_site_form textarea").each(function(){
-      $(this).val('');
-    });
-    // Clean all select
-    $("form#modal_loe_site_form select").each(function(){
-      $(this).val('');
-      $(this).select2().trigger('change');
+          $('#flash-message').empty();
+          var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+          $('#flash-message').append(box);
+          $('#delete-message').delay(2000).queue(function () {
+              $(this).addClass('animated flipOutX')
+          });
+        },
+        error: function (jqXhr, textStatus, errorMessage) { // error callback 
+          console.log('Error: ' + errorMessage);
+        }
+      });
     });
 
-    modal_loe_site_form_error_clean();
-  }
+    // SITE DELETE
+    $(document).on('click', '.site_delete', function () {
+      var data = {'name':$(this).data('name')};
+      bootbox.confirm("Are you sure want to delete this calculation?", function(result) {
+        if (result){
+          //console.log($(this).data('name'));
+          $.ajax({
+            type: 'get',
+            url: "{!! route('loeSiteDelete','') !!}/"+{{ $project->id }},
+            data: data,
+            dataType: 'json',
+            success: function(data) {
+              //console.log(data);
 
-  function modal_loe_site_form_error_clean() {
-    // Clean all error class
-    $("form#modal_loe_site_form  div.form-group").each(function(){
-      $(this).removeClass('has-error');
-    });
-    // Clean all error message
-    $("form#modal_loe_site_form span.help-block").each(function(){
-      $(this).empty();
-    });
-  }
+              if (data.result == 'success'){
+                  box_type = 'success';
+                  message_type = 'success';
+                  delay = 2000;
+                  getLoeList();
+              }
+              else {
+                  box_type = 'danger';
+                  message_type = 'error';
+                  delay = 10000;
+              }
 
-  $(document).on('click', '.site_edit', function () {
-    //console.log($(this).data('name'));
-    modal_loe_site_form_clean('Update');
-
-    var hidden = '';
-    hidden += '<input class="form-control" id="modal_loe_site_form_project_id" type="hidden" value="'+{{ $project->id }}+'">';
-    hidden += '<input class="form-control" id="modal_loe_site_form_old_name" type="hidden" value="'+$(this).data('name')+'">';
-    hidden += '<input class="form-control" id="modal_loe_site_form_action" type="hidden" value="update">';
-    $('#modal_loe_site_form_hidden').append(hidden);
-
-    // Init fields
-    
-    $('input#modal_loe_site_form_name').val($(this).data('name'));
-
-    $('#modal_loe_site').modal("show");
-  });
-
-  $(document).on('click', '.site_create', function () {
-    //console.log($(this).data('name'));
-    modal_loe_site_form_clean('Create');
-
-    var hidden = '';
-    hidden += '<input class="form-control" id="modal_loe_site_form_project_id" type="hidden" value="'+{{ $project->id }}+'">';
-    hidden += '<input class="form-control" id="modal_loe_site_form_id" type="hidden" value="'+$(this).data('id')+'">';
-    hidden += '<input class="form-control" id="modal_loe_site_form_action" type="hidden" value="create">';
-    $('#modal_loe_site_form_hidden').append(hidden);
-
-    // Init fields
-
-    $('#modal_loe_site').modal("show");
-  });
-
-  $(document).on('click', '#modal_loe_site_create_update_button', function () {
-    // hidden input
-    var modal_loe_site_form_project_id = $('input#modal_loe_site_form_project_id').val();
-    var modal_loe_site_form_old_name = $('input#modal_loe_site_form_old_name').val();
-    var modal_loe_site_form_action = $('input#modal_loe_site_form_action').val();
-
-    var modal_loe_site_form_name = $('input#modal_loe_site_form_name').val();
-
-
-    switch (modal_loe_site_form_action) {
-      case 'create':
-        var modal_loe_site_form_id = $('input#modal_loe_site_form_id').val();
-        var data = {'name':modal_loe_site_form_name,'project_loe_id':modal_loe_site_form_id
-        };
-        // Route info
-        var loe_site_create_update_route = "{!! route('loeSiteCreate','') !!}/"+modal_loe_site_form_project_id;
-        var type = 'post';
-        break;
-
-      case 'update':
-        var data = {'name':modal_loe_site_form_name,'old_name':modal_loe_site_form_old_name
-        };
-        // Route info
-        var loe_site_create_update_route = "{!! route('loeSiteEdit','') !!}/"+modal_loe_site_form_project_id;
-        var type = 'patch';
-        break;
-    }
-
-    $.ajax({
-          type: type,
-          url: loe_site_create_update_route,
-          data:data,
-          dataType: 'json',
-          success: function(data) {
-            modal_close = false;
-            //console.log(data);
-            if (data.result == 'success'){
-                box_type = 'success';
-                message_type = 'success';
-                modal_close = true;
-            } else if (data.result == 'validation_errors'){
-              modal_loe_site_form_error_clean();
-              //console.log(data.errors);
-              $.each(data.errors, function (key, value) {
-                //console.log(value);
-                $('#modal_loe_site_formgroup_'+value.field).addClass('has-error');
-                $('#modal_loe_site_form_'+value.field+'_error').text(value.msg);
-              });
-            }
-            else {
-                box_type = 'danger';
-                message_type = 'error';
-                modal_close = true;
-            }
-
-            if (modal_close) {
               $('#flash-message').empty();
               var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
               $('#flash-message').append(box);
-              $('#delete-message').delay(2000).queue(function () {
+              $('#delete-message').delay(delay).queue(function () {
                   $(this).addClass('animated flipOutX')
               });
-              $('#modal_loe_site').modal('hide');
-              getLoeList();
+            },
+            error: function (jqXhr, textStatus, errorMessage) { // error callback 
+              console.log('Error: ' + errorMessage);
             }
-            
-          }
+          });
+        }
+      });
+      
     });
 
-  });
+    // SITE CREATE EDIT
+    function modal_loe_site_form_clean(title) {
+      $('#modal_loe_site_title').text(title+' Calculation');
+      $('#modal_loe_site_create_update_button').text(title);
+      $('#modal_loe_site_form_hidden').empty();
 
-  // CONS DELETE
-  $(document).on('click', '.cons_delete', function () {
-    //console.log($(this).data('name'));
-    //console.log($(this).data('seniority'));
-    //console.log($(this).data('location'));
-  });
+      // Clean all input
+      $("form#modal_loe_site_form input").each(function(){ 
+        $(this).val('');
+      });
+      // Clean all textarea
+      $("form#modal_loe_site_form textarea").each(function(){
+        $(this).val('');
+      });
+      // Clean all select
+      $("form#modal_loe_site_form select").each(function(){
+        $(this).val('');
+        $(this).select2().trigger('change');
+      });
 
-  // CONS EDIT
-  $(document).on('click', '.cons_edit', function () {
-    //console.log($(this).data('name'));
-    //console.log($(this).data('seniority'));
-    //console.log($(this).data('location'));
-  });
+      modal_loe_site_form_error_clean();
+    }
 
-  function getLoeList(){
-    $('#LoeTable').empty();
-    $.ajax({
-      type: 'get',
-      url: "{!! route('listFromProjectID','') !!}/"+{{ $project->id }},
-      dataType: 'json',
-      success: function(data) {
+    function modal_loe_site_form_error_clean() {
+      // Clean all error class
+      $("form#modal_loe_site_form  div.form-group").each(function(){
+        $(this).removeClass('has-error');
+      });
+      // Clean all error message
+      $("form#modal_loe_site_form span.help-block").each(function(){
+        $(this).empty();
+      });
+    }
 
-        loe_data = data;
-        //console.log(data);
+    $(document).on('click', '.site_edit', function () {
+      //console.log($(this).data('name'));
+      modal_loe_site_form_clean('Update');
 
-        if (data.length != 0) {
-          // First we need to hide the create button
-          $('#create_loe').hide();
+      var hidden = '';
+      hidden += '<input class="form-control" id="modal_loe_site_form_project_id" type="hidden" value="'+{{ $project->id }}+'">';
+      hidden += '<input class="form-control" id="modal_loe_site_form_old_name" type="hidden" value="'+$(this).data('name')+'">';
+      hidden += '<input class="form-control" id="modal_loe_site_form_action" type="hidden" value="update">';
+      $('#modal_loe_site_form_hidden').append(hidden);
 
-          // Then we need to create the headers for the table
-          html = '<thead>';
-          // First header
-          html += '<tr>';
-          html += '<th rowspan="3">'+'Action'+'</th>';
-          html += '<th rowspan="3">'+'Main Phase'+'</th>';
-          html += '<th rowspan="3">'+'Secondary Phase'+'</th>';
-          html += '<th rowspan="3">'+'Domain'+'</th>';
-          html += '<th rowspan="3">'+'Description'+'</th>';
-          html += '<th rowspan="3">'+'Option'+'</th>';
-          html += '<th rowspan="3">'+'Assumption'+'</th>';
-          if (data.col.site.length>0) {
-            html += '<th colspan="'+2*data.col.site.length+'">'+'Site calculation'+'</th>';
-          }
-          html += '<th rowspan="3">'+'Quantity'+'</th>';
-          html += '<th rowspan="3">'+'LoE (per unit)'+'</th>';
-          if (data.col.site.length>0) {
-            html += '<th rowspan="3">'+'Formula'+'</th>';
-          }
-          
-          html += '<th rowspan="3">'+'recurrent'+'</th>';
-          html += '<th rowspan="3">'+'Start date'+'</th>';
-          html += '<th rowspan="3">'+'End date'+'</th>';
-          if (data.col.cons.length>0) {
-            html += '<th colspan="'+2*data.col.cons.length+'">'+'Consulting type (%)'+'</th>';
-            html += '<th colspan="'+2*data.col.cons.length+'">'+'Consulting type (MD)'+'</th>';
-          }
-          
-          html += '<th rowspan="3">'+'Total Loe'+'</th>';
-          if (data.col.cons.length>0) {
-            html += '<th rowspan="3">'+'Total Price'+'</th>';
-          }
-          html += '</tr>';
+      // Init fields
+      
+      $('input#modal_loe_site_form_name').val($(this).data('name'));
 
-          // Second header
-          html += '<tr>';
-          
-          data.col.site.forEach(function(site){
-            html += '<th colspan="2">';
-            html += '<div class="row">';
-            html += '<div class="col-sm-6">'+site.name+'</div>';
-            html += '<div class="col-sm-6">';
-            html += `<div class="dropdown">
-                      <button class="btn btn-sm btn-round dropdown-toggle" type="button" data-toggle="dropdown">
-                      <i class="fa fa-sort-desc"></i>
-                      </button>
-                      <ul class="dropdown-menu">
-                        <li class="dropdown-header">Calculation</li>
-                        <li><a class="site_edit" data-name="`+site.name+`" href="#">Edit</a></li>
-                        <li><a class="site_delete" data-name="`+site.name+`" href="#">Delete</a></li>
-                      </ul>
-                    </div>`;
-            html += '</div>';
-            html += '</div>';
-            html += '</th>';
-          });
-          
-          data.col.cons.forEach(function(cons){
-            html += '<th colspan="2">'
-            html += '<div class="row">';
-            html += '<div class="col-sm-6">';
-            html += '<div class="row">';
-            html += cons.name;
-            html += '</div>';
-            html += '<div class="row">';
-            html += cons.seniority;
-            html += '</div>';
-            html += '<div class="row">';
-            html += cons.location;
-            html += '</div>';
-            html += '</div>';
-            html += '<div class="col-sm-6">';
-            html += `<div class="dropdown">
-                      <button class="btn btn-sm btn-round dropdown-toggle" type="button" data-toggle="dropdown">
-                      <i class="fa fa-sort-desc"></i>
-                      </button>
-                      <ul class="dropdown-menu">
-                        <li class="dropdown-header">Consulting type</li>
-                        <li><a class="cons_edit" data-name="`+cons.name+`" data-seniority="`+cons.seniority+`" data-location="`+cons.location+`" href="#">Edit</a></li>
-                        <li><a class="cons_delete" data-name="`+cons.name+`" data-seniority="`+cons.seniority+`" data-location="`+cons.location+`" href="#">Delete</a></li>
-                      </ul>
-                    </div>`;
-            html += '</div>';
-            html += '</div>';
-            html += '</th>';
-          });
+      $('#modal_loe_site').modal("show");
+    });
 
-          data.col.cons.forEach(function(cons){
-            html += '<th colspan="2">'+cons.name+'<br>'+cons.seniority+'<br>'+cons.location+'</th>';
-          });
+    $(document).on('click', '.site_create', function () {
+      //console.log($(this).data('name'));
+      modal_loe_site_form_clean('Create');
 
-          html += '</tr>';
+      var hidden = '';
+      hidden += '<input class="form-control" id="modal_loe_site_form_project_id" type="hidden" value="'+{{ $project->id }}+'">';
+      hidden += '<input class="form-control" id="modal_loe_site_form_action" type="hidden" value="create">';
+      $('#modal_loe_site_form_hidden').append(hidden);
 
-          // Third header
-          html += '<tr>';
-          
-          data.col.site.forEach(function(site){
-            html += '<th>Quantity</th>';
-            html += '<th>LoE (per unit)</th>';
-          });
-          data.col.cons.forEach(function(cons){
-            html += '<th>%</th>';
-            html += '<th>€</th>';
-          });
-          data.col.cons.forEach(function(cons){
-            html += '<th>MD</th>';
-            html += '<th>€</th>';
-          });
+      // Init fields
 
-          html += '</tr>';
+      $('#modal_loe_site').modal("show");
+    });
 
-          html += '</thead>';
+    $(document).on('click', '#modal_loe_site_create_update_button', function () {
+      // hidden input
+      var modal_loe_site_form_project_id = $('input#modal_loe_site_form_project_id').val();
+      var modal_loe_site_form_old_name = $('input#modal_loe_site_form_old_name').val();
+      var modal_loe_site_form_action = $('input#modal_loe_site_form_action').val();
 
-          // Data filling
-          var grand_total_loe = 0;
-          var grand_total_price = 0;
-          var total_loe = 0;
+      var modal_loe_site_form_name = $('input#modal_loe_site_form_name').val();
 
-          function getBusinessDatesCount(start, end) {
-            var startDate = new Date(start);
-            var endDate = new Date(end);
-            var count = 0;
-            var curDate = startDate;
-            while (curDate <= endDate) {
-                var dayOfWeek = curDate.getDay();
-                if(!((dayOfWeek == 6) || (dayOfWeek == 0)))
-                  count++;
-                curDate.setDate(curDate.getDate() + 1);
-            }
-            return count;
-          }
 
-          function td_no_null(item,end='') {
-            if (item != null && item != '') {
-              return '<td>'+item+end+'</td>';
-            } else {
-              return '<td></td>';
-            }
-          }
+      switch (modal_loe_site_form_action) {
+        case 'create':
+          var data = {'name':modal_loe_site_form_name
+          };
+          // Route info
+          var loe_site_create_update_route = "{!! route('loeSiteCreate','') !!}/"+modal_loe_site_form_project_id;
+          var type = 'post';
+          break;
 
-          html += '<tbody>';
-          data.data.loe.forEach(function(row){
+        case 'update':
+          var data = {'name':modal_loe_site_form_name,'old_name':modal_loe_site_form_old_name
+          };
+          // Route info
+          var loe_site_create_update_route = "{!! route('loeSiteEdit','') !!}/"+modal_loe_site_form_project_id;
+          var type = 'patch';
+          break;
+      }
 
-            html += '<tr>';
-            // actions
-            html += '<td>';
-            html += `<div class="dropdown">
-                      <button class="btn btn-success btn-sm btn-round dropdown-toggle" type="button" data-toggle="dropdown">
-                      <i class="fa fa-gear"></i>
-                      </button>
-                      <ul class="dropdown-menu">
-                        <li class="dropdown-header">Line</li>
-                        <li><a href="#">New</a></li>
-                        <li><a href="#">Edit</a></li>
-                        <li><a href="#">Delete</a></li>
-                        <li class="dropdown-header">Calculation</li>
-                        <li><a class="site_create" data-id="`+row.id+`" href="#">New</a></li>
-                        <li class="dropdown-header">Consultant type</li>
-                        <li><a href="#">New</a></li>
-                      </ul>
-                    </div>`;
-            html +='</td>';
+      $.ajax({
+            type: type,
+            url: loe_site_create_update_route,
+            data:data,
+            dataType: 'json',
+            success: function(data) {
+              modal_close = false;
+              //console.log(data);
+              if (data.result == 'success'){
+                  box_type = 'success';
+                  message_type = 'success';
+                  modal_close = true;
+              } else if (data.result == 'validation_errors'){
+                modal_loe_site_form_error_clean();
+                //console.log(data.errors);
+                $.each(data.errors, function (key, value) {
+                  //console.log(value);
+                  $('#modal_loe_site_formgroup_'+value.field).addClass('has-error');
+                  $('#modal_loe_site_form_'+value.field+'_error').text(value.msg);
+                });
+              }
+              else {
+                  box_type = 'danger';
+                  message_type = 'error';
+                  modal_close = true;
+              }
 
-            html += td_no_null(row.main_phase);
-            html += td_no_null(row.secondary_phase);
-            html += td_no_null(row.domain);
-            html += td_no_null(row.description);
-            html += td_no_null(row.option);
-            html += td_no_null(row.assumption);
-
-            //console.log('row: '+row.id);
-            data.col.site.forEach(fill_site_data);
-            function fill_site_data (site){
+              if (modal_close) {
+                $('#flash-message').empty();
+                var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+                $('#flash-message').append(box);
+                $('#delete-message').delay(2000).queue(function () {
+                    $(this).addClass('animated flipOutX')
+                });
+                $('#modal_loe_site').modal('hide');
+                getLoeList();
+              }
               
-              if (data.data.site.hasOwnProperty(row.id) && data.data.site[row.id].hasOwnProperty(site.name)) {
-                //console.log(site.name+': '+data.data.site[row.id][site.name]['quantity']);
-                fill_quantity = data.data.site[row.id][site.name].quantity;
-                fill_loe_per_quantity = data.data.site[row.id][site.name].loe_per_quantity;
-              } else {
-                //console.log(site.name+': -');
-                fill_quantity = 0;
-                fill_loe_per_quantity = 0;
-              }
-              html += '<td>'+fill_quantity+'</td>';
-              html += '<td>'+fill_loe_per_quantity+'</td>';
             }
+      });
 
-            html += '<td>'+row.quantity+'</td>';
-            html += '<td>'+row.loe_per_quantity+'</td>';
+    });
 
-            if (data.col.site.length>0) {
-              if (row.formula != null && row.formula != '') {
-                html +=  '<td>';
-                html += `<div class="dropdown">
-                      
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-check"></i></a>
-                      
-                      <ul class="dropdown-menu">
-                        <li class="dropdown-header">Calculation</li>
-                        <li>`+row.formula+`</li>
-                      </ul>
-                    </div>`;
-                  html +=  '</td>';
-              } else {
-                html +=  '<td></td>';
+    // CONS DELETE
+    $(document).on('click', '.cons_delete', function () {
+      //console.log($(this).data('name'));
+      var data = {'name':$(this).data('name')};
+      bootbox.confirm("Are you sure want to delete this consulting type?", function(result) {
+        if (result){
+          //console.log($(this).data('name'));
+          $.ajax({
+            type: 'get',
+            url: "{!! route('loeConsDelete','') !!}/"+{{ $project->id }},
+            data: data,
+            dataType: 'json',
+            success: function(data) {
+              console.log(data);
+
+              if (data.result == 'success'){
+                  box_type = 'success';
+                  message_type = 'success';
+                  delay = 2000;
+                  getLoeList();
               }
+              else {
+                  box_type = 'danger';
+                  message_type = 'error';
+                  delay = 10000;
+              }
+
+              $('#flash-message').empty();
+              var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+              $('#flash-message').append(box);
+              $('#delete-message').delay(delay).queue(function () {
+                  $(this).addClass('animated flipOutX')
+              });
+            },
+            error: function (jqXhr, textStatus, errorMessage) { // error callback 
+              console.log('Error: ' + errorMessage);
             }
+          });
+        }
+      });
+    });
+
+    // CONS CREATE EDIT
+    function modal_loe_cons_form_clean(title) {
+      $('#modal_loe_cons_title').text(title+' Consulting Type');
+      $('#modal_loe_cons_create_update_button').text(title);
+      $('#modal_loe_cons_form_hidden').empty();
+
+      // Clean all input
+      $("form#modal_loe_cons_form input").each(function(){ 
+        $(this).val('');
+      });
+      // Clean all textarea
+      $("form#modal_loe_cons_form textarea").each(function(){
+        $(this).val('');
+      });
+      // Clean all select
+      $("form#modal_loe_cons_form select").each(function(){
+        $(this).val('');
+        $(this).select2().trigger('change');
+      });
+
+      modal_loe_cons_form_error_clean();
+    }
+
+    function modal_loe_cons_form_error_clean() {
+      // Clean all error class
+      $("form#modal_loe_cons_form  div.form-group").each(function(){
+        $(this).removeClass('has-error');
+      });
+      // Clean all error message
+      $("form#modal_loe_cons_form span.help-block").each(function(){
+        $(this).empty();
+      });
+    }
+
+    $(document).on('click', '#modal_loe_cons_clear_country_button', function () {
+      $('select#modal_loe_cons_form_country').val('');
+      $('select#modal_loe_cons_form_country').select2().trigger('change');
+    });
+
+    $(document).on('click', '#modal_loe_cons_clear_seniority_button', function () {
+      $('select#modal_loe_cons_form_seniority').val('');
+      $('select#modal_loe_cons_form_seniority').select2().trigger('change');
+    });
+
+    $(document).on('click', '.cons_create', function () {
+      
+      modal_loe_cons_form_clean('Create');
+
+      var hidden = '';
+      hidden += '<input class="form-control" id="modal_loe_cons_form_project_id" type="hidden" value="'+{{ $project->id }}+'">';
+      hidden += '<input class="form-control" id="modal_loe_cons_form_action" type="hidden" value="create">';
+      $('#modal_loe_cons_form_hidden').append(hidden);
+
+      // Init fields
+
+      $('#modal_loe_cons').modal("show");
+    });
+
+    
+    $(document).on('click', '.cons_edit', function () {
+      //console.log($(this).data('name'));
+      //console.log($(this).data('seniority'));
+      //console.log($(this).data('location'));
+      modal_loe_cons_form_clean('Update');
+
+      var hidden = '';
+      hidden += '<input class="form-control" id="modal_loe_cons_form_project_id" type="hidden" value="'+{{ $project->id }}+'">';
+      hidden += '<input class="form-control" id="modal_loe_cons_form_old_name" type="hidden" value="'+$(this).data('name')+'">';
+      hidden += '<input class="form-control" id="modal_loe_cons_form_action" type="hidden" value="update">';
+      $('#modal_loe_cons_form_hidden').append(hidden);
+
+      // Init fields
+      
+      $('input#modal_loe_cons_form_name').val($(this).data('name'));
+
+      $('select#modal_loe_cons_form_country').val($(this).data('location'));
+      $('select#modal_loe_cons_form_country').select2().trigger('change');
+
+      $('select#modal_loe_cons_form_seniority').val($(this).data('seniority'));
+      $('select#modal_loe_cons_form_seniority').select2().trigger('change');
+
+      $('#modal_loe_cons').modal("show");
+    });
+
+    $(document).on('click', '#modal_loe_cons_create_update_button', function () {
+      // hidden input
+      var modal_loe_cons_form_project_id = $('input#modal_loe_cons_form_project_id').val();
+      var modal_loe_cons_form_action = $('input#modal_loe_cons_form_action').val();
+
+      var modal_loe_cons_form_name = $('input#modal_loe_cons_form_name').val();
+      var modal_loe_cons_form_country = $('select#modal_loe_cons_form_country').children("option:selected").val();
+      var modal_loe_cons_form_seniority = $('select#modal_loe_cons_form_seniority').children("option:selected").val();
+
+      
+      
+      switch (modal_loe_cons_form_action) {
+        case 'create':
+          var data = {'name':modal_loe_cons_form_name,'location':modal_loe_cons_form_country,'seniority':modal_loe_cons_form_seniority
+          };
+          // Route info
+          var loe_cons_create_update_route = "{!! route('loeConsCreate','') !!}/"+modal_loe_cons_form_project_id;
+          var type = 'post';
+          break;
+
+        case 'update':
+          var modal_loe_cons_form_old_name = $('input#modal_loe_cons_form_old_name').val();
+          var data = {'name':modal_loe_cons_form_name,'old_name':modal_loe_cons_form_old_name,'location':modal_loe_cons_form_country,'seniority':modal_loe_cons_form_seniority
+          };
+          // Route info
+          var loe_cons_create_update_route = "{!! route('loeConsEdit','') !!}/"+modal_loe_cons_form_project_id;
+          var type = 'patch';
+          break;
+      }
+
+      $.ajax({
+            type: type,
+            url: loe_cons_create_update_route,
+            data:data,
+            dataType: 'json',
+            success: function(data) {
+              modal_close = false;
+              //console.log(data);
+              if (data.result == 'success'){
+                  box_type = 'success';
+                  message_type = 'success';
+                  modal_close = true;
+              } else if (data.result == 'validation_errors'){
+                modal_loe_cons_form_error_clean();
+                //console.log(data.errors);
+                $.each(data.errors, function (key, value) {
+                  //console.log(value);
+                  $('#modal_loe_cons_formgroup_'+value.field).addClass('has-error');
+                  $('#modal_loe_cons_form_'+value.field+'_error').text(value.msg);
+                });
+              }
+              else {
+                  box_type = 'danger';
+                  message_type = 'error';
+                  modal_close = true;
+              }
+
+              if (modal_close) {
+                $('#flash-message').empty();
+                var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+                $('#flash-message').append(box);
+                $('#delete-message').delay(2000).queue(function () {
+                    $(this).addClass('animated flipOutX')
+                });
+                $('#modal_loe_cons').modal('hide');
+                getLoeList();
+              }
+              
+            }
+      });
+
+    });
+
+    //ROW DELETE
+    $(document).on('click', '.buttonLoeDelete', function () {
+      //console.log($(this).data('id'));
+      var id = $(this).data('id');
+      bootbox.confirm("Are you sure want to delete this line?", function(result) {
+        if (result){
+          //console.log($(this).data('name'));
+          $.ajax({
+            type: 'get',
+            url: "{!! route('loeDelete','') !!}/"+id,
+            dataType: 'json',
+            success: function(data) {
+              console.log(data);
+
+              if (data.result == 'success'){
+                  box_type = 'success';
+                  message_type = 'success';
+                  delay = 2000;
+                  getLoeList();
+              }
+              else {
+                  box_type = 'danger';
+                  message_type = 'error';
+                  delay = 10000;
+              }
+
+              $('#flash-message').empty();
+              var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+              $('#flash-message').append(box);
+              $('#delete-message').delay(delay).queue(function () {
+                  $(this).addClass('animated flipOutX')
+              });
+            },
+            error: function (jqXhr, textStatus, errorMessage) { // error callback 
+              console.log('Error: ' + errorMessage);
+            }
+          });
+        }
+      });
+    });
+
+    //ROW DUPLICATE
+    $(document).on('click', '.buttonLoeDuplicate', function () {
+      //console.log($(this).data('id'));
+      var id = $(this).data('id');
+      $.ajax({
+            type: 'get',
+            url: "{!! route('loeDuplicate','') !!}/"+id,
+            dataType: 'json',
+            success: function(data) {
+              console.log(data);
+
+              if (data.result == 'success'){
+                  box_type = 'success';
+                  message_type = 'success';
+                  delay = 2000;
+                  getLoeList();
+              }
+              else {
+                  box_type = 'danger';
+                  message_type = 'error';
+                  delay = 10000;
+              }
+
+              $('#flash-message').empty();
+              var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+              $('#flash-message').append(box);
+              $('#delete-message').delay(delay).queue(function () {
+                  $(this).addClass('animated flipOutX')
+              });
+            },
+            error: function (jqXhr, textStatus, errorMessage) { // error callback 
+              console.log('Error: ' + errorMessage);
+            }
+          });
+    });
+
+    //ROW CREATE
+    $(document).on('click', '.buttonLoeCreateUpdate', function () {
+      //console.log(loe_data);
+      //console.log($(this).data('action'));
+      tr = $(this).closest('tr');
+      html = '<tr>';
+      html += `<td>
+                  <div class="btn-group btn-group-xs">
+                    <button type="button" class="buttonLoeAccept btn btn-success"><span class="glyphicon glyphicon-ok"></span></button>
+                    <button type="button" class="buttonLoeCancel btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
+                  </div>
+              </td>`;
+
+      if ($(this).data('action') == 'update') {
+        html += '<input class="form-control" id="loe_id" type="hidden" value="'+$(this).data('id')+'">';
+      }
+      html += `<td><input type="text" id="loe_main_phase" class="form-control" placeholder="Main phase"></input>
+      <span class="loe_main_phase_error help-block"></span></td>`;
+      html += `<td><input type="text" id="loe_secondary_phase" class="form-control" placeholder="Secondary phase"></input>
+      <span class="loe_secondary_phase_error help-block"></span></td>`;
+      html += `<td>
+        <select class="form-control select2" style="width: 100%;" id="loe_domain" data-placeholder="Select a domain">
+          <option value="" ></option>
+          @foreach(config('select.domain-users') as $key => $value)
+          <option value="{{ $key }}">
+            {{ $value }}
+          </option>
+          @endforeach
+        </select>
+      <span class="loe_domain_error help-block"></span></td>`;
+      html += `<td><textarea type="text" id="loe_description" class="form-control" placeholder="Description" rows="4"></textarea>
+      <span class="loe_description_error help-block"></span></td>`;
+      html += `<td><input type="text" id="loe_option" class="form-control" placeholder="Option"></input>
+      <span class="loe_option_error help-block"></span></td>`;
+      html += `<td><textarea type="text" id="loe_assumption" class="form-control" placeholder="Assumption" rows="4"></textarea>
+      <span class="loe_assumption_error help-block"></span></td>`;
+
+      loe_data.col.site.forEach(fill_site_inputs);
+      function fill_site_inputs (site){
+        html += `<td><input type="text" data-name="`+site.name+`" class="loe_site_quantity form-control" placeholder="Quantity" value="0"></input>
+        <span class="loe_site_quantity_error help-block"></span></td>`;
+        html += `<td><input type="text" data-name="`+site.name+`" class="loe_site_loe_per_u form-control" placeholder="LoE per unit" value="0"></input>
+        <span class="loe_site_loe_per_u_error help-block"></span></td>`;
+      }
+
+
+      html += `<td><input type="text" id="loe_quantity" class="form-control" placeholder="Quantity" value="0"></input>
+      <span class="loe_quantity_error help-block"></span></td>`;
+      html += `<td><input type="text" id="loe_loe_per_u" class="form-control" placeholder="Loe per unit" value="0"></input>
+      <span class="loe_loe_per_u_error help-block"></span></td>`;
+      html += `<td><input type="text" id="loe_formula" class="form-control" placeholder="Formula"></input>
+      <span class="loe_formula_error help-block"></span></td>`;
+      html += `<td><input type="checkbox" id="loe_recurrent" class="form-group"></input>
+      <span class="loe_recurrent_error help-block"></span></td>`;
+      html += `<td><input type="text" id="loe_start_date" class="form-control" placeholder="Start date"></input>
+      <span class="loe_start_date_error help-block"></span></td>`;
+      html += `<td><input type="text" id="loe_end_date" class="form-control" placeholder="End date"></input>
+      <span class="loe_end_date_error help-block"></span></td>`;
+
+      loe_data.col.cons.forEach(fill_cons_inputs);
+      function fill_cons_inputs (cons){
+        html += `<td><input type="text" data-name="`+cons.name+`" class="loe_cons_percentage form-control" placeholder="Percentage" value="0"></input>
+        <span class="loe_cons_percentage_error help-block"></span></td>`;
+        html += `<td><input type="text" data-name="`+cons.name+`" class="loe_cons_price form-control" placeholder="Price" value="0"></input>
+        <span class="loe_cons_price_error help-block"></span></td>`;
+      }
+
+      loe_data.col.cons.forEach(fill_cons_empty);
+      function fill_cons_empty (cons){
+        html += '<td></td>';
+        html += '<td></td>';
+      }
+
+      html += '<td></td>';
+      html += '<td></td>';
+      html += '</tr>';
+
+      tr.after(html);
+
+      // Init select2 boxes in the modal
+      $("#loe_domain").select2({
+          allowClear: true
+      });
+
+      // Init Date
+
+      $('#loe_start_date').daterangepicker({
+        singleDatePicker: true,
+        showDropdowns: true,
+        drops: 'up',
+        autoUpdateInput: false,
+        locale: {
+          format: 'YYYY-MM-DD',
+          cancelLabel: 'Clear'
+        }
+      });
+
+      $('#loe_start_date').on('apply.daterangepicker', function(ev, picker) {
+        $(this).val(picker.startDate.format('YYYY-MM-DD'));
+      });
+
+      $('#loe_start_date').on('cancel.daterangepicker', function(ev, picker) {
+          $(this).val('');
+      });
+
+      $('#loe_end_date').daterangepicker({
+        singleDatePicker: true,
+        showDropdowns: true,
+        drops: 'up',
+        autoUpdateInput: false,
+        locale: {
+          format: 'YYYY-MM-DD',
+          cancelLabel: 'Clear'
+        }
+      });
+
+      $('#loe_end_date').on('apply.daterangepicker', function(ev, picker) {
+        $(this).val(picker.startDate.format('YYYY-MM-DD'));
+      });
+
+      $('#loe_end_date').on('cancel.daterangepicker', function(ev, picker) {
+          $(this).val('');
+      });
+
+      $('.buttonLoeCreateUpdate').hide();
+      $('.buttonLoeDuplicate').hide();
+      $('.buttonLoeDelete').hide();
+
+      
+
+      if ($(this).data('action') == 'update') {
+        var id = $(this).data('id');
+        console.log(loe_data);
+        loe_data.data.loe.forEach(fill_update_data);
+        function fill_update_data(row) {
+          if (row.id == id) {
+            $('input#loe_main_phase').val(row.main_phase);
+            $('input#loe_secondary_phase').val(row.secondary_phase);
             
+            $('select#loe_domain').val(row.domain);
+            $('select#loe_domain').select2().trigger('change');
+
+            $('textarea#loe_description').val(row.description);
+            $('input#loe_option').val(row.option);
+            $('textarea#loe_assumption').val(row.assumption);
+
+            $('input#loe_quantity').val(row.quantity);
+            $('input#loe_loe_per_u').val(row.loe_per_quantity);
+            $('input#loe_formula').val(row.formula);
+
             if (row.recurrent == 1) {
-              html += '<td><i class="fa fa-check"></i></td>';
-            } else {
-              html += '<td></td>';
+              $('input#loe_recurrent').prop('checked',true);
             }
             
-            html += td_no_null(row.start_date);
-            html += td_no_null(row.end_date);
 
-            data.col.cons.forEach(fill_cons_data_percent);
-            function fill_cons_data_percent (cons){
-              
-              if (data.data.cons.hasOwnProperty(row.id) && data.data.cons[row.id].hasOwnProperty(cons.name)) {
-                //console.log(site.name+': '+data.data.site[row.id][site.name]['quantity']);
-                fill_percent = data.data.cons[row.id][cons.name].percentage;
-                fill_md = fill_percent*row.quantity*row.loe_per_quantity/100;
-                fill_price = data.data.cons[row.id][cons.name].price;
-              } else {
-                //console.log(site.name+': -');
-                fill_percent = 0;
-                fill_price = 0;
-              }
-              html += '<td>'+fill_percent+' %</td>';
-              html += '<td>'+fill_price+' €</td>';
-            }
-
-            var total_price = 0;
-            data.col.cons.forEach(fill_cons_data_MD);
-
-            function fill_cons_data_MD (cons){
-              if (data.data.cons.hasOwnProperty(row.id) && data.data.cons[row.id].hasOwnProperty(cons.name)) {
-                //console.log(site.name+': '+data.data.site[row.id][site.name]['quantity']);
-                fill_percent = data.data.cons[row.id][cons.name].percentage;
-                if (row.recurrent == 0) {
-                  fill_md = row.quantity*row.loe_per_quantity*fill_percent/100;
-                } else {
-                  fill_md = row.quantity*row.loe_per_quantity*getBusinessDatesCount(row.start_date,row.end_date)*fill_percent/100;
-                }
-                fill_price = data.data.cons[row.id][cons.name].price;
-                if (fill_price != null) {
-                  total_price += fill_md*fill_price;
-                }
-                //console.log('fill_md: '+fill_md);
-                //console.log('fill_price: '+fill_price);
-                //console.log('total_price: '+total_price);
-                //console.log('---------------------------: ');
-              } else {
-                //console.log(site.name+': -');
-                fill_md = 0;
-                fill_price = 0;
-              }
-              html += '<td>'+fill_md+'</td>';
-              html += '<td>'+fill_price+'</td>';
-            }
-
-            if (row.recurrent == 0) {
-              total_loe = row.quantity*row.loe_per_quantity;
-            } else {
-              total_loe = row.quantity*row.loe_per_quantity*getBusinessDatesCount(row.start_date,row.end_date);
-              //console.log(getBusinessDatesCount(row.start_date,row.end_date));
-            }
-            if (total_loe != null && total_loe != '') {
-              html += '<td>'+total_loe+'</td>';
-            } else {
-              html += '<td></td>';
-            }
-            grand_total_loe += total_loe;
-            
-            if (data.col.cons.length>0) {
-              html += td_no_null(total_price, ' €');
-            }
-            
-            grand_total_price += total_price;
-
-            html += '</tr>';
-          });
-          html += '</tbody>';
-
-          html += '<tfoot>';
-          number_of_cols = 13+2*data.col.site.length+2*2*data.col.cons.length;
-          //console.log(number_of_cols);
-          //console.log(data.col.site.length);
-          //console.log(data.col.cons.length);
-          // Wen need to remove one column named formula in case there is no calculation
-          if (data.col.site.length == 0) {
-            number_of_cols -= 1;
+            $('input#loe_start_date').val(row.start_date);
+            $('input#loe_end_date').val(row.end_date);
           }
-          html += '<td colspan="'+number_of_cols+'">Grand Total</td>';
-
-          if (grand_total_loe != null && grand_total_loe != '') {
-            html += '<td>'+grand_total_loe+'</td>';
-          } else {
-            html += '<td></td>';
-          }
-
-          if (data.col.cons.length>0) {
-            if (grand_total_price != null && grand_total_price != '') {
-              html += '<td>'+grand_total_price+' €</td>';
-            } else {
-            html += '<td></td>';
-            }
-            
-          }
-          
-          html += '</tfoot>';
-
-
-          $('#LoeTable').prepend(html);
 
         }
 
+        loe_data.col.site.forEach(fill_site_update_data);
+        function fill_site_update_data (site){
+          
+          if (loe_data.data.site.hasOwnProperty(id) && loe_data.data.site[id].hasOwnProperty(site.name)) {
+            fill_quantity = loe_data.data.site[id][site.name].quantity;
+            fill_loe_per_quantity = loe_data.data.site[id][site.name].loe_per_quantity;
+          } else {
+            //console.log(site.name+': -');
+            fill_quantity = 0;
+            fill_loe_per_quantity = 0;
+          }
+          $('input.loe_site_quantity[data-name="'+site.name+'"]').val(fill_quantity);
+          $('input.loe_site_loe_per_u[data-name="'+site.name+'"]').val(fill_loe_per_quantity);
+        }
+
+        loe_data.col.cons.forEach(fill_cons_update_data);
+        function fill_cons_update_data (cons){
+          if (loe_data.data.cons.hasOwnProperty(id) && loe_data.data.cons[id].hasOwnProperty(cons.name)) {
+            fill_percent = loe_data.data.cons[id][cons.name].percentage;
+            if (loe_data.data.cons[id][cons.name].price != null) {
+              fill_price = loe_data.data.cons[id][cons.name].price;
+            } else {
+              fill_price = 0;
+            }
+          } else {
+            fill_percent = 0;
+            fill_price = 0;
+          }
+          $('input.loe_cons_percentage[data-name="'+cons.name+'"]').val(fill_percent);
+          $('input.loe_cons_price[data-name="'+cons.name+'"]').val(fill_price);
+        }
+        
+        tr.remove();
       }
     });
-  }
 
-  getLoeList();
-  
+    $(document).on('click', '.buttonLoeCancel', function () {
+      getLoeList()
+    });
+
+    $(document).on('click', '.buttonLoeAccept', function () {
+      getLoeList()
+    });
+
+
+
+    function getLoeList(){
+      $('#LoeTable').empty();
+      $.ajax({
+        type: 'get',
+        url: "{!! route('listFromProjectID','') !!}/"+{{ $project->id }},
+        dataType: 'json',
+        success: function(data) {
+
+          loe_data = data;
+          //console.log(data);
+
+          if (data.length != 0) {
+            // First we need to hide the create button
+            $('#create_loe').hide();
+            $('#options_loe').show();
+
+            // Then we need to create the headers for the table
+            html = '<thead>';
+            //region First header
+            html += '<tr>';
+            html += '<th rowspan="3">'+'Action'+'</th>';
+            html += '<th rowspan="3">'+'Main Phase'+'</th>';
+            html += '<th rowspan="3">'+'Secondary Phase'+'</th>';
+            html += '<th rowspan="3">'+'Domain'+'</th>';
+            html += '<th rowspan="3">'+'Description'+'</th>';
+            html += '<th rowspan="3">'+'Option'+'</th>';
+            html += '<th rowspan="3">'+'Assumption'+'</th>';
+            if (data.col.site.length>0) {
+              html += '<th colspan="'+2*data.col.site.length+'">'+'Site calculation'+'</th>';
+            }
+            html += '<th rowspan="3">'+'Quantity'+'</th>';
+            html += '<th rowspan="3">'+'LoE (per unit)'+'</th>';
+            if (data.col.site.length>0) {
+              html += '<th rowspan="3">'+'Formula'+'</th>';
+            }
+            
+            html += '<th rowspan="3">'+'recurrent'+'</th>';
+            html += '<th rowspan="3">'+'Start date'+'</th>';
+            html += '<th rowspan="3">'+'End date'+'</th>';
+            if (data.col.cons.length>0) {
+              html += '<th colspan="'+2*data.col.cons.length+'">'+'Consulting type (%)'+'</th>';
+              html += '<th colspan="'+2*data.col.cons.length+'">'+'Consulting type (MD)'+'</th>';
+            }
+            
+            html += '<th rowspan="3">'+'Total Loe'+'</th>';
+            if (data.col.cons.length>0) {
+              html += '<th rowspan="3">'+'Total Price'+'</th>';
+            }
+            html += '</tr>';
+            //endregion
+            //region Second header
+            html += '<tr>';
+            
+            data.col.site.forEach(function(site){
+              html += '<th colspan="2">';
+              html += '<div class="row">';
+              html += '<div class="col-sm-6">'+site.name+'</div>';
+              html += '<div class="col-sm-6">';
+              html += `<div class="dropdown">
+                        <button class="btn btn-sm btn-round dropdown-toggle" type="button" data-toggle="dropdown">
+                        <i class="fa fa-sort-desc"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                          <li class="dropdown-header">Calculation</li>
+                          <li><a class="site_edit" data-name="`+site.name+`" href="#">Edit</a></li>
+                          <li><a class="site_delete" data-name="`+site.name+`" href="#">Delete</a></li>
+                        </ul>
+                      </div>`;
+              html += '</div>';
+              html += '</div>';
+              html += '</th>';
+            });
+            
+            data.col.cons.forEach(function(cons){
+              html += '<th colspan="2">'
+              html += '<div class="row">';
+              html += '<div class="col-sm-6">';
+              html += '<div class="row">';
+              html += cons.name;
+              html += '</div>';
+              html += '<div class="row">';
+              if (cons.seniority != null) {
+                html += cons.seniority;
+              } else {
+                html += '';
+              }
+              html += '</div>';
+              html += '<div class="row">';
+              if (cons.location != null) {
+                html += cons.location;
+              } else {
+                html += '';
+              }
+              html += '</div>';
+              html += '</div>';
+              html += '<div class="col-sm-6">';
+              html += `<div class="dropdown">
+                        <button class="btn btn-sm btn-round dropdown-toggle" type="button" data-toggle="dropdown">
+                        <i class="fa fa-sort-desc"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                          <li class="dropdown-header">Consulting type</li>
+                          <li><a class="cons_edit" data-name="`+cons.name+`" data-seniority="`+cons.seniority+`" data-location="`+cons.location+`" href="#">Edit</a></li>
+                          <li><a class="cons_delete" data-name="`+cons.name+`" data-seniority="`+cons.seniority+`" data-location="`+cons.location+`" href="#">Delete</a></li>
+                        </ul>
+                      </div>`;
+              html += '</div>';
+              html += '</div>';
+              html += '</th>';
+            });
+
+            data.col.cons.forEach(function(cons){
+              html += '<th colspan="2">'
+              html += '<div class="row">';
+              html += '<div class="col-sm-12">';
+              html += '<div class="row">';
+              html += cons.name;
+              html += '</div>';
+              html += '<div class="row">';
+              if (cons.seniority != null) {
+                html += cons.seniority;
+              } else {
+                html += '';
+              }
+              html += '</div>';
+              html += '<div class="row">';
+              if (cons.location != null) {
+                html += cons.location;
+              } else {
+                html += '';
+              }
+              html += '</div>';
+              html += '</div>';
+
+              html += '</div>';
+              html += '</th>';
+            });
+
+            html += '</tr>';
+            //endregion
+            //region Third header
+            html += '<tr>';
+            
+            data.col.site.forEach(function(site){
+              html += '<th>Quantity</th>';
+              html += '<th>LoE (per unit)</th>';
+            });
+            data.col.cons.forEach(function(cons){
+              html += '<th>%</th>';
+              html += '<th>€</th>';
+            });
+            data.col.cons.forEach(function(cons){
+              html += '<th>MD</th>';
+              html += '<th>€</th>';
+            });
+
+            html += '</tr>';
+
+            html += '</thead>';
+            //endregion
+            // Data filling
+            var grand_total_loe = 0;
+            var grand_total_price = 0;
+            var total_loe = 0;
+
+            function getBusinessDatesCount(start, end) {
+              var startDate = new Date(start);
+              var endDate = new Date(end);
+              var count = 0;
+              var curDate = startDate;
+              while (curDate <= endDate) {
+                  var dayOfWeek = curDate.getDay();
+                  if(!((dayOfWeek == 6) || (dayOfWeek == 0)))
+                    count++;
+                  curDate.setDate(curDate.getDate() + 1);
+              }
+              return count;
+            }
+
+            function td_no_null(item,end='') {
+              if (item != null && item != '') {
+                return '<td>'+item+end+'</td>';
+              } else {
+                return '<td></td>';
+              }
+            }
+            //region Body
+            html += '<tbody>';
+            data.data.loe.forEach(function(row){
+
+              html += '<tr data-id="'+row.id+'">';
+              // actions
+              html += '<td>';
+              html += '<div class="btn-group btn-group-xs">';
+              if ({{ Auth::user()->can('projectLoe-create') ? 'true' : 'false' }}){
+                html += '<button type="button" data-action="create" class="buttonLoeCreateUpdate btn btn-info"><span class="glyphicon glyphicon-plus"></span></button>';
+              };
+              if ({{ Auth::user()->can('projectLoe-create') ? 'true' : 'false' }} || {{ Auth::user()->can('projectLoe-editAll') ? 'true' : 'false' }}){
+                html += '<button type="button" data-id="'+row.id+'" class="buttonLoeDuplicate btn btn-warning"><span class="glyphicon glyphicon-duplicate"></span></button>';
+              };
+              if ({{ Auth::user()->can('projectLoe-edit') ? 'true' : 'false' }} || {{ Auth::user()->can('projectLoe-editAll') ? 'true' : 'false' }}){
+                html += '<button type="button" data-action="update" data-id="'+row.id+'" class="buttonLoeCreateUpdate btn btn-success"><span class="glyphicon glyphicon-pencil"></span></button>';
+              };
+              if ({{ Auth::user()->can('projectLoe-delete') ? 'true' : 'false' }} || {{ Auth::user()->can('projectLoe-deleteAll') ? 'true' : 'false' }}){
+                html += '<button type="button" data-id="'+row.id+'" class="buttonLoeDelete btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
+              };
+              html += '</div>';
+
+              html +='</td>';
+
+
+              html += td_no_null(row.main_phase);
+              html += td_no_null(row.secondary_phase);
+              html += td_no_null(row.domain);
+              html += td_no_null(row.description);
+              html += td_no_null(row.option);
+              html += td_no_null(row.assumption);
+
+              //console.log('row: '+row.id);
+              data.col.site.forEach(fill_site_data);
+              function fill_site_data (site){
+                
+                if (data.data.site.hasOwnProperty(row.id) && data.data.site[row.id].hasOwnProperty(site.name)) {
+                  //console.log(site.name+': '+data.data.site[row.id][site.name]['quantity']);
+                  fill_quantity = data.data.site[row.id][site.name].quantity;
+                  fill_loe_per_quantity = data.data.site[row.id][site.name].loe_per_quantity;
+                } else {
+                  //console.log(site.name+': -');
+                  fill_quantity = 0;
+                  fill_loe_per_quantity = 0;
+                }
+                html += '<td>'+fill_quantity+'</td>';
+                html += '<td>'+fill_loe_per_quantity+'</td>';
+              }
+
+              html += '<td>'+row.quantity+'</td>';
+              html += '<td>'+row.loe_per_quantity+'</td>';
+
+              if (data.col.site.length>0) {
+                if (row.formula != null && row.formula != '') {
+                  html +=  '<td>';
+                  html += `<div class="dropdown">
+                        
+                  <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-check"></i></a>
+                        
+                        <ul class="dropdown-menu">
+                          <li class="dropdown-header">Calculation</li>
+                          <li>`+row.formula+`</li>
+                        </ul>
+                      </div>`;
+                    html +=  '</td>';
+                } else {
+                  html +=  '<td></td>';
+                }
+              }
+              
+              if (row.recurrent == 1) {
+                html += '<td><i class="fa fa-check"></i></td>';
+              } else {
+                html += '<td></td>';
+              }
+              
+              html += td_no_null(row.start_date);
+              html += td_no_null(row.end_date);
+
+              data.col.cons.forEach(fill_cons_data_percent);
+              function fill_cons_data_percent (cons){
+                
+                if (data.data.cons.hasOwnProperty(row.id) && data.data.cons[row.id].hasOwnProperty(cons.name)) {
+                  //console.log(site.name+': '+data.data.site[row.id][site.name]['quantity']);
+                  fill_percent = data.data.cons[row.id][cons.name].percentage;
+                  fill_md = fill_percent*row.quantity*row.loe_per_quantity/100;
+                  if (data.data.cons[row.id][cons.name].price != null) {
+                    fill_price = data.data.cons[row.id][cons.name].price;
+                  } else {
+                    fill_price = 0;
+                  }
+                  
+                } else {
+                  //console.log(site.name+': -');
+                  fill_percent = 0;
+                  fill_price = 0;
+                }
+                html += '<td>'+fill_percent+' %</td>';
+                html += '<td>'+fill_price+' €</td>';
+              }
+
+              var total_price = 0;
+              data.col.cons.forEach(fill_cons_data_MD);
+
+              function fill_cons_data_MD (cons){
+                if (data.data.cons.hasOwnProperty(row.id) && data.data.cons[row.id].hasOwnProperty(cons.name)) {
+                  //console.log(site.name+': '+data.data.site[row.id][site.name]['quantity']);
+                  fill_percent = data.data.cons[row.id][cons.name].percentage;
+                  if (row.recurrent == 0) {
+                    fill_md = row.quantity*row.loe_per_quantity*fill_percent/100;
+                  } else {
+                    fill_md = row.quantity*row.loe_per_quantity*getBusinessDatesCount(row.start_date,row.end_date)*fill_percent/100;
+                  }
+                  if (data.data.cons[row.id][cons.name].price != null) {
+                    fill_price = data.data.cons[row.id][cons.name].price;
+                  } else {
+                    fill_price = 0;
+                  }
+                  if (fill_price != null) {
+                    total_price += fill_md*fill_price;
+                  }
+                  //console.log('fill_md: '+fill_md);
+                  //console.log('fill_price: '+fill_price);
+                  //console.log('total_price: '+total_price);
+                  //console.log('---------------------------: ');
+                } else {
+                  //console.log(site.name+': -');
+                  fill_md = 0;
+                  fill_price = 0;
+                }
+                html += '<td>'+fill_md+'</td>';
+                html += '<td>'+fill_price+'</td>';
+              }
+
+              if (row.recurrent == 0) {
+                total_loe = row.quantity*row.loe_per_quantity;
+              } else {
+                total_loe = row.quantity*row.loe_per_quantity*getBusinessDatesCount(row.start_date,row.end_date);
+                //console.log(getBusinessDatesCount(row.start_date,row.end_date));
+              }
+              if (total_loe != null && total_loe != '') {
+                html += '<td>'+total_loe+'</td>';
+              } else {
+                html += '<td></td>';
+              }
+              grand_total_loe += total_loe;
+              
+              if (data.col.cons.length>0) {
+                html += td_no_null(total_price, ' €');
+              }
+              
+              grand_total_price += total_price;
+
+              html += '</tr>';
+            });
+            html += '</tbody>';
+            //endregion
+            //region Footer
+            html += '<tfoot>';
+            number_of_cols = 13+2*data.col.site.length+2*2*data.col.cons.length;
+            //console.log(number_of_cols);
+            //console.log(data.col.site.length);
+            //console.log(data.col.cons.length);
+            // Wen need to remove one column named formula in case there is no calculation
+            if (data.col.site.length == 0) {
+              number_of_cols -= 1;
+            }
+            html += '<td colspan="'+number_of_cols+'">Grand Total</td>';
+
+            if (grand_total_loe != null && grand_total_loe != '') {
+              html += '<td>'+grand_total_loe+'</td>';
+            } else {
+              html += '<td></td>';
+            }
+
+            if (data.col.cons.length>0) {
+              if (grand_total_price != null && grand_total_price != '') {
+                html += '<td>'+grand_total_price+' €</td>';
+              } else {
+              html += '<td></td>';
+              }
+              
+            }
+            
+            html += '</tfoot>';
+            //endregion
+
+            $('#LoeTable').prepend(html);
+
+          }
+
+        }
+      });
+    }
+
+    getLoeList();
+  @endif
   //endregion
 
 

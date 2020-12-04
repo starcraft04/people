@@ -224,9 +224,18 @@ Route::group(['middleware' => ['auth', 'general','last_login']], function () {
     // LOE
     Route::get('loe/{id}', ['uses' => 'LoeController@listFromProjectID', 'as' => 'listFromProjectID', 'middleware' => ['permission:projectLoe-view']]);
     Route::get('loe/init/{id}', ['uses' => 'LoeController@init', 'as' => 'loeInit', 'middleware' => ['permission:projectLoe-create']]);
+    Route::get('loe/delete/{id}', ['uses' => 'LoeController@delete', 'as' => 'loeDelete', 'middleware' => ['permission:projectLoe-delete']]);
+    Route::get('loe/duplicate/{id}', ['uses' => 'LoeController@duplicate', 'as' => 'loeDuplicate', 'middleware' => ['permission:projectLoe-create']]);
+    Route::post('loe/create/{id}', ['uses' => 'LoeController@create', 'as' => 'loeCreate', 'middleware' => ['permission:projectLoe-create']]);
+    Route::patch('loe/edit/{id}', ['uses' => 'LoeController@edit', 'as' => 'loeEdit', 'middleware' => ['permission:projectLoe-edit']]);
+
     Route::get('loe/site_delete/{id}', ['uses' => 'LoeController@site_delete', 'as' => 'loeSiteDelete', 'middleware' => ['permission:projectLoe-delete']]);
     Route::post('loe/site_create/{id}', ['uses' => 'LoeController@site_create', 'as' => 'loeSiteCreate', 'middleware' => ['permission:projectLoe-create']]);
     Route::patch('loe/site_edit/{id}', ['uses' => 'LoeController@site_edit', 'as' => 'loeSiteEdit', 'middleware' => ['permission:projectLoe-edit']]);
+    Route::get('loe/cons_delete/{id}', ['uses' => 'LoeController@cons_delete', 'as' => 'loeConsDelete', 'middleware' => ['permission:projectLoe-delete']]);
+    Route::post('loe/cons_create/{id}', ['uses' => 'LoeController@cons_create', 'as' => 'loeConsCreate', 'middleware' => ['permission:projectLoe-create']]);
+    Route::patch('loe/cons_edit/{id}', ['uses' => 'LoeController@cons_edit', 'as' => 'loeConsEdit', 'middleware' => ['permission:projectLoe-edit']]);
+    
 });
 
 Route::get('/home', 'HomeController@index')->name('home');
