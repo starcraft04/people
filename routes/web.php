@@ -235,6 +235,9 @@ Route::group(['middleware' => ['auth', 'general','last_login']], function () {
     Route::get('loe/cons_delete/{id}', ['uses' => 'LoeController@cons_delete', 'as' => 'loeConsDelete', 'middleware' => ['permission:projectLoe-delete']]);
     Route::post('loe/cons_create/{id}', ['uses' => 'LoeController@cons_create', 'as' => 'loeConsCreate', 'middleware' => ['permission:projectLoe-create']]);
     Route::patch('loe/cons_edit/{id}', ['uses' => 'LoeController@cons_edit', 'as' => 'loeConsEdit', 'middleware' => ['permission:projectLoe-edit']]);
+
+    Route::get('loe/signoff/{id}', ['uses' => 'LoeController@signoff', 'as' => 'loeSignoff', 'middleware' => ['permission:projectLoe-signoff']]);
+    Route::get('loe/masssignoff/{id}', ['uses' => 'LoeController@masssignoff', 'as' => 'loeMassSignoff', 'middleware' => ['permission:projectLoe-signoff']]);
     
 });
 

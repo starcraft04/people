@@ -27,7 +27,7 @@ class ActionController extends Controller
                         'actions.status AS action_status', 'actions.project_id AS project_id', 'projects.project_name AS project_name',
                         'actions.estimated_start_date AS action_estimated_start_date', 'actions.estimated_end_date AS action_estimated_end_date',
                         'actions.description AS action_description'
-    );
+        );
         $actionList->leftjoin('users AS assigned', 'actions.assigned_user_id', '=', 'assigned.id');
         $actionList->leftjoin('users AS created_by', 'actions.user_id', '=', 'created_by.id');
         $actionList->leftjoin('projects', 'actions.project_id', '=', 'projects.id');
@@ -69,7 +69,7 @@ class ActionController extends Controller
                         'actions.description AS action_description',
                         'actions.next_action_description AS next_action_description', 'actions.next_action_dependency AS next_action_dependency', 'actions.next_action_due_date AS next_action_due_date',
                         'actions.created_at AS created_at', 'actions.updated_at AS updated_at'
-    );
+        );
         $actionList->leftjoin('users AS assigned', 'actions.assigned_user_id', '=', 'assigned.id');
         $actionList->leftjoin('users AS created_by', 'actions.user_id', '=', 'created_by.id');
         $actionList->leftjoin('projects', 'actions.project_id', '=', 'projects.id');

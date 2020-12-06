@@ -41,6 +41,7 @@ class ModifyLoe extends Migration
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->integer('signoff_user_id')->nullable()->unsigned();
+            $table->boolean('first_line')->default(0);
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();
         });

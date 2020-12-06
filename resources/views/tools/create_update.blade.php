@@ -95,8 +95,6 @@ h3:after {
 <!-- Range slider -->
 <script src="{{ asset('/plugins/TableExport/libs/FileSaver/FileSaver.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('/plugins/TableExport/libs/js-xlsx/xlsx.core.min.js') }}" type="text/javascript"></script>
-<script src="{{ asset('/plugins/TableExport/libs/jsPDF/jspdf.min.js') }}" type="text/javascript"></script>
-<script src="{{ asset('/plugins/TableExport/libs/jsPDF-AutoTable/jspdf.plugin.autotable.js') }}" type="text/javascript"></script>
 <script src="{{ asset('/plugins/TableExport/tableExport.min.js') }}" type="text/javascript"></script>
 @stop
 
@@ -829,7 +827,7 @@ h3:after {
                     <button id="create_loe" class="btn btn-success"><b>Create</b></button>
                     <div class="dropdown">
                       <button id="options_loe" class="btn btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
-                        <b>Options</b><i class="fa fa-sort-desc"></i>
+                      <span class="glyphicon glyphicon-cog"></span><i class="fa fa-sort-desc"></i>
                       </button>
                       <ul class="dropdown-menu">
                         <li class="dropdown-header">Add column</li>
@@ -838,6 +836,10 @@ h3:after {
                         <li class="dropdown-header">Report</li>
                         <li><a class="dropdown-selection loe_history" href="#">History</a></li>
                         <li><a class="dropdown-selection loe_table_to_excel" href="#">Export to Excel</a></li>
+                        <li class="dropdown-header">Mass Update</li>
+                        @if (Auth::user()->can('projectLoe-signoff'))
+                        <li><a class="dropdown-selection loe_mass_signoff" href="#">Signoff</a></li>
+                        @endif
                       </ul>
                     </div>
                   </div>
@@ -878,6 +880,42 @@ h3:after {
                   </div>
               </div>
               <!-- History Modal -->
+
+              <!-- Signoff Modal -->
+              <div class="modal fade" id="modal_loe_signoff" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" style="display:table;">
+                      <div class="modal-content">
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title" id="modal_loe_signoff_title">Mass signoff</h4>
+                        </div>
+                        <!-- Modal Header -->
+                      
+                        <!-- Modal Body -->
+                        <div class="modal-body">
+                          <form id="modal_loe_signoff_form" role="form" method="POST" action="">
+                            <div id="modal_loe_signoff_formgroup_domain" class="form-group">
+                              <label  class="control-label" for="modal_loe_signoff_form_domain">Domain</label>
+                              <select class="form-control select2" style="width: 100%;" id="modal_loe_signoff_form_domain" data-placeholder="Select a domain">
+                              </select>
+                              <span id="modal_loe_signoff_form_domain_error" class="help-block"></span>
+                            </div>
+                            <div class="form-group">
+                                <div id="modal_loe_signoff_form_hidden"></div>
+                            </div>
+                          </form>
+                        </div>
+                          
+                        <!-- Modal Footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" id="modal_loe_signoff_create_update_button" class="btn btn-success">Signoff</button>
+                        </div>
+                      </div>
+                  </div>
+              </div>
+              <!-- Signoff Modal -->
 
               <!-- Site Modal -->
               <div class="modal fade" id="modal_loe_site" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -2016,7 +2054,7 @@ $(document).ready(function() {
             html += '<tr>';
             html += '<th style="min-width:140px;">'+'Date'+'</th>';
             html += '<th>'+'User'+'</th>';
-            html += '<th>'+'Line#'+'</th>';
+            html += '<th>'+'DB ref#'+'</th>';
             html += '<th>'+'Main phase'+'</th>';
             html += '<th>'+'Secondary phase'+'</th>';
             html += '<th>'+'LoE Description'+'</th>';
@@ -2041,7 +2079,7 @@ $(document).ready(function() {
 
               html += '<tr>';
               created_at = new Date(row.created_at)
-              html += td_no_null(created_at.toDateString());
+              html += td_no_null(created_at.toLocaleString());
               html += td_no_null(row.name);
               html += td_no_null(row.project_loe_id);
               html += td_no_null(row.main_phase);
@@ -2075,6 +2113,64 @@ $(document).ready(function() {
       $('.table_recurrent').empty();
       $('.table_recurrent').html('<i class="fa fa-check"></i>');
       
+    });
+
+    // MASS SIGNOFF
+    $(document).on('click', '.loe_mass_signoff', function () {
+      //console.log(loe_data.col.domains);
+      var hidden = '';
+      hidden += '<input class="form-control" id="modal_loe_signoff_form_project_id" type="hidden" value="'+{{ $project->id }}+'">';
+      $('#modal_loe_signoff_form_hidden').append(hidden);
+
+      var html = '';
+      html += '<option value="All" >All</option>';
+      
+      loe_data.col.domains.forEach(fill_signoff_domains);
+      function fill_signoff_domains (domain){
+        html += '<option value="'+domain+'" >'+domain+'</option>';
+      }
+
+      $('#modal_loe_signoff_form_domain').empty();
+      $('#modal_loe_signoff_form_domain').append(html);
+
+      // Init select2 boxes in the modal
+      $("#modal_loe_signoff_form_domain").select2({
+          allowClear: false
+      });
+
+      $('#modal_loe_signoff').modal("show");
+    });
+
+    $(document).on('click', '#modal_loe_signoff_create_update_button', function () {
+      var modal_loe_signoff_form_project_id = $('input#modal_loe_signoff_form_project_id').val();
+      var modal_loe_signoff_form_domain = $('select#modal_loe_signoff_form_domain').children("option:selected").val();
+      var data = {'domain':modal_loe_signoff_form_domain};
+
+      $.ajax({
+            type: 'get',
+            url: "{!! route('loeMassSignoff','') !!}/"+modal_loe_signoff_form_project_id,
+            data:data,
+            dataType: 'json',
+            success: function(data) {
+              //console.log(data);
+              if (data.result == 'success'){
+                  box_type = 'success';
+                  message_type = 'success';
+              } else {
+                  box_type = 'danger';
+                  message_type = 'error';
+              }
+
+              $('#flash-message').empty();
+              var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+              $('#flash-message').append(box);
+              $('#delete-message').delay(2000).queue(function () {
+                  $(this).addClass('animated flipOutX')
+              });
+              $('#modal_loe_signoff').modal('hide');
+              getLoeList();
+            }
+      });
     });
 
     // SITE DELETE
@@ -2727,6 +2823,7 @@ $(document).ready(function() {
           $(this).val('');
       });
 
+      $('.buttonLoeSignoff').hide();
       $('.buttonLoeCreateUpdate').hide();
       $('.buttonLoeDuplicate').hide();
       $('.buttonLoeDelete').hide();
@@ -2920,6 +3017,7 @@ $(document).ready(function() {
                   box_type = 'danger';
                   message_type = 'error';
                   show_message = true;
+                  line_close = true;
               }
               
               if (show_message) {
@@ -2940,6 +3038,43 @@ $(document).ready(function() {
 
     });
 
+    //SIGNOFF
+    $(document).on('click', '.buttonLoeSignoff', function () {
+      //console.log($(this).data('id'));
+      var id = $(this).data('id');
+          //console.log($(this).data('name'));
+          $.ajax({
+            type: 'get',
+            url: "{!! route('loeSignoff','') !!}/"+id,
+            dataType: 'json',
+            success: function(data) {
+              //console.log(data);
+
+              if (data.result == 'success'){
+                  box_type = 'success';
+                  message_type = 'success';
+                  delay = 2000;
+                  getLoeList();
+              }
+              else {
+                  box_type = 'danger';
+                  message_type = 'error';
+                  delay = 2000;
+              }
+
+              $('#flash-message').empty();
+              var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+              $('#flash-message').append(box);
+              $('#delete-message').delay(delay).queue(function () {
+                  $(this).addClass('animated flipOutX')
+              });
+            },
+            error: function (jqXhr, textStatus, errorMessage) { // error callback 
+              console.log('Error: ' + errorMessage);
+            }
+          });
+    });
+
 
 
     function getLoeList(){
@@ -2951,7 +3086,7 @@ $(document).ready(function() {
         success: function(data) {
 
           loe_data = data;
-          //console.log(data);
+          console.log(data);
 
           if (data.length != 0) {
             // First we need to hide the create button
@@ -2962,7 +3097,7 @@ $(document).ready(function() {
             html = '<thead>';
             //region First header
             html += '<tr>';
-            html += '<th rowspan="3" style="min-width:110px;">'+'Action'+'</th>';
+            html += '<th rowspan="3" style="min-width:140px;">'+'Action'+'</th>';
             html += '<th rowspan="3" style="min-width:150px;">'+'Main Phase'+'</th>';
             html += '<th rowspan="3" style="min-width:150px;">'+'Secondary Phase'+'</th>';
             html += '<th rowspan="3" style="min-width:150px;">'+'Domain'+'</th>';
@@ -3109,6 +3244,13 @@ $(document).ready(function() {
               // actions
               html += '<td>';
               html += '<div class="btn-group btn-group-xs">';
+              if ({{ Auth::user()->can('projectLoe-signoff') ? 'true' : 'false' }}){
+                if (row.signoff_user_id != null) {
+                  html += '<button type="button" data-id="'+row.id+'" class="buttonLoeSignoff btn"><span class="glyphicon glyphicon-ok"></span></button>';
+                } else {
+                  html += '<button type="button" data-id="'+row.id+'" class="buttonLoeSignoff btn btn-default"><span class="glyphicon glyphicon-remove"></span></button>';
+                }
+              };
               if ({{ Auth::user()->can('projectLoe-create') ? 'true' : 'false' }}){
                 html += '<button type="button" data-action="create" class="buttonLoeCreateUpdate btn btn-info"><span class="glyphicon glyphicon-plus"></span></button>';
               };
@@ -3116,10 +3258,14 @@ $(document).ready(function() {
                 html += '<button type="button" data-id="'+row.id+'" class="buttonLoeDuplicate btn btn-warning"><span class="glyphicon glyphicon-duplicate"></span></button>';
               };
               if ({{ Auth::user()->can('projectLoe-edit') ? 'true' : 'false' }} || {{ Auth::user()->can('projectLoe-editAll') ? 'true' : 'false' }}){
-                html += '<button type="button" data-action="update" data-id="'+row.id+'" class="buttonLoeCreateUpdate btn btn-success"><span class="glyphicon glyphicon-pencil"></span></button>';
+                if (row.user_id == {{ Auth::user()->id }} || {{ Auth::user()->can('projectLoe-editAll') ? 'true' : 'false' }}) {
+                  html += '<button type="button" data-action="update" data-id="'+row.id+'" class="buttonLoeCreateUpdate btn btn-success"><span class="glyphicon glyphicon-pencil"></span></button>';
+                }
               };
               if ({{ Auth::user()->can('projectLoe-delete') ? 'true' : 'false' }} || {{ Auth::user()->can('projectLoe-deleteAll') ? 'true' : 'false' }}){
-                html += '<button type="button" data-id="'+row.id+'" class="buttonLoeDelete btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
+                if (row.user_id == {{ Auth::user()->id }} || {{ Auth::user()->can('projectLoe-deleteAll') ? 'true' : 'false' }}) {
+                  html += '<button type="button" data-id="'+row.id+'" class="buttonLoeDelete btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
+                }
               };
               html += '</div>';
 
@@ -3294,6 +3440,9 @@ $(document).ready(function() {
 
             $('#LoeTable').prepend(html);
 
+          } else {
+            $('#create_loe').show();
+            $('#options_loe').hide();
           }
 
         }

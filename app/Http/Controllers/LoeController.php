@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Auth;
 use DB;
 use App\Loe;
+use App\User;
 use App\LoeHistory;
 use App\LoeSite;
 use App\LoeConsultant;
@@ -16,9 +17,22 @@ class LoeController extends Controller
     public function listFromProjectID($id)
     {
         $results = array();
-        $loe_data = Loe::where('project_id',$id)->get();
+        $loe_data = Loe::where('project_id',$id)
+                    ->orderBy('main_phase','asc')
+                    ->orderBy('secondary_phase','asc')
+                    ->orderBy('domain','asc')
+                    ->orderBy('description','asc')
+                    ->get();
 
         if (count($loe_data) > 0) {
+            // Domains
+            $domains = [];
+            foreach ($loe_data as $key => $domain) {
+                if (!in_array($domain->domain, $domains)){
+                    array_push($domains,$domain->domain);
+                }
+            }
+
             // Col Sites
             $col_sites = DB::table('project_loe');
             $col_sites->select('site.name');
@@ -83,6 +97,7 @@ class LoeController extends Controller
             $results['col'] = array();
             $results['col']['site'] = $data_col_sites;
             $results['col']['cons'] = $data_col_cons;
+            $results['col']['domains'] = $domains;
             $results['data'] = array();
             $results['data']['loe'] = $loe_data;
             $results['data']['site'] = $data_sites_formatted;
@@ -100,6 +115,7 @@ class LoeController extends Controller
                     'project_loe_history.field_old_value','project_loe_history.field_new_value','project_loe_history.project_loe_id'
             )
             ->where('project_loe.project_id',$id)
+            ->orderBy('project_loe_history.created_at','asc')
             ->get();
 
         return $loe_history;
@@ -112,8 +128,9 @@ class LoeController extends Controller
         $inputs = [
             'project_id' => $id,
             'user_id' => Auth::user()->id,
-            'quantity' => 0,
-            'loe_per_quantity' => 0
+            'quantity' => 1,
+            'loe_per_quantity' => 0,
+            'first_line' => 1
         ];
         $insert_result = Loe::create($inputs);
         if ($insert_result != null) {
@@ -456,6 +473,25 @@ class LoeController extends Controller
     {
         $result = new \stdClass();
 
+        $loe_to_delete = Loe::find($id);
+
+
+        if ($loe_to_delete->user_id != Auth::user()->id && !Auth::user()->can('projectLoe-deleteAll')) {
+            $result->result = 'error';
+            $result->msg = 'You cannot delete this LoE as you did not create it';
+            return json_encode($result);
+        }
+
+        $list_with_same_project_id = Loe::where('project_id',$loe_to_delete->project_id)->get();
+        $num_of_loe = $list_with_same_project_id->count();
+
+        if ($loe_to_delete->first_line == 1 && $num_of_loe > 1) {
+            $result->result = 'error';
+            $result->msg = 'For integrity of the tool, the first line created must be deleted when all other lines have been deleted.';
+
+        return json_encode($result);
+        }
+
         $history = LoeHistory::where('project_loe_id',$id)->get();
 
         if($history){
@@ -535,12 +571,22 @@ class LoeController extends Controller
 
     public function create_update(Request $request,$id)
     {
+        $result = new \stdClass();
+        $result->result = 'success';
+
         $inputs = $request->all();
         $cons = json_decode($inputs['cons'], true);
         $sites = json_decode($inputs['site'], true);
 
-        $result = new \stdClass();
-        $result->result = 'success';
+        if ($inputs['action'] == 'update') {
+            $loe = Loe::find($id);
+            if ($loe->user_id != Auth::user()->id && !Auth::user()->can('projectLoe-editAll')) {
+                $result->result = 'error';
+                $result->msg = 'You cannot update this LoE as you did not create it';
+                return json_encode($result);
+            }
+        }
+            
         if ($inputs['action'] == 'create') {
             $result->msg = 'LoE created';
         } else {
@@ -696,90 +742,156 @@ class LoeController extends Controller
             }
             
         }
-        
+
+        if ($new_formula_validated) {
+            $executor = new MathExecutor();
+            // If division by 0 then equals 0
+            $inputs['loe_per_quantity'] = $executor->setDivisionByZeroIsZero()->execute($new_formula);
+        }
 
         //endregion
 
-        if ($new_formula_validated) {
-            
-            $executor = new MathExecutor();
-            $inputs['loe_per_quantity'] = $executor->execute($new_formula);
+        if ($result->result != 'validation_errors') {
+            $loe_values = [
+                'main_phase' => $inputs['main_phase'],
+                'secondary_phase' => $inputs['secondary_phase'],
+                'domain' => $inputs['domain'],
+                'description' => $inputs['description'],
+                'option' => $inputs['option'],
+                'assumption' => $inputs['assumption'],
+                'quantity' => $inputs['quantity'],
+                'loe_per_quantity' => $inputs['loe_per_quantity'],
+                'formula' => $inputs['formula'],
+                'recurrent' => $inputs['recurrent'],
+                'start_date' => $inputs['start_date'],
+                'end_date' => $inputs['end_date']
+            ];
+    
+            if ($inputs['action'] == 'create') {
+                $loe_values['project_id'] = $inputs['project_id'];
+                $loe_values['user_id'] = Auth::user()->id;
+                $loe = Loe::create($loe_values);
+            } else {
+                if ($loe->quantity != $loe_values['quantity']) {
+                    LoeHistory::create([
+                        'project_loe_id' => $id,
+                        'user_id' => Auth::user()->id,
+                        'description' => 'Value modified',
+                        'field_modified' => 'Quantity',
+                        'field_old_value' => $loe->quantity,
+                        'field_new_value' => $loe_values['quantity'],
+                    ]);
+                }
+                if ($loe->loe_per_quantity != $loe_values['loe_per_quantity']) {
+                    LoeHistory::create([
+                        'project_loe_id' => $id,
+                        'user_id' => Auth::user()->id,
+                        'description' => 'Value modified',
+                        'field_modified' => 'Loe per Quantity',
+                        'field_old_value' => $loe->loe_per_quantity,
+                        'field_new_value' => $loe_values['loe_per_quantity'],
+                    ]);
+                }
+                $loe->update($loe_values);
+            }
+    
+            foreach ($sites as $key => $site) {
+                LoeSite::updateOrCreate(
+                    [
+                        'project_loe_id' => $loe->id, 
+                        'name' => $site['name']
+                    ],
+                    [
+                        'quantity' => $site['quantity'],
+                        'loe_per_quantity' => $site['loe_per_quantity']
+                    ]
+                );
+            }
+    
+            foreach ($cons as $key => $cons_type) {
+                LoeConsultant::updateOrCreate(
+                    [
+                        'project_loe_id' => $loe->id, 
+                        'name' => $cons_type['name']
+                    ],
+                    [
+                        'price' => $cons_type['price'],
+                        'percentage' => $cons_type['percentage']
+                    ]
+                );
+            }
+        }
 
-            $result->formula = [];
-            $result->formula['begin'] = $inputs['formula'];
-            $result->formula['result'] = $new_formula;
-            $result->formula['result_calculated'] = $inputs['loe_per_quantity'];
+        return json_encode($result);
+    }
+
+    public function signoff($id)
+    {
+        $result = new \stdClass();
+
+        $loe = Loe::find($id);
+
+
+
+        if ($loe->signoff_user_id == null) {
+            LoeHistory::create([
+                'project_loe_id' => $id,
+                'user_id' => Auth::user()->id,
+                'description' => 'Value modified',
+                'field_modified' => 'Signoff',
+                'field_old_value' => 'unset',
+                'field_new_value' => Auth::user()->name,
+            ]);
+            $loe->signoff_user_id = Auth::user()->id;
+        } else {
+            $user = User::find($loe->signoff_user_id);
+            LoeHistory::create([
+                'project_loe_id' => $id,
+                'user_id' => Auth::user()->id,
+                'description' => 'Value modified',
+                'field_modified' => 'Signoff',
+                'field_old_value' => $user->name,
+                'field_new_value' => 'unset',
+            ]);
+            $loe->signoff_user_id = null;
+        }
+
+        $loe->save();
+
+        $result->result = 'success';
+        $result->msg = 'Record signed off successfuly';
+
+        return json_encode($result);
+    }
+
+    public function masssignoff(Request $request,$id)
+    {
+        $result = new \stdClass();
+        $result->result = 'success';
+        $result->msg = 'Mass sign off success';
+
+        $inputs = $request->all();
+        if ($inputs['domain'] == 'All') {
+            $loes = Loe::where('project_id',$id)->get();
+        } else {
+            $loes = Loe::where('project_id',$id)->where('domain',$inputs['domain'])->get();
         }
         
-
-        $loe_values = [
-            'main_phase' => $inputs['main_phase'],
-            'secondary_phase' => $inputs['secondary_phase'],
-            'domain' => $inputs['domain'],
-            'description' => $inputs['description'],
-            'option' => $inputs['option'],
-            'assumption' => $inputs['assumption'],
-            'quantity' => $inputs['quantity'],
-            'loe_per_quantity' => $inputs['loe_per_quantity'],
-            'formula' => $inputs['formula'],
-            'recurrent' => $inputs['recurrent'],
-            'start_date' => $inputs['start_date'],
-            'end_date' => $inputs['end_date']
-        ];
-
-        if ($inputs['action'] == 'create') {
-            $loe_values['project_id'] = $inputs['project_id'];
-            $loe_values['user_id'] = Auth::user()->id;
-            $loe = Loe::create($loe_values);
-        } else {
-            $loe = Loe::find($id);
-            if ($loe->quantity != $loe_values['quantity']) {
+        foreach ($loes as $key => $loe) {
+            Loe::find($loe->id);
+            if ($loe->signoff_user_id == null) {
                 LoeHistory::create([
-                    'project_loe_id' => $id,
+                    'project_loe_id' => $loe->id,
                     'user_id' => Auth::user()->id,
                     'description' => 'Value modified',
-                    'field_modified' => 'Quantity',
-                    'field_old_value' => $loe->quantity,
-                    'field_new_value' => $loe_values['quantity'],
+                    'field_modified' => 'Signoff',
+                    'field_old_value' => 'unset',
+                    'field_new_value' => Auth::user()->name,
                 ]);
             }
-            if ($loe->loe_per_quantity != $loe_values['loe_per_quantity']) {
-                LoeHistory::create([
-                    'project_loe_id' => $id,
-                    'user_id' => Auth::user()->id,
-                    'description' => 'Value modified',
-                    'field_modified' => 'Loe per Quantity',
-                    'field_old_value' => $loe->loe_per_quantity,
-                    'field_new_value' => $loe_values['loe_per_quantity'],
-                ]);
-            }
-            $loe->update($loe_values);
-        }
-
-        foreach ($sites as $key => $site) {
-            LoeSite::updateOrCreate(
-                [
-                    'project_loe_id' => $loe->id, 
-                    'name' => $site['name']
-                ],
-                [
-                    'quantity' => $site['quantity'],
-                    'loe_per_quantity' => $site['loe_per_quantity']
-                ]
-            );
-        }
-
-        foreach ($cons as $key => $cons_type) {
-            LoeConsultant::updateOrCreate(
-                [
-                    'project_loe_id' => $loe->id, 
-                    'name' => $cons_type['name']
-                ],
-                [
-                    'price' => $cons_type['price'],
-                    'percentage' => $cons_type['percentage']
-                ]
-            );
+            $loe->signoff_user_id = Auth::user()->id;
+            $loe->save();
+            
         }
 
 
