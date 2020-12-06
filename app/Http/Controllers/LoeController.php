@@ -11,6 +11,9 @@ use App\LoeHistory;
 use App\LoeSite;
 use App\LoeConsultant;
 use NXP\MathExecutor;
+use App\Http\Controllers\Auth\AuthUsersForDataView;
+use App\Customer;
+use App\Project;
 
 class LoeController extends Controller
 {
@@ -120,7 +123,6 @@ class LoeController extends Controller
 
         return $loe_history;
     }
-
 
     public function init($id)
     {
@@ -809,6 +811,29 @@ class LoeController extends Controller
             }
     
             foreach ($cons as $key => $cons_type) {
+                if ($inputs['action'] == 'update') {
+                    $loe_consultant = LoeConsultant::where('project_loe_id',$loe->id)->where('name',$cons_type['name'])->first();
+                    if ($loe_consultant->price != $cons_type['price']) {
+                        LoeHistory::create([
+                            'project_loe_id' => $loe->id,
+                            'user_id' => Auth::user()->id,
+                            'description' => 'Value consulting type <<'.$cons_type['name'].'>> modified',
+                            'field_modified' => 'Price',
+                            'field_old_value' => $loe_consultant->price,
+                            'field_new_value' => $cons_type['price'],
+                        ]);
+                    }
+                    if ($loe_consultant->percentage != $cons_type['percentage']) {
+                        LoeHistory::create([
+                            'project_loe_id' => $loe->id,
+                            'user_id' => Auth::user()->id,
+                            'description' => 'Value consulting type <<'.$cons_type['name'].'>> modified',
+                            'field_modified' => 'Percentage',
+                            'field_old_value' => $loe_consultant->percentage,
+                            'field_new_value' => $cons_type['percentage'],
+                        ]);
+                    }
+                }
                 LoeConsultant::updateOrCreate(
                     [
                         'project_loe_id' => $loe->id, 
@@ -896,5 +921,24 @@ class LoeController extends Controller
 
 
         return json_encode($result);
+    }
+
+    public function dashboard(AuthUsersForDataView $authUsersForDataView, $year = null)
+    {
+        $authUsersForDataView->userCanView('tools-activity-all-view');
+        if ($year == null) {
+            $year = date('Y');
+        }
+        $customers_list = Customer::pluck('name', 'id');
+
+        return view('dashboard/loe', compact('authUsersForDataView', 'year','customers_list'));
+    }
+
+    public function dashboardProjects($id)
+    {
+        $project_list = Project::select('id','project_name')
+                ->where('customer_id', $id)->get();
+
+        return json_encode($project_list);
     }
 }

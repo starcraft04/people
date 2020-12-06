@@ -25,4 +25,7 @@ table#LoeTable th{
   font-weight: bold;
 }
 
+.tab-content {
+  height: auto! Important;
+}
 

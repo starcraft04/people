@@ -199,7 +199,7 @@ Route::group(['middleware' => ['auth', 'general','last_login']], function () {
     Route::get('dashboarddscisc/{year?}', ['uses' => 'DashboardController@dscisc', 'as' => 'dashboarddscisc', 'middleware' => ['permission:dashboard-view']]);
     Route::get('revenuedashboard/{year?}/{user_id?}', ['uses' => 'DashboardController@revenue', 'as' => 'revenuedashboard', 'middleware' => ['permission:dashboardRevenue-view']]);
     Route::get('orderdashboard/{year?}/{user_id?}', ['uses' => 'DashboardController@order', 'as' => 'orderdashboard', 'middleware' => ['permission:dashboardOrder-view']]);
-    Route::get('loedashboard/{year?}', ['uses' => 'DashboardController@loe', 'as' => 'loedashboard', 'middleware' => ['permission:projectLoe-dashboard_view']]);
+    
     Route::get('actiondashboard/{user_name?}', ['uses' => 'DashboardController@action', 'as' => 'actiondashboard', 'middleware' => ['permission:action-view']]);
     //  AJAX
     Route::post('listOfLoadPerUserAjax', ['uses' => 'ActivityController@listOfLoadPerUserAjax', 'as' => 'listOfLoadPerUserAjax', 'middleware' => ['permission:dashboard-view']]);
@@ -222,7 +222,7 @@ Route::group(['middleware' => ['auth', 'general','last_login']], function () {
     Route::get('test', ['uses' => 'ActivityController@test', 'middleware' => ['permission:user-view']]);
 
     // LOE
-    Route::get('loe/{id}', ['uses' => 'LoeController@listFromProjectID', 'as' => 'listFromProjectID', 'middleware' => ['permission:projectLoe-view']]);
+    Route::get('loe/{id}', ['uses' => 'LoeController@listFromProjectID', 'as' => 'listFromProjectID', 'middleware' => ['permission:projectLoe-view|projectLoe-dashboard_view']]);
     Route::get('loeHistory/{id}', ['uses' => 'LoeController@loeHistory', 'as' => 'loeHistory', 'middleware' => ['permission:projectLoe-view']]);
     Route::get('loe/init/{id}', ['uses' => 'LoeController@init', 'as' => 'loeInit', 'middleware' => ['permission:projectLoe-create']]);
     Route::get('loe/delete/{id}', ['uses' => 'LoeController@delete', 'as' => 'loeDelete', 'middleware' => ['permission:projectLoe-delete']]);
@@ -239,6 +239,8 @@ Route::group(['middleware' => ['auth', 'general','last_login']], function () {
     Route::get('loe/signoff/{id}', ['uses' => 'LoeController@signoff', 'as' => 'loeSignoff', 'middleware' => ['permission:projectLoe-signoff']]);
     Route::get('loe/masssignoff/{id}', ['uses' => 'LoeController@masssignoff', 'as' => 'loeMassSignoff', 'middleware' => ['permission:projectLoe-signoff']]);
     
+    Route::get('loe/dashboard/{year?}', ['uses' => 'LoeController@dashboard', 'as' => 'loedashboard', 'middleware' => ['permission:projectLoe-dashboard_view']]);
+    Route::get('loe/dashboard/projects/{id}', ['uses' => 'LoeController@dashboardProjects', 'as' => 'loeDashboardProjects', 'middleware' => ['permission:projectLoe-dashboard_view']]);
 });
 
 Route::get('/home', 'HomeController@index')->name('home');

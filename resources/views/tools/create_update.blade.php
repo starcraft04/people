@@ -22,6 +22,9 @@
 <!-- Range slider -->
 <link href="{{ asset('/plugins/gentelella/vendors/ion.rangeSlider/css/ion.rangeSlider.css') }}" rel="stylesheet">
 <link href="{{ asset('/plugins/gentelella/vendors/ion.rangeSlider/css/ion.rangeSlider.skinModern.css') }}" rel="stylesheet">
+
+<!-- Smart Wizard -->
+<link href="{{ asset('/plugins/smartwizard/dist/css/smart_wizard_all.min.css') }}" rel="stylesheet">
 <!-- Document styling -->
 <link href="{{ asset('/css/loe.css') }}" rel="stylesheet" />
 <style>
@@ -96,6 +99,8 @@ h3:after {
 <script src="{{ asset('/plugins/TableExport/libs/FileSaver/FileSaver.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('/plugins/TableExport/libs/js-xlsx/xlsx.core.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('/plugins/TableExport/tableExport.min.js') }}" type="text/javascript"></script>
+<!-- Smart wizard -->
+<script src="{{ asset('/plugins/smartwizard/dist/js/jquery.smartWizard.min.js') }}" type="text/javascript"></script>
 @stop
 
 @section('content')
@@ -822,9 +827,10 @@ h3:after {
               <!-- Table -->
               <div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="tab_loe">
                 <div class="row">
-                  @if(Auth::user()->can('projectLoe-create'))
-                  <div class="col-md-12">
-                    <button id="create_loe" class="btn btn-success"><b>Create</b></button>
+                  <div class="col-md-1">
+                    @if(Auth::user()->can('projectLoe-create'))
+                      <button id="create_loe" class="btn btn-success"><b>Create</b></button>
+                    @endif
                     <div class="dropdown">
                       <button id="options_loe" class="btn btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
                       <span class="glyphicon glyphicon-cog"></span><i class="fa fa-sort-desc"></i>
@@ -840,20 +846,197 @@ h3:after {
                         @if (Auth::user()->can('projectLoe-signoff'))
                         <li><a class="dropdown-selection loe_mass_signoff" href="#">Signoff</a></li>
                         @endif
+                        <li class="dropdown-header">Help</li>
+                        <li><a class="dropdown-selection loe_help_basic" href="#">Basic</a></li>
                       </ul>
                     </div>
                   </div>
-                  @endif
+                  <div class="col-md-2">
+                    <button type="button" class="buttonLoeAccept btn btn-success"><span class="glyphicon glyphicon-ok"></span></button>
+                    <button type="button" class="buttonLoeCancel btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
+                  </div>
                 </div>
                 <div class="row">
                   <div class="table-responsive">
-                    <table class="table table-striped table-hover table-bordered table-sm" cellspacing="0"
-  width="100%" id="LoeTable">
-                    </table>
+                    <table class="table table-striped table-hover table-bordered table-sm" cellspacing="0" width="100%" id="LoeTable"></table>
                   </div>
                 </div>
               </div>
               <!-- Table -->
+
+              <!-- Help Modal -->
+              <div class="modal fade" id="modal_loe_help_basic" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered modal-lg">
+                      <div class="modal-content">
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title" id="modal_loe_help_basic_title">Help</h4>
+                        </div>
+                        <!-- Modal Header -->
+                        
+                        <!-- Modal Body -->
+                        <div class="modal-body">
+                          <div id="smartwizard">
+                            <ul class="nav">
+                              <li class="nav-item">
+                                <a class="nav-link" href="#step-1">
+                                  Intro
+                                </a>
+                              </li>
+                              <li class="nav-item">
+                                <a class="nav-link" href="#step-2">
+                                  Add columns
+                                </a>
+                              </li>
+                              <li class="nav-item">
+                                <a class="nav-link" href="#step-3">
+                                  Report
+                                </a>
+                              </li>
+                              <li class="nav-item">
+                                <a class="nav-link" href="#step-4">
+                                  Mass update
+                                </a>
+                              </li>
+                            </ul>
+
+                            <div class="tab-content">
+                              <div id="step-1" class="tab-pane" role="tabpanel" aria-labelledby="step-1">
+                                <div class="row">
+                                  <p>When you have created the LoE, a first line is automatically created with a quantiy and a LoE per quantity set to 0</p>
+                                  <p>From there, you have different options:</p>
+                                </div>
+                                <div class="row">
+                                  <div class="col-sm-1">
+                                    <div class="btn-group btn-group-xs">
+                                      <button type="button" class="btn"><span class="glyphicon glyphicon-ok"></span></button>
+                                      <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-remove"></span></button>
+                                    </div>
+                                  </div>
+                                  <div class="col-sm-11">
+                                    Those buttons are used to define if you add or remove a signoff
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <div class="col-sm-1">
+                                    <div class="btn-group btn-group-xs">
+                                      <button type="button" class="btn btn-info"><span class="glyphicon glyphicon-plus"></span></button>
+                                    </div>
+                                  </div>
+                                  <div class="col-sm-11">
+                                    This button is used to add a new line
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <div class="col-sm-1">
+                                    <div class="btn-group btn-group-xs">
+                                      <button type="button" class="btn btn-warning"><span class="glyphicon glyphicon-duplicate"></span></button>
+                                    </div>
+                                  </div>
+                                  <div class="col-sm-11">
+                                    This button is used to duplicate the line
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <div class="col-sm-1">
+                                    <div class="btn-group btn-group-xs">
+                                      <button type="button" class="btn btn-success"><span class="glyphicon glyphicon-pencil"></span></button>
+                                    </div>
+                                  </div>
+                                  <div class="col-sm-11">
+                                    This button is used to edit the line
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <div class="col-sm-1">
+                                    <div class="btn-group btn-group-xs">
+                                      <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>
+                                    </div>
+                                  </div>
+                                  <div class="col-sm-11">
+                                    This button is used to delete line
+                                  </div>
+                                </div>
+                              </div>
+                              <div id="step-2" class="tab-pane" role="tabpanel" aria-labelledby="step-2">
+                                <p>When you click on the <span class="glyphicon glyphicon-cog"></span> , you will have the possibility to add 2 types of columns. After they are added, you will have the ability to modify them by clicking the arrow next to the name of the column.</p>
+                                <div class="row">
+                                  <div class="col-sm-1">
+                                    <div class="btn-group btn-group-xs">
+                                      <b>Calculation</b> 
+                                    </div>
+                                  </div>
+                                  <div class="col-sm-11">
+                                    <p>Those columns will allow you to set up some values for each line that will be used in the field formula. When you name a column,
+                                    it is important to respect the fact that you cannot use a space and it must start with an alphanumeric. In order to use this column in the formula,
+                                    use @{{name_of_column}}. The column will be replaced in the formula by quantity * loe per unit.</p>
+                                    <p>Example: I create 2 columns 1) site and 2) switches then in the formula, I will have @{{site}}+@{{switches}} then on the line with this formula,
+                                      it will calculate by replacing site and switches by their quantity*loe per unit and update the field loe per unit. It is important to note that
+                                      if you modify the loe per unit in the line (not under the calculation) and their is a formula, it will be replaced by the value calculated by the formula.
+                                    </p>
+                                    <p>Attention: if you divide by 0 in the formula, it will be replaced by the total is 0.</p>
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <div class="col-sm-1">
+                                    <div class="btn-group btn-group-xs">
+                                      <b>Consulting type</b> 
+                                    </div>
+                                  </div>
+                                  <div class="col-sm-11">
+                                    <p>Here you will be able to add a consulting type and under each new column you will have a percentage and a price per day. This will be used in the calculation of the total price</p>
+                                  </div>
+                                </div>
+                              </div>
+                              <div id="step-3" class="tab-pane" role="tabpanel" aria-labelledby="step-3">
+                                <p>You can get the following reports:</p>
+                                <div class="row">
+                                  <div class="col-sm-1">
+                                    <div class="btn-group btn-group-xs">
+                                      <b>History</b> 
+                                    </div>
+                                  </div>
+                                  <div class="col-sm-11">
+                                    <p>This will give you the history of all modification on the table. You will also have the ability to export this to excel</p>
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <div class="col-sm-1">
+                                    <div class="btn-group btn-group-xs">
+                                      <b>Export to excel</b> 
+                                    </div>
+                                  </div>
+                                  <div class="col-sm-11">
+                                    <p>This will export the current visible table to excel</p>
+                                  </div>
+                                </div>
+                              </div>
+                              <div id="step-4" class="tab-pane" role="tabpanel" aria-labelledby="step-4">
+                                <p>Mass updates needs to be used with caution:</p>
+                                <div class="row">
+                                  <div class="col-sm-1">
+                                    <div class="btn-group btn-group-xs">
+                                      <b>Signoff</b> 
+                                    </div>
+                                  </div>
+                                  <div class="col-sm-11">
+                                    <p>You will have the ability to select a domain or all domains and sign off all the lines for this LoE</p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                          </div>
+                        </div>
+                        <!-- Modal Footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                  </div>
+              </div>
+              <!-- Help Modal -->
 
               <!-- History Modal -->
               <div class="modal fade" id="modal_loe_history" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -1993,8 +2176,53 @@ $(document).ready(function() {
   //region Loe
   @if($action == 'update')
     var loe_data;
+    $('#smartwizard').smartWizard({
+        selected: 0, // Initial selected step, 0 = first step
+        theme: 'default', // theme for the wizard, related css need to include for other than default theme
+        justified: true, // Nav menu justification. true/false
+        darkMode:false, // Enable/disable Dark Mode if the theme supports. true/false
+        autoAdjustHeight: true, // Automatically adjust content height
+        cycleSteps: false, // Allows to cycle the navigation of steps
+        backButtonSupport: true, // Enable the back button support
+        enableURLhash: true, // Enable selection of the step based on url hash
+        transition: {
+            animation: 'none', // Effect on navigation, none/fade/slide-horizontal/slide-vertical/slide-swing
+            speed: '400', // Transion animation speed
+            easing:'' // Transition animation easing. Not supported without a jQuery easing plugin
+        },
+        toolbarSettings: {
+            toolbarPosition: 'bottom', // none, top, bottom, both
+            toolbarButtonPosition: 'right', // left, right, center
+            showNextButton: true, // show/hide a Next button
+            showPreviousButton: true, // show/hide a Previous button
+            toolbarExtraButtons: [] // Extra buttons to show on toolbar, array of jQuery input/buttons elements
+        },
+        anchorSettings: {
+            anchorClickable: true, // Enable/Disable anchor navigation
+            enableAllAnchors: false, // Activates all anchors clickable all times
+            markDoneStep: true, // Add done state on navigation
+            markAllPreviousStepsAsDone: true, // When a step selected by url hash, all previous steps are marked done
+            removeDoneStepOnNavigateBack: false, // While navigate back done step after active step will be cleared
+            enableAnchorOnDoneStep: true // Enable/Disable the done steps navigation
+        },
+        keyboardSettings: {
+            keyNavigation: true, // Enable/Disable keyboard navigation(left and right keys are used if enabled)
+            keyLeft: [37], // Left key code
+            keyRight: [39] // Right key code
+        },
+        lang: { // Language variables for button
+            next: 'Next',
+            previous: 'Previous'
+        },
+        disabledSteps: [], // Array Steps disabled
+        errorSteps: [], // Highlight step with errors
+        hiddenSteps: [] // Hidden steps
+      });
+    
 
     $('#options_loe').hide();
+    $('.buttonLoeAccept').hide();
+    $('.buttonLoeCancel').hide();
 
     // Init select2 boxes in the modal
     $("#modal_loe_cons_form_country").select2({
@@ -2002,6 +2230,12 @@ $(document).ready(function() {
     });
     $("#modal_loe_cons_form_seniority").select2({
         allowClear: true
+    });
+
+    // HELP
+    $(document).on('click', '.loe_help_basic', function () {
+      $('#modal_loe_help_basic').modal("show");
+      $("#smartwizard").smartWizard("currentRefresh");
     });
 
     // LOE INIT
@@ -2630,14 +2864,13 @@ $(document).ready(function() {
     $(document).on('click', '.buttonLoeCreateUpdate', function () {
       //console.log(loe_data);
       //console.log($(this).data('action'));
+      $('.buttonLoeAccept').show();
+      $('.buttonLoeCancel').show();
       tr = $(this).closest('tr');
       
       html = '<tr id="loe_form">';
       html += `<td>
-                  <div class="btn-group btn-group-xs">
-                    <button type="button" class="buttonLoeAccept btn btn-success"><span class="glyphicon glyphicon-ok"></span></button>
-                    <button type="button" class="buttonLoeCancel btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button>
-                  </div>
+                  
               </td>`;
 
       //hidden
@@ -2902,6 +3135,8 @@ $(document).ready(function() {
     });
 
     $(document).on('click', '.buttonLoeCancel', function () {
+      $('.buttonLoeAccept').hide();
+      $('.buttonLoeCancel').hide();
       getLoeList()
     });
 
@@ -3030,6 +3265,8 @@ $(document).ready(function() {
               }
 
               if (line_close) {
+                $('.buttonLoeAccept').hide();
+                $('.buttonLoeCancel').hide();
                 getLoeList();
               }
               

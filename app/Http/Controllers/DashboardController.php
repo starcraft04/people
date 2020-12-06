@@ -473,17 +473,6 @@ class DashboardController extends Controller
         return view('dashboard/order', compact('authUsersForDataView', 'user_id', 'year', 'order_target', 'all_orders', 'grand_total', 'grand_total_weighted', 'table_height'));
     }
 
-    public function loe(AuthUsersForDataView $authUsersForDataView, $year = null)
-    {
-        $authUsersForDataView->userCanView('tools-activity-all-view');
-        $table_height = Auth::user()->table_height;
-        if ($year == null) {
-            $year = date('Y');
-        }
-
-        return view('dashboard/loe', compact('authUsersForDataView', 'year', 'table_height'));
-    }
-
     public function action($user_name = '')
     {
         $table_height = Auth::user()->table_height;
