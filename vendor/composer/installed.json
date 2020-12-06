@@ -1402,7 +1402,8 @@
             "data",
             "faker",
             "fixtures"
-        ]
+        ],
+        "abandoned": true
     },
     {
         "name": "guzzlehttp/guzzle",
@@ -3060,6 +3061,60 @@
         ]
     },
     {
+        "name": "nxp/math-executor",
+        "version": "V2.1.5",
+        "version_normalized": "2.1.5.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/neonxp/MathExecutor.git",
+            "reference": "761ac503441b77c9ee50b3e1deaf0da89a8cbafe"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/neonxp/MathExecutor/zipball/761ac503441b77c9ee50b3e1deaf0da89a8cbafe",
+            "reference": "761ac503441b77c9ee50b3e1deaf0da89a8cbafe",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=7.1"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "~8.0"
+        },
+        "time": "2020-10-19T23:25:48+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "NXP": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Alexander 'NeonXP' Kiryukhin",
+                "email": "a.kiryukhin@mail.ru"
+            },
+            {
+                "name": "Bruce Wells",
+                "email": "brucekwells@gmail.com"
+            }
+        ],
+        "description": "Simple math expressions calculator",
+        "homepage": "http://github.com/NeonXP/MathExecutor",
+        "keywords": [
+            "calculator",
+            "expression",
+            "formula",
+            "math",
+            "mathmatics",
+            "parser"
+        ]
+    },
+    {
         "name": "opis/closure",
         "version": "3.5.4",
         "version_normalized": "3.5.4.0",
@@ -3870,7 +3925,8 @@
         "homepage": "https://github.com/sebastianbergmann/php-token-stream/",
         "keywords": [
             "tokenizer"
-        ]
+        ],
+        "abandoned": true
     },
     {
         "name": "phpunit/phpunit",

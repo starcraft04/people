@@ -23,6 +23,7 @@
 <link href="{{ asset('/plugins/gentelella/vendors/ion.rangeSlider/css/ion.rangeSlider.css') }}" rel="stylesheet">
 <link href="{{ asset('/plugins/gentelella/vendors/ion.rangeSlider/css/ion.rangeSlider.skinModern.css') }}" rel="stylesheet">
 <!-- Document styling -->
+<link href="{{ asset('/css/loe.css') }}" rel="stylesheet" />
 <style>
 h3 {
   overflow: hidden;
@@ -91,6 +92,12 @@ h3:after {
 <script src="{{ asset('/plugins/gentelella/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js') }}" type="text/javascript"></script>
 <!-- Range slider -->
 <script src="{{ asset('/plugins/gentelella/vendors/ion.rangeSlider/js/ion.rangeSlider.min.js') }}" type="text/javascript"></script>
+<!-- Range slider -->
+<script src="{{ asset('/plugins/TableExport/libs/FileSaver/FileSaver.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/TableExport/libs/js-xlsx/xlsx.core.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/TableExport/libs/jsPDF/jspdf.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/TableExport/libs/jsPDF-AutoTable/jspdf.plugin.autotable.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/TableExport/tableExport.min.js') }}" type="text/javascript"></script>
 @stop
 
 @section('content')
@@ -826,8 +833,11 @@ h3:after {
                       </button>
                       <ul class="dropdown-menu">
                         <li class="dropdown-header">Add column</li>
-                        <li><a class="site_create" href="#">Calculation</a></li>
-                        <li><a class="cons_create" href="#">Consulting type</a></li>
+                        <li><a class="dropdown-selection site_create" href="#">Calculation</a></li>
+                        <li><a class="dropdown-selection cons_create" href="#">Consulting type</a></li>
+                        <li class="dropdown-header">Report</li>
+                        <li><a class="dropdown-selection loe_history" href="#">History</a></li>
+                        <li><a class="dropdown-selection loe_table_to_excel" href="#">Export to Excel</a></li>
                       </ul>
                     </div>
                   </div>
@@ -835,13 +845,39 @@ h3:after {
                 </div>
                 <div class="row">
                   <div class="table-responsive">
-                    <table class="table table-striped table-hover table-bordered mytable" width="100%" id="LoeTable">
+                    <table class="table table-striped table-hover table-bordered table-sm" cellspacing="0"
+  width="100%" id="LoeTable">
                     </table>
-                    <br><br><br><br><br><br><br><br><br><br><br>
                   </div>
                 </div>
               </div>
               <!-- Table -->
+
+              <!-- History Modal -->
+              <div class="modal fade" id="modal_loe_history" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" style="display:table;">
+                      <div class="modal-content">
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title" id="modal_loe_history_title">History</h4>
+                        </div>
+                        <!-- Modal Header -->
+                      
+                        <!-- Modal Body -->
+                        <div class="modal-body">
+                          <table class="table table-striped table-hover table-bordered table-sm" cellspacing="0" width="800px" id="LoeHistoryTable">
+                          </table>
+                        </div>
+                        <!-- Modal Footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" id="loe_history_excel" class="btn btn-info">Excel</button>
+                        </div>
+                      </div>
+                  </div>
+              </div>
+              <!-- History Modal -->
 
               <!-- Site Modal -->
               <div class="modal fade" id="modal_loe_site" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -1962,6 +1998,85 @@ $(document).ready(function() {
       });
     });
 
+    // HISTORY
+    $(document).on('click', '.loe_history', function () {
+      $('#LoeHistoryTable').empty();
+      $.ajax({
+        type: 'get',
+        url: "{!! route('loeHistory','') !!}/"+{{ $project->id }},
+        dataType: 'json',
+        success: function(data) {
+          
+
+          if (data.length != 0) {
+            console.log(data);
+            // Then we need to create the headers for the table
+            html = '<thead>';
+            //region First header
+            html += '<tr>';
+            html += '<th style="min-width:140px;">'+'Date'+'</th>';
+            html += '<th>'+'User'+'</th>';
+            html += '<th>'+'Line#'+'</th>';
+            html += '<th>'+'Main phase'+'</th>';
+            html += '<th>'+'Secondary phase'+'</th>';
+            html += '<th>'+'LoE Description'+'</th>';
+            html += '<th>'+'History Description'+'</th>';
+            html += '<th>'+'Field'+'</th>';
+            html += '<th>'+'Old'+'</th>';
+            html += '<th>'+'New'+'</th>';
+            html += '</tr>';
+            html += '</thead>';
+            //endregion
+            // Data filling
+            function td_no_null(item,end='') {
+              if (item != null && item != '') {
+                return '<td>'+item+end+'</td>';
+              } else {
+                return '<td></td>';
+              }
+            }
+            //region Body
+            html += '<tbody>';
+            data.forEach(function(row){
+
+              html += '<tr>';
+              created_at = new Date(row.created_at)
+              html += td_no_null(created_at.toDateString());
+              html += td_no_null(row.name);
+              html += td_no_null(row.project_loe_id);
+              html += td_no_null(row.main_phase);
+              html += td_no_null(row.secondary_phase);
+              html += td_no_null(row.loe_desc);
+              html += td_no_null(row.history_desc);
+              html += td_no_null(row.field_modified);
+              html += td_no_null(row.field_old_value);
+              html += td_no_null(row.field_new_value);
+              html += '</tr>';
+            });
+            html += '</tbody>';
+            //endregion
+            $('#LoeHistoryTable').prepend(html);
+            $('#modal_loe_history').modal("show");
+          }
+
+        }
+      });
+      
+    });
+
+    $(document).on('click', '#loe_history_excel', function () {
+      $('#LoeHistoryTable').tableExport({type:'excel',fileName: 'history'});
+    });
+
+    $(document).on('click', '.loe_table_to_excel', function () {
+      $('.table_recurrent').empty();
+      $('.table_recurrent').html('1');
+      $('#LoeTable').tableExport({type:'excel',fileName: 'loe'});
+      $('.table_recurrent').empty();
+      $('.table_recurrent').html('<i class="fa fa-check"></i>');
+      
+    });
+
     // SITE DELETE
     $(document).on('click', '.site_delete', function () {
       var data = {'name':$(this).data('name')};
@@ -2420,7 +2535,8 @@ $(document).ready(function() {
       //console.log(loe_data);
       //console.log($(this).data('action'));
       tr = $(this).closest('tr');
-      html = '<tr>';
+      
+      html = '<tr id="loe_form">';
       html += `<td>
                   <div class="btn-group btn-group-xs">
                     <button type="button" class="buttonLoeAccept btn btn-success"><span class="glyphicon glyphicon-ok"></span></button>
@@ -2428,58 +2544,129 @@ $(document).ready(function() {
                   </div>
               </td>`;
 
+      //hidden
+      html += '<input class="form-control" id="loe_action" type="hidden" value="'+$(this).data('action')+'">';
+      html += '<input class="form-control" id="loe_project_id" type="hidden" value="'+{{ $project->id }}+'">';
+
       if ($(this).data('action') == 'update') {
         html += '<input class="form-control" id="loe_id" type="hidden" value="'+$(this).data('id')+'">';
       }
-      html += `<td><input type="text" id="loe_main_phase" class="form-control" placeholder="Main phase"></input>
-      <span class="loe_main_phase_error help-block"></span></td>`;
-      html += `<td><input type="text" id="loe_secondary_phase" class="form-control" placeholder="Secondary phase"></input>
-      <span class="loe_secondary_phase_error help-block"></span></td>`;
+
+      //fields
       html += `<td>
-        <select class="form-control select2" style="width: 100%;" id="loe_domain" data-placeholder="Select a domain">
-          <option value="" ></option>
-          @foreach(config('select.domain-users') as $key => $value)
-          <option value="{{ $key }}">
-            {{ $value }}
-          </option>
-          @endforeach
-        </select>
-      <span class="loe_domain_error help-block"></span></td>`;
-      html += `<td><textarea type="text" id="loe_description" class="form-control" placeholder="Description" rows="4"></textarea>
-      <span class="loe_description_error help-block"></span></td>`;
-      html += `<td><input type="text" id="loe_option" class="form-control" placeholder="Option"></input>
-      <span class="loe_option_error help-block"></span></td>`;
-      html += `<td><textarea type="text" id="loe_assumption" class="form-control" placeholder="Assumption" rows="4"></textarea>
-      <span class="loe_assumption_error help-block"></span></td>`;
+                <div id="loe_div_main_phase" class="form-group">
+                  <input type="text" id="loe_main_phase" class="form-control" placeholder="Main phase"></input>
+                  <span id="loe_main_phase_error" class="help-block"></span>
+                </div>
+              </td>`;
+      html += `<td>
+                <div id="loe_div_secondary_phase" class="form-group">
+                  <input type="text" id="loe_secondary_phase" class="form-control" placeholder="Secondary phase"></input>
+                  <span id="loe_secondary_phase_error" class="help-block"></span>
+                </div>
+              </td>`;
+      html += `<td>
+                <div id="loe_div_domain" class="form-group">
+                  <select class="form-control select2" style="width: 100%;" id="loe_domain" data-placeholder="Select a domain">
+                    <option value="" ></option>
+                    @foreach(config('select.domain-users') as $key => $value)
+                    <option value="{{ $key }}">
+                      {{ $value }}
+                    </option>
+                    @endforeach
+                  </select>
+                  <span id="loe_domain_error" class="help-block"></span>
+                </div>
+              </td>`;
+      html += `<td>
+                <div id="loe_div_description" class="form-group">
+                  <textarea type="text" id="loe_description" class="form-control" placeholder="Description" rows="4"></textarea>
+                  <span id="loe_description_error" class="help-block"></span>
+                </div>
+              </td>`;
+      html += `<td>
+                <div id="loe_div_option" class="form-group">
+                  <input type="text" id="loe_option" class="form-control" placeholder="Option"></input>
+                  <span id="loe_option_error" class="help-block"></span>
+                </div>
+              </td>`;
+      html += `<td>
+                <div id="loe_div_assumption" class="form-group">
+                  <textarea type="text" id="loe_assumption" class="form-control" placeholder="Assumption" rows="4"></textarea>
+                  <span id="loe_assumption_error" class="help-block"></span>
+                </div>
+              </td>`;
 
       loe_data.col.site.forEach(fill_site_inputs);
       function fill_site_inputs (site){
-        html += `<td><input type="text" data-name="`+site.name+`" class="loe_site_quantity form-control" placeholder="Quantity" value="0"></input>
-        <span class="loe_site_quantity_error help-block"></span></td>`;
-        html += `<td><input type="text" data-name="`+site.name+`" class="loe_site_loe_per_u form-control" placeholder="LoE per unit" value="0"></input>
-        <span class="loe_site_loe_per_u_error help-block"></span></td>`;
+        html += `<td>
+                  <div id="loe_div_site_quantity_`+site.name+`" class="form-group">
+                    <input type="text" data-name="`+site.name+`" class="loe_site_quantity form-control" placeholder="Quantity" value="1"></input>
+                    <span id="loe_site_quantity_`+site.name+`_error" class="help-block"></span>
+                  </div>
+                </td>`;
+        html += `<td width="200px">
+                  <div id="loe_div_site_loe_per_quantity_`+site.name+`" class="form-group">
+                    <input type="text" data-name="`+site.name+`" class="loe_site_loe_per_u form-control" placeholder="LoE per unit" value="0"></input>
+                    <span id="loe_site_loe_per_quantity_`+site.name+`_error" class="help-block"></span>
+                  </div>
+                </td>`;
       }
 
 
-      html += `<td><input type="text" id="loe_quantity" class="form-control" placeholder="Quantity" value="0"></input>
-      <span class="loe_quantity_error help-block"></span></td>`;
-      html += `<td><input type="text" id="loe_loe_per_u" class="form-control" placeholder="Loe per unit" value="0"></input>
-      <span class="loe_loe_per_u_error help-block"></span></td>`;
-      html += `<td><input type="text" id="loe_formula" class="form-control" placeholder="Formula"></input>
-      <span class="loe_formula_error help-block"></span></td>`;
-      html += `<td><input type="checkbox" id="loe_recurrent" class="form-group"></input>
-      <span class="loe_recurrent_error help-block"></span></td>`;
-      html += `<td><input type="text" id="loe_start_date" class="form-control" placeholder="Start date"></input>
-      <span class="loe_start_date_error help-block"></span></td>`;
-      html += `<td><input type="text" id="loe_end_date" class="form-control" placeholder="End date"></input>
-      <span class="loe_end_date_error help-block"></span></td>`;
+      html += `<td>
+                <div id="loe_div_quantity" class="form-group">
+                  <input type="text" id="loe_quantity" class="form-control" placeholder="Quantity" value="1"></input>
+                  <span id="loe_quantity_error" class="help-block"></span>
+                </div>
+              </td>`;
+      html += `<td>
+                <div id="loe_div_loe_per_quantity" class="form-group">
+                  <input type="text" id="loe_loe_per_u" class="form-control" placeholder="Loe per unit" value="0"></input>
+                  <span id="loe_loe_per_quantity_error" class="help-block"></span>
+                </div>
+              </td>`;
+      if (loe_data.col.site.length>0) {
+        html += `<td>
+                <div id="loe_div_formula" class="form-group">
+                  <textarea type="text" id="loe_formula" class="form-control" placeholder="Formula"></textarea>
+                  <span id="loe_formula_error" class="help-block"></span>
+                </div>
+              </td>`;
+      } 
+      html += `<td>
+                <div id="loe_div_recurrent" class="form-group">
+                  <input data-test="test" type="checkbox" id="loe_recurrent" class="form-group"></input>
+                  <span id="loe_recurrent_error" class="help-block"></span>
+                </div>
+              </td>`;
+      html += `<td>
+                <div id="loe_div_start_date" class="form-group">
+                  <input type="text" id="loe_start_date" class="form-control" placeholder="Start date"></input>
+                  <span id="loe_start_date_error" class="help-block"></span>
+                </div>
+              </td>`;
+      html += `<td>
+                <div id="loe_div_end_date" class="form-group">
+                  <input type="text" id="loe_end_date" class="form-control" placeholder="End date"></input>
+                  <span id="loe_end_date_error" class="help-block"></span>
+                </div>
+              </td>`;
 
       loe_data.col.cons.forEach(fill_cons_inputs);
       function fill_cons_inputs (cons){
-        html += `<td><input type="text" data-name="`+cons.name+`" class="loe_cons_percentage form-control" placeholder="Percentage" value="0"></input>
-        <span class="loe_cons_percentage_error help-block"></span></td>`;
-        html += `<td><input type="text" data-name="`+cons.name+`" class="loe_cons_price form-control" placeholder="Price" value="0"></input>
-        <span class="loe_cons_price_error help-block"></span></td>`;
+        html += `<td>
+                  <div id="loe_div_cons_percentage_`+cons.name+`" class="form-group">
+                    <input type="text" data-name="`+cons.name+`" class="loe_cons_percentage form-control" placeholder="Percentage" value="0"></input>
+                    <span id="loe_cons_percentage_`+cons.name+`_error" class="help-block"></span>
+                  </div>
+                </td>`;
+        html += `<td>
+                  <div id="loe_div_cons_price_`+cons.name+`" class="form-group">
+                    <input type="text" data-name="`+cons.name+`" class="loe_cons_price form-control" placeholder="Price" value="0"></input>
+                    <span id="loe_cons_price_`+cons.name+`_error" class="help-block"></span>
+                  </div>
+                </td>`;
       }
 
       loe_data.col.cons.forEach(fill_cons_empty);
@@ -2491,6 +2678,7 @@ $(document).ready(function() {
       html += '<td></td>';
       html += '<td></td>';
       html += '</tr>';
+      
 
       tr.after(html);
 
@@ -2547,7 +2735,7 @@ $(document).ready(function() {
 
       if ($(this).data('action') == 'update') {
         var id = $(this).data('id');
-        console.log(loe_data);
+        //console.log(loe_data);
         loe_data.data.loe.forEach(fill_update_data);
         function fill_update_data(row) {
           if (row.id == id) {
@@ -2563,7 +2751,11 @@ $(document).ready(function() {
 
             $('input#loe_quantity').val(row.quantity);
             $('input#loe_loe_per_u').val(row.loe_per_quantity);
-            $('input#loe_formula').val(row.formula);
+            
+            if (loe_data.col.site.length>0) {
+              $('textarea#loe_formula').val(row.formula);
+            } 
+            
 
             if (row.recurrent == 1) {
               $('input#loe_recurrent').prop('checked',true);
@@ -2617,7 +2809,135 @@ $(document).ready(function() {
     });
 
     $(document).on('click', '.buttonLoeAccept', function () {
-      getLoeList()
+
+      // Clean all error class
+      $("tr#loe_form  div.form-group").each(function(){
+        $(this).removeClass('has-error');
+      });
+      // Clean all error message
+      $("tr#loe_form span.help-block").each(function(){
+        $(this).empty();
+      });
+
+      // hidden input
+      var action = $('input#loe_action').val();
+      var project_id = $('input#loe_project_id').val();
+      if (action == 'update') {
+        var id = $('input#loe_id').val();
+      } else {
+        var id = 0;
+      }
+      var main_phase = $('input#loe_main_phase').val();
+      var secondary_phase = $('input#loe_secondary_phase').val();
+      var domain = $('select#loe_domain').children("option:selected").val();
+      var description = $('textarea#loe_description').val();
+      var option = $('input#loe_option').val();
+      var assumption = $('textarea#loe_assumption').val();
+
+      var site_data = [];
+      loe_data.col.site.forEach(fill_site_data_accept);
+      function fill_site_data_accept (site,index){
+        site_data[index] = {};
+        site_data[index].name = site.name;
+        site_data[index].quantity = $('input.loe_site_quantity[data-name="'+site.name+'"]').val();
+        site_data[index].loe_per_quantity = $('input.loe_site_loe_per_u[data-name="'+site.name+'"]').val();
+      }
+
+      var quantity = $('input#loe_quantity').val();
+      var loe_per_quantity = $('input#loe_loe_per_u').val();
+      if (loe_data.col.site.length>0) {
+        var formula = $('textarea#loe_formula').val();
+      } else {
+        var formula = '';
+      }
+      
+      if ($('input#loe_recurrent').prop('checked') == true) {
+        var recurrent = 1;
+      } else {
+        var recurrent = 0;
+      }
+
+      var start_date = $('input#loe_start_date').val();
+      var end_date = $('input#loe_end_date').val();
+
+      var cons_data = [];
+      loe_data.col.cons.forEach(fill_cons_data_accept);
+      function fill_cons_data_accept (cons,index){
+        cons_data[index] = {};
+        cons_data[index].name = cons.name;
+        cons_data[index].percentage = $('input.loe_cons_percentage[data-name="'+cons.name+'"]').val();
+        cons_data[index].price = $('input.loe_cons_price[data-name="'+cons.name+'"]').val();
+      }
+
+      const site_data_json = JSON.stringify(site_data);
+      const cons_data_json = JSON.stringify(cons_data);
+
+      var data = {
+        'action':action,
+        'project_id':project_id,
+        'main_phase':main_phase,
+        'secondary_phase':secondary_phase,
+        'domain':domain,
+        'description':description,
+        'option':option,
+        'assumption':assumption,
+        'site':site_data_json,
+        'quantity':quantity,
+        'loe_per_quantity':loe_per_quantity,
+        'formula':formula,
+        'recurrent':recurrent,
+        'start_date':start_date,
+        'end_date':end_date,
+        'cons':cons_data_json
+      }
+
+      //console.log(data);
+
+      $.ajax({
+            type: 'post',
+            url: "{!! route('loeCreateUpdate','') !!}/"+id,
+            data:data,
+            dataType: 'json',
+            success: function(data) {
+              line_close = false;
+              show_message = false;
+              console.log(data);
+              if (data.result == 'success'){
+                  box_type = 'success';
+                  message_type = 'success';
+                  line_close = true;
+                  show_message = true;
+              } else if (data.result == 'validation_errors'){
+                //console.log(data.errors);
+                $.each(data.errors, function (key, value) {
+                  //console.log(value.field);
+                  //console.log(value.msg);
+                  $('#loe_div_'+value.field).addClass('has-error');
+                  $('#loe_'+value.field+'_error').text(value.msg);
+                });
+              }
+              else {
+                  box_type = 'danger';
+                  message_type = 'error';
+                  show_message = true;
+              }
+              
+              if (show_message) {
+                $('#flash-message').empty();
+                var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+                $('#flash-message').append(box);
+                $('#delete-message').delay(2000).queue(function () {
+                    $(this).addClass('animated flipOutX')
+                });
+              }
+
+              if (line_close) {
+                getLoeList();
+              }
+              
+            }
+      });
+
     });
 
 
@@ -2642,25 +2962,25 @@ $(document).ready(function() {
             html = '<thead>';
             //region First header
             html += '<tr>';
-            html += '<th rowspan="3">'+'Action'+'</th>';
-            html += '<th rowspan="3">'+'Main Phase'+'</th>';
-            html += '<th rowspan="3">'+'Secondary Phase'+'</th>';
-            html += '<th rowspan="3">'+'Domain'+'</th>';
-            html += '<th rowspan="3">'+'Description'+'</th>';
-            html += '<th rowspan="3">'+'Option'+'</th>';
-            html += '<th rowspan="3">'+'Assumption'+'</th>';
+            html += '<th rowspan="3" style="min-width:110px;">'+'Action'+'</th>';
+            html += '<th rowspan="3" style="min-width:150px;">'+'Main Phase'+'</th>';
+            html += '<th rowspan="3" style="min-width:150px;">'+'Secondary Phase'+'</th>';
+            html += '<th rowspan="3" style="min-width:150px;">'+'Domain'+'</th>';
+            html += '<th rowspan="3" style="min-width:250px;">'+'Description'+'</th>';
+            html += '<th rowspan="3" style="min-width:150px;">'+'Option'+'</th>';
+            html += '<th rowspan="3" style="min-width:250px;">'+'Assumption'+'</th>';
             if (data.col.site.length>0) {
               html += '<th colspan="'+2*data.col.site.length+'">'+'Site calculation'+'</th>';
             }
             html += '<th rowspan="3">'+'Quantity'+'</th>';
             html += '<th rowspan="3">'+'LoE (per unit)'+'</th>';
             if (data.col.site.length>0) {
-              html += '<th rowspan="3">'+'Formula'+'</th>';
+              html += '<th rowspan="3" style="min-width:150px;">'+'Formula'+'</th>';
             }
             
             html += '<th rowspan="3">'+'recurrent'+'</th>';
-            html += '<th rowspan="3">'+'Start date'+'</th>';
-            html += '<th rowspan="3">'+'End date'+'</th>';
+            html += '<th rowspan="3" style="min-width:150px;">'+'Start date'+'</th>';
+            html += '<th rowspan="3" style="min-width:150px;">'+'End date'+'</th>';
             if (data.col.cons.length>0) {
               html += '<th colspan="'+2*data.col.cons.length+'">'+'Consulting type (%)'+'</th>';
               html += '<th colspan="'+2*data.col.cons.length+'">'+'Consulting type (MD)'+'</th>';
@@ -2677,86 +2997,59 @@ $(document).ready(function() {
             
             data.col.site.forEach(function(site){
               html += '<th colspan="2">';
-              html += '<div class="row">';
-              html += '<div class="col-sm-6">'+site.name+'</div>';
-              html += '<div class="col-sm-6">';
+              html += '<span class="inline">'+site.name+'</span>';
               html += `<div class="dropdown">
-                        <button class="btn btn-sm btn-round dropdown-toggle" type="button" data-toggle="dropdown">
-                        <i class="fa fa-sort-desc"></i>
-                        </button>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-sort-desc"></i></a>
                         <ul class="dropdown-menu">
                           <li class="dropdown-header">Calculation</li>
-                          <li><a class="site_edit" data-name="`+site.name+`" href="#">Edit</a></li>
-                          <li><a class="site_delete" data-name="`+site.name+`" href="#">Delete</a></li>
+                          <li><a class="dropdown-selection site_edit" data-name="`+site.name+`" href="#">Edit</a></li>
+                          <li><a class="dropdown-selection site_delete" data-name="`+site.name+`" href="#">Delete</a></li>
                         </ul>
                       </div>`;
-              html += '</div>';
-              html += '</div>';
               html += '</th>';
             });
             
             data.col.cons.forEach(function(cons){
-              html += '<th colspan="2">'
-              html += '<div class="row">';
-              html += '<div class="col-sm-6">';
-              html += '<div class="row">';
+              html += '<th colspan="2" style="min-width:180px;">'
               html += cons.name;
-              html += '</div>';
-              html += '<div class="row">';
+              html += '<br>';
               if (cons.seniority != null) {
                 html += cons.seniority;
               } else {
                 html += '';
               }
-              html += '</div>';
-              html += '<div class="row">';
+              html += '<br>';
               if (cons.location != null) {
                 html += cons.location;
               } else {
                 html += '';
               }
-              html += '</div>';
-              html += '</div>';
-              html += '<div class="col-sm-6">';
               html += `<div class="dropdown">
-                        <button class="btn btn-sm btn-round dropdown-toggle" type="button" data-toggle="dropdown">
-                        <i class="fa fa-sort-desc"></i>
-                        </button>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-sort-desc"></i></a>
                         <ul class="dropdown-menu">
                           <li class="dropdown-header">Consulting type</li>
-                          <li><a class="cons_edit" data-name="`+cons.name+`" data-seniority="`+cons.seniority+`" data-location="`+cons.location+`" href="#">Edit</a></li>
-                          <li><a class="cons_delete" data-name="`+cons.name+`" data-seniority="`+cons.seniority+`" data-location="`+cons.location+`" href="#">Delete</a></li>
+                          <li><a class="dropdown-selection cons_edit" data-name="`+cons.name+`" data-seniority="`+cons.seniority+`" data-location="`+cons.location+`" href="#">Edit</a></li>
+                          <li><a class="dropdown-selection cons_delete" data-name="`+cons.name+`" data-seniority="`+cons.seniority+`" data-location="`+cons.location+`" href="#">Delete</a></li>
                         </ul>
                       </div>`;
-              html += '</div>';
-              html += '</div>';
               html += '</th>';
             });
 
             data.col.cons.forEach(function(cons){
-              html += '<th colspan="2">'
-              html += '<div class="row">';
-              html += '<div class="col-sm-12">';
-              html += '<div class="row">';
+              html += '<th colspan="2" style="min-width:150px;">'
               html += cons.name;
-              html += '</div>';
-              html += '<div class="row">';
+              html += '<br>';
               if (cons.seniority != null) {
                 html += cons.seniority;
               } else {
                 html += '';
               }
-              html += '</div>';
-              html += '<div class="row">';
+              html += '<br>';
               if (cons.location != null) {
                 html += cons.location;
               } else {
                 html += '';
               }
-              html += '</div>';
-              html += '</div>';
-
-              html += '</div>';
               html += '</th>';
             });
 
@@ -2879,7 +3172,7 @@ $(document).ready(function() {
               }
               
               if (row.recurrent == 1) {
-                html += '<td><i class="fa fa-check"></i></td>';
+                html += '<td class="table_recurrent"><i class="fa fa-check"></i></td>';
               } else {
                 html += '<td></td>';
               }
@@ -2967,7 +3260,7 @@ $(document).ready(function() {
             //endregion
             //region Footer
             html += '<tfoot>';
-            number_of_cols = 13+2*data.col.site.length+2*2*data.col.cons.length;
+            number_of_cols = 13+2*data.col.site.length+2*2*data.col.cons.length-1;
             //console.log(number_of_cols);
             //console.log(data.col.site.length);
             //console.log(data.col.cons.length);
@@ -2975,7 +3268,11 @@ $(document).ready(function() {
             if (data.col.site.length == 0) {
               number_of_cols -= 1;
             }
-            html += '<td colspan="'+number_of_cols+'">Grand Total</td>';
+            for (let index = 0; index < number_of_cols; index++) {
+              html += '<td></td>';
+            }
+
+            html += '<td>Grand Total</td>';
 
             if (grand_total_loe != null && grand_total_loe != '') {
               html += '<td>'+grand_total_loe+'</td>';

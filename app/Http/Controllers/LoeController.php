@@ -9,6 +9,7 @@ use App\Loe;
 use App\LoeHistory;
 use App\LoeSite;
 use App\LoeConsultant;
+use NXP\MathExecutor;
 
 class LoeController extends Controller
 {
@@ -90,6 +91,21 @@ class LoeController extends Controller
         return $results;
     }
 
+    public function loeHistory($id)
+    {
+        $loe_history = LoeHistory::join('project_loe', 'project_loe.id', '=', 'project_loe_history.project_loe_id')
+            ->join('users','users.id','=','project_loe_history.user_id')
+            ->select('users.name','project_loe.main_phase','project_loe.secondary_phase','project_loe.description AS loe_desc',
+                    'project_loe_history.description AS history_desc','project_loe_history.created_at','project_loe_history.field_modified',
+                    'project_loe_history.field_old_value','project_loe_history.field_new_value','project_loe_history.project_loe_id'
+            )
+            ->where('project_loe.project_id',$id)
+            ->get();
+
+        return $loe_history;
+    }
+
+
     public function init($id)
     {
         $result = new \stdClass();
@@ -101,6 +117,11 @@ class LoeController extends Controller
         ];
         $insert_result = Loe::create($inputs);
         if ($insert_result != null) {
+            LoeHistory::create([
+                'project_loe_id' => $insert_result->id,
+                'user_id' => Auth::user()->id,
+                'description' => 'LoE table created'
+            ]);
             $result->result = 'success';
             $result->msg = 'LoE initiated successfuly';
         } else {
@@ -166,6 +187,16 @@ class LoeController extends Controller
             return json_encode($result);
         }
 
+        $alphanum = preg_match("/^[a-zA-Z0-9][a-zA-Z0-9-_]+[a-zA-Z0-9]$/",$inputs['name']);
+        if ($alphanum == 0) {
+            $result->result = 'validation_errors';
+            $result->errors = array();
+            $result->errors[0] = array();
+            $result->errors[0]['field'] = 'name';
+            $result->errors[0]['msg'] = 'Must start and end with alphanumeric and only use alphanumeric or - or _';
+            return json_encode($result);
+        }
+
         $records = LoeSite::join('project_loe', 'project_loe.id', '=', 'project_loe_site.project_loe_id')
                         ->where('project_id',$id)
                         ->where('name',$inputs['name'])
@@ -213,6 +244,16 @@ class LoeController extends Controller
             $result->errors[0] = array();
             $result->errors[0]['field'] = 'name';
             $result->errors[0]['msg'] = 'This field cannot be empty';
+            return json_encode($result);
+        }
+
+        $alphanum = preg_match("/^[a-zA-Z0-9][a-zA-Z0-9-_]+[a-zA-Z0-9]$/",$inputs['name']);
+        if ($alphanum == 0) {
+            $result->result = 'validation_errors';
+            $result->errors = array();
+            $result->errors[0] = array();
+            $result->errors[0]['field'] = 'name';
+            $result->errors[0]['msg'] = 'Must start and end with alphanumeric and only use alphanumeric or - or _';
             return json_encode($result);
         }
 
@@ -305,6 +346,16 @@ class LoeController extends Controller
             return json_encode($result);
         }
 
+        $alphanum = preg_match("/^[a-zA-Z0-9][a-zA-Z0-9-_]+[a-zA-Z0-9]$/",$inputs['name']);
+        if ($alphanum == 0) {
+            $result->result = 'validation_errors';
+            $result->errors = array();
+            $result->errors[0] = array();
+            $result->errors[0]['field'] = 'name';
+            $result->errors[0]['msg'] = 'Must start and end with alphanumeric and only use alphanumeric or - or _';
+            return json_encode($result);
+        }
+
         $records = LoeConsultant::join('project_loe', 'project_loe.id', '=', 'project_loe_consultant.project_loe_id')
                         ->where('project_id',$id)
                         ->where('name',$inputs['name'])
@@ -358,6 +409,16 @@ class LoeController extends Controller
             return json_encode($result);
         }
 
+        $alphanum = preg_match("/^[a-zA-Z0-9][a-zA-Z0-9-_]+[a-zA-Z0-9]$/",$inputs['name']);
+        if ($alphanum == 0) {
+            $result->result = 'validation_errors';
+            $result->errors = array();
+            $result->errors[0] = array();
+            $result->errors[0]['field'] = 'name';
+            $result->errors[0]['msg'] = 'Must start and end with alphanumeric and only use alphanumeric or - or _';
+            return json_encode($result);
+        }
+
         if ($inputs['name'] != $inputs['old_name']) {
             $records = LoeConsultant::join('project_loe', 'project_loe.id', '=', 'project_loe_consultant.project_loe_id')
                         ->where('project_id',$id)
@@ -395,11 +456,18 @@ class LoeController extends Controller
     {
         $result = new \stdClass();
 
+        $history = LoeHistory::where('project_loe_id',$id)->get();
+
+        if($history){
+            LoeHistory::where('project_loe_id',$id)->delete();
+        }
+
         $site = LoeSite::where('project_loe_id',$id)->get();
 
         if($site){
             LoeSite::where('project_loe_id',$id)->delete();
         }
+
         $consultant = LoeConsultant::where('project_loe_id',$id)->get();
         if($consultant){
             LoeConsultant::where('project_loe_id',$id)->delete();
@@ -465,25 +533,256 @@ class LoeController extends Controller
         return json_encode($result);
     }
 
-    public function create(Request $request,$id)
+    public function create_update(Request $request,$id)
     {
-        $result = new \stdClass();
         $inputs = $request->all();
+        $cons = json_decode($inputs['cons'], true);
+        $sites = json_decode($inputs['site'], true);
 
-        $result->result = 'success';
-        $result->msg = 'Consultant type created successfuly';
-
-        return json_encode($inputs);
-    }
-
-    public function edit(Request $request,$id)
-    {
         $result = new \stdClass();
-        $inputs = $request->all();
-
         $result->result = 'success';
-        $result->msg = 'Consultant type created successfuly';
+        if ($inputs['action'] == 'create') {
+            $result->msg = 'LoE created';
+        } else {
+            $result->msg = 'LoE updated';
+        }
+        
+        //$result->sites = $sites;
 
-        return json_encode($inputs);
+        $result->errors = [];
+
+        //region validation process
+
+        //sites not empty
+        $one_site_empty = False;
+        foreach ($sites as $key => $site) {
+            if ($site['quantity'] == null) {
+                $result->result = 'validation_errors';
+                $error = [];
+                $error['field'] = 'site_quantity_'.$site['name'];
+                $error['msg'] = 'Cannot be empty';
+                array_push($result->errors,$error);
+                $one_site_empty = True;
+            }
+            if ($site['loe_per_quantity'] == null) {
+                $result->result = 'validation_errors';
+                $error = [];
+                $error['field'] = 'site_loe_per_quantity_'.$site['name'];
+                $error['msg'] = 'Cannot be empty';
+                array_push($result->errors,$error);
+                $one_site_empty = True;
+            }
+        }
+        //quantity not empty
+        if ($inputs['quantity'] == null) {
+            $result->result = 'validation_errors';
+            $error = [];
+            $error['field'] = 'quantity';
+            $error['msg'] = 'Cannot be empty';
+            array_push($result->errors,$error);
+        }
+        //loe_per_quantity not empty and check if recurrent then between 0 and 1
+        if ($inputs['loe_per_quantity'] == null) {
+            $result->result = 'validation_errors';
+            $error = [];
+            $error['field'] = 'loe_per_quantity';
+            $error['msg'] = 'Cannot be empty';
+            array_push($result->errors,$error);
+        } else if ($inputs['recurrent'] == 1 && ($inputs['loe_per_quantity']<0 || $inputs['loe_per_quantity']>1)) {
+            $result->result = 'validation_errors';
+            $error = [];
+            $error['field'] = 'loe_per_quantity';
+            $error['msg'] = 'If recurrent is selected, must be between 0 and 1';
+            array_push($result->errors,$error);
+        }
+        //cons not empty and percentage between 0 and 100
+        foreach ($cons as $key => $cons_type) {
+            if ($cons_type['percentage'] == null) {
+                $result->result = 'validation_errors';
+                $error = [];
+                $error['field'] = 'cons_percentage_'.$cons_type['name'];
+                $error['msg'] = 'Cannot be empty';
+                array_push($result->errors,$error);
+            }
+            if ($cons_type['percentage'] < 0 || $cons_type['percentage'] > 100) {
+                $result->result = 'validation_errors';
+                $error = [];
+                $error['field'] = 'cons_percentage_'.$cons_type['name'];
+                $error['msg'] = 'Must be between 0 and 100';
+                array_push($result->errors,$error);
+            }
+
+            if ($cons_type['price'] == null) {
+                $result->result = 'validation_errors';
+                $error = [];
+                $error['field'] = 'cons_price_'.$cons_type['name'];
+                $error['msg'] = 'Cannot be empty';
+                array_push($result->errors,$error);
+            }
+        }
+        //check dates when recurrent
+        if ($inputs['recurrent'] == 1) {
+            if ($inputs['start_date'] == null) {
+                $result->result = 'validation_errors';
+                $error = [];
+                $error['field'] = 'start_date';
+                $error['msg'] = 'If recurrent is selected, cannot be empty';
+                array_push($result->errors,$error);
+            }
+            if ($inputs['end_date'] == null) {
+                $result->result = 'validation_errors';
+                $error = [];
+                $error['field'] = 'end_date';
+                $error['msg'] = 'If recurrent is selected, cannot be empty';
+                array_push($result->errors,$error);
+            }
+        } else if ($inputs['start_date'] == null && $inputs['end_date'] != null) {
+            $result->result = 'validation_errors';
+            $error = [];
+            $error['field'] = 'start_date';
+            $error['msg'] = 'If end date is selected, cannot be empty';
+            array_push($result->errors,$error);
+        } else if ($inputs['start_date'] != null && $inputs['end_date'] == null) {
+            $result->result = 'validation_errors';
+            $error = [];
+            $error['field'] = 'end_date';
+            $error['msg'] = 'If start date is selected, cannot be empty';
+            array_push($result->errors,$error);
+        }
+        //check start < end date
+        $start_date = new \DateTime($inputs['start_date']);
+        $end_date = new \DateTime($inputs['end_date']);
+        if (($inputs['start_date'] != null && $inputs['end_date'] != null) && $end_date < $start_date) {
+            $result->result = 'validation_errors';
+            $error = [];
+            $error['field'] = 'start_date';
+            $error['msg'] = 'start date must be before end date';
+            array_push($result->errors,$error);
+        }
+
+        $new_formula = $inputs['formula'];
+        $new_formula_validated = False;
+        //check formulas
+        if ($new_formula != null) {
+            if ($inputs['recurrent'] == 1) {
+                $result->result = 'validation_errors';
+                $error = [];
+                $error['field'] = 'recurrent';
+                $error['msg'] = 'Recurrent cannot be set up when formula is used';
+                array_push($result->errors,$error);
+            } else {
+
+                if ($one_site_empty) {
+                    $result->result = 'validation_errors';
+                    $error = [];
+                    $error['field'] = 'formula';
+                    $error['msg'] = 'To evaluate formula, no calculation field can be empty';
+                    array_push($result->errors,$error);
+                } else {
+                    foreach ($sites as $key => $site) {
+                        $new_formula = str_replace("{{".$site['name']."}}",$site['quantity']*$site['loe_per_quantity'],$new_formula);
+                    }
+                    $alphanum = preg_match("/^(-?[0-9]+[\+\-\*\/])+[0-9]+$/",$new_formula);
+                    if ($alphanum == 0) {
+                        $result->result = 'validation_errors';
+                        $error = [];
+                        $error['field'] = 'formula';
+                        $error['msg'] = 'There is a problem with your formula';
+                        array_push($result->errors,$error);
+                    } else {
+                        $new_formula_validated = True;
+                    }
+                }    
+            }
+            
+        }
+        
+
+        //endregion
+
+        if ($new_formula_validated) {
+            
+            $executor = new MathExecutor();
+            $inputs['loe_per_quantity'] = $executor->execute($new_formula);
+
+            $result->formula = [];
+            $result->formula['begin'] = $inputs['formula'];
+            $result->formula['result'] = $new_formula;
+            $result->formula['result_calculated'] = $inputs['loe_per_quantity'];
+        }
+        
+
+        $loe_values = [
+            'main_phase' => $inputs['main_phase'],
+            'secondary_phase' => $inputs['secondary_phase'],
+            'domain' => $inputs['domain'],
+            'description' => $inputs['description'],
+            'option' => $inputs['option'],
+            'assumption' => $inputs['assumption'],
+            'quantity' => $inputs['quantity'],
+            'loe_per_quantity' => $inputs['loe_per_quantity'],
+            'formula' => $inputs['formula'],
+            'recurrent' => $inputs['recurrent'],
+            'start_date' => $inputs['start_date'],
+            'end_date' => $inputs['end_date']
+        ];
+
+        if ($inputs['action'] == 'create') {
+            $loe_values['project_id'] = $inputs['project_id'];
+            $loe_values['user_id'] = Auth::user()->id;
+            $loe = Loe::create($loe_values);
+        } else {
+            $loe = Loe::find($id);
+            if ($loe->quantity != $loe_values['quantity']) {
+                LoeHistory::create([
+                    'project_loe_id' => $id,
+                    'user_id' => Auth::user()->id,
+                    'description' => 'Value modified',
+                    'field_modified' => 'Quantity',
+                    'field_old_value' => $loe->quantity,
+                    'field_new_value' => $loe_values['quantity'],
+                ]);
+            }
+            if ($loe->loe_per_quantity != $loe_values['loe_per_quantity']) {
+                LoeHistory::create([
+                    'project_loe_id' => $id,
+                    'user_id' => Auth::user()->id,
+                    'description' => 'Value modified',
+                    'field_modified' => 'Loe per Quantity',
+                    'field_old_value' => $loe->loe_per_quantity,
+                    'field_new_value' => $loe_values['loe_per_quantity'],
+                ]);
+            }
+            $loe->update($loe_values);
+        }
+
+        foreach ($sites as $key => $site) {
+            LoeSite::updateOrCreate(
+                [
+                    'project_loe_id' => $loe->id, 
+                    'name' => $site['name']
+                ],
+                [
+                    'quantity' => $site['quantity'],
+                    'loe_per_quantity' => $site['loe_per_quantity']
+                ]
+            );
+        }
+
+        foreach ($cons as $key => $cons_type) {
+            LoeConsultant::updateOrCreate(
+                [
+                    'project_loe_id' => $loe->id, 
+                    'name' => $cons_type['name']
+                ],
+                [
+                    'price' => $cons_type['price'],
+                    'percentage' => $cons_type['percentage']
+                ]
+            );
+        }
+
+
+        return json_encode($result);
     }
 }

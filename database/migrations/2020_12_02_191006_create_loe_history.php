@@ -18,7 +18,9 @@ class CreateLoeHistory extends Migration
             $table->integer('project_loe_id')->unsigned();
             $table->integer('user_id')->unsigned();
             $table->string('field_modified', 50)->nullable();
+            $table->string('field_old_value', 50)->nullable();
             $table->string('field_new_value', 50)->nullable();
+            $table->string('description', 250)->nullable();
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();
         });

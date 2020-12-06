@@ -629,6 +629,13 @@ class ComposerStaticInit5a6269b6010239a679d4ab8cef050843
     );
 
     public static $prefixesPsr0 = array (
+        'N' => 
+        array (
+            'NXP' => 
+            array (
+                0 => __DIR__ . '/..' . '/nxp/math-executor/src',
+            ),
+        ),
         'M' => 
         array (
             'Mockery' => 
@@ -685,6 +692,7 @@ class ComposerStaticInit5a6269b6010239a679d4ab8cef050843
         'App\\Http\\Controllers\\DashboardController' => __DIR__ . '/../..' . '/app/Http/Controllers/DashboardController.php',
         'App\\Http\\Controllers\\GeneralController' => __DIR__ . '/../..' . '/app/Http/Controllers/GeneralController.php',
         'App\\Http\\Controllers\\HomeController' => __DIR__ . '/../..' . '/app/Http/Controllers/HomeController.php',
+        'App\\Http\\Controllers\\LoeController' => __DIR__ . '/../..' . '/app/Http/Controllers/LoeController.php',
         'App\\Http\\Controllers\\OtlUploadController' => __DIR__ . '/../..' . '/app/Http/Controllers/OtlUploadController.php',
         'App\\Http\\Controllers\\ProfileToolsController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProfileToolsController.php',
         'App\\Http\\Controllers\\ProjectController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProjectController.php',
@@ -727,6 +735,9 @@ class ComposerStaticInit5a6269b6010239a679d4ab8cef050843
         'App\\Http\\Requests\\UserUpdateRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UserUpdateRequest.php',
         'App\\Imports\\ImportExcelToArray' => __DIR__ . '/../..' . '/app/Imports/ImportExcelToArray.php',
         'App\\Loe' => __DIR__ . '/../..' . '/app/Loe.php',
+        'App\\LoeConsultant' => __DIR__ . '/../..' . '/app/LoeConsultant.php',
+        'App\\LoeHistory' => __DIR__ . '/../..' . '/app/LoeHistory.php',
+        'App\\LoeSite' => __DIR__ . '/../..' . '/app/LoeSite.php',
         'App\\Project' => __DIR__ . '/../..' . '/app/Project.php',
         'App\\ProjectRevenue' => __DIR__ . '/../..' . '/app/ProjectRevenue.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
@@ -3617,6 +3628,20 @@ class ComposerStaticInit5a6269b6010239a679d4ab8cef050843
         'Monolog\\Utils' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Utils.php',
         'MyCLabs\\Enum\\Enum' => __DIR__ . '/..' . '/myclabs/php-enum/src/Enum.php',
         'MyCLabs\\Enum\\PHPUnit\\Comparator' => __DIR__ . '/..' . '/myclabs/php-enum/src/PHPUnit/Comparator.php',
+        'NXP\\Classes\\Calculator' => __DIR__ . '/..' . '/nxp/math-executor/src/NXP/Classes/Calculator.php',
+        'NXP\\Classes\\CustomFunction' => __DIR__ . '/..' . '/nxp/math-executor/src/NXP/Classes/CustomFunction.php',
+        'NXP\\Classes\\Operator' => __DIR__ . '/..' . '/nxp/math-executor/src/NXP/Classes/Operator.php',
+        'NXP\\Classes\\Token' => __DIR__ . '/..' . '/nxp/math-executor/src/NXP/Classes/Token.php',
+        'NXP\\Classes\\Tokenizer' => __DIR__ . '/..' . '/nxp/math-executor/src/NXP/Classes/Tokenizer.php',
+        'NXP\\Exception\\DivisionByZeroException' => __DIR__ . '/..' . '/nxp/math-executor/src/NXP/Exception/DivisionByZeroException.php',
+        'NXP\\Exception\\IncorrectBracketsException' => __DIR__ . '/..' . '/nxp/math-executor/src/NXP/Exception/IncorrectBracketsException.php',
+        'NXP\\Exception\\IncorrectExpressionException' => __DIR__ . '/..' . '/nxp/math-executor/src/NXP/Exception/IncorrectExpressionException.php',
+        'NXP\\Exception\\IncorrectNumberOfFunctionParametersException' => __DIR__ . '/..' . '/nxp/math-executor/src/NXP/Exception/IncorrectNumberOfFunctionParametersException.php',
+        'NXP\\Exception\\MathExecutorException' => __DIR__ . '/..' . '/nxp/math-executor/src/NXP/Exception/MathExecutorException.php',
+        'NXP\\Exception\\UnknownFunctionException' => __DIR__ . '/..' . '/nxp/math-executor/src/NXP/Exception/UnknownFunctionException.php',
+        'NXP\\Exception\\UnknownOperatorException' => __DIR__ . '/..' . '/nxp/math-executor/src/NXP/Exception/UnknownOperatorException.php',
+        'NXP\\Exception\\UnknownVariableException' => __DIR__ . '/..' . '/nxp/math-executor/src/NXP/Exception/UnknownVariableException.php',
+        'NXP\\MathExecutor' => __DIR__ . '/..' . '/nxp/math-executor/src/NXP/MathExecutor.php',
         'Normalizer' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/Resources/stubs/Normalizer.php',
         'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider' => __DIR__ . '/..' . '/nunomaduro/collision/src/Adapters/Laravel/CollisionServiceProvider.php',
         'NunoMaduro\\Collision\\Adapters\\Laravel\\Commands\\TestCommand' => __DIR__ . '/..' . '/nunomaduro/collision/src/Adapters/Laravel/Commands/TestCommand.php',

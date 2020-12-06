@@ -1,0 +1,28 @@
+table#LoeTable {
+  overflow-x: auto;
+}
+
+table#LoeTable th{
+  vertical-align: top;
+  white-space: nowrap;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.dropdown-menu {
+  background-color: #f7f7f7;
+}
+
+.dropdown-header {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.dropdown-selection {
+  font-size: 12px;
+}
+.dropdown-selection:hover {
+  font-weight: bold;
+}
+
+
