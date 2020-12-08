@@ -303,7 +303,7 @@
   }
 
   /* year_test = 2020;
-  month_test = 12;
+  month_test = 3;
   console.log(daysInMonth(month_test, year_test));
   for (let day = 1; day < daysInMonth(month_test, year_test)+1; day++) {
     date_day = new Date(year_test, month_test, day);
@@ -415,7 +415,7 @@
         { name: 'user_id', data: 'user_id' , searchable: false , visible: false},
         { name: 'user_name', data: 'user_name' , width: '150px'},
         { name: 'year', data: 'year'  , visible: false},
-        @foreach(config('select.available_months') as $month)
+        @foreach(config('select.available_months') as $month_int => $month)
 
         { name: '{{ $month }}_com', data: function ( row, type, val, meta ){
             if (row.{{ $month }}_com>0) {
@@ -443,7 +443,7 @@
 
         { data: function ( row, type, val, meta ) {
             if (row.{{ $month }}_com>0) {
-              arvi = (row.{{ $month }}_bil/getWeekdaysInMonth(1, row.year)*100).toFixed(1)+'%';
+              arvi = (row.{{ $month }}_bil/getWeekdaysInMonth({{ $month_int }}, row.year)*100).toFixed(1)+'%';
             } else {
               arvi = '';
             }
@@ -455,14 +455,14 @@
 
         { data: function ( row, type, val, meta ) {
             if (row.{{ $month }}_com>0) {
-              prime_completion = (row.{{ $month }}_com/getWeekdaysInMonth(1, row.year)*100).toFixed(1)+'%';
+              prime_completion = (row.{{ $month }}_com/getWeekdaysInMonth({{ $month_int }}, row.year)*100).toFixed(1)+'%';
             } else {
               prime_completion = '';
             }
             return prime_completion;
           }, 
           createdCell: function (td, cellData, rowData, row, col) {
-            prime_completion = rowData.{{ $month }}_com/getWeekdaysInMonth(1, rowData.year)*100;
+            prime_completion = rowData.{{ $month }}_com/getWeekdaysInMonth({{ $month_int }}, rowData.year)*100;
             color_for_completion_value(prime_completion,td);
           }, width: '30px', searchable: false, orderable: false},
         @endforeach
