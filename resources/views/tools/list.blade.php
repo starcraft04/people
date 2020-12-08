@@ -504,6 +504,22 @@
     // SELECTIONS END
 
     month_col = [32,36,40,44,48,52,56,60,64,68,72,76];
+
+    function color_for_month_value(user,prime,from_prime,td) {
+      if (from_prime == 1) {
+        if (prime == 0) {
+          $(td).addClass("zero");
+        } else {
+          $(td).addClass("otl");
+        }        
+      } else {
+        if (user == 0) {
+          $(td).addClass("zero");
+        } else {
+          $(td).addClass("forecast");
+        } 
+      }
+    }
   
 
     activitiesTable = $('#activitiesTable').DataTable({
@@ -560,13 +576,7 @@
           if (row.jan_from_otl == 1){return row.jan_otl;}else{return row.jan_user;}
             }, 
           createdCell: function (td, cellData, rowData, row, col) {
-            if (rowData.jan_otl == 0 && rowData.jan_user == 0) {
-              $(td).addClass("zero");
-            } else if(rowData.jan_from_otl == 1){
-              $(td).addClass("otl");
-            } else {
-              $(td).addClass("forecast");
-            }
+            color_for_month_value(rowData.jan_user,rowData.jan_otl,rowData.jan_from_otl,td);
           }, width: '30px', searchable: false},
         { name: 'jan_user', data: 'jan_user', width: '30px', searchable: false , visible: false},
         { name: 'jan_otl', data: 'jan_otl', width: '10px', searchable: false , visible: false},
@@ -575,13 +585,7 @@
           if (row.feb_from_otl == 1){return row.feb_otl;}else{return row.feb_user;}
             }, 
           createdCell: function (td, cellData, rowData, row, col) {
-            if (rowData.feb_otl == 0 && rowData.feb_user == 0) {
-              $(td).addClass("zero");
-            } else if(rowData.feb_from_otl == 1){
-              $(td).addClass("otl");
-            } else {
-              $(td).addClass("forecast");
-            }
+            color_for_month_value(rowData.feb_user,rowData.feb_otl,rowData.feb_from_otl,td);
           }, width: '30px', searchable: false},
         { name: 'feb_user', data: 'feb_user', width: '30px', searchable: false , visible: false},
         { name: 'feb_otl', data: 'feb_otl', width: '10px', searchable: false , visible: false},
@@ -590,13 +594,7 @@
           if (row.mar_from_otl == 1){return row.mar_otl;}else{return row.mar_user;}
             }, 
           createdCell: function (td, cellData, rowData, row, col) {
-            if (rowData.mar_otl == 0 && rowData.mar_user == 0) {
-              $(td).addClass("zero");
-            } else if(rowData.mar_from_otl == 1){
-              $(td).addClass("otl");
-            } else {
-              $(td).addClass("forecast");
-            }
+            color_for_month_value(rowData.mar_user,rowData.mar_otl,rowData.mar_from_otl,td);
           }, width: '30px', searchable: false},
         { name: 'mar_user', data: 'mar_user', width: '30px', searchable: false , visible: false},
         { name: 'mar_otl', data: 'mar_otl', width: '10px', searchable: false , visible: false},
@@ -605,13 +603,7 @@
           if (row.apr_from_otl == 1){return row.apr_otl;}else{return row.apr_user;}
             }, 
           createdCell: function (td, cellData, rowData, row, col) {
-            if (rowData.apr_otl == 0 && rowData.apr_user == 0) {
-              $(td).addClass("zero");
-            } else if(rowData.apr_from_otl == 1){
-              $(td).addClass("otl");
-            } else {
-              $(td).addClass("forecast");
-            }
+            color_for_month_value(rowData.apr_user,rowData.apr_otl,rowData.apr_from_otl,td);
           }, width: '30px', searchable: false},
         { name: 'apr_user', data: 'apr_user', width: '30px', searchable: false , visible: false},
         { name: 'apr_otl', data: 'apr_otl', width: '10px', searchable: false , visible: false},
@@ -620,13 +612,7 @@
           if (row.may_from_otl == 1){return row.may_otl;}else{return row.may_user;}
             }, 
           createdCell: function (td, cellData, rowData, row, col) {
-            if (rowData.may_otl == 0 && rowData.may_user == 0) {
-              $(td).addClass("zero");
-            } else if(rowData.may_from_otl == 1){
-              $(td).addClass("otl");
-            } else {
-              $(td).addClass("forecast");
-            }
+            color_for_month_value(rowData.may_user,rowData.may_otl,rowData.may_from_otl,td);
           }, width: '30px', searchable: false},
         { name: 'may_user', data: 'may_user', width: '30px', searchable: false , visible: false},
         { name: 'may_otl', data: 'may_otl', width: '10px', searchable: false , visible: false},
@@ -635,13 +621,7 @@
           if (row.jun_from_otl == 1){return row.jun_otl;}else{return row.jun_user;}
             }, 
           createdCell: function (td, cellData, rowData, row, col) {
-            if (rowData.jun_otl == 0 && rowData.jun_user == 0) {
-              $(td).addClass("zero");
-            } else if(rowData.jun_from_otl == 1){
-              $(td).addClass("otl");
-            } else {
-              $(td).addClass("forecast");
-            }
+            color_for_month_value(rowData.jun_user,rowData.jun_otl,rowData.jun_from_otl,td);
           }, width: '30px', searchable: false},
         { name: 'jun_user', data: 'jun_user', width: '30px', searchable: false , visible: false},
         { name: 'jun_otl', data: 'jun_otl', width: '10px', searchable: false , visible: false},
@@ -650,13 +630,7 @@
           if (row.jul_from_otl == 1){return row.jul_otl;}else{return row.jul_user;}
           }, 
           createdCell: function (td, cellData, rowData, row, col) {
-            if (rowData.jul_otl == 0 && rowData.jul_user == 0) {
-              $(td).addClass("zero");
-            } else if(rowData.jul_from_otl == 1){
-              $(td).addClass("otl");
-            } else {
-              $(td).addClass("forecast");
-            }
+            color_for_month_value(rowData.jul_user,rowData.jul_otl,rowData.jul_from_otl,td);
           },
           width: '30px', searchable: false}, 
         { name: 'jul_user', data: 'jul_user', width: '30px', searchable: false , visible: false},
@@ -666,13 +640,7 @@
           if (row.aug_from_otl == 1){return row.aug_otl;}else{return row.aug_user;}
             }, 
           createdCell: function (td, cellData, rowData, row, col) {
-            if (rowData.aug_otl == 0 && rowData.aug_user == 0) {
-              $(td).addClass("zero");
-            } else if(rowData.aug_from_otl == 1){
-              $(td).addClass("otl");
-            } else {
-              $(td).addClass("forecast");
-            }
+            color_for_month_value(rowData.aug_user,rowData.aug_otl,rowData.aug_from_otl,td);
           }, width: '30px', searchable: false},
         { name: 'aug_user', data: 'aug_user', width: '30px', searchable: false , visible: false},
         { name: 'aug_otl', data: 'aug_otl', width: '10px', searchable: false , visible: false},
@@ -681,13 +649,7 @@
           if (row.sep_from_otl == 1){return row.sep_otl;}else{return row.sep_user;}
             }, 
           createdCell: function (td, cellData, rowData, row, col) {
-            if (rowData.sep_otl == 0 && rowData.sep_user == 0) {
-              $(td).addClass("zero");
-            } else if(rowData.sep_from_otl == 1){
-              $(td).addClass("otl");
-            } else {
-              $(td).addClass("forecast");
-            }
+            color_for_month_value(rowData.sep_user,rowData.sep_otl,rowData.sep_from_otl,td);
           }, width: '30px', searchable: false},
         { name: 'sep_user', data: 'sep_user', width: '30px', searchable: false , visible: false},
         { name: 'sep_otl', data: 'sep_otl', width: '10px', searchable: false , visible: false},
@@ -696,13 +658,7 @@
           if (row.oct_from_otl == 1){return row.oct_otl;}else{return row.oct_user;}
             }, 
           createdCell: function (td, cellData, rowData, row, col) {
-            if (rowData.oct_otl == 0 && rowData.oct_user == 0) {
-              $(td).addClass("zero");
-            } else if(rowData.oct_from_otl == 1){
-              $(td).addClass("otl");
-            } else {
-              $(td).addClass("forecast");
-            }
+            color_for_month_value(rowData.oct_user,rowData.oct_otl,rowData.oct_from_otl,td);
           }, width: '30px', searchable: false},
         { name: 'oct_user', data: 'oct_user', width: '30px', searchable: false , visible: false},
         { name: 'oct_otl', data: 'oct_otl', width: '10px', searchable: false , visible: false},
@@ -711,13 +667,7 @@
           if (row.nov_from_otl == 1){return row.nov_otl;}else{return row.nov_user;}
             }, 
           createdCell: function (td, cellData, rowData, row, col) {
-            if (rowData.nov_otl == 0 && rowData.nov_user == 0) {
-              $(td).addClass("zero");
-            } else if(rowData.nov_from_otl == 1){
-              $(td).addClass("otl");
-            } else {
-              $(td).addClass("forecast");
-            }
+            color_for_month_value(rowData.nov_user,rowData.nov_otl,rowData.nov_from_otl,td);
           }, width: '30px', searchable: false},
         { name: 'nov_user', data: 'nov_user', width: '30px', searchable: false , visible: false},
         { name: 'nov_otl', data: 'nov_otl', width: '10px', searchable: false , visible: false},
@@ -726,13 +676,7 @@
           if (row.dec_from_otl == 1){return row.dec_otl;}else{return row.dec_user;}
             }, 
           createdCell: function (td, cellData, rowData, row, col) {
-            if (rowData.dec_otl == 0 && rowData.dec_user == 0) {
-              $(td).addClass("zero");
-            } else if(rowData.dec_from_otl == 1){
-              $(td).addClass("otl");
-            } else {
-              $(td).addClass("forecast");
-            }
+            color_for_month_value(rowData.dec_user,rowData.dec_otl,rowData.dec_from_otl,td);
           }, width: '30px', searchable: false},
         { name: 'dec_user', data: 'dec_user', width: '30px', searchable: false , visible: false},
         { name: 'dec_otl', data: 'dec_otl', width: '10px', searchable: false , visible: false},

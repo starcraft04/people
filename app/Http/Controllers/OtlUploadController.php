@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Customer;
+use App\Activity;
 use App\Http\Requests\OtlUploadRequest;
 use App\Repositories\ActivityRepository;
 use App\Repositories\ProjectRepository;
@@ -154,6 +155,9 @@ class OtlUploadController extends Controller
                 return view('dataFeed/otlupload', compact('messages', 'color'));
             }
 
+            // We will store each month for each user that has been found in Prime so later on we can make sure all the forecasts are filled in correctly for that month
+            $user_months_filled = [];
+
             foreach ($result as $row) {
                 $userInDB = $this->userRepository->getByName($row['employee_name']);
                 $projectInDBnum = $this->projectRepository->getByOTLnum($row['project_name'], $row['meta_activity']);
@@ -174,9 +178,9 @@ class OtlUploadController extends Controller
                 if (! Auth::user()->can('otl-upload-all') && ! in_array($userInDB->id, $users_id)) {
                     if (! in_array(['status'=>'error', 'msg'=>'User not your employee', 'user' =>$row['employee_name']], $messages, true)) {
                         array_push($messages, ['status'=>'error',
-            'msg'=>'User not your employee',
-            'user' =>$row['employee_name'],
-            ]);
+                                                'msg'=>'User not your employee',
+                                                'user' =>$row['employee_name'],
+                        ]);
                     }
                     continue;
                 }
@@ -184,9 +188,9 @@ class OtlUploadController extends Controller
                 if (! array_key_exists(strtolower($row['month']), $months_converted)) {
                     if (! in_array(['status'=>'error', 'user' =>'', 'msg'=>'Month '.$row['month'].' is not a correct value, it should be in the form Jan, Feb, Mar, ...'], $messages, true)) {
                         array_push($messages, ['status'=>'error',
-            'user' =>'',
-            'msg'=> 'Month '.$row['month'].' is not a correct value, it should be in the form Jan, Feb, Mar, ...',
-            ]);
+                                                'user' =>'',
+                                                'msg'=> 'Month '.$row['month'].' is not a correct value, it should be in the form Jan, Feb, Mar, ...',
+                        ]);
                     }
                     continue;
                 }
@@ -205,14 +209,14 @@ class OtlUploadController extends Controller
                 if ($projectInDBnum != 1) {
                     if (! in_array(['status'=>'error', 'mgr'=>$userInDB->managers->first()->name, 'msg'=>'this Prime code and META activity is not found in the DB.', 'user' =>$row['employee_name'], 'customer_prime' => $row['customer_name'], 'prime_code' => $row['project_name'], 'meta' => $row['meta_activity'], 'year' => $row['year']], $messages, true)) {
                         array_push($messages, ['status'=>'error',
-              'mgr'=>$userInDB->managers->first()->name,
-              'msg'=>'this Prime code and META activity is not found in the DB.',
-              'user' =>$row['employee_name'],
-              'customer_prime' => $row['customer_name'],
-              'prime_code' => $row['project_name'],
-              'meta' => $row['meta_activity'],
-              'year' => $row['year'],
-              ]);
+                                                'mgr'=>$userInDB->managers->first()->name,
+                                                'msg'=>'this Prime code and META activity is not found in the DB.',
+                                                'user' =>$row['employee_name'],
+                                                'customer_prime' => $row['customer_name'],
+                                                'prime_code' => $row['project_name'],
+                                                'meta' => $row['meta_activity'],
+                                                'year' => $row['year'],
+                        ]);
                     }
                     continue;
                 } else {
@@ -250,8 +254,55 @@ class OtlUploadController extends Controller
                     $this->activityRepository->update($activityInDB->id, $activity);
                 }
                 // END assign activities
+
+                // Now we will enter the months for each user
+                if (!array_key_exists($userInDB->id, $user_months_filled)) {
+                    $user_months_filled[$userInDB->id] = [];
+                }
+                if (!array_key_exists($row['year'], $user_months_filled[$userInDB->id])) {
+                    $user_months_filled[$userInDB->id][$row['year']] = [];
+                }
+                if (!in_array($months_converted[strtolower($row['month'])],$user_months_filled[$userInDB->id][$row['year']])) {
+                    array_push($user_months_filled[$userInDB->id][$row['year']],$months_converted[strtolower($row['month'])]);
+                }
             }
         }
+        //dd($user_months_filled);
+
+        // Now we need to go through each months for each user and set all projects with forecast but no Prime to value of 0 with from_otl set to 1
+        foreach ($user_months_filled as $user => $years) {
+            foreach ($years as $year => $months) {
+                foreach ($months as $month) {
+                    $forecasts = Activity::select('year','month','project_id','user_id','from_otl')
+                                            ->where('user_id',$user)
+                                            ->where('year',$year)
+                                            ->where('month',$month)
+                                            ->where('from_otl',0)
+                                            ->get();
+                    foreach ($forecasts as $key => $forecast) {
+                        $from_otl = Activity::select('year','month','project_id','user_id','from_otl')
+                                            ->where('user_id',$forecast->user_id)
+                                            ->where('year',$forecast->year)
+                                            ->where('month',$forecast->month)
+                                            ->where('project_id',$forecast->project_id)
+                                            ->where('from_otl',1)
+                                            ->get();
+                        if (count($from_otl) < 1) {
+                            Activity::create([
+                                'year' => $year,
+                                'month' => $month,
+                                'project_id' => $forecast->project_id,
+                                'user_id' => $forecast->user_id,
+                                'task_hour' => 0,
+                                'from_otl' => 1
+                            ]);
+                        }
+                    }                      
+                }
+            }
+        }
+
+        //dd();
 
         $customers_list = Customer::orderBy('name')->pluck('name', 'id');
 
