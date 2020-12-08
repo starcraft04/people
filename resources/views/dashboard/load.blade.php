@@ -140,18 +140,15 @@
                   <th>User ID</th>
                   <th>User name</th>
                   <th>Year</th>
-                  <th>Jan</th>
-                  <th>Feb</th>
-                  <th>Mar</th>
-                  <th>Apr</th>
-                  <th>May</th>
-                  <th>Jun</th>
-                  <th>Jul</th>
-                  <th>Aug</th>
-                  <th>Sep</th>
-                  <th>Oct</th>
-                  <th>Nov</th>
-                  <th>Dec</th>
+                  @foreach(config('select.available_months') as $month)
+                  <th>{{ ucfirst($month) }} Tot</th>
+                  <th>{{ ucfirst($month) }} Bil</th>
+                  <th>{{ ucfirst($month) }} ARVI</th>
+                  <th>{{ ucfirst($month) }} completion</th>
+                  @endforeach
+                  <th>H1 Bil(hours)</th>
+                  <th>H2 Bil(hours)</th>
+                  <th>Year Bil(hours)</th>
                 </tr>
               </thead>
               <tfoot>
@@ -161,15 +158,12 @@
                   <th></th>
                   <th></th>
                   <th></th>
+                  @foreach(config('select.available_months') as $month)
                   <th></th>
                   <th></th>
                   <th></th>
                   <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
+                  @endforeach
                   <th></th>
                   <th></th>
                   <th></th>
@@ -230,6 +224,7 @@
 
   @section('script')
   <script>
+  //region Variables and functions
   var activitiesTable;
   var year = [];
   var manager = [];
@@ -272,20 +267,57 @@
   }
 
   //Assign color
-  function assign_color(row,value,month,checked_value){
-    if(value <= 0){
-      $(row).find('td.'+month).addClass('zero');
-    }
-    else if(value > checked_value){
-      $(row).find('td.'+month).addClass('too_high');
-    }
-    else {
-      $(row).find('td.'+month).addClass('forecast');
+  function color_for_month_value(from_prime,td) {
+      if (from_prime >= 1) {
+        $(td).addClass("otl");      
+      } else {
+          $(td).addClass("forecast");
+      }
+  }
+
+  function color_for_completion_value(value,td) {
+    if (value < 100) {
+      $(td).addClass("too_low");      
     }
   }
 
-  $(document).ready(function() {
+  //For number of week days in a month
+  function daysInMonth(month, year){
+    // Here January is 1 based
+    //Day 0 is the last day in the previous month
+    return new Date(year, month, 0).getDate();
+    // Here January is 0 based
+    //return new Date(year, month+1, 0).getDate();
+  }
+  function isWeekday(year, month, day) {
+    var day = new Date(year, month-1, day).getDay();
+    return day !=0 && day !=6;
+  }
+  function getWeekdaysInMonth(month, year) {
+    var days = daysInMonth(month, year);
+    var weekdays = 0;
+    for(var i=0; i< days; i++) {
+        if (isWeekday(year, month, i+1)) weekdays++;
+    }
+    return weekdays;
+  }
 
+  /* year_test = 2020;
+  month_test = 12;
+  console.log(daysInMonth(month_test, year_test));
+  for (let day = 1; day < daysInMonth(month_test, year_test)+1; day++) {
+    date_day = new Date(year_test, month_test, day);
+    console.log(date_day.toLocaleString()+' - weekday: '+isWeekday(year_test,month_test,day));
+  }
+  console.log(getWeekdaysInMonth(month_test, year_test)); */
+  
+  //endregion
+  
+  
+  
+
+  $(document).ready(function() {
+    //region Init
     $.ajaxSetup({
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -359,6 +391,7 @@
     });
 
     // SELECTIONS END
+    //endregion
 
     activitiesTable = $('#activitiesTable').DataTable({
       scrollX: true,
@@ -373,7 +406,7 @@
         },
         dataType: "JSON",
         beforeSend: function() {
-          console.log(ajaxData());
+          //console.log(ajaxData());
         }
       },
       columns: [
@@ -382,18 +415,100 @@
         { name: 'user_id', data: 'user_id' , searchable: false , visible: false},
         { name: 'user_name', data: 'user_name' , width: '150px'},
         { name: 'year', data: 'year'  , visible: false},
-        { name: 'jan_com', data: 'jan_com', width: '30px', searchable: false , className: "jan_com"},
-        { name: 'feb_com', data: 'feb_com', width: '30px', searchable: false , className: "feb_com"},
-        { name: 'mar_com', data: 'mar_com', width: '30px', searchable: false , className: "mar_com"},
-        { name: 'apr_com', data: 'apr_com', width: '30px', searchable: false , className: "apr_com"},
-        { name: 'may_com', data: 'may_com', width: '30px', searchable: false , className: "may_com"},
-        { name: 'jun_com', data: 'jun_com', width: '30px', searchable: false , className: "jun_com"},
-        { name: 'jul_com', data: 'jul_com', width: '30px', searchable: false , className: "jul_com"},
-        { name: 'aug_com', data: 'aug_com', width: '30px', searchable: false , className: "aug_com"},
-        { name: 'sep_com', data: 'sep_com', width: '30px', searchable: false , className: "sep_com"},
-        { name: 'oct_com', data: 'oct_com', width: '30px', searchable: false , className: "oct_com"},
-        { name: 'nov_com', data: 'nov_com', width: '30px', searchable: false , className: "nov_com"},
-        { name: 'dec_com', data: 'dec_com', width: '30px', searchable: false , className: "dec_com"}
+        @foreach(config('select.available_months') as $month)
+
+        { name: '{{ $month }}_com', data: function ( row, type, val, meta ){
+            if (row.{{ $month }}_com>0) {
+              month_com = row.{{ $month }}_com;
+            } else {
+              month_com = '';
+            }  
+            return month_com;
+          },
+          createdCell: function (td, cellData, rowData, row, col) {
+            color_for_month_value(rowData.{{ $month }}_from_otl,td);
+          }, width: '30px', searchable: false},
+
+        { name: '{{ $month }}_bil', data: function ( row, type, val, meta ){
+            if (row.{{ $month }}_com>0) {
+              month_bil = row.{{ $month }}_bil;
+            } else {
+              month_bil = '';
+            }  
+            return month_bil;
+          },
+          createdCell: function (td, cellData, rowData, row, col) {
+            //color_for_month_bil_value(rowData.{{ $month }}_from_otl,td);
+          }, width: '30px', searchable: false},
+
+        { data: function ( row, type, val, meta ) {
+            if (row.{{ $month }}_com>0) {
+              arvi = (row.{{ $month }}_bil/getWeekdaysInMonth(1, row.year)*100).toFixed(1)+'%';
+            } else {
+              arvi = '';
+            }
+            return arvi;
+          }, 
+          createdCell: function (td, cellData, rowData, row, col) {
+            //color_for_completion_value(prime_completion,td);
+          }, width: '30px', searchable: false, orderable: false},
+
+        { data: function ( row, type, val, meta ) {
+            if (row.{{ $month }}_com>0) {
+              prime_completion = (row.{{ $month }}_com/getWeekdaysInMonth(1, row.year)*100).toFixed(1)+'%';
+            } else {
+              prime_completion = '';
+            }
+            return prime_completion;
+          }, 
+          createdCell: function (td, cellData, rowData, row, col) {
+            prime_completion = rowData.{{ $month }}_com/getWeekdaysInMonth(1, rowData.year)*100;
+            color_for_completion_value(prime_completion,td);
+          }, width: '30px', searchable: false, orderable: false},
+        @endforeach
+
+        { data: function ( row, type, val, meta ) {
+            total = 0;
+            @foreach(config('select.available_months_h1') as $month)
+            
+            if (row.{{ $month }}_bil>0) {
+                total += row.{{ $month }}_bil;
+              }
+            @endforeach
+            total = total*8;
+            return total.toFixed(1);
+          }, 
+          createdCell: function (td, cellData, rowData, row, col) {
+          }, width: '30px', searchable: false, orderable: false},
+
+        { data: function ( row, type, val, meta ) {
+            total = 0;
+            @foreach(config('select.available_months_h2') as $month)
+            
+            if (row.{{ $month }}_bil>0) {
+                total += row.{{ $month }}_bil;
+              }
+            @endforeach
+            total = total*8;
+            return total.toFixed(1);
+          }, 
+          createdCell: function (td, cellData, rowData, row, col) {
+          }, width: '30px', searchable: false, orderable: false},
+
+        { data: function ( row, type, val, meta ) {
+            total = 0;
+            @foreach(config('select.available_months') as $month)
+            
+            if (row.{{ $month }}_bil>0) {
+                total += row.{{ $month }}_bil;
+              }
+            @endforeach
+            total = total*8;
+            return total.toFixed(1);
+          }, 
+          createdCell: function (td, cellData, rowData, row, col) {
+          }, width: '30px', searchable: false, orderable: false},
+
       ],
       order: [[2, 'asc']],
       lengthMenu: [
@@ -405,7 +520,12 @@
         {
           extend: "colvis",
           className: "btn-sm",
-          columns: [1,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+          collectionLayout: "three-column",
+          columns: [1,3,4
+          @for ($i = 0; $i < (4*12)+3; $i++)
+              ,{{ $i+5 }}
+          @endfor
+        ]
         },
         {
           extend: "pageLength",
@@ -415,25 +535,25 @@
           extend: "csv",
           className: "btn-sm",
           exportOptions: {
-              columns: [ 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ]
+              columns: ':visible'
           }
         },
         {
           extend: "excel",
           className: "btn-sm",
           exportOptions: {
-              columns: [ 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ]
+              columns: ':visible'
           }
         },
         {
           extend: "print",
           className: "btn-sm",
           exportOptions: {
-              columns: [ 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ]
+              columns: ':visible'
           }
         },
       ],
-      initComplete: function () {
+      initComplete: function (json) {
         var columns = this.api().init().columns;
         this.api().columns().every(function () {
           var column = this;
@@ -466,20 +586,7 @@
 
             activitiesTable.draw();
         }
-      },
-      rowCallback: function(row, data, index){
-        assign_color(row,data.jan_com,'jan_com',{{ config('options.time_trak')['days_in_month'] }});
-        assign_color(row,data.feb_com,'feb_com',{{ config('options.time_trak')['days_in_month'] }});
-        assign_color(row,data.mar_com,'mar_com',{{ config('options.time_trak')['days_in_month'] }});
-        assign_color(row,data.apr_com,'apr_com',{{ config('options.time_trak')['days_in_month'] }});
-        assign_color(row,data.may_com,'may_com',{{ config('options.time_trak')['days_in_month'] }});
-        assign_color(row,data.jun_com,'jun_com',{{ config('options.time_trak')['days_in_month'] }});
-        assign_color(row,data.jul_com,'jul_com',{{ config('options.time_trak')['days_in_month'] }});
-        assign_color(row,data.aug_com,'aug_com',{{ config('options.time_trak')['days_in_month'] }});
-        assign_color(row,data.sep_com,'sep_com',{{ config('options.time_trak')['days_in_month'] }});
-        assign_color(row,data.oct_com,'oct_com',{{ config('options.time_trak')['days_in_month'] }});
-        assign_color(row,data.nov_com,'nov_com',{{ config('options.time_trak')['days_in_month'] }});
-        assign_color(row,data.dec_com,'dec_com',{{ config('options.time_trak')['days_in_month'] }});
+        console.log(json.json.data);
       }
     });
 

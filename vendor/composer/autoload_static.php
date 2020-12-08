@@ -749,6 +749,7 @@ class ComposerStaticInit5a6269b6010239a679d4ab8cef050843
         'App\\Repositories\\ProjectRepository' => __DIR__ . '/../..' . '/app/Repositories/ProjectRepository.php',
         'App\\Repositories\\ProjectTableRepository' => __DIR__ . '/../..' . '/app/Repositories/ProjectTableRepository.php',
         'App\\Repositories\\ProjectTableRepositoryV2' => __DIR__ . '/../..' . '/app/Repositories/ProjectTableRepositoryV2.php',
+        'App\\Repositories\\ProjectTableRepositoryVload' => __DIR__ . '/../..' . '/app/Repositories/ProjectTableRepositoryVload.php',
         'App\\Repositories\\RevenueRepository' => __DIR__ . '/../..' . '/app/Repositories/RevenueRepository.php',
         'App\\Repositories\\UserRepository' => __DIR__ . '/../..' . '/app/Repositories/UserRepository.php',
         'App\\Revenue' => __DIR__ . '/../..' . '/app/Revenue.php',

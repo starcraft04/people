@@ -319,27 +319,28 @@ class ActivityRepository
          *   In the ajax datatables (view), there will be a parameter name that is going to be used here for the extra parameters so if we use a join,
          *   Then we will need to use in the view page the name of the table.column. This is so that it knows how to do proper sorting or search.
          **/
-        $temp_table = new ProjectTableRepository('temp_a');
+        $temp_table = new ProjectTableRepositoryVload('temp_a');
 
         $activityList = DB::table('temp_a');
 
-        $activityList->select('uu.manager_id AS manager_id', 'm.name AS manager_name', 'temp_a.user_id', 'u.name AS user_name', 'year',
-                            DB::raw('ROUND(SUM(jan_com),1) AS jan_com'),
-                            DB::raw('ROUND(SUM(feb_com),1) AS feb_com'),
-                            DB::raw('ROUND(SUM(mar_com),1) AS mar_com'),
-                            DB::raw('ROUND(SUM(apr_com),1) AS apr_com'),
-                            DB::raw('ROUND(SUM(may_com),1) AS may_com'),
-                            DB::raw('ROUND(SUM(jun_com),1) AS jun_com'),
-                            DB::raw('ROUND(SUM(jul_com),1) AS jul_com'),
-                            DB::raw('ROUND(SUM(aug_com),1) AS aug_com'),
-                            DB::raw('ROUND(SUM(sep_com),1) AS sep_com'),
-                            DB::raw('ROUND(SUM(oct_com),1) AS oct_com'),
-                            DB::raw('ROUND(SUM(nov_com),1) AS nov_com'),
-                            DB::raw('ROUND(SUM(dec_com),1) AS dec_com')
+        $activityList->select('uu.manager_id AS manager_id', 'm.name AS manager_name', 'temp_a.user_id', 'u.name AS user_name', 'year','p.meta_activity',
+                            DB::raw('ROUND(SUM(jan_com),1) AS jan_com'),DB::raw('SUM(jan_from_otl) AS jan_from_otl'),DB::raw('ROUND(SUM(CASE WHEN p.meta_activity="BILLABLE" THEN jan_com ELSE 0 END),1) AS jan_bil'),
+                            DB::raw('ROUND(SUM(feb_com),1) AS feb_com'),DB::raw('SUM(feb_from_otl) AS feb_from_otl'),DB::raw('ROUND(SUM(CASE WHEN p.meta_activity="BILLABLE" THEN feb_com ELSE 0 END),1) AS feb_bil'),
+                            DB::raw('ROUND(SUM(mar_com),1) AS mar_com'),DB::raw('SUM(mar_from_otl) AS mar_from_otl'),DB::raw('ROUND(SUM(CASE WHEN p.meta_activity="BILLABLE" THEN mar_com ELSE 0 END),1) AS mar_bil'),
+                            DB::raw('ROUND(SUM(apr_com),1) AS apr_com'),DB::raw('SUM(apr_from_otl) AS apr_from_otl'),DB::raw('ROUND(SUM(CASE WHEN p.meta_activity="BILLABLE" THEN apr_com ELSE 0 END),1) AS apr_bil'),
+                            DB::raw('ROUND(SUM(may_com),1) AS may_com'),DB::raw('SUM(may_from_otl) AS may_from_otl'),DB::raw('ROUND(SUM(CASE WHEN p.meta_activity="BILLABLE" THEN may_com ELSE 0 END),1) AS may_bil'),
+                            DB::raw('ROUND(SUM(jun_com),1) AS jun_com'),DB::raw('SUM(jun_from_otl) AS jun_from_otl'),DB::raw('ROUND(SUM(CASE WHEN p.meta_activity="BILLABLE" THEN jun_com ELSE 0 END),1) AS jun_bil'),
+                            DB::raw('ROUND(SUM(jul_com),1) AS jul_com'),DB::raw('SUM(jul_from_otl) AS jul_from_otl'),DB::raw('ROUND(SUM(CASE WHEN p.meta_activity="BILLABLE" THEN jul_com ELSE 0 END),1) AS jul_bil'),
+                            DB::raw('ROUND(SUM(aug_com),1) AS aug_com'),DB::raw('SUM(aug_from_otl) AS aug_from_otl'),DB::raw('ROUND(SUM(CASE WHEN p.meta_activity="BILLABLE" THEN aug_com ELSE 0 END),1) AS aug_bil'),
+                            DB::raw('ROUND(SUM(sep_com),1) AS sep_com'),DB::raw('SUM(sep_from_otl) AS sep_from_otl'),DB::raw('ROUND(SUM(CASE WHEN p.meta_activity="BILLABLE" THEN sep_com ELSE 0 END),1) AS sep_bil'),
+                            DB::raw('ROUND(SUM(oct_com),1) AS oct_com'),DB::raw('SUM(oct_from_otl) AS oct_from_otl'),DB::raw('ROUND(SUM(CASE WHEN p.meta_activity="BILLABLE" THEN oct_com ELSE 0 END),1) AS oct_bil'),
+                            DB::raw('ROUND(SUM(nov_com),1) AS nov_com'),DB::raw('SUM(nov_from_otl) AS nov_from_otl'),DB::raw('ROUND(SUM(CASE WHEN p.meta_activity="BILLABLE" THEN nov_com ELSE 0 END),1) AS nov_bil'),
+                            DB::raw('ROUND(SUM(dec_com),1) AS dec_com'),DB::raw('SUM(dec_from_otl) AS dec_from_otl'),DB::raw('ROUND(SUM(CASE WHEN p.meta_activity="BILLABLE" THEN dec_com ELSE 0 END),1) AS dec_bil')
     );
         $activityList->leftjoin('users_users AS uu', 'temp_a.user_id', '=', 'uu.user_id');
         $activityList->leftjoin('users AS u', 'temp_a.user_id', '=', 'u.id');
         $activityList->leftjoin('users AS m', 'm.id', '=', 'uu.manager_id');
+        $activityList->leftjoin('projects AS p', 'p.id', '=', 'temp_a.project_id');
 
         if (! empty($where['year'])) {
             $activityList->where(function ($query) use ($where) {
