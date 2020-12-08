@@ -568,7 +568,7 @@ class ToolsController extends Controller
     public function listOfUsersSkills($cert)
     {
         $skillList = DB::table('skills')
-          ->select('skill_user.id', 'skills.domain', 'skills.subdomain', 'skills.technology', 'skills.skill', 'm.name AS manager_name', 'u.email AS user_email', 'u.name AS user_name','u.activity_status AS user_activity', 'u.region', 'u.country', 'u.job_role', 'u.employee_type', 'skill_user.rating', 'skills.id AS skill_id')
+          ->select('skill_user.id', 'skills.domain', 'skills.subdomain', 'skills.technology', 'skills.skill', 'm.name AS manager_name', 'm.email AS manager_email', 'u.email AS user_email', 'u.name AS user_name','u.activity_status AS user_activity', 'u.region', 'u.country', 'u.job_role', 'u.employee_type', 'skill_user.rating', 'skills.id AS skill_id')
           ->leftjoin('skill_user', 'skills.id', '=', 'skill_user.skill_id')
           ->leftjoin('users AS u', 'u.id', '=', 'skill_user.user_id')
           ->leftjoin('users_users AS uu', 'u.id', '=', 'uu.user_id')
