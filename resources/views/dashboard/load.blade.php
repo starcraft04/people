@@ -522,14 +522,67 @@
           className: "btn-sm",
           collectionLayout: "three-column",
           columns: [1,3,4
-          @for ($i = 0; $i < (4*12)+3; $i++)
-              ,{{ $i+5 }}
+          @for ($i = 5; $i < 5+(4*12); $i++)
+              ,{{ $i }}
           @endfor
+          ,{{5+(4*12)}},{{5+(4*12)+1}},{{5+(4*12)+2}}
         ]
         },
         {
           extend: "pageLength",
           className: "btn-sm"
+        },
+        {
+          extend: 'collection',
+          className: "btn-sm",
+          text: 'Views',
+          buttons: [
+              {
+                text: 'H1',
+                extend: 'colvisGroup',
+                show: [ 1,3
+                  @for ($i = 5; $i < 5+(4*6); $i++)
+                    ,{{ $i }}
+                  @endfor
+                  ,{{5+(4*12)}}
+                ],
+                hide: [ 0,2,4
+                  @for ($i = 5+(4*6); $i < 5+(4*12); $i++)
+                    ,{{ $i }}
+                  @endfor
+                  ,{{5+(4*12)+1}},{{5+(4*12)+2}}
+                ]
+              },
+              {
+                text: 'H2',
+                extend: 'colvisGroup',
+                show: [ 1,3
+                  @for ($i = 5+(4*6); $i < 5+(4*12); $i++)
+                    ,{{ $i }}
+                  @endfor
+                  ,{{5+(4*12)+1}}
+                ],
+                hide: [ 0,2,4
+                  @for ($i = 5; $i < 5+(4*6); $i++)
+                    ,{{ $i }}
+                  @endfor
+                  ,{{5+(4*12)}},{{5+(4*12)+2}}
+                 ]
+              }
+              ,
+              {
+                text: 'Full year',
+                extend: 'colvisGroup',
+                show: [ 1,3
+                  @for ($i = 5; $i < 5+(4*12); $i++)
+                      ,{{ $i }}
+                  @endfor
+                  ,{{5+(4*12)}},{{5+(4*12)+1}},{{5+(4*12)+2}}
+                ],
+                hide: [ 0,2,4 ]
+              }
+          ],
+          responsive: true
         },
         {
           extend: "csv",
@@ -586,7 +639,7 @@
 
             activitiesTable.draw();
         }
-        console.log(json.json.data);
+        //console.log(json.json.data);
       }
     });
 
