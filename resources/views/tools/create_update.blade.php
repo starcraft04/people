@@ -2984,24 +2984,19 @@ $(document).ready(function() {
 
       loe_data.col.cons.forEach(fill_cons_inputs);
       function fill_cons_inputs (cons){
-        html += `<td>
+        html += `<td style="min-width:80px;">
                   <div id="loe_div_cons_percentage_`+cons.name+`" class="form-group">
                     <input type="text" data-name="`+cons.name+`" class="loe_cons_percentage form-control" placeholder="Percentage" value="0"></input>
                     <span id="loe_cons_percentage_`+cons.name+`_error" class="help-block"></span>
                   </div>
                 </td>`;
-        html += `<td>
+        html += '<td></td>';
+        html += `<td style="min-width:120px;">
                   <div id="loe_div_cons_price_`+cons.name+`" class="form-group">
                     <input type="text" data-name="`+cons.name+`" class="loe_cons_price form-control" placeholder="Price" value="0"></input>
                     <span id="loe_cons_price_`+cons.name+`_error" class="help-block"></span>
                   </div>
                 </td>`;
-      }
-
-      loe_data.col.cons.forEach(fill_cons_empty);
-      function fill_cons_empty (cons){
-        html += '<td></td>';
-        html += '<td></td>';
       }
 
       html += '<td></td>';
@@ -3345,7 +3340,7 @@ $(document).ready(function() {
               html += '<th colspan="'+2*data.col.site.length+'">'+'Site calculation'+'</th>';
             }
             html += '<th rowspan="3">'+'Quantity'+'</th>';
-            html += '<th rowspan="3">'+'LoE (per unit)'+'</th>';
+            html += '<th rowspan="3">'+'LoE (per unit)<br>in days'+'</th>';
             if (data.col.site.length>0) {
               html += '<th rowspan="3" style="min-width:150px;">'+'Formula'+'</th>';
             }
@@ -3354,8 +3349,7 @@ $(document).ready(function() {
             html += '<th rowspan="3" style="min-width:150px;">'+'Start date'+'</th>';
             html += '<th rowspan="3" style="min-width:150px;">'+'End date'+'</th>';
             if (data.col.cons.length>0) {
-              html += '<th colspan="'+2*data.col.cons.length+'">'+'Consulting type (%)'+'</th>';
-              html += '<th colspan="'+2*data.col.cons.length+'">'+'Consulting type (MD)'+'</th>';
+              html += '<th colspan="'+3*data.col.cons.length+'">'+'Consulting type'+'</th>';
             }
             
             html += '<th rowspan="3">'+'Total Loe'+'</th>';
@@ -3382,7 +3376,7 @@ $(document).ready(function() {
             });
             
             data.col.cons.forEach(function(cons){
-              html += '<th colspan="2" style="min-width:180px;">'
+              html += '<th colspan="3" style="min-width:180px;">'
               html += cons.name;
               html += '<br>';
               if (cons.seniority != null) {
@@ -3407,24 +3401,6 @@ $(document).ready(function() {
               html += '</th>';
             });
 
-            data.col.cons.forEach(function(cons){
-              html += '<th colspan="2" style="min-width:150px;">'
-              html += cons.name;
-              html += '<br>';
-              if (cons.seniority != null) {
-                html += cons.seniority;
-              } else {
-                html += '';
-              }
-              html += '<br>';
-              if (cons.location != null) {
-                html += cons.location;
-              } else {
-                html += '';
-              }
-              html += '</th>';
-            });
-
             html += '</tr>';
             //endregion
             //region Third header
@@ -3432,13 +3408,10 @@ $(document).ready(function() {
             
             data.col.site.forEach(function(site){
               html += '<th>Quantity</th>';
-              html += '<th>LoE (per unit)</th>';
+              html += '<th>LoE (per unit)<br>in days</th>';
             });
             data.col.cons.forEach(function(cons){
               html += '<th>%</th>';
-              html += '<th>€</th>';
-            });
-            data.col.cons.forEach(function(cons){
               html += '<th>MD</th>';
               html += '<th>€</th>';
             });
@@ -3563,59 +3536,36 @@ $(document).ready(function() {
               html += td_no_null(row.start_date);
               html += td_no_null(row.end_date);
 
-              data.col.cons.forEach(fill_cons_data_percent);
-              function fill_cons_data_percent (cons){
+              var total_price = 0;
+              data.col.cons.forEach(fill_cons_data);
+              function fill_cons_data (cons){
                 
                 if (data.data.cons.hasOwnProperty(row.id) && data.data.cons[row.id].hasOwnProperty(cons.name)) {
                   //console.log(site.name+': '+data.data.site[row.id][site.name]['quantity']);
                   fill_percent = data.data.cons[row.id][cons.name].percentage;
-                  fill_md = fill_percent*row.quantity*row.loe_per_quantity/100;
                   if (data.data.cons[row.id][cons.name].price != null) {
                     fill_price = data.data.cons[row.id][cons.name].price;
                   } else {
                     fill_price = 0;
                   }
-                  
-                } else {
-                  //console.log(site.name+': -');
-                  fill_percent = 0;
-                  fill_price = 0;
-                }
-                html += '<td>'+fill_percent+' %</td>';
-                html += '<td>'+fill_price+' €</td>';
-              }
-
-              var total_price = 0;
-              data.col.cons.forEach(fill_cons_data_MD);
-
-              function fill_cons_data_MD (cons){
-                if (data.data.cons.hasOwnProperty(row.id) && data.data.cons[row.id].hasOwnProperty(cons.name)) {
-                  //console.log(site.name+': '+data.data.site[row.id][site.name]['quantity']);
-                  fill_percent = data.data.cons[row.id][cons.name].percentage;
                   if (row.recurrent == 0) {
                     fill_md = row.quantity*row.loe_per_quantity*fill_percent/100;
                   } else {
                     fill_md = row.quantity*row.loe_per_quantity*getBusinessDatesCount(row.start_date,row.end_date)*fill_percent/100;
                   }
-                  if (data.data.cons[row.id][cons.name].price != null) {
-                    fill_price = data.data.cons[row.id][cons.name].price;
-                  } else {
-                    fill_price = 0;
-                  }
                   if (fill_price != null) {
                     total_price += fill_md*fill_price;
                   }
-                  //console.log('fill_md: '+fill_md);
-                  //console.log('fill_price: '+fill_price);
-                  //console.log('total_price: '+total_price);
-                  //console.log('---------------------------: ');
+                  
                 } else {
                   //console.log(site.name+': -');
+                  fill_percent = 0;
                   fill_md = 0;
                   fill_price = 0;
                 }
-                html += '<td>'+fill_md+'</td>';
-                html += '<td>'+fill_price+'</td>';
+                html += '<td>'+fill_percent+' %</td>';
+                html += '<td>'+fill_md+' </td>';
+                html += '<td>'+fill_price+' €</td>';
               }
 
               if (row.recurrent == 0) {
@@ -3643,7 +3593,7 @@ $(document).ready(function() {
             //endregion
             //region Footer
             html += '<tfoot>';
-            number_of_cols = 13+2*data.col.site.length+2*2*data.col.cons.length-1;
+            number_of_cols = 13+2*data.col.site.length+3*data.col.cons.length-1;
             //console.log(number_of_cols);
             //console.log(data.col.site.length);
             //console.log(data.col.cons.length);

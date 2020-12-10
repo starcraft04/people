@@ -206,7 +206,7 @@ class LoeController extends Controller
             return json_encode($result);
         }
 
-        $alphanum = preg_match("/^[a-zA-Z0-9][a-zA-Z0-9-_]+[a-zA-Z0-9]$/",$inputs['name']);
+        $alphanum = preg_match("/^[a-zA-Z0-9][a-zA-Z0-9-_]*[a-zA-Z0-9]$/",$inputs['name']);
         if ($alphanum == 0) {
             $result->result = 'validation_errors';
             $result->errors = array();
@@ -266,7 +266,7 @@ class LoeController extends Controller
             return json_encode($result);
         }
 
-        $alphanum = preg_match("/^[a-zA-Z0-9][a-zA-Z0-9-_]+[a-zA-Z0-9]$/",$inputs['name']);
+        $alphanum = preg_match("/^[a-zA-Z0-9][a-zA-Z0-9-_]*[a-zA-Z0-9]$/",$inputs['name']);
         if ($alphanum == 0) {
             $result->result = 'validation_errors';
             $result->errors = array();
@@ -365,7 +365,7 @@ class LoeController extends Controller
             return json_encode($result);
         }
 
-        $alphanum = preg_match("/^[a-zA-Z0-9][a-zA-Z0-9-_]+[a-zA-Z0-9]$/",$inputs['name']);
+        $alphanum = preg_match("/^[a-zA-Z0-9][a-zA-Z0-9-_]*[a-zA-Z0-9]$/",$inputs['name']);
         if ($alphanum == 0) {
             $result->result = 'validation_errors';
             $result->errors = array();
@@ -428,7 +428,7 @@ class LoeController extends Controller
             return json_encode($result);
         }
 
-        $alphanum = preg_match("/^[a-zA-Z0-9][a-zA-Z0-9-_]+[a-zA-Z0-9]$/",$inputs['name']);
+        $alphanum = preg_match("/^[a-zA-Z0-9][a-zA-Z0-9-_]*[a-zA-Z0-9]$/",$inputs['name']);
         if ($alphanum == 0) {
             $result->result = 'validation_errors';
             $result->errors = array();
