@@ -12,8 +12,6 @@
     <link rel="stylesheet" href="{{ asset('/css/datatables.css') }}">
     <!-- Select2 -->
     <link href="{{ asset('/plugins/select2/select2.min.css') }}" rel="stylesheet" type="text/css" />
-    <!-- Switchery -->
-    <link href="{{ asset('/plugins/gentelella/vendors/switchery/dist/switchery.min.css') }}" rel="stylesheet">
 @stop
 
 @section('scriptsrc')
@@ -38,9 +36,7 @@
     <!-- Select2 -->
     <script src="{{ asset('/plugins/select2/select2.full.min.js') }}" type="text/javascript"></script>
     <!-- Bootbox -->
-    <script src="{{ asset('/plugins/bootbox/bootbox.min.js') }}"></script>
-    <!-- Switchery -->
-    <script src="{{ asset('/plugins/gentelella/vendors/switchery/dist/switchery.min.js') }}" type="text/javascript"></script>
+    <script src="{{ asset('/plugins/bootbox/bootbox.min.js') }}"></script>script>
 @stop
 
 @section('content')
@@ -65,12 +61,20 @@
 
         <div class="form-group row">
           <div class="col-xs-3">
-            <label for="month" class="control-label">Year</label>
+            <label for="year" class="control-label">Year</label>
             <select class="form-control select2" id="year" name="year" data-placeholder="Select a year">
-              @foreach($authUsersForDataView->year_list as $key => $value)
-              <option value="{{ $key }}"
-                @if(isset($authUsersForDataView->year_selected) && $key == $authUsersForDataView->year_selected) selected
-                @endif>
+              @foreach(config('select.year') as $key => $value)
+              <option value="{{ $key }}">
+                {{ $value }}
+              </option>
+              @endforeach
+            </select>
+          </div>
+          <div class="col-xs-3">
+            <label for="month" class="control-label">Month</label>
+            <select class="form-control select2" id="month" name="month" data-placeholder="Select a month">
+              @foreach(config('select.month_names') as $key => $value)
+              <option value="{{ $key }}">
                 {{ $value }}
               </option>
               @endforeach
@@ -99,10 +103,6 @@
               </option>
               @endforeach
             </select>
-          </div>
-          <div class="col-xs-3">
-            <label for="closed" class="control-label">Hide closed</label>
-            <input name="closed" type="checkbox" id="closed" class="form-group js-switch-small" checked /> 
           </div>
         </div>
 
@@ -153,55 +153,11 @@
               <th>End date</th>
               <th>Gold order</th>
               <th>Win ratio (%)</th>
-              <th>Year</th>
-              <th>Jan</th>
-              <th>Jan user</th>
-              <th>Jan otl</th>
+              @foreach(config('select.available_months') as $key => $month)
+              <th id="table_month_{{$key}}"></th>
+              <th>ID</th>
               <th>OTL</th>
-              <th>Feb</th>
-              <th>Feb user</th>
-              <th>Feb otl</th>
-              <th>OTL</th>
-              <th>Mar</th>
-              <th>Mar user</th>
-              <th>Mar otl</th>
-              <th>OTL</th>
-              <th>Apr</th>
-              <th>Apr user</th>
-              <th>Apr otl</th>
-              <th>OTL</th>
-              <th>May</th>
-              <th>May user</th>
-              <th>May otl</th>
-              <th>OTL</th>
-              <th>Jun</th>
-              <th>Jun user</th>
-              <th>Jun otl</th>
-              <th>OTL</th>
-              <th>Jul</th>
-              <th>Jul user</th>
-              <th>Jul otl</th>
-              <th>OTL</th>
-              <th>Aug</th>
-              <th>Aug user</th>
-              <th>Aug otl</th>
-              <th>OTL</th>
-              <th>Sep</th>
-              <th>Sep user</th>
-              <th>Sep otl</th>
-              <th>OTL</th>
-              <th>Oct</th>
-              <th>Oct user</th>
-              <th>Oct otl</th>
-              <th>OTL</th>
-              <th>Nov</th>
-              <th>Nov user</th>
-              <th>Nov otl</th>
-              <th>OTL</th>
-              <th>Dec</th>
-              <th>Dec user</th>
-              <th>Dec otl</th>
-              <th>OTL</th>
+              @endforeach
             </tr>
           </thead>
           <tfoot>
@@ -237,55 +193,11 @@
               <th></th>
               <th></th>
               <th></th>
+              @foreach(config('select.available_months') as $key => $month)
               <th></th>
               <th></th>
               <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
+              @endforeach
             </tr>
           </tfoot>
         </table>
@@ -348,21 +260,18 @@
   <script>
   var activitiesTable;
   var year = [];
+  var month = [];
   var manager = [];
   var user = [];
-  var checkbox_closed = 1;
   var month_col = [];
-
-  // switchery
-  var small = document.querySelector('.js-switch-small');
-  var switchery = new Switchery(small, { size: 'small' });
+  var header_months = [];
 
   function ajaxData(){
     var obj = {
       'year[]': year,
+      'month[]': month,
       'manager[]': manager,
-      'user[]': user,
-      'checkbox_closed':checkbox_closed
+      'user[]': user
     };
     return obj;
   }
@@ -385,6 +294,14 @@
       });
     }
     else {
+      var d = new Date();
+      var y = d.getFullYear();
+      var m = d.getMonth()+1;
+      if (select_id == 'year') {
+        $('#'+select_id).val(y).trigger('change');
+      } else if (select_id == 'month') {
+        $('#'+select_id).val(m).trigger('change');
+      }
       $("#"+select_id+" option:selected").each(function()
       {
         // log the value and text of each option
@@ -392,19 +309,6 @@
       });
     }
     return array_to_use;
-  }
-
-  //Assign color
-  function assign_color(row,value,otl,month){
-    if(value <= 0){
-      $(row).find('td.'+month).addClass('zero');
-    }
-    else if(otl > 0){
-      $(row).find('td.'+month).addClass('otl');
-    }
-    else {
-      $(row).find('td.'+month).addClass('forecast');
-    }
   }
 
   $(document).ready(function() {
@@ -415,21 +319,22 @@
       }
     });
 
+    //region Selection
     // SELECTIONS START
     // ________________
     // First we define the select2 boxes
 
     //Init select2 boxes
     $("#year").select2({
-      allowClear: false,
-      disabled: {{ $authUsersForDataView->year_select_disabled }}
+      allowClear: false
     });
-    //Init select2 boxes
+    $("#month").select2({
+      allowClear: false
+    });
     $("#manager").select2({
       allowClear: false,
       disabled: {{ $authUsersForDataView->manager_select_disabled }}
     });
-    //Init select2 boxes
     $("#user").select2({
       allowClear: false,
       disabled: {{ $authUsersForDataView->user_select_disabled }}
@@ -438,16 +343,9 @@
     // Then we need to get back the information from the cookie
 
     year = fill_select('year');
+    month = fill_select('month');
     manager = fill_select('manager');
     user = fill_select('user');
-    if (Cookies.get('checkbox_closed') != null) {
-      if (Cookies.get('checkbox_closed') == 0) {
-        checkbox_closed = 0;
-        $('#closed').click();
-      } else {
-        checkbox_closed = 1;
-      }
-    }
 
     //alert($.fn.dataTable.version);
 
@@ -462,7 +360,20 @@
         year.push($(this).val());
 
       });
-      activitiesTable.ajax.reload();
+      activitiesTable.ajax.reload(update_headers());
+    });
+
+    $('#month').on('change', function() {
+      Cookies.set('month', $('#month').val());
+      month = [];
+      $("#month option:selected").each(function()
+      {
+        // log the value and text of each option
+        month.push($(this).val());
+
+      });
+      //console.log(month);
+      activitiesTable.ajax.reload(update_headers());
     });
 
     $('#manager').on('change', function() {
@@ -474,7 +385,7 @@
         manager.push($(this).val());
 
       });
-      activitiesTable.ajax.reload();
+      activitiesTable.ajax.reload(update_headers());
     });
 
     $('#user').on('change', function() {
@@ -486,39 +397,71 @@
         user.push($(this).val());
 
       });
-      activitiesTable.ajax.reload();
-    });
-
-    $('#closed').on('change', function() {
-      if ($(this).is(':checked')) {
-        Cookies.set('checkbox_closed', 1);
-        checkbox_closed = 1;
-      } else {
-        Cookies.set('checkbox_closed', 0);
-        checkbox_closed = 0;
-      }
-      //console.log(checkbox_closed);
-      activitiesTable.ajax.reload();
+      activitiesTable.ajax.reload(update_headers());
     });
 
     // SELECTIONS END
+    //endregion
 
-    month_col = [32,36,40,44,48,52,56,60,64,68,72,76];
+    month_col = [31, 34, 37, 40, 43, 46, 49, 52, 55, 58, 61, 64];
 
-    function color_for_month_value(user,prime,from_prime,td) {
-      if (from_prime == 1) {
-        if (prime == 0) {
-          $(td).addClass("zero");
+    // This is to color in case it comes from prime or if forecast
+    function color_for_month_value(value,from_otl,id,colonne,project_id,user_id,td) {
+      if (from_otl == 1) {
+        if (value == 0) {
+          $(td).addClass("otl_zero");
         } else {
           $(td).addClass("otl");
         }        
       } else {
-        if (user == 0) {
+        @can('tools-activity-edit')
+        $(td).addClass("editable");
+        $(td).attr('contenteditable', true);
+        $(td).attr('data-id', id);
+        $(td).attr('data-colonne', colonne);
+        $(td).attr('data-project_id', project_id);
+        $(td).attr('data-user_id', user_id);
+        $(td).attr('data-value', value);
+        @endcan
+        if (value == 0) {
           $(td).addClass("zero");
         } else {
           $(td).addClass("forecast");
         } 
       }
+    }
+
+    // This is to update the headers
+    function update_headers() {
+      months_from_selection = [];
+      months_name = [
+        @foreach(config('select.month') as $key => $month)
+          '{{$month}}'
+          @if($month != 'DEC'),@endif
+        @endforeach
+      ];
+      header_months = [];
+      
+      for (let index = parseInt(month[0],10); index <= 12; index++) {
+        this_year = parseInt(year[0],10);
+        months_from_selection.push(months_name[index-1]+' '+this_year.toString().substring(2));
+        header_months.push({'year':this_year,'month':index});
+      }
+      if (month[0] > 1) {
+        next_year = parseInt(year[0], 10)+1;
+        for (let index = 1; index <= month[0]-1; index++) {
+          months_from_selection.push(months_name[index-1]+' '+next_year.toString().substring(2));
+          header_months.push({'year':next_year,'month':index});
+        }
+      }
+
+      //console.log(months_from_selection);
+      
+      // We change the title of the months as it varies in function of the year and month selected
+      for (let index = 1; index <= 12; index++) {
+          //console.log(month);
+          $('#table_month_'+index).empty().html(months_from_selection[index-1]);
+        }
     }
   
 
@@ -570,117 +513,18 @@
         { name: 'p.estimated_start_date', data: 'estimated_start_date' , searchable: true , visible: false, className: "dt-nowrap"},
         { name: 'p.estimated_end_date', data: 'estimated_end_date' , searchable: true , visible: false, className: "dt-nowrap"},
         { name: 'p.gold_order_number', data: 'gold_order_number' , searchable: true , visible: false, className: "dt-nowrap"},
-        { name: 'p.win_ratio', data: 'win_ratio' , searchable: true , visible: false, className: "dt-nowrap"},
-        { name: 'temp_a.year', data: 'year' , searchable: false , visible: false, className: "dt-nowrap"},
-        { data: function ( row, type, val, meta ) {
-          if (row.jan_from_otl == 1){return row.jan_otl;}else{return row.jan_user;}
-            }, 
-          createdCell: function (td, cellData, rowData, row, col) {
-            color_for_month_value(rowData.jan_user,rowData.jan_otl,rowData.jan_from_otl,td);
-          }, width: '30px', searchable: false},
-        { name: 'jan_user', data: 'jan_user', width: '30px', searchable: false , visible: false},
-        { name: 'jan_otl', data: 'jan_otl', width: '10px', searchable: false , visible: false},
-        { name: 'jan_from_otl', data: 'jan_from_otl', width: '10px', searchable: false , visible: false},
-        { data: function ( row, type, val, meta ) {
-          if (row.feb_from_otl == 1){return row.feb_otl;}else{return row.feb_user;}
-            }, 
-          createdCell: function (td, cellData, rowData, row, col) {
-            color_for_month_value(rowData.feb_user,rowData.feb_otl,rowData.feb_from_otl,td);
-          }, width: '30px', searchable: false},
-        { name: 'feb_user', data: 'feb_user', width: '30px', searchable: false , visible: false},
-        { name: 'feb_otl', data: 'feb_otl', width: '10px', searchable: false , visible: false},
-        { name: 'feb_from_otl', data: 'feb_from_otl', width: '10px', searchable: false , visible: false},
-        { data: function ( row, type, val, meta ) {
-          if (row.mar_from_otl == 1){return row.mar_otl;}else{return row.mar_user;}
-            }, 
-          createdCell: function (td, cellData, rowData, row, col) {
-            color_for_month_value(rowData.mar_user,rowData.mar_otl,rowData.mar_from_otl,td);
-          }, width: '30px', searchable: false},
-        { name: 'mar_user', data: 'mar_user', width: '30px', searchable: false , visible: false},
-        { name: 'mar_otl', data: 'mar_otl', width: '10px', searchable: false , visible: false},
-        { name: 'mar_from_otl', data: 'mar_from_otl', width: '10px', searchable: false , visible: false},
-        { data: function ( row, type, val, meta ) {
-          if (row.apr_from_otl == 1){return row.apr_otl;}else{return row.apr_user;}
-            }, 
-          createdCell: function (td, cellData, rowData, row, col) {
-            color_for_month_value(rowData.apr_user,rowData.apr_otl,rowData.apr_from_otl,td);
-          }, width: '30px', searchable: false},
-        { name: 'apr_user', data: 'apr_user', width: '30px', searchable: false , visible: false},
-        { name: 'apr_otl', data: 'apr_otl', width: '10px', searchable: false , visible: false},
-        { name: 'apr_from_otl', data: 'apr_from_otl', width: '10px', searchable: false , visible: false},
-        { data: function ( row, type, val, meta ) {
-          if (row.may_from_otl == 1){return row.may_otl;}else{return row.may_user;}
-            }, 
-          createdCell: function (td, cellData, rowData, row, col) {
-            color_for_month_value(rowData.may_user,rowData.may_otl,rowData.may_from_otl,td);
-          }, width: '30px', searchable: false},
-        { name: 'may_user', data: 'may_user', width: '30px', searchable: false , visible: false},
-        { name: 'may_otl', data: 'may_otl', width: '10px', searchable: false , visible: false},
-        { name: 'may_from_otl', data: 'may_from_otl', width: '10px', searchable: false , visible: false},
-        { data: function ( row, type, val, meta ) {
-          if (row.jun_from_otl == 1){return row.jun_otl;}else{return row.jun_user;}
-            }, 
-          createdCell: function (td, cellData, rowData, row, col) {
-            color_for_month_value(rowData.jun_user,rowData.jun_otl,rowData.jun_from_otl,td);
-          }, width: '30px', searchable: false},
-        { name: 'jun_user', data: 'jun_user', width: '30px', searchable: false , visible: false},
-        { name: 'jun_otl', data: 'jun_otl', width: '10px', searchable: false , visible: false},
-        { name: 'jun_from_otl', data: 'jun_from_otl', width: '10px', searchable: false , visible: false},
-        { data: function ( row, type, val, meta ) {
-          if (row.jul_from_otl == 1){return row.jul_otl;}else{return row.jul_user;}
-          }, 
-          createdCell: function (td, cellData, rowData, row, col) {
-            color_for_month_value(rowData.jul_user,rowData.jul_otl,rowData.jul_from_otl,td);
-          },
-          width: '30px', searchable: false}, 
-        { name: 'jul_user', data: 'jul_user', width: '30px', searchable: false , visible: false},
-        { name: 'jul_otl', data: 'jul_otl', width: '10px', searchable: false , visible: false},
-        { name: 'jul_from_otl', data: 'jul_from_otl', width: '10px', searchable: false , visible: false},
-        { data: function ( row, type, val, meta ) {
-          if (row.aug_from_otl == 1){return row.aug_otl;}else{return row.aug_user;}
-            }, 
-          createdCell: function (td, cellData, rowData, row, col) {
-            color_for_month_value(rowData.aug_user,rowData.aug_otl,rowData.aug_from_otl,td);
-          }, width: '30px', searchable: false},
-        { name: 'aug_user', data: 'aug_user', width: '30px', searchable: false , visible: false},
-        { name: 'aug_otl', data: 'aug_otl', width: '10px', searchable: false , visible: false},
-        { name: 'aug_from_otl', data: 'aug_from_otl', width: '10px', searchable: false , visible: false},
-        { data: function ( row, type, val, meta ) {
-          if (row.sep_from_otl == 1){return row.sep_otl;}else{return row.sep_user;}
-            }, 
-          createdCell: function (td, cellData, rowData, row, col) {
-            color_for_month_value(rowData.sep_user,rowData.sep_otl,rowData.sep_from_otl,td);
-          }, width: '30px', searchable: false},
-        { name: 'sep_user', data: 'sep_user', width: '30px', searchable: false , visible: false},
-        { name: 'sep_otl', data: 'sep_otl', width: '10px', searchable: false , visible: false},
-        { name: 'sep_from_otl', data: 'sep_from_otl', width: '10px', searchable: false , visible: false},
-        { data: function ( row, type, val, meta ) {
-          if (row.oct_from_otl == 1){return row.oct_otl;}else{return row.oct_user;}
-            }, 
-          createdCell: function (td, cellData, rowData, row, col) {
-            color_for_month_value(rowData.oct_user,rowData.oct_otl,rowData.oct_from_otl,td);
-          }, width: '30px', searchable: false},
-        { name: 'oct_user', data: 'oct_user', width: '30px', searchable: false , visible: false},
-        { name: 'oct_otl', data: 'oct_otl', width: '10px', searchable: false , visible: false},
-        { name: 'oct_from_otl', data: 'oct_from_otl', width: '10px', searchable: false , visible: false},
-        { data: function ( row, type, val, meta ) {
-          if (row.nov_from_otl == 1){return row.nov_otl;}else{return row.nov_user;}
-            }, 
-          createdCell: function (td, cellData, rowData, row, col) {
-            color_for_month_value(rowData.nov_user,rowData.nov_otl,rowData.nov_from_otl,td);
-          }, width: '30px', searchable: false},
-        { name: 'nov_user', data: 'nov_user', width: '30px', searchable: false , visible: false},
-        { name: 'nov_otl', data: 'nov_otl', width: '10px', searchable: false , visible: false},
-        { name: 'nov_from_otl', data: 'nov_from_otl', width: '10px', searchable: false , visible: false},
-        { data: function ( row, type, val, meta ) {
-          if (row.dec_from_otl == 1){return row.dec_otl;}else{return row.dec_user;}
-            }, 
-          createdCell: function (td, cellData, rowData, row, col) {
-            color_for_month_value(rowData.dec_user,rowData.dec_otl,rowData.dec_from_otl,td);
-          }, width: '30px', searchable: false},
-        { name: 'dec_user', data: 'dec_user', width: '30px', searchable: false , visible: false},
-        { name: 'dec_otl', data: 'dec_otl', width: '10px', searchable: false , visible: false},
-        { name: 'dec_from_otl', data: 'dec_from_otl', width: '10px', searchable: false , visible: false}
+        { name: 'p.win_ratio', data: 'win_ratio' , searchable: true , visible: false, className: "dt-nowrap"}
+        @foreach(config('select.available_months') as $key => $month)
+
+          ,{ name: 'm{{$key}}_com', data: 'm{{$key}}_com', 
+            createdCell: function (td, cellData, rowData, row, col) {
+              color_for_month_value(rowData.m{{$key}}_com,rowData.m{{$key}}_from_otl,rowData.m{{$key}}_id,{{$key}},rowData.project_id,rowData.user_id,td);
+            }, width: '30px', searchable: false, visible: true, orderable: false},
+
+          { name: 'm{{$key}}_id', data: 'm{{$key}}_id', width: '10px', searchable: false , visible: false, orderable: false},
+          { name: 'm{{$key}}_from_otl', data: 'm{{$key}}_from_otl', width: '10px', searchable: false , visible: false, orderable: false}
+          
+        @endforeach
       ],
       order: [[1, 'asc'],[3, 'asc'],[7, 'asc'],[12, 'asc']],
       lengthMenu: [
@@ -693,61 +537,7 @@
           extend: "colvis",
           className: "btn-sm",
           collectionLayout: "three-column",
-          columns: [ 1, 3, 4, 5, 6,7,8,9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,32,36,40,44,48,52,56,60,64,68,72,76 ]
-        },
-        {
-          extend: 'collection',
-          className: "btn-sm",
-          text: 'Views',
-          buttons: [
-              {
-                text: 'Cluster',
-                extend: 'colvisGroup',
-                show: [ 3,4,7,8,11,12,14,32,36,40,44,48,52,56,60,64,68,72,76 ],
-                hide: [ 1,5,6,9,10,13,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31 ]
-              },
-              {
-                text: 'Team member',
-                extend: 'colvisGroup',
-                show: [ 3,7,11,12,14,32,36,40,44,48,52,56,60,64,68,72,76 ],
-                hide: [ 1,4,5,6,8,9,10,13,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31 ]
-              }
-          ],
-          responsive: true
-        },
-        {
-          extend: 'collection',
-          className: "btn-sm",
-          text: 'Selection',
-          buttons: [
-              {
-                text: 'Security',
-                action: function ( e, dt, node, config ) {
-                  $('input', activitiesTable.column(4).footer()).val("Security");
-                  activitiesTable.column(4).search("Security").draw();
-                  activitiesTable.columns([ 3,4,7,8,11,12,14,32,36,40,44,48,52,56,60,64,68,72,76 ]).visible(true);
-                  activitiesTable.columns([ 1,5,6,9,10,13,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31 ]).visible(false);
-                }
-              },
-              {
-                text: 'PullThru',
-                action: function ( e, dt, node, config ) {
-                  $('input', activitiesTable.column(12).footer()).val("Pre-sales");
-                  activitiesTable.column(12).search("Pre-sales").draw();
-                  activitiesTable.columns([ 3,7,9,11,13,16,17,18,19,20,23,24,26,27,30 ]).visible(true);
-                  activitiesTable.columns([ 1,4,5,6,8,10,12,14,15,21,22,25,28,29,31,32,36,40,44,48,52,56,60,64,68,72,76 ]).visible(false);
-                }
-              },
-              {
-                text: 'APM',
-                action: function ( e, dt, node, config ) {
-                  $('input', activitiesTable.column(4).footer()).val("APM");
-                  activitiesTable.column(4).search("APM").draw();
-                  activitiesTable.columns([ 3,4,7,8,11,12,14,32,36,40,44,48,52,56,60,64,68,72,76 ]).visible(true);
-                  activitiesTable.columns([ 1,5,6,9,10,13,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31 ]).visible(false);
-                }
-              }
-          ]
+          columns: [ 1, 3, 4, 5, 6,7,8,9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 34, 37, 40, 43, 46, 49, 52, 55, 58, 61, 64 ]
         },
         {
           extend: "pageLength",
@@ -794,6 +584,8 @@
         });
       },
       initComplete: function () {
+        update_headers();
+        // We create section below columns
         var columns = this.api().init().columns;
         this.api().columns().every(function () {
           var column = this;
@@ -842,15 +634,92 @@
       //console.log('the user id is '+row.data().user_id);
       //console.log('the project id is '+row.data().project_id);
       // If we click on the name, then we create a new project
-      year = [];
-      $("#year option:selected").each(function()
-      {
-        // log the value and text of each option
-        year.push($(this).val());
-      });
-      window.location.href = "{!! route('toolsFormUpdate',['','','']) !!}/"+row.data().user_id+"/"+row.data().project_id+"/"+year[0];
+      if (columns[colIndex].name == 'p.project_name') {
+        year = [];
+        $("#year option:selected").each(function()
+        {
+          // log the value and text of each option
+          year.push($(this).val());
+        });
+        window.location.href = "{!! route('toolsFormUpdate',['','','']) !!}/"+row.data().user_id+"/"+row.data().project_id+"/"+year[0];
+      }
     });
+
+    $(document).on('keypress', '.editable', function(e){
+      //console.log('editing');
+      if (e.which  == 13) { //Enter key's keycode
+        update_activity($(this));
+        return false;
+      }
+    });
+
+    function update_activity(td) {
+      /* console.log(td.data('id'));
+      console.log(td.data('project_id'));
+      console.log(td.data('user_id'));
+      console.log(td.data('colonne'));
+      console.log(td.html());
+      console.log(header_months[td.data('colonne')-1]); */
+      var td;
+      var data = {
+        'id':td.data('id'),
+        'project_id':td.data('project_id'),
+        'user_id':td.data('user_id'),
+        'year':header_months[td.data('colonne')-1].year,
+        'month':header_months[td.data('colonne')-1].month,
+        'task_hour':td.html()
+      }
+
+      $.ajax({
+            type: 'POST',
+            url: "{!! route('updateActivityAjax') !!}",
+            data:data,
+            dataType: 'json',
+            success: function(data) {
+              //console.log(data);
+              // SUCCESS
+              if (data.result == 'success'){
+                if (data.action == 'create') {
+                  td.attr('data-id', data.id); 
+                }
+                td.removeClass();
+                td.addClass('editable');
+                if (td.html() == 0) {
+                  td.addClass('zero');
+                } else {
+                  td.addClass('forecast');
+                }
+                td.attr('data-value', td.html()); 
+                td.addClass('update_success');
+                setTimeout(function () {
+                  td.removeClass('update_success');
+                }, 2000);
+              } else {
+                // ERROR
+                td.html(td.data('value'));
+                td.addClass('update_error');
+                setTimeout(function () {
+                  td.removeClass('update_error');
+                }, 2000);
+
+                box_type = 'danger';
+                message_type = 'error';
+
+                $('#flash-message').empty();
+                var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+                $('#flash-message').append(box);
+                $('#delete-message').delay(2000).queue(function () {
+                    $(this).addClass('animated flipOutX')
+                });
+              }
+            }
+      });
+
+    }
+    
     @endcan
+
+
 
     @can('tools-activity-new')
     $('#new_project').on('click', function() {

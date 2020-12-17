@@ -136,6 +136,7 @@ Route::group(['middleware' => ['auth', 'general','last_login']], function () {
     Route::get('activityDelete/{n}', ['uses' => 'ActivityController@delete', 'as' => 'activityDelete', 'middleware' => ['permission:activity-delete']]);
     //  AJAX
     Route::get('listOfActivitiesAjax', ['uses' => 'ActivityController@listOfActivities', 'as' => 'listOfActivitiesAjax', 'middleware' => ['permission:activity-view|activity-create|activity-edit|activity-delete']]);
+    
 
     //Comment
     Route::get('comment/{id}', ['uses' => 'CommentController@show', 'as' => 'comment_show', 'middleware' => ['permission:tools-projects-comments']]);
@@ -191,6 +192,7 @@ Route::group(['middleware' => ['auth', 'general','last_login']], function () {
     Route::post('listOfSkills/{cert}', ['uses' => 'ToolsController@listOfSkills', 'as' => 'listOfSkills', 'middleware' => ['permission:tools-usersskills']]);
     Route::post('listOfUsersSkills/{cert}', ['uses' => 'ToolsController@listOfUsersSkills', 'as' => 'listOfUsersSkills', 'middleware' => ['permission:tools-usersskills']]);
     Route::get('userskillDelete/{id}', ['uses' => 'ToolsController@userSkillDelete', 'as' => 'userskillDelete', 'middleware' => ['permission:tools-usersskills']]);
+    Route::post('updateActivityAjax', ['uses' => 'ActivityController@updateActivityAjax', 'as' => 'updateActivityAjax', 'middleware' => ['permission:tools-activity-new|tools-activity-edit|tools-activity-all-edit']]);
 
     //Dashboards
     Route::get('dashboardLoad', ['uses' => 'DashboardController@load', 'as' => 'dashboardLoad', 'middleware' => ['permission:dashboard-view']]);

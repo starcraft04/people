@@ -96,9 +96,6 @@
             @can('tools-activity-view')
             <li><a href="{!!route('toolsActivities')!!}">Activity list per project</a></li>
             @endcan
-            @can('tools-user-summary')
-            <li><a href="{!!route('toolsUserSummary')!!}">User Summary</a></li>
-            @endcan
             @can('tools-all_projects-view')
             <li><a href="{!!route('projectsAll')!!}">Project list</a></li>
             @endcan

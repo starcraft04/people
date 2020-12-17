@@ -181,9 +181,27 @@ class ActivityRepository
          *   In the ajax datatables (view), there will be a parameter name that is going to be used here for the extra parameters so if we use a join,
          *   Then we will need to use in the view page the name of the table.column. This is so that it knows how to do proper sorting or search.
          **/
-        $temp_table = new ProjectTableRepositoryV2('temp_a');
+
+        //dd($where['year'][0]);
+
+        $where['months'] = [];
+
+        for ($i=$where['month'][0]; $i <= 12 ; $i++) { 
+            array_push($where['months'],['year' => $where['year'][0],'month'=>$i]);
+        }
+
+        if ($where['month'][0] > 1) {
+            for ($i=1; $i <= $where['month'][0]-1 ; $i++) { 
+                array_push($where['months'],['year' => $where['year'][0]+1,'month'=>$i]);
+            }
+        } 
+
+        //dd($where['months']);
+
+        $temp_table = new ProjectTableRepositoryV2('temp_a',$where);
 
         $activityList = DB::table('temp_a');
+        
 
         $activityList->select('uu.manager_id AS manager_id', 'm.name AS manager_name', 'temp_a.user_id AS user_id', 'u.name AS user_name', 'u.country AS user_country', 'u.employee_type AS user_employee_type', 'u.domain AS user_domain',
                             'temp_a.project_id AS project_id',
@@ -195,26 +213,17 @@ class ActivityRepository
                             'p.estimated_start_date AS estimated_start_date', 'p.estimated_end_date AS estimated_end_date',
                             'p.gold_order_number AS gold_order_number', 'p.win_ratio AS win_ratio',
                             'c.name AS customer_name', 'c.cluster_owner AS customer_cluster_owner', 'c.country_owner AS customer_country_owner',
-                            'temp_a.year AS year', 'p.activity_type AS activity_type', 'p.project_status AS project_status', 'p.project_type AS project_type',
-                            'jan_user', 'jan_otl', 'jan_from_otl', 'feb_user', 'feb_otl', 'feb_from_otl', 'mar_user', 'mar_otl', 'mar_from_otl',
-                            'apr_user', 'apr_otl', 'apr_from_otl', 'may_user', 'may_otl', 'may_from_otl', 'jun_user', 'jun_otl', 'jun_from_otl',
-                            'jul_user', 'jul_otl', 'jul_from_otl', 'aug_user', 'aug_otl', 'aug_from_otl', 'sep_user', 'sep_otl', 'sep_from_otl',
-                            'oct_user', 'oct_otl', 'oct_from_otl', 'nov_user', 'nov_otl', 'nov_from_otl', 'dec_user', 'dec_otl', 'dec_from_otl'
-    );
+                            'p.activity_type AS activity_type', 'p.project_status AS project_status', 'p.project_type AS project_type',
+                            'm1_id','m1_com', 'm1_from_otl','m2_id','m2_com', 'm2_from_otl','m3_id','m3_com', 'm3_from_otl',
+                            'm4_id','m4_com', 'm4_from_otl','m5_id','m5_com', 'm5_from_otl','m6_id','m6_com', 'm6_from_otl',
+                            'm7_id','m7_com', 'm7_from_otl','m8_id','m8_com', 'm8_from_otl','m9_id','m9_com', 'm9_from_otl',
+                            'm10_id','m10_com', 'm10_from_otl','m11_id','m11_com', 'm11_from_otl','m12_id','m12_com', 'm12_from_otl'
+        );
         $activityList->leftjoin('projects AS p', 'p.id', '=', 'temp_a.project_id');
         $activityList->leftjoin('users AS u', 'temp_a.user_id', '=', 'u.id');
         $activityList->leftjoin('users_users AS uu', 'u.id', '=', 'uu.user_id');
         $activityList->leftjoin('users AS m', 'm.id', '=', 'uu.manager_id');
         $activityList->leftjoin('customers AS c', 'c.id', '=', 'p.customer_id');
-
-        // Checking which year to display
-        if (! empty($where['year'])) {
-            $activityList->where(function ($query) use ($where) {
-                foreach ($where['year'] as $w) {
-                    $query->orWhere('year', $w);
-                }
-            });
-        }
 
         // Removing customers
         if (! empty($where['except_customers'])) {
@@ -249,14 +258,6 @@ class ActivityRepository
                     $query->where('p.project_status', '!=', $w);
                 }
             });
-        }
-
-        if (! empty($where['checkbox_closed']) && $where['checkbox_closed'] == 1) {
-            $activityList->where(function ($query) {
-                return $query->where('project_status', '!=', 'Closed')
-                    ->orWhereNull('project_status');
-            }
-        );
         }
 
         // Checking the roles to see if allowed to see all users
@@ -295,9 +296,6 @@ class ActivityRepository
         else {
             $activityList->where('temp_a.user_id', '=', Auth::user()->id);
         }
-
-        $activityList->orderBy('c.name', 'asc');
-        $activityList->orderBy('p.project_name', 'asc');
 
         //$activityList->groupBy('manager_id','manager_name','user_id','user_name','project_id','project_name','year');
         if (isset($where['no_datatables']) && $where['no_datatables']) {

@@ -172,4 +172,45 @@ class ActivityController extends Controller
     {
         return view('activity/test');
     }
+
+    public function updateActivityAjax(Request $request)
+    {
+        $result = new \stdClass();
+        $inputs = $request->all();
+        // Verification if the user is authorised to modify
+        if ($inputs['user_id'] == Auth::user()->id || Auth::user()->can('tools-activity-all-edit')) {
+            // Validation that what has been entered is positive and numeric
+            if (is_numeric($inputs['task_hour']) && $inputs['task_hour'] >= 0) {
+                // Check if we need to create or update
+                if (empty($inputs['id'])) {
+                    $record = Activity::create(
+                        [
+                            'year'=>$inputs['year'],
+                            'month'=>$inputs['month'],
+                            'project_id'=>$inputs['project_id'],
+                            'user_id'=>$inputs['user_id'],
+                            'task_hour'=>$inputs['task_hour'],
+                            'from_otl'=>0
+                        ]);
+                    $result->result = 'success';
+                    $result->action = 'create';
+                    $result->id = $record->id;
+                    $result->msg = 'Record created successfully';
+                } else {
+                    $record = Activity::where('id',$inputs['id'])
+                        ->update(['task_hour'=>$inputs['task_hour']]);
+                    $result->result = 'success';
+                    $result->action = 'update';
+                    $result->msg = 'Record updated successfully';
+                }
+            } else {
+                $result->result = 'error';
+                $result->msg = 'Must be a positive numeric value';
+            }
+        } else {
+            $result->result = 'error';
+            $result->msg = 'No permission to edit this record';
+        }
+        return json_encode($result);
+    }
 }
