@@ -80,6 +80,8 @@ Route::group(['middleware' => ['auth', 'general','last_login']], function () {
 
     //ProfileToolsController
     Route::get('ajax_git_pull', ['uses' => 'ProfileToolsController@ajax_git_pull', 'as' => 'ajax_git_pull']);
+    Route::get('db_cleanup', ['uses' => 'ProfileToolsController@db_cleanup', 'as' => 'db_cleanup']);
+    Route::get('factory_reset', ['uses' => 'ProfileToolsController@factory_reset', 'as' => 'factory_reset']);
     Route::get('ajax_env_app_debug/{n}', ['uses' => 'ProfileToolsController@ajax_env_app_debug', 'as' => 'ajax_env_app_debug']);
 
     // Roles

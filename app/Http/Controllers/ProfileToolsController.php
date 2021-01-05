@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests;
 use Auth;
+use DB;
+use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileToolsController extends Controller
 {
@@ -15,7 +18,9 @@ class ProfileToolsController extends Controller
     public function ajax_git_pull()
     {
         if (Auth::user()->name == 'admin') {
-            $output = shell_exec('git -C /var/www/html pull');
+            $path = base_path();
+            $output = shell_exec('git -C '.$path.' pull');
+            $output .= shell_exec('php '.$path.DIRECTORY_SEPARATOR.'artisan migrate');
             echo $output;
         }
     }
@@ -66,6 +71,52 @@ class ProfileToolsController extends Controller
         // Reload the cached config
         if (file_exists(\App::getCachedConfigPath())) {
             Artisan::call('config:cache');
+        }
+    }
+
+    public function db_cleanup()
+    {
+        if (Auth::user()->name == 'admin') {
+            
+        }
+    }
+
+    public function factory_reset()
+    {
+        if (Auth::user()->name == 'admin') {
+            $result = new \stdClass();
+            $result->result = 'success';
+            $result->msg = 'DB updated successfully';
+
+            $factory_reset = DB::table('users_users')->delete();
+            $factory_reset = DB::table('skill_user')->delete();
+            $factory_reset = DB::table('skills')->delete();
+            $factory_reset = DB::table('samba_users')->delete();
+            $factory_reset = DB::table('samba_names')->delete();
+            $factory_reset = DB::table('revenues')->delete();
+            $factory_reset = DB::table('project_revenues')->delete();
+            $factory_reset = DB::table('project_loe')->delete();
+            $factory_reset = DB::table('projects_comments')->delete();
+            $factory_reset = DB::table('password_resets')->delete();
+            $factory_reset = DB::table('customers_other_names')->delete();
+            $factory_reset = DB::table('cluster_user')->delete();
+            $factory_reset = DB::table('actions')->delete();
+            $factory_reset = DB::table('activities')->delete();
+            $factory_reset = DB::table('projects')->delete();
+            $factory_reset = DB::table('customers')->delete();
+            $factory_reset = DB::table('model_has_roles')->where('model_id','!=',1)->delete();
+            $factory_reset = DB::table('model_has_permissions')->where('model_id','!=',1)->delete();
+            $factory_reset = DB::table('role_has_permissions')->where('role_id','!=',1)->delete();
+            $factory_reset = DB::table('roles')->where('id','!=',1)->delete();
+            $factory_reset = DB::table('users')->where('id','!=',1)->delete();
+            $factory_reset = DB::table('role_has_permissions')->where('permission_id','>',10)->delete();
+            $factory_reset = DB::table('role_has_permissions')->insert(['permission_id'=>52,'role_id'=>1]);
+
+            $user = User::find(1);
+            $user->update_password('Welcome1',true);
+
+            //User::where('id','!=',1)->delete();
+            return json_encode($result);
         }
     }
 }

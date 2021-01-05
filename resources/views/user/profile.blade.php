@@ -1,5 +1,11 @@
 @extends('layouts.app')
 
+@section('scriptsrc')
+    <!-- JS -->
+    <!-- Bootbox -->
+    <script src="{{ asset('/plugins/bootbox/bootbox.min.js') }}"></script>
+@stop
+
 @section('content')
 <!-- Page title -->
 <div class="page-title">
@@ -124,13 +130,19 @@
       <!-- Window content -->
       <div class="x_content">
         <div class="col-md-2">
-          <button id="git_pull" class="btn btn-success"><span class="glyphicon glyphicon-pencil"></span> Git PULL</button>
+          <button id="git_pull" class="btn btn-success"><span class="glyphicon glyphicon-pencil"></span> Check update</button>
         </div>
         <div class="col-md-2">
           <button id="debug_true" class="btn btn-success"><span class="glyphicon glyphicon-pencil"></span> DEBUG true</button>
         </div>
         <div class="col-md-2">
           <button id="debug_false" class="btn btn-success"><span class="glyphicon glyphicon-pencil"></span> DEBUG false</button>
+        </div>
+        <div class="col-md-2">
+          <button id="db_cleanup" class="btn btn-success"><span class="glyphicon glyphicon-floppy-remove"></span> DB Cleanup</button>
+        </div>
+        <div class="col-md-2">
+          <button id="factory_reset" class="btn btn-success"><span class="glyphicon glyphicon-trash"></span> Factory reset</button>
         </div>
       </div>
       <!-- Window content -->
@@ -205,6 +217,29 @@
           success: function(data) {
             $("#result").empty();
             $("#result").append('set to false');
+          }
+      });
+    });
+
+    // DB cleanup
+    $(document).on('click', '#db_cleanup', function () {
+      
+    });
+
+    // Factory reset
+    $(document).on('click', '#factory_reset', function () {
+      bootbox.confirm("Are you sure want to factory reset? Attention, the admin password will be set to Welcome1", function(result) {
+          if (result){
+              $.ajax({
+                  type: 'get',
+                  url: "{!! route('factory_reset') !!}",
+                  dataType: 'json',
+                  success: function(data) {
+                      console.log(data);
+                      $("#result").empty();
+                      $("#result").append('Database reset complete. Please login with the account admin@orange.com with password Welcome1');
+                  }
+              });
           }
       });
     });

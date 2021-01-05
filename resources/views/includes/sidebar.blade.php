@@ -1,7 +1,7 @@
 <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
   <div class="menu_section">
 
-    @can('otl-upload')
+    @canany(['otl-upload','samba-upload','revenue-upload','customer-upload'])
     <ul class="nav side-menu">
       <li><a><i class="fa fa-home"></i>DB Feed <span class="fa fa-chevron-down"></span></a>
         <ul class="nav child_menu">
