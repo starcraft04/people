@@ -260,6 +260,15 @@ class ActivityRepository
             });
         }
 
+        // Check if we need to show closed
+        if (! empty($where['checkbox_closed']) && $where['checkbox_closed'] == 1) {
+            $activityList->where(function ($query) {
+                return $query->where('project_status', '!=', 'Closed')
+                    ->orWhereNull('project_status');
+            }
+        );
+        }
+
         // Checking the roles to see if allowed to see all users
         if (Auth::user()->can('tools-activity-all-view')) {
             // Format of $manager_list is [ 1=> 'manager1', 2=>'manager2',...]

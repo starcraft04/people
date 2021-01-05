@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="{{ asset('/css/datatables.css') }}">
     <!-- Select2 -->
     <link href="{{ asset('/plugins/select2/select2.min.css') }}" rel="stylesheet" type="text/css" />
+    <!-- Switchery -->
+    <link href="{{ asset('/plugins/gentelella/vendors/switchery/dist/switchery.min.css') }}" rel="stylesheet">
 @stop
 
 @section('scriptsrc')
@@ -37,6 +39,8 @@
     <script src="{{ asset('/plugins/select2/select2.full.min.js') }}" type="text/javascript"></script>
     <!-- Bootbox -->
     <script src="{{ asset('/plugins/bootbox/bootbox.min.js') }}"></script>script>
+    <!-- Switchery -->
+    <script src="{{ asset('/plugins/gentelella/vendors/switchery/dist/switchery.min.js') }}" type="text/javascript"></script>
 @stop
 
 @section('content')
@@ -60,7 +64,7 @@
         <!-- Selections for the table -->
 
         <div class="form-group row">
-          <div class="col-xs-3">
+          <div class="col-xs-2">
             <label for="year" class="control-label">Year</label>
             <select class="form-control select2" id="year" name="year" data-placeholder="Select a year">
               @foreach(config('select.year') as $key => $value)
@@ -70,7 +74,7 @@
               @endforeach
             </select>
           </div>
-          <div class="col-xs-3">
+          <div class="col-xs-2">
             <label for="month" class="control-label">Month</label>
             <select class="form-control select2" id="month" name="month" data-placeholder="Select a month">
               @foreach(config('select.month_names') as $key => $value)
@@ -103,6 +107,10 @@
               </option>
               @endforeach
             </select>
+          </div>
+          <div class="col-xs-2">
+            <label for="closed" class="control-label">Hide closed</label>
+            <input name="closed" type="checkbox" id="closed" class="form-group js-switch-small" checked /> 
           </div>
         </div>
 
@@ -265,13 +273,19 @@
   var user = [];
   var month_col = [];
   var header_months = [];
+  var checkbox_closed = 0;
+
+  // switchery
+  var small = document.querySelector('.js-switch-small');
+  var switchery = new Switchery(small, { size: 'small' });
 
   function ajaxData(){
     var obj = {
       'year[]': year,
       'month[]': month,
       'manager[]': manager,
-      'user[]': user
+      'user[]': user,
+      'checkbox_closed':checkbox_closed
     };
     return obj;
   }
@@ -347,6 +361,15 @@
     manager = fill_select('manager');
     user = fill_select('user');
 
+    if (Cookies.get('checkbox_closed') != null) {
+      if (Cookies.get('checkbox_closed') == 0) {
+        checkbox_closed = 0;
+        $('#closed').click();
+      } else {
+        checkbox_closed = 1;
+      }
+    }
+
     //alert($.fn.dataTable.version);
 
     // Then we define what happens when the selection changes
@@ -398,6 +421,18 @@
 
       });
       activitiesTable.ajax.reload(update_headers());
+    });
+
+    $('#closed').on('change', function() {
+      if ($(this).is(':checked')) {
+        Cookies.set('checkbox_closed', 1);
+        checkbox_closed = 1;
+      } else {
+        Cookies.set('checkbox_closed', 0);
+        checkbox_closed = 0;
+      }
+      //console.log(checkbox_closed);
+      activitiesTable.ajax.reload();
     });
 
     // SELECTIONS END
