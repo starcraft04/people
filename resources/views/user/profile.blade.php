@@ -1,9 +1,18 @@
 @extends('layouts.app')
 
+@section('style')
+<!-- CSS -->
+<!-- Select2 -->
+<link href="{{ asset('/plugins/select2/select2.min.css') }}" rel="stylesheet" type="text/css" />
+</style>
+@stop
+
 @section('scriptsrc')
-    <!-- JS -->
-    <!-- Bootbox -->
-    <script src="{{ asset('/plugins/bootbox/bootbox.min.js') }}"></script>
+<!-- JS -->
+<!-- Bootbox -->
+<script src="{{ asset('/plugins/bootbox/bootbox.min.js') }}"></script>
+<!-- Select2 -->
+<script src="{{ asset('/plugins/select2/select2.full.min.js') }}" type="text/javascript"></script>
 @stop
 
 @section('content')
@@ -173,6 +182,49 @@
         </pre>
       </div>
       <!-- Window content -->
+      <!-- Modal -->
+      <div class="modal fade" id="modal_clean_db" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="display:table;">
+          <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" id="modal_clean_db_title">Clean DB</h4>
+            </div>
+            <!-- Modal Header -->
+              
+            <!-- Modal Body -->
+            <div class="modal-body">
+              All activities before the date selected will be deleted and all projects without an activity will be deleted.
+              <form id="modal_clean_db_form" role="form" method="POST" action="">
+                <div id="modal_clean_db_formgroup_year" class="col-md-6 col-sm-12 form-group">
+                  <label class="control-label" for="modal_clean_db_form_year">Year</label>
+                  <select class="form-control select2" style="width: 100%;" id="modal_clean_db_form_year" data-placeholder="Select a priority">
+                    <option value="" ></option>
+                    @foreach(config('select.year') as $key => $value)
+                    <option value="{{ $key }}" @if(date('Y')==$key)selected @endif>
+                      {{ $value }}
+                    </option>
+                    @endforeach
+                  </select>
+                  <span id="modal_clean_db_form_year_error" class="help-block"></span>
+                </div>
+                <div class="form-group">
+                  <div id="modal_clean_db_form_hidden">
+                  </div>
+                </div>
+              </form>  
+            </div>
+              
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" id="modal_clean_db_create_update_button" class="btn btn-success">Clean</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Modal -->
 
     </div>
   </div>
@@ -222,8 +274,13 @@
     });
 
     // DB cleanup
+    // Init select2 boxes in the modal
+    $("#modal_clean_db_form_year").select2({
+        allowClear: false
+    });
+
     $(document).on('click', '#db_cleanup', function () {
-      
+      $('#modal_clean_db').modal("show");
     });
 
     // Factory reset
