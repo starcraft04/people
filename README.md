@@ -8,9 +8,14 @@ Those are the steps used on a Debian 10
     sudo apt-get update
     sudo apt-get install apache2 php7.3 mariadb-server-10.3 libapache2-mod-php7.3 php7.3-mysql
 ```
-2) Install PHPmyadmin (optionnal if you need to work on the database)
+   If you need to setup your DB for the first time, use
 ```
-    sudo apt-get install phpmyadmin
+   sudo mysql_secure_installation
+```
+2) Configure the database to have a db for the tool and a user pass to access it
+```
+    sudo mysql
+    CREATE DATABASE <db_name>;
 ```
 3) Install Git
 ```
@@ -46,23 +51,18 @@ Those are the steps used on a Debian 10
 ```
     mv .env.example .env
 ```
-9) Install composer dependencies
+9) Create an application key
 ```
-    composer install --prefer-dist
+    php artisan key:generate
 ```
-10) Create an application key
-```
-    sudo php artisan key:generate
-```
-11) Go in phpmyadmin and create a database name "people"
-12) Edit .env
-    > Update Application key eg: "base64:26pmIRt/R7deEbuTNjlIlugejU++DpXLfKKLuAAAAAA="
-    > Enter information about MySQL database credentials 
-13) Restart apache
+10) Edit .env
+    > Enter information about MySQL database credentials
+    > Enter location of mysqldump executable (usually in /usr/bin/)
+11) Restart apache
 ```
     sudo service apache2 restart
 ```
-14) Edit /etc/apache2/apache2.conf
+12) Edit /etc/apache2/apache2.conf
     > change from
     ```
     <Directory /var/www/>
@@ -88,18 +88,15 @@ Those are the steps used on a Debian 10
     ```
     sudo service apache2 restart
     ```
-15) Go to .../public/niceartisan/
+13) Upgrade DB and use the seeds to create a user admin with the basic rights (admin@orange.com // Welcome1)
 
-  >  do migrate
-  >  do db seed
-  ```
-    php artisan migrate --seed
-  ```
+  >  php artisan migrate
+  >  php artisan db:seed --class=DatabaseSeeder
   > If reset is not working, do
 ```
     php composer dump-autoload
 ```
-16) Modify your php.ini file (for php 7, located at: /etc/php/7.0/apache2/php.ini)
+14) Modify your php.ini file (for php 7, located at: /etc/php/7.3/apache2/php.ini)
 ```
     Upload_max_filesize  - 15 M
     Max_input_time  - 600
@@ -107,27 +104,12 @@ Those are the steps used on a Debian 10
     Max_execution_time -  600
     Post_max_size - 15 M
 ```
-17) Install zip support for the Excel file module to work
-```
-    sudo apt-get install php7.0-zip
-    sudo service apache2 restart
-```
-18) In order to make sure that the git update button works, please enter the following
+15) In order to make sure that the git update button works, please enter the following
 ```
     sudo visudo
 ```
   > Add the line: git ALL=(www-data) /usr/bin/git pull
-19) run mysqldump --version to make sure it is installed or install it if not already done
-```
-    sudo apt-get install mysql-client
-```
-20) if you are going to use the automatic backup function, then you need to enter this in your cron
+16) if you are going to use the automatic backup function, then you need to enter this in your cron
 ```
     * * * * * php /path-to-your-project/artisan schedule:run >> /dev/null 2>&1
-```
-21) if you need to change the frequency of automatic backups, edit app/console/kernel.php
-22) the backups will be stored in storage/app/backup/ and you need to make sure to modify the access to 2 folders:
-```
-    sudo chmod a+rwx /var/www/html/storage/app/backup
-    sudo chmod a+rwx /var/www/html/storage/laravel-backups
 ```
