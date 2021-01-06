@@ -2,39 +2,45 @@ This tool will help on people management
 
 Install
 _______
-For Linux Ubuntu
-1) Install LAMP with
+Those are the steps used on a Debian 10
+1) Install apache, php and mysql
 ```
     sudo apt-get update
-    sudo apt-get install apache2 php5 mysql-server libapache2-mod-php5 php5-mysql
+    sudo apt-get install apache2 php7.3 mariadb-server-10.3 libapache2-mod-php7.3 php7.3-mysql
 ```
-2) Install PHPmyadmin
+2) Install PHPmyadmin (optionnal if you need to work on the database)
 ```
     sudo apt-get install phpmyadmin
 ```
-3) Changed owner and group of www with
+3) Install Git
+```
+    sudo apt-get install git
+```
+4) Install the application (go in the appropriate directory first, eg: /var/www/html)
+```
+    sudo git clone https://github.com/starcraft04/people/ .
+```
+5) Install composer (attention, go to the composer website and install from there don't use apt as it doesn't install latest version)
+```
+    https://getcomposer.org/download/
+    When you have composer.phar, rename to composer and move to /usr/bin/composer
+```
+6) Changed owner and group of www with
 ```
     sudo chgrp -R <user> /var/www/html/
     sudo chown -R <user> /var/www/html/
     sudo chmod a+w -R /var/www/html/bootstrap/cache/
     sudo chmod a+w -R /var/www/html/storage/
 ```
-4) Install Git
-```
-    sudo apt-get install git
-```
-5) Install the application
-```
-    sudo git clone https://github.com/starcraft04/people/ .
-```
-6) Install composer
-```
-    sudo apt-get install composer
-```
 7) Execute composer to install necessary applications for Laravel 5
 ```
-    sudo composer install
     sudo composer update
+```
+   if you are missing some php packages, it could be:
+```
+    sudo apt-get install php7.3-xml
+    sudo apt-get install php7.3-gd
+    sudo apt-get install php7.3-zip
 ```
 8) Rename .env.example into .env with
 ```
