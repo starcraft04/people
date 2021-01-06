@@ -6,9 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'NXP' => array($vendorDir . '/nxp/math-executor/src'),
     'Mockery' => array($vendorDir . '/mockery/mockery/library'),
-    'Highlight\\' => array($vendorDir . '/scrivo/highlight.php'),
-    'HighlightUtilities\\' => array($vendorDir . '/scrivo/highlight.php'),
+    'HTMLPurifier' => array($vendorDir . '/ezyang/htmlpurifier/library'),
     'Doctrine\\DBAL\\' => array($vendorDir . '/doctrine/dbal/lib'),
 );

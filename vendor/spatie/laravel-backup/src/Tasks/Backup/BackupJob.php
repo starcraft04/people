@@ -19,6 +19,8 @@ use Spatie\TemporaryDirectory\TemporaryDirectory;
 
 class BackupJob
 {
+    public const FILENAME_FORMAT = 'Y-m-d-H-i-s.\z\i\p';
+
     /** @var \Spatie\Backup\Tasks\Backup\FileSelection */
     protected $fileSelection;
 
@@ -58,7 +60,8 @@ class BackupJob
         $this->dbDumpers = $this->dbDumpers->filter(
             function (DbDumper $dbDumper, string $connectionName) use ($allowedDbNames) {
                 return in_array($connectionName, $allowedDbNames);
-            });
+            }
+        );
 
         return $this;
     }
@@ -79,7 +82,7 @@ class BackupJob
 
     public function setDefaultFilename(): self
     {
-        $this->filename = Carbon::now()->format('Y-m-d-H-i-s').'.zip';
+        $this->filename = Carbon::now()->format(static::FILENAME_FORMAT);
 
         return $this;
     }

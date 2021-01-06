@@ -283,6 +283,10 @@
       $('#modal_clean_db').modal("show");
     });
 
+    $(document).on('click', '#modal_clean_db_create_update_button', function () {
+      $('#modal_clean_db').modal("show");
+    });
+
     // Factory reset
     $(document).on('click', '#factory_reset', function () {
       bootbox.confirm("Are you sure want to factory reset? Attention, the admin password will be set to Welcome1", function(result) {

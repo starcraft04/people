@@ -20,6 +20,11 @@ class DbDumperFactory
     public static function createFromConnection(string $dbConnectionName): DbDumper
     {
         $parser = new ConfigurationUrlParser();
+
+        if (config("database.connections.{$dbConnectionName}") === null) {
+            throw CannotCreateDbDumper::unsupportedDriver($dbConnectionName);
+        }
+
         try {
             $dbConfig = $parser->parseConfiguration(config("database.connections.{$dbConnectionName}"));
         } catch (Exception $e) {
