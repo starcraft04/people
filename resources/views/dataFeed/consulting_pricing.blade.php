@@ -35,7 +35,7 @@
 
       <!-- Window content -->
       <div class="x_content">
-          {!! Form::open(['url' => 'consulting_pricing/uploadFile', 'method' => 'post', 'class' => 'form-horizontal', 'files' => true]) !!}
+          {!! Form::open(['url' => 'consulting_pricing_uploadFile', 'method' => 'post', 'class' => 'form-horizontal', 'files' => true]) !!}
 
           <div class="row">
             <div class="form-group col-md-12">

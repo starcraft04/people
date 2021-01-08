@@ -125,8 +125,8 @@ Route::group(['middleware' => ['auth', 'general','last_login']], function () {
 
     //Consulting Pricing
     //  Main pricing list
-    Route::get('consulting_pricing/upload', ['uses' => 'ConsultingPricingController@upload', 'as' => 'ConsultingPricingUpload', 'middleware' => ['permission:consulting_pricing_upload']]);
-    Route::post('consulting_pricing/uploadFile', ['uses' => 'ConsultingPricingController@uploadFile', 'middleware' => ['permission:consulting_pricing_upload']]);
+    Route::get('consulting_pricing_upload', ['uses' => 'ConsultingPricingController@upload', 'as' => 'ConsultingPricingUpload', 'middleware' => ['permission:consulting_pricing_upload']]);
+    Route::post('consulting_pricing_uploadFile', ['uses' => 'ConsultingPricingController@uploadFile', 'middleware' => ['permission:consulting_pricing_upload']]);
 
     //Activity
     //  Main activity list
