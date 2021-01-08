@@ -14,6 +14,7 @@ use NXP\MathExecutor;
 use App\Http\Controllers\Auth\AuthUsersForDataView;
 use App\Customer;
 use App\Project;
+use App\ConsultingPricing;
 
 class LoeController extends Controller
 {
@@ -53,6 +54,19 @@ class LoeController extends Controller
             $col_cons->groupBy('consultant.name');
             $col_cons->orderBy('consultant.name','asc');
             $data_col_cons = $col_cons->get();
+            foreach ($data_col_cons as $key => $cons) {
+                // If all validation test are good we execute the create
+                $cons_price = ConsultingPricing::where('country',$cons->location)->where('role',$cons->seniority)->first();
+                if (!empty($cons_price)) {
+                    $price = $cons_price->unit_price;
+                    $cost = $cons_price->unit_cost;
+                } else {
+                    $price = 0;
+                    $cost = 0;
+                }
+                $data_col_cons[$key]->price = $price;
+                $data_col_cons[$key]->cost = $cost;
+            }
 
             // Sites
             $sites = DB::table('project_loe');
@@ -79,7 +93,7 @@ class LoeController extends Controller
 
             // Consultants
             $consultants = DB::table('project_loe');
-            $consultants->select('consultant.id','consultant.project_loe_id','consultant.name','consultant.percentage','consultant.price');
+            $consultants->select('consultant.id','consultant.project_loe_id','consultant.name','consultant.percentage','consultant.price','consultant.cost');
             $consultants->join('project_loe_consultant AS consultant', 'project_loe.id', '=', 'consultant.project_loe_id');
             $consultants->where('project_id',$id);
             $consultants->orderBy('consultant.name','asc');
@@ -93,6 +107,7 @@ class LoeController extends Controller
                 }
                 $data_consultants_formatted[$row->project_loe_id][$row->name]['id'] = $row->id;
                 $data_consultants_formatted[$row->project_loe_id][$row->name]['percentage'] = $row->percentage;
+                $data_consultants_formatted[$row->project_loe_id][$row->name]['cost'] = $row->cost;
                 $data_consultants_formatted[$row->project_loe_id][$row->name]['price'] = $row->price;
             }
 
@@ -393,7 +408,16 @@ class LoeController extends Controller
                                 ->get();
 
             // If all validation test are good we execute the create
+            $cons_price = ConsultingPricing::where('country',$inputs['location'])->where('role',$inputs['seniority'])->first();
+            if (!empty($cons_price)) {
+                $price = $cons_price->unit_price;
+                $cost = $cons_price->unit_cost;
+            } else {
+                $price = 0;
+                $cost = 0;
+            }
             foreach ($loes as $key => $loe) {
+
                 $records = LoeConsultant::create(
                     [
                         'project_loe_id'=>$loe->id,
@@ -401,7 +425,8 @@ class LoeController extends Controller
                         'location'=>$inputs['location'],
                         'seniority'=>$inputs['seniority'],
                         'percentage'=>0,
-                        'price'=>0
+                        'price'=>$price,
+                        'cost'=>$cost
                     ]);
             }
             
@@ -560,6 +585,7 @@ class LoeController extends Controller
                 'name' => $consultant->name,
                 'location' => $consultant->location,
                 'seniority' => $consultant->seniority,
+                'cost' => $consultant->cost,
                 'price' => $consultant->price,
                 'percentage' => $consultant->percentage
             ]);
@@ -657,6 +683,14 @@ class LoeController extends Controller
                 $error = [];
                 $error['field'] = 'cons_percentage_'.$cons_type['name'];
                 $error['msg'] = 'Must be between 0 and 100';
+                array_push($result->errors,$error);
+            }
+
+            if ($cons_type['cost'] == null) {
+                $result->result = 'validation_errors';
+                $error = [];
+                $error['field'] = 'cons_cost_'.$cons_type['name'];
+                $error['msg'] = 'Cannot be empty';
                 array_push($result->errors,$error);
             }
 
@@ -813,11 +847,21 @@ class LoeController extends Controller
             foreach ($cons as $key => $cons_type) {
                 if ($inputs['action'] == 'update') {
                     $loe_consultant = LoeConsultant::where('project_loe_id',$loe->id)->where('name',$cons_type['name'])->first();
+                    if ($loe_consultant->cost != $cons_type['cost']) {
+                        LoeHistory::create([
+                            'project_loe_id' => $loe->id,
+                            'user_id' => Auth::user()->id,
+                            'description' => 'Value consulting type "'.$cons_type['name'].'" modified',
+                            'field_modified' => 'Cost',
+                            'field_old_value' => $loe_consultant->cost,
+                            'field_new_value' => $cons_type['cost'],
+                        ]);
+                    }
                     if ($loe_consultant->price != $cons_type['price']) {
                         LoeHistory::create([
                             'project_loe_id' => $loe->id,
                             'user_id' => Auth::user()->id,
-                            'description' => 'Value consulting type <<'.$cons_type['name'].'>> modified',
+                            'description' => 'Value consulting type "'.$cons_type['name'].'" modified',
                             'field_modified' => 'Price',
                             'field_old_value' => $loe_consultant->price,
                             'field_new_value' => $cons_type['price'],
@@ -827,7 +871,7 @@ class LoeController extends Controller
                         LoeHistory::create([
                             'project_loe_id' => $loe->id,
                             'user_id' => Auth::user()->id,
-                            'description' => 'Value consulting type <<'.$cons_type['name'].'>> modified',
+                            'description' => 'Value consulting type "'.$cons_type['name'].'" modified',
                             'field_modified' => 'Percentage',
                             'field_old_value' => $loe_consultant->percentage,
                             'field_new_value' => $cons_type['percentage'],
@@ -840,6 +884,7 @@ class LoeController extends Controller
                         'name' => $cons_type['name']
                     ],
                     [
+                        'cost' => $cons_type['cost'],
                         'price' => $cons_type['price'],
                         'percentage' => $cons_type['percentage']
                     ]

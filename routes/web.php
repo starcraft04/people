@@ -80,7 +80,7 @@ Route::group(['middleware' => ['auth', 'general','last_login']], function () {
 
     //ProfileToolsController
     Route::get('ajax_git_pull', ['uses' => 'ProfileToolsController@ajax_git_pull', 'as' => 'ajax_git_pull']);
-    Route::get('db_cleanup', ['uses' => 'ProfileToolsController@db_cleanup', 'as' => 'db_cleanup']);
+    Route::post('db_cleanup', ['uses' => 'ProfileToolsController@db_cleanup', 'as' => 'db_cleanup']);
     Route::get('factory_reset', ['uses' => 'ProfileToolsController@factory_reset', 'as' => 'factory_reset']);
     Route::get('ajax_env_app_debug/{n}', ['uses' => 'ProfileToolsController@ajax_env_app_debug', 'as' => 'ajax_env_app_debug']);
 
@@ -122,6 +122,11 @@ Route::group(['middleware' => ['auth', 'general','last_login']], function () {
     Route::get('customerDelete/{n}', ['uses' => 'CustomerController@delete', 'as' => 'customerDelete', 'middleware' => ['permission:project-delete']]);
     //  AJAX
     Route::post('listOfCustomersAjax', ['uses' => 'CustomerController@listOfCustomers', 'as' => 'listOfCustomersAjax', 'middleware' => ['permission:project-view|project-create|project-edit|project-delete']]);
+
+    //Consulting Pricing
+    //  Main pricing list
+    Route::get('consulting_pricing/upload', ['uses' => 'ConsultingPricingController@upload', 'as' => 'ConsultingPricingUpload', 'middleware' => ['permission:consulting_pricing_upload']]);
+    Route::post('consulting_pricing/uploadFile', ['uses' => 'ConsultingPricingController@uploadFile', 'middleware' => ['permission:consulting_pricing_upload']]);
 
     //Activity
     //  Main activity list

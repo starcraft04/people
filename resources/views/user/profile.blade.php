@@ -195,14 +195,14 @@
               
             <!-- Modal Body -->
             <div class="modal-body">
-              All activities before the date selected will be deleted and all projects without an activity will be deleted.
+              All activities before the year selected will be deleted and all projects without an activity will be deleted. If you only want to clean up the projects without activity, don't set a year (leave empty).
               <form id="modal_clean_db_form" role="form" method="POST" action="">
                 <div id="modal_clean_db_formgroup_year" class="col-md-6 col-sm-12 form-group">
                   <label class="control-label" for="modal_clean_db_form_year">Year</label>
                   <select class="form-control select2" style="width: 100%;" id="modal_clean_db_form_year" data-placeholder="Select a priority">
                     <option value="" ></option>
                     @foreach(config('select.year') as $key => $value)
-                    <option value="{{ $key }}" @if(date('Y')==$key)selected @endif>
+                    <option value="{{ $key }}" @if( date('Y') == $key ) selected @endif>
                       {{ $value }}
                     </option>
                     @endforeach
@@ -237,15 +237,22 @@
 <script>
   $(document).ready(function() {
 
+    // Ajax setup needed in case there is an update for revenue, comment, loe, ... tabs
+    $.ajaxSetup({
+      headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    });
+
     // git pull
     $(document).on('click', '#git_pull', function () {
       $.ajax({
-          type: 'get',
-          url: "{!! route('ajax_git_pull') !!}",
-          success: function(data) {
-            $("#result").empty();
-            $("#result").append(data);
-          }
+        type: 'get',
+        url: "{!! route('ajax_git_pull') !!}",
+        success: function(data) {
+          $("#result").empty();
+          $("#result").append(data);
+        }
       });
     });
 
@@ -276,7 +283,7 @@
     // DB cleanup
     // Init select2 boxes in the modal
     $("#modal_clean_db_form_year").select2({
-        allowClear: false
+        allowClear: true
     });
 
     $(document).on('click', '#db_cleanup', function () {
@@ -284,7 +291,22 @@
     });
 
     $(document).on('click', '#modal_clean_db_create_update_button', function () {
-      $('#modal_clean_db').modal("show");
+      var year = $('select#modal_clean_db_form_year').children("option:selected").val();
+      var data = {'year':year};
+
+      $.ajax({
+            type: 'post',
+            url: "{!! route('db_cleanup') !!}",
+            data:data,
+            dataType: 'json',
+            success: function(data) {
+              console.log(data);
+              $("#result").empty();
+              $("#result").append('Database cleaned up!');
+            }
+      });
+
+      $('#modal_clean_db').modal("hide");
     });
 
     // Factory reset

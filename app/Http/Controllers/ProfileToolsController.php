@@ -6,6 +6,8 @@ use App\Http\Requests;
 use Auth;
 use DB;
 use App\User;
+use App\Project;
+use App\Activity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -74,10 +76,41 @@ class ProfileToolsController extends Controller
         }
     }
 
-    public function db_cleanup()
+    public function db_cleanup(Request $request)
     {
         if (Auth::user()->name == 'admin') {
+            $result = new \stdClass();
+            $result->result = 'success';
+            $result->msg = 'DB updated successfully';
+
+            $inputs = $request->all();
+
+            $year = $inputs['year'];
+
+            if (!empty($year)) {
+                Activity::where('year','<',$year)->delete();
+            }
+
+            $projects = DB::table('projects')
+                        ->select('projects.id AS id','activities.id AS activity_id')
+                        ->leftjoin('activities','projects.id','=','activities.project_id')
+                        ->whereNull('activities.id')
+                        ->get();
             
+            foreach ($projects as $key => $project) {
+                DB::table('actions')->where('project_id',$project->id)->delete();
+                DB::table('projects_comments')->where('project_id',$project->id)->delete();
+                DB::table('project_revenues')->where('project_id',$project->id)->delete();
+                $loes = DB::table('project_loe')->where('project_id',$project->id)->get();
+                foreach ($loes as $key => $loe) {
+                    DB::table('project_loe_consultant')->where('project_loe_id',$loe->id)->delete();
+                    DB::table('project_loe_history')->where('project_loe_id',$loe->id)->delete();
+                    DB::table('project_loe_site')->where('project_loe_id',$loe->id)->delete();
+                }
+                Project::destroy($project->id);
+            }
+
+            return json_encode($result);
         }
     }
 

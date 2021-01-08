@@ -2992,6 +2992,12 @@ $(document).ready(function() {
                 </td>`;
         html += '<td></td>';
         html += `<td style="min-width:120px;">
+                  <div id="loe_div_cons_cost_`+cons.name+`" class="form-group">
+                    <input type="text" data-name="`+cons.name+`" class="loe_cons_cost form-control" placeholder="Cost" value="0"></input>
+                    <span id="loe_cons_cost_`+cons.name+`_error" class="help-block"></span>
+                  </div>
+                </td>`;
+        html += `<td style="min-width:120px;">
                   <div id="loe_div_cons_price_`+cons.name+`" class="form-group">
                     <input type="text" data-name="`+cons.name+`" class="loe_cons_price form-control" placeholder="Price" value="0"></input>
                     <span id="loe_cons_price_`+cons.name+`_error" class="help-block"></span>
@@ -2999,6 +3005,8 @@ $(document).ready(function() {
                 </td>`;
       }
 
+      html += '<td></td>';
+      html += '<td></td>';
       html += '<td></td>';
       html += '<td></td>';
       html += '</tr>';
@@ -3117,15 +3125,31 @@ $(document).ready(function() {
             } else {
               fill_price = 0;
             }
+            if (loe_data.data.cons[id][cons.name].cost != null) {
+              fill_cost = loe_data.data.cons[id][cons.name].cost;
+            } else {
+              fill_cost = 0;
+            }
           } else {
             fill_percent = 0;
             fill_price = 0;
+            fill_cost = 0;
           }
           $('input.loe_cons_percentage[data-name="'+cons.name+'"]').val(fill_percent);
+          $('input.loe_cons_cost[data-name="'+cons.name+'"]').val(fill_cost);
           $('input.loe_cons_price[data-name="'+cons.name+'"]').val(fill_price);
         }
-        
         tr.remove();
+      } else {
+        loe_data.col.cons.forEach(fill_cons_update_data);
+        function fill_cons_update_data (cons){
+          fill_percent = 0;
+          fill_cost = cons.cost;
+          fill_price = cons.price;
+          $('input.loe_cons_percentage[data-name="'+cons.name+'"]').val(fill_percent);
+          $('input.loe_cons_cost[data-name="'+cons.name+'"]').val(fill_cost);
+          $('input.loe_cons_price[data-name="'+cons.name+'"]').val(fill_price);
+        }
       }
     });
 
@@ -3193,6 +3217,7 @@ $(document).ready(function() {
         cons_data[index] = {};
         cons_data[index].name = cons.name;
         cons_data[index].percentage = $('input.loe_cons_percentage[data-name="'+cons.name+'"]').val();
+        cons_data[index].cost = $('input.loe_cons_cost[data-name="'+cons.name+'"]').val();
         cons_data[index].price = $('input.loe_cons_price[data-name="'+cons.name+'"]').val();
       }
 
@@ -3307,8 +3332,6 @@ $(document).ready(function() {
           });
     });
 
-
-
     function getLoeList(){
       $('#LoeTable').empty();
       $.ajax({
@@ -3349,12 +3372,14 @@ $(document).ready(function() {
             html += '<th rowspan="3" style="min-width:150px;">'+'Start date'+'</th>';
             html += '<th rowspan="3" style="min-width:150px;">'+'End date'+'</th>';
             if (data.col.cons.length>0) {
-              html += '<th colspan="'+3*data.col.cons.length+'">'+'Consulting type'+'</th>';
+              html += '<th colspan="'+4*data.col.cons.length+'">'+'Consulting type'+'</th>';
             }
             
             html += '<th rowspan="3">'+'Total Loe'+'</th>';
             if (data.col.cons.length>0) {
-              html += '<th rowspan="3">'+'Total Price'+'</th>';
+              html += '<th rowspan="3">'+'Total Cost (€)'+'</th>';
+              html += '<th rowspan="3">'+'Total Price (€)'+'</th>';
+              html += '<th rowspan="3">'+'Margin (%)'+'</th>';
             }
             html += '</tr>';
             //endregion
@@ -3376,7 +3401,7 @@ $(document).ready(function() {
             });
             
             data.col.cons.forEach(function(cons){
-              html += '<th colspan="3" style="min-width:180px;">'
+              html += '<th colspan="4" style="min-width:180px;">'
               html += cons.name;
               html += '<br>';
               if (cons.seniority != null) {
@@ -3413,7 +3438,8 @@ $(document).ready(function() {
             data.col.cons.forEach(function(cons){
               html += '<th>%</th>';
               html += '<th>MD</th>';
-              html += '<th>€</th>';
+              html += '<th>Cost (€)</th>';
+              html += '<th>Price (€)</th>';
             });
 
             html += '</tr>';
@@ -3422,6 +3448,7 @@ $(document).ready(function() {
             //endregion
             // Data filling
             var grand_total_loe = 0;
+            var grand_total_cost = 0;
             var grand_total_price = 0;
             var total_loe = 0;
 
@@ -3537,12 +3564,18 @@ $(document).ready(function() {
               html += td_no_null(row.end_date);
 
               var total_price = 0;
+              var total_cost = 0;
               data.col.cons.forEach(fill_cons_data);
               function fill_cons_data (cons){
                 
                 if (data.data.cons.hasOwnProperty(row.id) && data.data.cons[row.id].hasOwnProperty(cons.name)) {
                   //console.log(site.name+': '+data.data.site[row.id][site.name]['quantity']);
                   fill_percent = data.data.cons[row.id][cons.name].percentage;
+                  if (data.data.cons[row.id][cons.name].cost != null) {
+                    fill_cost = data.data.cons[row.id][cons.name].cost;
+                  } else {
+                    fill_cost = 0;
+                  }
                   if (data.data.cons[row.id][cons.name].price != null) {
                     fill_price = data.data.cons[row.id][cons.name].price;
                   } else {
@@ -3556,16 +3589,21 @@ $(document).ready(function() {
                   if (fill_price != null) {
                     total_price += fill_md*fill_price;
                   }
+                  if (fill_cost != null) {
+                    total_cost += fill_md*fill_cost;
+                  }
                   
                 } else {
                   //console.log(site.name+': -');
                   fill_percent = 0;
                   fill_md = 0;
+                  fill_cost = 0;
                   fill_price = 0;
                 }
-                html += '<td>'+fill_percent+' %</td>';
+                html += '<td>'+fill_percent+'</td>';
                 html += '<td>'+fill_md+' </td>';
-                html += '<td>'+fill_price+' €</td>';
+                html += '<td>'+fill_cost.toFixed(1)+'</td>';
+                html += '<td>'+fill_price.toFixed(1)+'</td>';
               }
 
               if (row.recurrent == 0) {
@@ -3582,9 +3620,17 @@ $(document).ready(function() {
               grand_total_loe += total_loe;
               
               if (data.col.cons.length>0) {
-                html += td_no_null(total_price, ' €');
+                html += td_no_null(total_cost.toFixed(1), '');
+                html += td_no_null(total_price.toFixed(1), '');
+                if (total_price > 0) {
+                  gross_profit_margin = 100*(total_price-total_cost)/total_price;
+                } else {
+                  gross_profit_margin = 0;
+                }
+                html += td_no_null(gross_profit_margin.toFixed(1), '');
               }
               
+              grand_total_cost += total_cost;
               grand_total_price += total_price;
 
               html += '</tr>';
@@ -3593,7 +3639,7 @@ $(document).ready(function() {
             //endregion
             //region Footer
             html += '<tfoot>';
-            number_of_cols = 13+2*data.col.site.length+3*data.col.cons.length-1;
+            number_of_cols = 13+2*data.col.site.length+4*data.col.cons.length-1;
             //console.log(number_of_cols);
             //console.log(data.col.site.length);
             //console.log(data.col.cons.length);
@@ -3614,8 +3660,19 @@ $(document).ready(function() {
             }
 
             if (data.col.cons.length>0) {
+              if (grand_total_cost != null && grand_total_cost != '') {
+                html += '<td>'+grand_total_cost.toFixed(1)+'</td>';
+              } else {
+              html += '<td></td>';
+              }
               if (grand_total_price != null && grand_total_price != '') {
-                html += '<td>'+grand_total_price+' €</td>';
+                html += '<td>'+grand_total_price.toFixed(1)+'</td>';
+              } else {
+              html += '<td></td>';
+              }
+              if (grand_total_cost != null && grand_total_cost != '' && grand_total_price != null && grand_total_price != '' && grand_total_price > 0) {
+                grand_total_gpm = 100*(grand_total_price-grand_total_cost)/grand_total_price;
+                html += '<td>'+grand_total_gpm.toFixed(1)+'</td>';
               } else {
               html += '<td></td>';
               }

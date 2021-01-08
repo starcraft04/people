@@ -1,35 +1,35 @@
 <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
   <div class="menu_section">
 
-    @canany(['otl-upload','samba-upload','revenue-upload','customer-upload'])
+    @canany(['otl-upload','samba-upload','revenue-upload','customer-upload','consulting_pricing_upload'])
     <ul class="nav side-menu">
       <li><a><i class="fa fa-home"></i>DB Feed <span class="fa fa-chevron-down"></span></a>
         <ul class="nav child_menu">
           @can('otl-upload')
-            <li><a href="{!!route('otluploadform')!!}">Prime upload</a></li>
+            <li><a href="{!!route('otluploadform')!!}">Prime</a></li>
           @endcan
           @can('samba-upload')
-            <li><a href="{!!route('sambauploadform')!!}">CL upload</a></li>
+            <li><a href="{!!route('sambauploadform')!!}">CL</a></li>
           @endcan
           @can('samba-upload')
             <li><a href="{!!route('sambauserupload')!!}">CL user synch</a></li>
           @endcan
           @can('revenue-upload')
-            <li><a href="{!!route('revenueuploadform')!!}">Revenue upload</a></li>
+            <li><a href="{!!route('revenueuploadform')!!}">Revenue</a></li>
           @endcan
           @can('customer-upload')
-            <li><a href="{!!route('customeruploadform')!!}">Customer upload</a></li>
+            <li><a href="{!!route('customeruploadform')!!}">Customer</a></li>
+          @endcan
+          @can('consulting_pricing_upload')
+          <li><a href="{!!route('ConsultingPricingUpload')!!}">Consulting Pricing</a></li>
           @endcan
         </ul>
       </li>
     </ul>
     @endcan
 
-    @canany(['user-view','user-edit','user-create','user-delete',
-    'role-view','role-edit','role-create','role-delete',
-    'project-view','project-edit','project-create','project-delete',
-    'activity-view','activity-edit','activity-create','activity-delete',
-    'skills-addnew','backup-create','backup-download','backup-delete'
+    @canany(['user-view','role-view','project-view','activity-view','activity-edit','activity-create','activity-delete',
+    'skills-addnew','backup-download'
     ])
     <ul class="nav side-menu">
       <li><a><i class="fa fa-edit"></i>DB Management <span class="fa fa-chevron-down"></span></a>
