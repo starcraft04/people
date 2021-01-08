@@ -680,12 +680,29 @@
       }
     });
 
+    var editable_old_value = ''
+    // This is to select the text when you click inside a td that is editable
+    $(document).on('click', 'td.editable', function() {
+        var range = document.createRange();
+        range.selectNodeContents(this);  
+        var sel = window.getSelection(); 
+        sel.removeAllRanges(); 
+        sel.addRange(range);
+        editable_old_value = $(this).html();
+    });
+
     $(document).on('keypress', '.editable', function(e){
       //console.log('editing');
       if (e.which  == 13) { //Enter key's keycode
         update_activity($(this));
         return false;
       }
+    });
+
+
+    $(document).on('blur', '.editable', function(e){
+      //console.log('editing');
+      update_activity($(this));
     });
 
     function update_activity(td) {
@@ -695,60 +712,62 @@
       console.log(td.data('colonne'));
       console.log(td.html());
       console.log(header_months[td.data('colonne')-1]); */
-      var td;
-      var data = {
-        'id':td.data('id'),
-        'project_id':td.data('project_id'),
-        'user_id':td.data('user_id'),
-        'year':header_months[td.data('colonne')-1].year,
-        'month':header_months[td.data('colonne')-1].month,
-        'task_hour':td.html()
-      }
+      if (td.html() != editable_old_value) {
+        var td;
+        var data = {
+          'id':td.data('id'),
+          'project_id':td.data('project_id'),
+          'user_id':td.data('user_id'),
+          'year':header_months[td.data('colonne')-1].year,
+          'month':header_months[td.data('colonne')-1].month,
+          'task_hour':td.html()
+        }
 
-      $.ajax({
-            type: 'POST',
-            url: "{!! route('updateActivityAjax') !!}",
-            data:data,
-            dataType: 'json',
-            success: function(data) {
-              //console.log(data);
-              // SUCCESS
-              if (data.result == 'success'){
-                if (data.action == 'create') {
-                  td.attr('data-id', data.id); 
-                }
-                td.removeClass();
-                td.addClass('editable');
-                if (td.html() == 0) {
-                  td.addClass('zero');
+        $.ajax({
+              type: 'POST',
+              url: "{!! route('updateActivityAjax') !!}",
+              data:data,
+              dataType: 'json',
+              success: function(data) {
+                //console.log(data);
+                // SUCCESS
+                if (data.result == 'success'){
+                  if (data.action == 'create') {
+                    td.attr('data-id', data.id); 
+                  }
+                  td.removeClass();
+                  td.addClass('editable');
+                  if (td.html() == 0) {
+                    td.addClass('zero');
+                  } else {
+                    td.addClass('forecast');
+                  }
+                  td.attr('data-value', td.html()); 
+                  td.addClass('update_success');
+                  setTimeout(function () {
+                    td.removeClass('update_success');
+                  }, 1000);
                 } else {
-                  td.addClass('forecast');
+                  // ERROR
+                  td.html(td.data('value'));
+                  td.addClass('update_error');
+                  setTimeout(function () {
+                    td.removeClass('update_error');
+                  }, 2000);
+
+                  box_type = 'danger';
+                  message_type = 'error';
+
+                  $('#flash-message').empty();
+                  var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+                  $('#flash-message').append(box);
+                  $('#delete-message').delay(2000).queue(function () {
+                      $(this).addClass('animated flipOutX')
+                  });
                 }
-                td.attr('data-value', td.html()); 
-                td.addClass('update_success');
-                setTimeout(function () {
-                  td.removeClass('update_success');
-                }, 2000);
-              } else {
-                // ERROR
-                td.html(td.data('value'));
-                td.addClass('update_error');
-                setTimeout(function () {
-                  td.removeClass('update_error');
-                }, 2000);
-
-                box_type = 'danger';
-                message_type = 'error';
-
-                $('#flash-message').empty();
-                var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
-                $('#flash-message').append(box);
-                $('#delete-message').delay(2000).queue(function () {
-                    $(this).addClass('animated flipOutX')
-                });
               }
-            }
-      });
+        });
+      }
 
     }
     
