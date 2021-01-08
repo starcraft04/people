@@ -682,7 +682,7 @@
 
     var editable_old_value = ''
     // This is to select the text when you click inside a td that is editable
-    $(document).on('click', 'td.editable', function() {
+    $(document).on('focus', 'td.editable', function() {
         var range = document.createRange();
         range.selectNodeContents(this);  
         var sel = window.getSelection(); 
