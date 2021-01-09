@@ -842,9 +842,10 @@ h3:after {
                         <li class="dropdown-header">Report</li>
                         <li><a class="dropdown-selection loe_history" href="#">History</a></li>
                         <li><a class="dropdown-selection loe_table_to_excel" href="#">Export to Excel</a></li>
-                        <li class="dropdown-header">Mass Update</li>
+                        <li class="dropdown-header">Tools</li>
+                        <li><a class="dropdown-selection hide_columns" href="#">Hide Columns</a></li>
                         @if (Auth::user()->can('projectLoe-signoff'))
-                        <li><a class="dropdown-selection loe_mass_signoff" href="#">Signoff</a></li>
+                        <li><a class="dropdown-selection loe_mass_signoff" href="#">Mass Signoff</a></li>
                         @endif
                         <li class="dropdown-header">Help</li>
                         <li><a class="dropdown-selection loe_help_basic" href="#">Basic</a></li>
@@ -1037,6 +1038,32 @@ h3:after {
                   </div>
               </div>
               <!-- Help Modal -->
+
+              <!-- Loe hide Modal -->
+              <div class="modal fade" id="modal_loe_hidecol" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" style="display:table;">
+                      <div class="modal-content">
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title" id="modal_loe_hidecol_title">Hide columns</h4>
+                        </div>
+                        <!-- Modal Header -->
+                      
+                        <!-- Modal Body -->
+                        <div class="modal-body">
+                          <form id="modal_loe_hidecol_form" role="form" method="POST" action="">
+                          </form>
+                        </div>
+                          
+                        <!-- Modal Footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                  </div>
+              </div>
+              <!-- Site Modal -->
 
               <!-- History Modal -->
               <div class="modal fade" id="modal_loe_history" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -2176,6 +2203,34 @@ $(document).ready(function() {
   //region Loe
   @if($action == 'update')
     var loe_data;
+    // Now we need to check if there is colhide in cookies...
+    var load_loe_hide_cookie = Cookies.get("loe_hide_columns");
+    if (typeof load_loe_hide_cookie !== 'undefined') {
+      var colhide = JSON.parse(load_loe_hide_cookie);
+    } else {
+      var colhide = [
+      {'name':'action','hide':false},
+      {'name':'main_phase','hide':false},
+      {'name':'secondary_phase','hide':false},
+      {'name':'domain','hide':false},
+      {'name':'description','hide':false},
+      {'name':'option','hide':false},
+      {'name':'assumption','hide':false},
+      {'name':'site','hide':false},
+      {'name':'quantity','hide':false},
+      {'name':'loe_per_unit','hide':false},
+      {'name':'formula','hide':false},
+      {'name':'recurrent','hide':false},
+      {'name':'start_date','hide':false},
+      {'name':'end_date','hide':false},
+      {'name':'consulting','hide':false},
+      {'name':'total_loe','hide':false},
+      {'name':'total_cost','hide':false},
+      {'name':'total_price','hide':false},
+      {'name':'margin','hide':false}
+    ];
+    }
+
     $('#smartwizard').smartWizard({
         selected: 0, // Initial selected step, 0 = first step
         theme: 'default', // theme for the wizard, related css need to include for other than default theme
@@ -2268,6 +2323,38 @@ $(document).ready(function() {
           console.log('Error: ' + errorMessage);
         }
       });
+    });
+
+    // LoE hide columns
+    $(document).on('click', '.hide_columns', function () {
+      $('#modal_loe_hidecol_form').empty();
+      var html = '';
+      colhide.forEach(hide_columns_choice);
+      function hide_columns_choice (col,index){
+        if (col.hide) {
+          checked_val = 'checked';
+        } else {
+          checked_val = '';
+        }
+        html += '<div class="checkbox">';
+        html += '<label><input type="checkbox" data-array_id="'+index+'" class="colhidecheckbox" value="" '+checked_val+'>'+col.name+'</label>';
+        html += '</div>';
+      }
+      $('#modal_loe_hidecol_form').prepend(html);
+
+      $('#modal_loe_hidecol').modal("show");
+    });
+
+    //jQuery listen for checkbox change
+    $(document).on('change', '.colhidecheckbox', function () {
+      key = $(this).data('array_id');
+        if(this.checked) {
+          colhide[key].hide = true;
+        } else {
+          colhide[key].hide = false;
+        }
+        Cookies.set("loe_hide_columns", JSON.stringify(colhide));
+        columns_hide();
     });
 
     // HISTORY
@@ -2869,7 +2956,7 @@ $(document).ready(function() {
       tr = $(this).closest('tr');
       
       html = '<tr id="loe_form">';
-      html += `<td>
+      html += `<td data-colname="action">
                   
               </td>`;
 
@@ -2882,19 +2969,19 @@ $(document).ready(function() {
       }
 
       //fields
-      html += `<td>
+      html += `<td data-colname="main_phase">
                 <div id="loe_div_main_phase" class="form-group">
                   <input type="text" id="loe_main_phase" class="form-control" placeholder="Main phase"></input>
                   <span id="loe_main_phase_error" class="help-block"></span>
                 </div>
               </td>`;
-      html += `<td>
+      html += `<td data-colname="secondary_phase">
                 <div id="loe_div_secondary_phase" class="form-group">
                   <input type="text" id="loe_secondary_phase" class="form-control" placeholder="Secondary phase"></input>
                   <span id="loe_secondary_phase_error" class="help-block"></span>
                 </div>
               </td>`;
-      html += `<td>
+      html += `<td data-colname="domain">
                 <div id="loe_div_domain" class="form-group">
                   <select class="form-control select2" style="width: 100%;" id="loe_domain" data-placeholder="Select a domain">
                     <option value="" ></option>
@@ -2907,19 +2994,19 @@ $(document).ready(function() {
                   <span id="loe_domain_error" class="help-block"></span>
                 </div>
               </td>`;
-      html += `<td>
+      html += `<td data-colname="description">
                 <div id="loe_div_description" class="form-group">
                   <textarea type="text" id="loe_description" class="form-control" placeholder="Description" rows="4"></textarea>
                   <span id="loe_description_error" class="help-block"></span>
                 </div>
               </td>`;
-      html += `<td>
+      html += `<td data-colname="option">
                 <div id="loe_div_option" class="form-group">
                   <input type="text" id="loe_option" class="form-control" placeholder="Option"></input>
                   <span id="loe_option_error" class="help-block"></span>
                 </div>
               </td>`;
-      html += `<td>
+      html += `<td data-colname="assumption">
                 <div id="loe_div_assumption" class="form-group">
                   <textarea type="text" id="loe_assumption" class="form-control" placeholder="Assumption" rows="4"></textarea>
                   <span id="loe_assumption_error" class="help-block"></span>
@@ -2928,13 +3015,13 @@ $(document).ready(function() {
 
       loe_data.col.site.forEach(fill_site_inputs);
       function fill_site_inputs (site){
-        html += `<td>
+        html += `<td data-colname="site">
                   <div id="loe_div_site_quantity_`+site.name+`" class="form-group">
                     <input type="text" data-name="`+site.name+`" class="loe_site_quantity form-control" placeholder="Quantity" value="1"></input>
                     <span id="loe_site_quantity_`+site.name+`_error" class="help-block"></span>
                   </div>
                 </td>`;
-        html += `<td width="200px">
+        html += `<td data-colname="site" width="200px">
                   <div id="loe_div_site_loe_per_quantity_`+site.name+`" class="form-group">
                     <input type="text" data-name="`+site.name+`" class="loe_site_loe_per_u form-control" placeholder="LoE per unit" value="0"></input>
                     <span id="loe_site_loe_per_quantity_`+site.name+`_error" class="help-block"></span>
@@ -2943,39 +3030,39 @@ $(document).ready(function() {
       }
 
 
-      html += `<td>
+      html += `<td data-colname="quantity">
                 <div id="loe_div_quantity" class="form-group">
                   <input type="text" id="loe_quantity" class="form-control" placeholder="Quantity" value="1"></input>
                   <span id="loe_quantity_error" class="help-block"></span>
                 </div>
               </td>`;
-      html += `<td>
+      html += `<td data-colname="loe_per_unit">
                 <div id="loe_div_loe_per_quantity" class="form-group">
                   <input type="text" id="loe_loe_per_u" class="form-control" placeholder="Loe per unit" value="0"></input>
                   <span id="loe_loe_per_quantity_error" class="help-block"></span>
                 </div>
               </td>`;
       if (loe_data.col.site.length>0) {
-        html += `<td>
+        html += `<td data-colname="formula">
                 <div id="loe_div_formula" class="form-group">
                   <textarea type="text" id="loe_formula" class="form-control" placeholder="Formula"></textarea>
                   <span id="loe_formula_error" class="help-block"></span>
                 </div>
               </td>`;
       } 
-      html += `<td>
+      html += `<td data-colname="recurrent">
                 <div id="loe_div_recurrent" class="form-group">
                   <input data-test="test" type="checkbox" id="loe_recurrent" class="form-group"></input>
                   <span id="loe_recurrent_error" class="help-block"></span>
                 </div>
               </td>`;
-      html += `<td>
+      html += `<td data-colname="start_date">
                 <div id="loe_div_start_date" class="form-group">
                   <input type="text" id="loe_start_date" class="form-control" placeholder="Start date"></input>
                   <span id="loe_start_date_error" class="help-block"></span>
                 </div>
               </td>`;
-      html += `<td>
+      html += `<td data-colname="end_date">
                 <div id="loe_div_end_date" class="form-group">
                   <input type="text" id="loe_end_date" class="form-control" placeholder="End date"></input>
                   <span id="loe_end_date_error" class="help-block"></span>
@@ -2984,20 +3071,20 @@ $(document).ready(function() {
 
       loe_data.col.cons.forEach(fill_cons_inputs);
       function fill_cons_inputs (cons){
-        html += `<td style="min-width:80px;">
+        html += `<td data-colname="consulting" style="min-width:80px;">
                   <div id="loe_div_cons_percentage_`+cons.name+`" class="form-group">
                     <input type="text" data-name="`+cons.name+`" class="loe_cons_percentage form-control" placeholder="Percentage" value="0"></input>
                     <span id="loe_cons_percentage_`+cons.name+`_error" class="help-block"></span>
                   </div>
                 </td>`;
-        html += '<td></td>';
-        html += `<td style="min-width:120px;">
+        html += '<td data-colname="consulting"></td>';
+        html += `<td data-colname="consulting" style="min-width:120px;">
                   <div id="loe_div_cons_cost_`+cons.name+`" class="form-group">
                     <input type="text" data-name="`+cons.name+`" class="loe_cons_cost form-control" placeholder="Cost" value="0"></input>
                     <span id="loe_cons_cost_`+cons.name+`_error" class="help-block"></span>
                   </div>
                 </td>`;
-        html += `<td style="min-width:120px;">
+        html += `<td data-colname="consulting" style="min-width:120px;">
                   <div id="loe_div_cons_price_`+cons.name+`" class="form-group">
                     <input type="text" data-name="`+cons.name+`" class="loe_cons_price form-control" placeholder="Price" value="0"></input>
                     <span id="loe_cons_price_`+cons.name+`_error" class="help-block"></span>
@@ -3005,10 +3092,10 @@ $(document).ready(function() {
                 </td>`;
       }
 
-      html += '<td></td>';
-      html += '<td></td>';
-      html += '<td></td>';
-      html += '<td></td>';
+      html += '<td data-colname="total_loe"></td>';
+      html += '<td data-colname="total_cost"></td>';
+      html += '<td data-colname="total_price"></td>';
+      html += '<td data-colname="margin"></td>';
       html += '</tr>';
       
 
@@ -3151,6 +3238,8 @@ $(document).ready(function() {
           $('input.loe_cons_price[data-name="'+cons.name+'"]').val(fill_price);
         }
       }
+
+      columns_hide()
     });
 
     $(document).on('click', '.buttonLoeCancel', function () {
@@ -3332,6 +3421,43 @@ $(document).ready(function() {
           });
     });
 
+    function getBusinessDatesCount(start, end) {
+      var startDate = new Date(start);
+      var endDate = new Date(end);
+      var count = 0;
+      var curDate = startDate;
+      while (curDate <= endDate) {
+          var dayOfWeek = curDate.getDay();
+          if(!((dayOfWeek == 6) || (dayOfWeek == 0)))
+            count++;
+          curDate.setDate(curDate.getDate() + 1);
+      }
+      return count;
+    }
+
+    function td_no_null(item,end='',colname='') {
+      if (item != null && item != '') {
+        return '<td data-colname="'+colname+'">'+item+end+'</td>';
+      } else {
+        return '<td data-colname="'+colname+'"></td>';
+      }
+    }
+
+    function columns_hide() {
+      colhide.forEach(hide_columns);
+      function hide_columns (col,index){
+        if (col.hide) {
+          $('[data-colname="'+col.name+'"]').each(function(){
+            $(this).hide();
+          });
+        } else {
+          $('[data-colname="'+col.name+'"]').each(function(){
+            $(this).show();
+          });
+        }
+      }
+    }
+
     function getLoeList(){
       $('#LoeTable').empty();
       $.ajax({
@@ -3352,34 +3478,34 @@ $(document).ready(function() {
             html = '<thead>';
             //region First header
             html += '<tr>';
-            html += '<th rowspan="3" style="min-width:140px;">'+'Action'+'</th>';
-            html += '<th rowspan="3" style="min-width:150px;">'+'Main Phase'+'</th>';
-            html += '<th rowspan="3" style="min-width:150px;">'+'Secondary Phase'+'</th>';
-            html += '<th rowspan="3" style="min-width:150px;">'+'Domain'+'</th>';
-            html += '<th rowspan="3" style="min-width:250px;">'+'Description'+'</th>';
-            html += '<th rowspan="3" style="min-width:150px;">'+'Option'+'</th>';
-            html += '<th rowspan="3" style="min-width:250px;">'+'Assumption'+'</th>';
+            html += '<th rowspan="3" data-colname="action" style="min-width:140px;">'+'Action'+'</th>';
+            html += '<th rowspan="3" data-colname="main_phase" style="min-width:150px;">'+'Main Phase'+'</th>';
+            html += '<th rowspan="3" data-colname="secondary_phase" style="min-width:150px;">'+'Secondary Phase'+'</th>';
+            html += '<th rowspan="3" data-colname="domain" style="min-width:150px;">'+'Domain'+'</th>';
+            html += '<th rowspan="3" data-colname="description" style="min-width:250px;">'+'Description'+'</th>';
+            html += '<th rowspan="3" data-colname="option" style="min-width:150px;">'+'Option'+'</th>';
+            html += '<th rowspan="3" data-colname="assumption" style="min-width:250px;">'+'Assumption'+'</th>';
             if (data.col.site.length>0) {
-              html += '<th colspan="'+2*data.col.site.length+'">'+'Site calculation'+'</th>';
+              html += '<th data-colname="site" colspan="'+2*data.col.site.length+'">'+'Site calculation'+'</th>';
             }
-            html += '<th rowspan="3">'+'Quantity'+'</th>';
-            html += '<th rowspan="3">'+'LoE (per unit)<br>in days'+'</th>';
+            html += '<th data-colname="quantity" rowspan="3">'+'Quantity'+'</th>';
+            html += '<th data-colname="loe_per_unit" rowspan="3">'+'LoE<br>(per unit)<br>in days'+'</th>';
             if (data.col.site.length>0) {
-              html += '<th rowspan="3" style="min-width:150px;">'+'Formula'+'</th>';
+              html += '<th data-colname="formula" rowspan="3" style="min-width:150px;">'+'Formula'+'</th>';
             }
             
-            html += '<th rowspan="3">'+'recurrent'+'</th>';
-            html += '<th rowspan="3" style="min-width:150px;">'+'Start date'+'</th>';
-            html += '<th rowspan="3" style="min-width:150px;">'+'End date'+'</th>';
+            html += '<th data-colname="recurrent" rowspan="3">'+'recurrent'+'</th>';
+            html += '<th data-colname="start_date" rowspan="3" style="min-width:150px;">'+'Start date'+'</th>';
+            html += '<th data-colname="end_date" rowspan="3" style="min-width:150px;">'+'End date'+'</th>';
             if (data.col.cons.length>0) {
-              html += '<th colspan="'+4*data.col.cons.length+'">'+'Consulting type'+'</th>';
+              html += '<th data-colname="consulting" colspan="'+4*data.col.cons.length+'">'+'Consulting type'+'</th>';
             }
             
-            html += '<th rowspan="3">'+'Total Loe'+'</th>';
+            html += '<th data-colname="total_loe" rowspan="3">'+'Total Loe'+'</th>';
             if (data.col.cons.length>0) {
-              html += '<th rowspan="3">'+'Total Cost (€)'+'</th>';
-              html += '<th rowspan="3">'+'Total Price (€)'+'</th>';
-              html += '<th rowspan="3">'+'Margin (%)'+'</th>';
+              html += '<th data-colname="total_cost" rowspan="3">'+'Total Cost (€)'+'</th>';
+              html += '<th data-colname="total_price" rowspan="3">'+'Total Price (€)'+'</th>';
+              html += '<th data-colname="margin" rowspan="3">'+'Margin (%)'+'</th>';
             }
             html += '</tr>';
             //endregion
@@ -3387,7 +3513,7 @@ $(document).ready(function() {
             html += '<tr>';
             
             data.col.site.forEach(function(site){
-              html += '<th colspan="2">';
+              html += '<th data-colname="site" colspan="2">';
               html += '<span class="inline">'+site.name+'</span>';
               html += `<div class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-sort-desc"></i></a>
@@ -3401,7 +3527,7 @@ $(document).ready(function() {
             });
             
             data.col.cons.forEach(function(cons){
-              html += '<th colspan="4" style="min-width:180px;">'
+              html += '<th data-colname="consulting" colspan="4" style="min-width:180px;">'
               html += cons.name;
               html += '<br>';
               if (cons.seniority != null) {
@@ -3432,14 +3558,14 @@ $(document).ready(function() {
             html += '<tr>';
             
             data.col.site.forEach(function(site){
-              html += '<th>Quantity</th>';
-              html += '<th>LoE (per unit)<br>in days</th>';
+              html += '<th data-colname="site">Quantity</th>';
+              html += '<th data-colname="site">LoE<br>(per unit)<br>in days</th>';
             });
             data.col.cons.forEach(function(cons){
-              html += '<th>%</th>';
-              html += '<th>MD</th>';
-              html += '<th>Cost (€)</th>';
-              html += '<th>Price (€)</th>';
+              html += '<th data-colname="consulting">%</th>';
+              html += '<th data-colname="consulting">MD</th>';
+              html += '<th data-colname="consulting">Cost (€)</th>';
+              html += '<th data-colname="consulting">Price (€)</th>';
             });
 
             html += '</tr>';
@@ -3452,34 +3578,13 @@ $(document).ready(function() {
             var grand_total_price = 0;
             var total_loe = 0;
 
-            function getBusinessDatesCount(start, end) {
-              var startDate = new Date(start);
-              var endDate = new Date(end);
-              var count = 0;
-              var curDate = startDate;
-              while (curDate <= endDate) {
-                  var dayOfWeek = curDate.getDay();
-                  if(!((dayOfWeek == 6) || (dayOfWeek == 0)))
-                    count++;
-                  curDate.setDate(curDate.getDate() + 1);
-              }
-              return count;
-            }
-
-            function td_no_null(item,end='') {
-              if (item != null && item != '') {
-                return '<td>'+item+end+'</td>';
-              } else {
-                return '<td></td>';
-              }
-            }
             //region Body
             html += '<tbody>';
             data.data.loe.forEach(function(row){
 
               html += '<tr data-id="'+row.id+'">';
               // actions
-              html += '<td>';
+              html += '<td data-colname="action">';
               html += '<div class="btn-group btn-group-xs">';
               if ({{ Auth::user()->can('projectLoe-signoff') ? 'true' : 'false' }}){
                 if (row.signoff_user_id != null) {
@@ -3509,12 +3614,12 @@ $(document).ready(function() {
               html +='</td>';
 
 
-              html += td_no_null(row.main_phase);
-              html += td_no_null(row.secondary_phase);
-              html += td_no_null(row.domain);
-              html += td_no_null(row.description);
-              html += td_no_null(row.option);
-              html += td_no_null(row.assumption);
+              html += td_no_null(row.main_phase,'','main_phase');
+              html += td_no_null(row.secondary_phase,'','secondary_phase');
+              html += td_no_null(row.domain,'','domain');
+              html += td_no_null(row.description,'','description');
+              html += td_no_null(row.option,'','option');
+              html += td_no_null(row.assumption,'','assumption');
 
               //console.log('row: '+row.id);
               data.col.site.forEach(fill_site_data);
@@ -3529,39 +3634,39 @@ $(document).ready(function() {
                   fill_quantity = 0;
                   fill_loe_per_quantity = 0;
                 }
-                html += '<td>'+fill_quantity+'</td>';
-                html += '<td>'+fill_loe_per_quantity+'</td>';
+                html += '<td data-colname="site">'+fill_quantity+'</td>';
+                html += '<td data-colname="site">'+fill_loe_per_quantity+'</td>';
               }
 
-              html += '<td>'+row.quantity+'</td>';
-              html += '<td>'+row.loe_per_quantity+'</td>';
+              html += '<td data-colname="quantity">'+row.quantity+'</td>';
+              html += '<td data-colname="loe_per_unit">'+row.loe_per_quantity+'</td>';
 
               if (data.col.site.length>0) {
                 if (row.formula != null && row.formula != '') {
-                  html +=  '<td>';
+                  html +=  '<td data-colname="formula">';
                   html += `<div class="dropdown">
                         
-                  <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-check"></i></a>
-                        
-                        <ul class="dropdown-menu">
-                          <li class="dropdown-header">Calculation</li>
-                          <li>`+row.formula+`</li>
-                        </ul>
-                      </div>`;
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-check"></i></a>
+                            
+                            <ul class="dropdown-menu">
+                              <li class="dropdown-header">Calculation</li>
+                              <li>`+row.formula+`</li>
+                            </ul>
+                          </div>`;
                     html +=  '</td>';
                 } else {
-                  html +=  '<td></td>';
+                  html +=  '<td data-colname="formula"></td>';
                 }
               }
               
               if (row.recurrent == 1) {
-                html += '<td class="table_recurrent"><i class="fa fa-check"></i></td>';
+                html += '<td data-colname="recurrent" class="table_recurrent"><i class="fa fa-check"></i></td>';
               } else {
-                html += '<td></td>';
+                html += '<td data-colname="recurrent"></td>';
               }
               
-              html += td_no_null(row.start_date);
-              html += td_no_null(row.end_date);
+              html += td_no_null(row.start_date,'','start_date');
+              html += td_no_null(row.end_date,'','end_date');
 
               var total_price = 0;
               var total_cost = 0;
@@ -3600,10 +3705,10 @@ $(document).ready(function() {
                   fill_cost = 0;
                   fill_price = 0;
                 }
-                html += '<td>'+fill_percent+'</td>';
-                html += '<td>'+fill_md+' </td>';
-                html += '<td>'+fill_cost.toFixed(1)+'</td>';
-                html += '<td>'+fill_price.toFixed(1)+'</td>';
+                html += '<td data-colname="consulting">'+fill_percent+'</td>';
+                html += '<td data-colname="consulting">'+fill_md+' </td>';
+                html += '<td data-colname="consulting">'+fill_cost.toFixed(1)+'</td>';
+                html += '<td data-colname="consulting">'+fill_price.toFixed(1)+'</td>';
               }
 
               if (row.recurrent == 0) {
@@ -3613,21 +3718,21 @@ $(document).ready(function() {
                 //console.log(getBusinessDatesCount(row.start_date,row.end_date));
               }
               if (total_loe != null && total_loe != '') {
-                html += '<td>'+total_loe+'</td>';
+                html += '<td data-colname="total_loe">'+total_loe+'</td>';
               } else {
-                html += '<td></td>';
+                html += '<td data-colname="total_loe"></td>';
               }
               grand_total_loe += total_loe;
               
               if (data.col.cons.length>0) {
-                html += td_no_null(total_cost.toFixed(1), '');
-                html += td_no_null(total_price.toFixed(1), '');
+                html += td_no_null(total_cost.toFixed(1), '','total_cost');
+                html += td_no_null(total_price.toFixed(1), '','total_price');
                 if (total_price > 0) {
                   gross_profit_margin = 100*(total_price-total_cost)/total_price;
                 } else {
                   gross_profit_margin = 0;
                 }
-                html += td_no_null(gross_profit_margin.toFixed(1), '');
+                html += td_no_null(gross_profit_margin.toFixed(1), '','margin');
               }
               
               grand_total_cost += total_cost;
@@ -3639,42 +3744,59 @@ $(document).ready(function() {
             //endregion
             //region Footer
             html += '<tfoot>';
-            number_of_cols = 13+2*data.col.site.length+4*data.col.cons.length-1;
-            //console.log(number_of_cols);
             //console.log(data.col.site.length);
             //console.log(data.col.cons.length);
-            // Wen need to remove one column named formula in case there is no calculation
-            if (data.col.site.length == 0) {
-              number_of_cols -= 1;
+            
+            html += '<td data-colname="action">Grand Total</td>';
+            html += '<td data-colname="main_phase"></td>';
+            html += '<td data-colname="secondary_phase"></td>';
+            html += '<td data-colname="domain"></td>';
+            html += '<td data-colname="description"></td>';
+            html += '<td data-colname="option"></td>';
+            html += '<td data-colname="assumption"></td>';
+            // We need to remove one column named formula in case there is no calculation
+            for (let index = 0; index < data.col.site.length; index++) {
+              html += '<td data-colname="site"></td>';
+              html += '<td data-colname="site"></td>';
             }
-            for (let index = 0; index < number_of_cols; index++) {
-              html += '<td></td>';
+            html += '<td data-colname="quantity"></td>';
+            html += '<td data-colname="loe_per_unit"></td>';
+            if (data.col.site.length != 0) {
+              html += '<td data-colname="formula"></td>';
+            }
+            html += '<td data-colname="recurrent"></td>';
+            html += '<td data-colname="start_date"></td>';
+            html += '<td data-colname="end_date"></td>';
+            for (let index = 0; index < data.col.cons.length; index++) {
+              html += '<td data-colname="consulting"></td>';
+              html += '<td data-colname="consulting"></td>';
+              html += '<td data-colname="consulting"></td>';
+              html += '<td data-colname="consulting"></td>';
             }
 
-            html += '<td>Grand Total</td>';
 
             if (grand_total_loe != null && grand_total_loe != '') {
-              html += '<td>'+grand_total_loe+'</td>';
+              html += '<td data-colname="total_loe">'+grand_total_loe+'</td>';
             } else {
-              html += '<td></td>';
+              html += '<td data-colname="total_loe"></td>';
             }
 
             if (data.col.cons.length>0) {
               if (grand_total_cost != null && grand_total_cost != '') {
-                html += '<td>'+grand_total_cost.toFixed(1)+'</td>';
+                html += '<td data-colname="total_cost">'+grand_total_cost.toFixed(1)+'</td>';
               } else {
-              html += '<td></td>';
+              html += '<td data-colname="total_cost"></td>';
               }
               if (grand_total_price != null && grand_total_price != '') {
-                html += '<td>'+grand_total_price.toFixed(1)+'</td>';
+                html += '<td data-colname="total_price">'+grand_total_price.toFixed(1)+'</td>';
               } else {
-              html += '<td></td>';
+              html += '<td data-colname="total_price"></td>';
               }
               if (grand_total_cost != null && grand_total_cost != '' && grand_total_price != null && grand_total_price != '' && grand_total_price > 0) {
                 grand_total_gpm = 100*(grand_total_price-grand_total_cost)/grand_total_price;
-                html += '<td>'+grand_total_gpm.toFixed(1)+'</td>';
+                html += '<td data-colname="margin">'+grand_total_gpm.toFixed(1)+'</td>';
               } else {
-              html += '<td></td>';
+              html += '<td data-colname="margin"></td>';
               }
               
             }
@@ -3683,6 +3805,8 @@ $(document).ready(function() {
             //endregion
 
             $('#LoeTable').prepend(html);
+
+            columns_hide();
 
           } else {
             $('#create_loe').show();
@@ -3694,6 +3818,8 @@ $(document).ready(function() {
     }
 
     getLoeList();
+    
+
   @endif
   //endregion
 
