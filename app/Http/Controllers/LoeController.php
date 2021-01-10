@@ -670,6 +670,7 @@ class LoeController extends Controller
             array_push($result->errors,$error);
         }
         //cons not empty and percentage between 0 and 100
+        $percent_total = 0;
         foreach ($cons as $key => $cons_type) {
             if ($cons_type['percentage'] == null) {
                 $result->result = 'validation_errors';
@@ -677,13 +678,14 @@ class LoeController extends Controller
                 $error['field'] = 'cons_percentage_'.$cons_type['name'];
                 $error['msg'] = 'Cannot be empty';
                 array_push($result->errors,$error);
-            }
-            if ($cons_type['percentage'] < 0 || $cons_type['percentage'] > 100) {
+            } else if ($cons_type['percentage'] < 0 || $cons_type['percentage'] > 100) {
                 $result->result = 'validation_errors';
                 $error = [];
                 $error['field'] = 'cons_percentage_'.$cons_type['name'];
                 $error['msg'] = 'Must be between 0 and 100';
                 array_push($result->errors,$error);
+            } else {
+                $percent_total += $cons_type['percentage'];
             }
 
             if ($cons_type['cost'] == null) {
@@ -702,6 +704,16 @@ class LoeController extends Controller
                 array_push($result->errors,$error);
             }
         }
+        if ($percent_total != 0 && $percent_total != 100) {
+            foreach ($cons as $key => $cons_type) {
+                $result->result = 'validation_errors';
+                $error = [];
+                $error['field'] = 'cons_percentage_'.$cons_type['name'];
+                $error['msg'] = 'The sum must be 100';
+                array_push($result->errors,$error);
+            }
+        }
+
         //check dates when recurrent
         if ($inputs['recurrent'] == 1) {
             if ($inputs['start_date'] == null) {

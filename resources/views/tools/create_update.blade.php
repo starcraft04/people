@@ -2202,6 +2202,7 @@ $(document).ready(function() {
   
   //region Loe
   @if($action == 'update')
+    //region LoeInit
     var loe_data;
     // Now we need to check if there is colhide in cookies...
     var load_loe_hide_cookie = Cookies.get("loe_hide_columns");
@@ -2287,12 +2288,6 @@ $(document).ready(function() {
         allowClear: true
     });
 
-    // HELP
-    $(document).on('click', '.loe_help_basic', function () {
-      $('#modal_loe_help_basic').modal("show");
-      $("#smartwizard").smartWizard("currentRefresh");
-    });
-
     // LOE INIT
     $(document).on('click', '#create_loe', function () {
       $.ajax({
@@ -2324,7 +2319,17 @@ $(document).ready(function() {
         }
       });
     });
+    //endregion
 
+    //region help
+    // HELP
+    $(document).on('click', '.loe_help_basic', function () {
+      $('#modal_loe_help_basic').modal("show");
+      $("#smartwizard").smartWizard("currentRefresh");
+    });
+    //endregion
+
+    //region Loe hide columns
     // LoE hide columns
     $(document).on('click', '.hide_columns', function () {
       $('#modal_loe_hidecol_form').empty();
@@ -2344,7 +2349,7 @@ $(document).ready(function() {
 
       $('#modal_loe_hidecol').modal("show");
     });
-
+    
     //jQuery listen for checkbox change
     $(document).on('change', '.colhidecheckbox', function () {
       key = $(this).data('array_id');
@@ -2357,6 +2362,9 @@ $(document).ready(function() {
         columns_hide();
     });
 
+    //endregion
+
+    //region history
     // HISTORY
     $(document).on('click', '.loe_history', function () {
       $('#LoeHistoryTable').empty();
@@ -2426,16 +2434,35 @@ $(document).ready(function() {
     $(document).on('click', '#loe_history_excel', function () {
       $('#LoeHistoryTable').tableExport({type:'excel',fileName: 'history'});
     });
+    //endregion
 
+    //region Export table to excel
     $(document).on('click', '.loe_table_to_excel', function () {
+      project_name = $('#project_name').val();
+      d = new Date();
+      date = d.toISOString();
+      filename = 'LoE_'+project_name+'_'+date;
+      console.log(filename);
+      
+      colhide_change = false;
+      if (!colhide[0].hide) {
+        colhide[0].hide = true;
+        colhide_change = true;
+        columns_hide();
+      }
       $('.table_recurrent').empty();
       $('.table_recurrent').html('1');
-      $('#LoeTable').tableExport({type:'excel',fileName: 'loe'});
+      $('#LoeTable').tableExport({type:'excel',fileName: filename});
       $('.table_recurrent').empty();
       $('.table_recurrent').html('<i class="fa fa-check"></i>');
-      
+      if (colhide_change) {
+        colhide[0].hide = false;
+        columns_hide();
+      }
     });
+    //endregion
 
+    //region Mass signoff
     // MASS SIGNOFF
     $(document).on('click', '.loe_mass_signoff', function () {
       //console.log(loe_data.col.domains);
@@ -2493,7 +2520,9 @@ $(document).ready(function() {
             }
       });
     });
+    //endregion
 
+    //region Loe Sites
     // SITE DELETE
     $(document).on('click', '.site_delete', function () {
       var data = {'name':$(this).data('name')};
@@ -2670,7 +2699,9 @@ $(document).ready(function() {
       });
 
     });
+    //endregion
 
+    //region Loe Consulting
     // CONS DELETE
     $(document).on('click', '.cons_delete', function () {
       //console.log($(this).data('name'));
@@ -2869,7 +2900,9 @@ $(document).ready(function() {
       });
 
     });
+    //endregion
 
+    //region Row actions
     //ROW DELETE
     $(document).on('click', '.buttonLoeDelete', function () {
       //console.log($(this).data('id'));
@@ -2954,7 +2987,8 @@ $(document).ready(function() {
       $('.buttonLoeAccept').show();
       $('.buttonLoeCancel').show();
       tr = $(this).closest('tr');
-      
+
+      //region Creating the row with input fields
       html = '<tr id="loe_form">';
       html += `<td data-colname="action">
                   
@@ -3038,7 +3072,9 @@ $(document).ready(function() {
               </td>`;
       html += `<td data-colname="loe_per_unit">
                 <div id="loe_div_loe_per_quantity" class="form-group">
-                  <input type="text" id="loe_loe_per_u" class="form-control" placeholder="Loe per unit" value="0"></input>
+                  <div id="loe_loe_per_u_tooltip" class="tooltip-wrapper disabled">
+                    <input type="text" id="loe_loe_per_u" class="form-control" placeholder="Loe per unit" value="0"></input>
+                  </div>
                   <span id="loe_loe_per_quantity_error" class="help-block"></span>
                 </div>
               </td>`;
@@ -3098,7 +3134,6 @@ $(document).ready(function() {
       html += '<td data-colname="margin"></td>';
       html += '</tr>';
       
-
       tr.after(html);
 
       // Init select2 boxes in the modal
@@ -3150,12 +3185,12 @@ $(document).ready(function() {
       $('.buttonLoeCreateUpdate').hide();
       $('.buttonLoeDuplicate').hide();
       $('.buttonLoeDelete').hide();
+      //endregion
 
-      
-
+      //region Fill in the input fields in case of update
       if ($(this).data('action') == 'update') {
         var id = $(this).data('id');
-        //console.log(loe_data);
+
         loe_data.data.loe.forEach(fill_update_data);
         function fill_update_data(row) {
           if (row.id == id) {
@@ -3174,20 +3209,21 @@ $(document).ready(function() {
             
             if (loe_data.col.site.length>0) {
               $('textarea#loe_formula').val(row.formula);
-            } 
-            
+            }
+            //Now we need to disable the loe_per_u in case formula is not empty
+            //For this, we can just check with if(row.formula) which will be false in case of empty, '', null, 0, ...
 
             if (row.recurrent == 1) {
               $('input#loe_recurrent').prop('checked',true);
             }
             
-
             $('input#loe_start_date').val(row.start_date);
             $('input#loe_end_date').val(row.end_date);
           }
-
         }
+        creat_tooltip_if_formula();
 
+        //region Fill in the sites data
         loe_data.col.site.forEach(fill_site_update_data);
         function fill_site_update_data (site){
           
@@ -3202,7 +3238,9 @@ $(document).ready(function() {
           $('input.loe_site_quantity[data-name="'+site.name+'"]').val(fill_quantity);
           $('input.loe_site_loe_per_u[data-name="'+site.name+'"]').val(fill_loe_per_quantity);
         }
+        //endregion
 
+        //region Fill in the cons data
         loe_data.col.cons.forEach(fill_cons_update_data);
         function fill_cons_update_data (cons){
           if (loe_data.data.cons.hasOwnProperty(id) && loe_data.data.cons[id].hasOwnProperty(cons.name)) {
@@ -3226,7 +3264,11 @@ $(document).ready(function() {
           $('input.loe_cons_cost[data-name="'+cons.name+'"]').val(fill_cost);
           $('input.loe_cons_price[data-name="'+cons.name+'"]').val(fill_price);
         }
+        //endregion
+
         tr.remove();
+      //endregion
+      //region Fill in the input fields in case of create
       } else {
         loe_data.col.cons.forEach(fill_cons_update_data);
         function fill_cons_update_data (cons){
@@ -3238,8 +3280,25 @@ $(document).ready(function() {
           $('input.loe_cons_price[data-name="'+cons.name+'"]').val(fill_price);
         }
       }
+      //endregion
 
+      //Hide the columns that have just been created when requested by the user
       columns_hide()
+    });
+
+    function creat_tooltip_if_formula() {
+      if ($('textarea#loe_formula').val()) {
+        $("input#loe_loe_per_u").prop("disabled", true);
+        $('div#loe_loe_per_u_tooltip').tooltip({'placement': 'bottom' , 'title' : 'If formula is used, this field will be calculated!'});
+      } else {
+        $("input#loe_loe_per_u").prop("disabled", false);
+        $('div#loe_loe_per_u_tooltip').tooltip("destroy");
+      }
+    }
+
+    //Now we need to remove disable for the loe per unit in case formula is empty or not
+    $(document).on('keyup', 'textarea#loe_formula', function () {
+      creat_tooltip_if_formula();
     });
 
     $(document).on('click', '.buttonLoeCancel', function () {
@@ -3420,7 +3479,9 @@ $(document).ready(function() {
             }
           });
     });
+    //endregion
 
+    //region Show Loe
     function getBusinessDatesCount(start, end) {
       var startDate = new Date(start);
       var endDate = new Date(end);
@@ -3747,8 +3808,8 @@ $(document).ready(function() {
             //console.log(data.col.site.length);
             //console.log(data.col.cons.length);
             
-            html += '<td data-colname="action">Grand Total</td>';
-            html += '<td data-colname="main_phase"></td>';
+            html += '<td data-colname="action"></td>';
+            html += '<td data-colname="main_phase" class="grand_total">Grand Total</td>';
             html += '<td data-colname="secondary_phase"></td>';
             html += '<td data-colname="domain"></td>';
             html += '<td data-colname="description"></td>';
@@ -3776,25 +3837,25 @@ $(document).ready(function() {
 
 
             if (grand_total_loe != null && grand_total_loe != '') {
-              html += '<td data-colname="total_loe">'+grand_total_loe+'</td>';
+              html += '<td data-colname="total_loe" class="grand_total">'+grand_total_loe+'</td>';
             } else {
               html += '<td data-colname="total_loe"></td>';
             }
 
             if (data.col.cons.length>0) {
               if (grand_total_cost != null && grand_total_cost != '') {
-                html += '<td data-colname="total_cost">'+grand_total_cost.toFixed(1)+'</td>';
+                html += '<td data-colname="total_cost" class="grand_total">'+grand_total_cost.toFixed(1)+'</td>';
               } else {
               html += '<td data-colname="total_cost"></td>';
               }
               if (grand_total_price != null && grand_total_price != '') {
-                html += '<td data-colname="total_price">'+grand_total_price.toFixed(1)+'</td>';
+                html += '<td data-colname="total_price" class="grand_total">'+grand_total_price.toFixed(1)+'</td>';
               } else {
               html += '<td data-colname="total_price"></td>';
               }
               if (grand_total_cost != null && grand_total_cost != '' && grand_total_price != null && grand_total_price != '' && grand_total_price > 0) {
                 grand_total_gpm = 100*(grand_total_price-grand_total_cost)/grand_total_price;
-                html += '<td data-colname="margin">'+grand_total_gpm.toFixed(1)+'</td>';
+                html += '<td data-colname="margin" class="grand_total">'+grand_total_gpm.toFixed(1)+'</td>';
               } else {
               html += '<td data-colname="margin"></td>';
               }
@@ -3818,7 +3879,7 @@ $(document).ready(function() {
     }
 
     getLoeList();
-    
+    //endregion
 
   @endif
   //endregion

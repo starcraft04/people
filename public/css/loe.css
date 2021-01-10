@@ -13,7 +13,7 @@ table#LoeTable th{
   background-color: #f7f7f7;
 }
 
-.dropdown-header {
+.dropdown-header, .grand_total {
   font-size: 14px;
   font-weight: bold;
 }
@@ -29,3 +29,16 @@ table#LoeTable th{
   height: auto! Important;
 }
 
+.tooltip-wrapper {
+  display: inline-block; /* display: block works as well */
+}
+
+.tooltip-wrapper input[disabled] {
+  /* don't let button block mouse events from reaching wrapper */
+  pointer-events: none;
+}
+
+.tooltip-wrapper.disabled {
+  /* OPTIONAL pointer-events setting above blocks cursor setting, so set it here */
+  cursor: not-allowed;
+}
