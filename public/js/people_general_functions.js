@@ -16,6 +16,7 @@ function toCurrency(num) {
     }
     return result;
   }
+  
 function print_null(some_text) {
     if (some_text == null) {
         result = '-';

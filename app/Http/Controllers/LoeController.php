@@ -765,7 +765,6 @@ class LoeController extends Controller
                 $error['msg'] = 'Recurrent cannot be set up when formula is used';
                 array_push($result->errors,$error);
             } else {
-
                 if ($one_site_empty) {
                     $result->result = 'validation_errors';
                     $error = [];
@@ -774,14 +773,15 @@ class LoeController extends Controller
                     array_push($result->errors,$error);
                 } else {
                     foreach ($sites as $key => $site) {
-                        $new_formula = str_replace("{{".$site['name']."}}",$site['quantity']*$site['loe_per_quantity'],$new_formula);
+                        $product = $site['quantity']*$site['loe_per_quantity'];
+                        $new_formula = str_replace("{{".$site['name']."}}",$product,$new_formula);
                     }
-                    $alphanum = preg_match("/^(-?[0-9]+[\+\-\*\/])+[0-9]+$/",$new_formula);
+                    $alphanum = preg_match("/^(-?[0-9.]+[\+\-\*\/])+[0-9.]+$/",$new_formula);
                     if ($alphanum == 0) {
                         $result->result = 'validation_errors';
                         $error = [];
                         $error['field'] = 'formula';
-                        $error['msg'] = 'There is a problem with your formula';
+                        $error['msg'] = 'There is a problem with your formula: '.$new_formula;
                         array_push($result->errors,$error);
                     } else {
                         $new_formula_validated = True;
@@ -980,21 +980,23 @@ class LoeController extends Controller
         return json_encode($result);
     }
 
-    public function dashboard(AuthUsersForDataView $authUsersForDataView, $year = null)
+    public function dashboard()
     {
-        $authUsersForDataView->userCanView('tools-activity-all-view');
-        if ($year == null) {
-            $year = date('Y');
-        }
-        $customers_list = Customer::pluck('name', 'id');
+        $customers_list = Customer::leftjoin('projects','projects.customer_id','=','customers.id')
+        ->leftjoin('project_loe','project_loe.project_id','=','projects.id')
+        ->whereNotNull('project_loe.id')
+        ->pluck('customers.name', 'customers.id');
 
-        return view('dashboard/loe', compact('authUsersForDataView', 'year','customers_list'));
+        return view('dashboard/loe', compact('customers_list'));
     }
 
     public function dashboardProjects($id)
     {
-        $project_list = Project::select('id','project_name')
-                ->where('customer_id', $id)->get();
+        $project_list = Project::leftjoin('project_loe','project_loe.project_id','=','projects.id')
+                ->select('projects.id','projects.project_name')
+                ->where('projects.customer_id', $id)
+                ->whereNotNull('project_loe.id')
+                ->get();
 
         return json_encode($project_list);
     }

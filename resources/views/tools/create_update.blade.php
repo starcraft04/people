@@ -95,10 +95,11 @@ h3:after {
 <script src="{{ asset('/plugins/gentelella/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js') }}" type="text/javascript"></script>
 <!-- Range slider -->
 <script src="{{ asset('/plugins/gentelella/vendors/ion.rangeSlider/js/ion.rangeSlider.min.js') }}" type="text/javascript"></script>
-<!-- Range slider -->
-<script src="{{ asset('/plugins/TableExport/libs/FileSaver/FileSaver.min.js') }}" type="text/javascript"></script>
-<script src="{{ asset('/plugins/TableExport/libs/js-xlsx/xlsx.core.min.js') }}" type="text/javascript"></script>
+<!-- Table Excel -->
+<script src="{{ asset('/plugins/sheetjs/dist/xlsx.core.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/FileSaver/FileSaver.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('/plugins/TableExport/tableExport.min.js') }}" type="text/javascript"></script>
+<!-- For details: https://github.com/hhurz/tableExport.jquery.plugin -->
 <!-- Smart wizard -->
 <script src="{{ asset('/plugins/smartwizard/dist/js/jquery.smartWizard.min.js') }}" type="text/javascript"></script>
 @stop
@@ -1063,7 +1064,7 @@ h3:after {
                       </div>
                   </div>
               </div>
-              <!-- Site Modal -->
+              <!-- Loe hide Modal -->
 
               <!-- History Modal -->
               <div class="modal fade" id="modal_loe_history" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -2210,27 +2211,28 @@ $(document).ready(function() {
       var colhide = JSON.parse(load_loe_hide_cookie);
     } else {
       var colhide = [
-      {'name':'action','hide':false},
-      {'name':'main_phase','hide':false},
-      {'name':'secondary_phase','hide':false},
-      {'name':'domain','hide':false},
-      {'name':'description','hide':false},
-      {'name':'option','hide':false},
-      {'name':'assumption','hide':false},
-      {'name':'site','hide':false},
-      {'name':'quantity','hide':false},
-      {'name':'loe_per_unit','hide':false},
-      {'name':'formula','hide':false},
-      {'name':'recurrent','hide':false},
-      {'name':'start_date','hide':false},
-      {'name':'end_date','hide':false},
-      {'name':'consulting','hide':false},
-      {'name':'total_loe','hide':false},
-      {'name':'total_cost','hide':false},
-      {'name':'total_price','hide':false},
-      {'name':'margin','hide':false}
-    ];
+        {'name':'main_phase','hide':false},
+        {'name':'secondary_phase','hide':false},
+        {'name':'domain','hide':false},
+        {'name':'description','hide':false},
+        {'name':'option','hide':false},
+        {'name':'assumption','hide':false},
+        {'name':'site','hide':false},
+        {'name':'quantity','hide':false},
+        {'name':'loe_per_unit','hide':false},
+        {'name':'formula','hide':false},
+        {'name':'recurrent','hide':false},
+        {'name':'start_date','hide':false},
+        {'name':'end_date','hide':false},
+        {'name':'consulting','hide':false},
+        {'name':'total_loe','hide':false},
+        {'name':'total_cost','hide':false},
+        {'name':'total_price','hide':false},
+        {'name':'margin','hide':false}
+      ];
     }
+
+    var project_id = {{ $project->id }};
 
     $('#smartwizard').smartWizard({
         selected: 0, // Initial selected step, 0 = first step
@@ -2288,7 +2290,7 @@ $(document).ready(function() {
         allowClear: true
     });
 
-    // LOE INIT
+    // LOE CREATE INIT
     $(document).on('click', '#create_loe', function () {
       $.ajax({
         type: 'get',
@@ -2296,7 +2298,7 @@ $(document).ready(function() {
         dataType: 'json',
         success: function(data) {
 
-          getLoeList();
+          getLoeList(project_id);
 
           if (data.result == 'success'){
               box_type = 'success';
@@ -2361,6 +2363,23 @@ $(document).ready(function() {
         Cookies.set("loe_hide_columns", JSON.stringify(colhide));
         columns_hide();
     });
+
+    function columns_hide() {
+      colhide.forEach(hide_columns);
+      function hide_columns (col,index){
+        if (col.hide) {
+          $('[data-colname="'+col.name+'"]').each(function(){
+            $(this).attr('data-tableexport-display','none');
+            $(this).hide();
+          });
+        } else {
+          $('[data-colname="'+col.name+'"]').each(function(){
+            $(this).attr('data-tableexport-display','');
+            $(this).show();
+          });
+        }
+      }
+    }
 
     //endregion
 
@@ -2432,7 +2451,19 @@ $(document).ready(function() {
     });
 
     $(document).on('click', '#loe_history_excel', function () {
-      $('#LoeHistoryTable').tableExport({type:'excel',fileName: 'history'});
+      project_name = $('#project_name').val();
+      d = new Date();
+      date = d.toISOString();
+      filename = 'LoE_History_'+project_name+'_'+date;
+      $('#LoeHistoryTable').tableExport({
+        fileName: filename, 
+        type:'excel',
+        exportHiddenCells: false,
+        htmlContent: false,
+        mso: {
+            fileFormat:'xlsx'
+        }
+      });
     });
     //endregion
 
@@ -2442,23 +2473,43 @@ $(document).ready(function() {
       d = new Date();
       date = d.toISOString();
       filename = 'LoE_'+project_name+'_'+date;
-      console.log(filename);
+
+      $('.table_recurrent').empty();
+      $('.table_recurrent').html('yes');
+
+      if (loe_data.col.site.length>0) {
+        $('.sites_header').empty();
+        $('td.formula_cell').each(function () {
+          formula_text = $(this).find('.formula_text').html();
+          $(this).empty();
+          $(this).append(formula_text);
+        });
+      }
       
-      colhide_change = false;
-      if (!colhide[0].hide) {
-        colhide[0].hide = true;
-        colhide_change = true;
-        columns_hide();
+      if (loe_data.col.cons.length>0) {
+        $('.consultants_header').empty();
+        $('.consultants_main_header').each(function () {
+          value = $(this).html().split('<div');
+          const search = '<br>';
+          const replaceWith = '-';
+          const html = value[0].split(search).join(replaceWith);
+          $(this).empty();
+          $(this).append(html);
+        });
       }
-      $('.table_recurrent').empty();
-      $('.table_recurrent').html('1');
-      $('#LoeTable').tableExport({type:'excel',fileName: filename});
-      $('.table_recurrent').empty();
-      $('.table_recurrent').html('<i class="fa fa-check"></i>');
-      if (colhide_change) {
-        colhide[0].hide = false;
-        columns_hide();
-      }
+      
+      $('#LoeTable').tableExport({
+        fileName: filename, 
+        type:'excel',
+        exportHiddenCells: false,
+        htmlContent: false,
+        mso: {
+            fileFormat:'xlsx'
+        }
+      });
+
+      getLoeList(project_id);
+
     });
     //endregion
 
@@ -2516,7 +2567,7 @@ $(document).ready(function() {
                   $(this).addClass('animated flipOutX')
               });
               $('#modal_loe_signoff').modal('hide');
-              getLoeList();
+              getLoeList(project_id);
             }
       });
     });
@@ -2541,7 +2592,7 @@ $(document).ready(function() {
                   box_type = 'success';
                   message_type = 'success';
                   delay = 2000;
-                  getLoeList();
+                  getLoeList(project_id);
               }
               else {
                   box_type = 'danger';
@@ -2692,7 +2743,7 @@ $(document).ready(function() {
                     $(this).addClass('animated flipOutX')
                 });
                 $('#modal_loe_site').modal('hide');
-                getLoeList();
+                getLoeList(project_id);
               }
               
             }
@@ -2721,7 +2772,7 @@ $(document).ready(function() {
                   box_type = 'success';
                   message_type = 'success';
                   delay = 2000;
-                  getLoeList();
+                  getLoeList(project_id);
               }
               else {
                   box_type = 'danger';
@@ -2893,7 +2944,7 @@ $(document).ready(function() {
                     $(this).addClass('animated flipOutX')
                 });
                 $('#modal_loe_cons').modal('hide');
-                getLoeList();
+                getLoeList(project_id);
               }
               
             }
@@ -2921,7 +2972,7 @@ $(document).ready(function() {
                   box_type = 'success';
                   message_type = 'success';
                   delay = 2000;
-                  getLoeList();
+                  getLoeList(project_id);
               }
               else {
                   box_type = 'danger';
@@ -2959,7 +3010,7 @@ $(document).ready(function() {
                   box_type = 'success';
                   message_type = 'success';
                   delay = 2000;
-                  getLoeList();
+                  getLoeList(project_id);
               }
               else {
                   box_type = 'danger';
@@ -3129,9 +3180,11 @@ $(document).ready(function() {
       }
 
       html += '<td data-colname="total_loe"></td>';
-      html += '<td data-colname="total_cost"></td>';
-      html += '<td data-colname="total_price"></td>';
-      html += '<td data-colname="margin"></td>';
+      if (loe_data.col.cons.length>0) {
+        html += '<td data-colname="total_cost"></td>';
+        html += '<td data-colname="total_price"></td>';
+        html += '<td data-colname="margin"></td>';
+      }
       html += '</tr>';
       
       tr.after(html);
@@ -3304,7 +3357,7 @@ $(document).ready(function() {
     $(document).on('click', '.buttonLoeCancel', function () {
       $('.buttonLoeAccept').hide();
       $('.buttonLoeCancel').hide();
-      getLoeList()
+      getLoeList(project_id)
     });
 
     $(document).on('click', '.buttonLoeAccept', function () {
@@ -3320,7 +3373,6 @@ $(document).ready(function() {
 
       // hidden input
       var action = $('input#loe_action').val();
-      var project_id = $('input#loe_project_id').val();
       if (action == 'update') {
         var id = $('input#loe_id').val();
       } else {
@@ -3435,7 +3487,7 @@ $(document).ready(function() {
               if (line_close) {
                 $('.buttonLoeAccept').hide();
                 $('.buttonLoeCancel').hide();
-                getLoeList();
+                getLoeList(project_id);
               }
               
             }
@@ -3459,7 +3511,7 @@ $(document).ready(function() {
                   box_type = 'success';
                   message_type = 'success';
                   delay = 2000;
-                  getLoeList();
+                  getLoeList(project_id);
               }
               else {
                   box_type = 'danger';
@@ -3504,26 +3556,11 @@ $(document).ready(function() {
       }
     }
 
-    function columns_hide() {
-      colhide.forEach(hide_columns);
-      function hide_columns (col,index){
-        if (col.hide) {
-          $('[data-colname="'+col.name+'"]').each(function(){
-            $(this).hide();
-          });
-        } else {
-          $('[data-colname="'+col.name+'"]').each(function(){
-            $(this).show();
-          });
-        }
-      }
-    }
-
-    function getLoeList(){
+    function getLoeList(project_id){
       $('#LoeTable').empty();
       $.ajax({
         type: 'get',
-        url: "{!! route('listFromProjectID','') !!}/"+{{ $project->id }},
+        url: "{!! route('listFromProjectID','') !!}/"+project_id,
         dataType: 'json',
         success: function(data) {
 
@@ -3539,7 +3576,7 @@ $(document).ready(function() {
             html = '<thead>';
             //region First header
             html += '<tr>';
-            html += '<th rowspan="3" data-colname="action" style="min-width:140px;">'+'Action'+'</th>';
+            html += '<th rowspan="3" data-colname="action" style="min-width:140px;" data-tableexport-display="none">'+'Action'+'</th>';
             html += '<th rowspan="3" data-colname="main_phase" style="min-width:150px;">'+'Main Phase'+'</th>';
             html += '<th rowspan="3" data-colname="secondary_phase" style="min-width:150px;">'+'Secondary Phase'+'</th>';
             html += '<th rowspan="3" data-colname="domain" style="min-width:150px;">'+'Domain'+'</th>';
@@ -3576,7 +3613,7 @@ $(document).ready(function() {
             data.col.site.forEach(function(site){
               html += '<th data-colname="site" colspan="2">';
               html += '<span class="inline">'+site.name+'</span>';
-              html += `<div class="dropdown">
+              html += `<div class="dropdown sites_header">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-sort-desc"></i></a>
                         <ul class="dropdown-menu">
                           <li class="dropdown-header">Calculation</li>
@@ -3588,7 +3625,7 @@ $(document).ready(function() {
             });
             
             data.col.cons.forEach(function(cons){
-              html += '<th data-colname="consulting" colspan="4" style="min-width:180px;">'
+              html += '<th class="consultants_main_header" data-colname="consulting" colspan="4" style="min-width:180px;">'
               html += cons.name;
               html += '<br>';
               if (cons.seniority != null) {
@@ -3602,7 +3639,7 @@ $(document).ready(function() {
               } else {
                 html += '';
               }
-              html += `<div class="dropdown">
+              html += `<div class="dropdown consultants_header">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-sort-desc"></i></a>
                         <ul class="dropdown-menu">
                           <li class="dropdown-header">Consulting type</li>
@@ -3623,7 +3660,7 @@ $(document).ready(function() {
               html += '<th data-colname="site">LoE<br>(per unit)<br>in days</th>';
             });
             data.col.cons.forEach(function(cons){
-              html += '<th data-colname="consulting">%</th>';
+              html += '<th data-colname="consulting" data-tableexport-xlsxformatid="49">%</th>';
               html += '<th data-colname="consulting">MD</th>';
               html += '<th data-colname="consulting">Cost (€)</th>';
               html += '<th data-colname="consulting">Price (€)</th>';
@@ -3645,7 +3682,7 @@ $(document).ready(function() {
 
               html += '<tr data-id="'+row.id+'">';
               // actions
-              html += '<td data-colname="action">';
+              html += '<td data-colname="action" data-tableexport-display="none">';
               html += '<div class="btn-group btn-group-xs">';
               if ({{ Auth::user()->can('projectLoe-signoff') ? 'true' : 'false' }}){
                 if (row.signoff_user_id != null) {
@@ -3678,9 +3715,11 @@ $(document).ready(function() {
               html += td_no_null(row.main_phase,'','main_phase');
               html += td_no_null(row.secondary_phase,'','secondary_phase');
               html += td_no_null(row.domain,'','domain');
-              html += td_no_null(row.description,'','description');
+              description_formatted = row.description.replace(/\r?\n|\r/g,'<br>');
+              html += td_no_null(description_formatted,'','description');
               html += td_no_null(row.option,'','option');
-              html += td_no_null(row.assumption,'','assumption');
+              assumption_formatted = row.assumption.replace(/\r?\n|\r/g,'<br>');
+              html += td_no_null(assumption_formatted,'','assumption');
 
               //console.log('row: '+row.id);
               data.col.site.forEach(fill_site_data);
@@ -3704,14 +3743,14 @@ $(document).ready(function() {
 
               if (data.col.site.length>0) {
                 if (row.formula != null && row.formula != '') {
-                  html +=  '<td data-colname="formula">';
+                  html +=  '<td class="formula_cell" data-colname="formula">';
                   html += `<div class="dropdown">
                         
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-check"></i></a>
                             
                             <ul class="dropdown-menu">
                               <li class="dropdown-header">Calculation</li>
-                              <li>`+row.formula+`</li>
+                              <li class="formula_text" >`+row.formula+`</li>
                             </ul>
                           </div>`;
                     html +=  '</td>';
@@ -3808,7 +3847,7 @@ $(document).ready(function() {
             //console.log(data.col.site.length);
             //console.log(data.col.cons.length);
             
-            html += '<td data-colname="action"></td>';
+            html += '<td data-colname="action" data-tableexport-display="none"></td>';
             html += '<td data-colname="main_phase" class="grand_total">Grand Total</td>';
             html += '<td data-colname="secondary_phase"></td>';
             html += '<td data-colname="domain"></td>';
@@ -3878,7 +3917,7 @@ $(document).ready(function() {
       });
     }
 
-    getLoeList();
+    getLoeList(project_id);
     //endregion
 
   @endif

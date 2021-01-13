@@ -79,7 +79,7 @@
             <li><a href="{!!route('orderdashboard')!!}/{{date('Y')}}/0">Order Dashboard</a></li>
             @endcan
             @can('projectLoe-dashboard_view')
-            <li><a href="{!!route('loedashboard')!!}/{{date('Y')}}">LoE Dashboard</a></li>
+            <li><a href="{!!route('loeDashboard')!!}">LoE Dashboard</a></li>
             @endcan
             @can('action-view')
             <li><a href="{!!route('actiondashboard')!!}">Action Dashboard</a></li>
