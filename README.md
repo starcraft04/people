@@ -39,9 +39,9 @@ Those are the steps used on a Debian 10
 ```
 7) Execute composer to install necessary applications for Laravel 5
 ```
-    sudo composer update
+    sudo composer install
 ```
-   if you are missing some php packages, it could be:
+   And also install the following php packages:
 ```
     sudo apt-get install php7.3-xml
     sudo apt-get install php7.3-gd
