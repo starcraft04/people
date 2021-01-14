@@ -3548,8 +3548,12 @@ $(document).ready(function() {
       return count;
     }
 
-    function td_no_null(item,end='',colname='') {
+    function td_no_null(item,end='',colname='',cr = false) {
       if (item != null && item != '') {
+        if (cr) {
+          item = item.replace(/\r?\n|\r/g,'<br>');
+          console.log(item);
+        }
         return '<td data-colname="'+colname+'">'+item+end+'</td>';
       } else {
         return '<td data-colname="'+colname+'"></td>';
@@ -3715,11 +3719,9 @@ $(document).ready(function() {
               html += td_no_null(row.main_phase,'','main_phase');
               html += td_no_null(row.secondary_phase,'','secondary_phase');
               html += td_no_null(row.domain,'','domain');
-              description_formatted = row.description.replace(/\r?\n|\r/g,'<br>');
-              html += td_no_null(description_formatted,'','description');
+              html += td_no_null(row.description,'','description',true);
               html += td_no_null(row.option,'','option');
-              assumption_formatted = row.assumption.replace(/\r?\n|\r/g,'<br>');
-              html += td_no_null(assumption_formatted,'','assumption');
+              html += td_no_null(row.assumption,'','assumption',true);
 
               //console.log('row: '+row.id);
               data.col.site.forEach(fill_site_data);

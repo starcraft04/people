@@ -996,6 +996,7 @@ class LoeController extends Controller
                 ->select('projects.id','projects.project_name')
                 ->where('projects.customer_id', $id)
                 ->whereNotNull('project_loe.id')
+                ->groupBy('projects.id')
                 ->get();
 
         return json_encode($project_list);
