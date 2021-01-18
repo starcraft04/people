@@ -207,9 +207,14 @@ class OtlUploadController extends Controller
 
                 // Checking if the project is in DB
                 if ($projectInDBnum != 1) {
-                    if (! in_array(['status'=>'error', 'mgr'=>$userInDB->managers->first()->name, 'msg'=>'this Prime code and META activity is not found in the DB.', 'user' =>$row['employee_name'], 'customer_prime' => $row['customer_name'], 'prime_code' => $row['project_name'], 'meta' => $row['meta_activity'], 'year' => $row['year']], $messages, true)) {
+                    if ($userInDB->managers->count() != 0) {
+                        $manager_name = $userInDB->managers->first()->name;
+                    } else {
+                        $manager_name = '';
+                    }
+                    if (! in_array(['status'=>'error', 'mgr'=>$manager_name, 'msg'=>'this Prime code and META activity is not found in the DB.', 'user' =>$row['employee_name'], 'customer_prime' => $row['customer_name'], 'prime_code' => $row['project_name'], 'meta' => $row['meta_activity'], 'year' => $row['year']], $messages, true)) {
                         array_push($messages, ['status'=>'error',
-                                                'mgr'=>$userInDB->managers->first()->name,
+                                                'mgr'=>$manager_name,
                                                 'msg'=>'this Prime code and META activity is not found in the DB.',
                                                 'user' =>$row['employee_name'],
                                                 'customer_prime' => $row['customer_name'],
