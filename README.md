@@ -28,24 +28,25 @@ Those are the steps used on a Debian 10
 5) Install composer (attention, go to the composer website and install from there don't use apt as it doesn't install latest version)
 ```
     https://getcomposer.org/download/
+    make sure it is installed like this to have it available globally: sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer
     When you have composer.phar, rename to composer and move to /usr/bin/composer
 ```
 6) Changed owner and group of www with
 ```
-    sudo chgrp -R <user> /var/www/html/
     sudo chown -R <user> /var/www/html/
+```
+    And for Laravel to be able to write temp files:
+```
     sudo chmod a+w -R /var/www/html/bootstrap/cache/
     sudo chmod a+w -R /var/www/html/storage/
 ```
 7) Execute composer to install necessary applications for Laravel 5
 ```
-    sudo composer install
+    composer install
 ```
    And also install the following php packages:
 ```
-    sudo apt-get install php7.3-xml
-    sudo apt-get install php7.3-gd
-    sudo apt-get install php7.3-zip
+    sudo apt-get install php7.3-xml php7.3-gd php7.3-zip php7.3-mbstring
 ```
 8) Rename .env.example into .env with
 ```
@@ -88,14 +89,16 @@ Those are the steps used on a Debian 10
     ```
     sudo service apache2 restart
     ```
+    
 13) Upgrade DB and use the seeds to create a user admin with the basic rights (admin@orange.com // Welcome1)
-
-  >  php artisan migrate
-  >  php artisan db:seed --class=DatabaseSeeder
-  > If reset is not working, do
-```
+    ```
+    php artisan migrate
+    php artisan db:seed --class=DatabaseSeeder
+    ```
+    If reset is not working, do
+    ```
     php composer dump-autoload
-```
+    ```
 14) Modify your php.ini file (for php 7, located at: /etc/php/7.3/apache2/php.ini)
 ```
     Upload_max_filesize  - 15 M
@@ -109,7 +112,7 @@ Those are the steps used on a Debian 10
     sudo visudo
 ```
   > Add the line: git ALL=(www-data) /usr/bin/git pull
-16) if you are going to use the automatic backup function, then you need to enter this in your cron
+16) if you are going to use the automatic backup function, then you need to enter this in your cron (crontab -e)
 ```
     * * * * * php /path-to-your-project/artisan schedule:run >> /dev/null 2>&1
 ```
