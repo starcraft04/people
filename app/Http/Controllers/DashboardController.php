@@ -217,10 +217,13 @@ class DashboardController extends Controller
                 array_push($activities[$customer['cluster']][$customer['name']], $activitie_temp);
             }
             $activities_tot[$customer['name']] = $activityRepository->getActivitiesPerCustomerTot($customer['name'], $year, 'table_temp_a', $domain_selected);
-            $activities_tot[$customer['name']]->h1 = $activities_tot[$customer['name']]->jan_com + $activities_tot[$customer['name']]->feb_com + $activities_tot[$customer['name']]->mar_com + $activities_tot[$customer['name']]->apr_com + $activities_tot[$customer['name']]->may_com + $activities_tot[$customer['name']]->jun_com;
-            $activities_tot[$customer['name']]->h2 = $activities_tot[$customer['name']]->jul_com + $activities_tot[$customer['name']]->aug_com + $activities_tot[$customer['name']]->sep_com + $activities_tot[$customer['name']]->oct_com + $activities_tot[$customer['name']]->nov_com + $activities_tot[$customer['name']]->dec_com;
-            $activities_tot[$customer['name']]->full_year = $activities_tot[$customer['name']]->h1 + $activities_tot[$customer['name']]->h2;
             //dd($activities_tot);
+            if (!empty($activities_tot[$customer['name']])) {
+                $activities_tot[$customer['name']]->h1 = $activities_tot[$customer['name']]->jan_com + $activities_tot[$customer['name']]->feb_com + $activities_tot[$customer['name']]->mar_com + $activities_tot[$customer['name']]->apr_com + $activities_tot[$customer['name']]->may_com + $activities_tot[$customer['name']]->jun_com;
+                $activities_tot[$customer['name']]->h2 = $activities_tot[$customer['name']]->jul_com + $activities_tot[$customer['name']]->aug_com + $activities_tot[$customer['name']]->sep_com + $activities_tot[$customer['name']]->oct_com + $activities_tot[$customer['name']]->nov_com + $activities_tot[$customer['name']]->dec_com;
+                $activities_tot[$customer['name']]->full_year = $activities_tot[$customer['name']]->h1 + $activities_tot[$customer['name']]->h2;
+            }
+            
 
             // Revenues
             if (! isset($revenues[$customer['name']])) {

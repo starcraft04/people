@@ -3552,7 +3552,7 @@ $(document).ready(function() {
       if (item != null && item != '') {
         if (cr) {
           item = item.replace(/\r?\n|\r/g,'<br>');
-          console.log(item);
+          //console.log(item);
         }
         return '<td data-colname="'+colname+'">'+item+end+'</td>';
       } else {
@@ -3569,7 +3569,7 @@ $(document).ready(function() {
         success: function(data) {
 
           loe_data = data;
-          console.log(data);
+          //console.log(data);
 
           if (data.length != 0) {
             // First we need to hide the create button
@@ -3674,13 +3674,11 @@ $(document).ready(function() {
 
             html += '</thead>';
             //endregion
-            // Data filling
+            //region Body
             var grand_total_loe = 0;
             var grand_total_cost = 0;
             var grand_total_price = 0;
             var total_loe = 0;
-
-            //region Body
             html += '<tbody>';
             data.data.loe.forEach(function(row){
 
@@ -3924,7 +3922,6 @@ $(document).ready(function() {
 
   @endif
   //endregion
-
 
   //region Action
   @if($action == 'update')
