@@ -128,6 +128,10 @@ class ProfileToolsController extends Controller
             $factory_reset = DB::table('samba_names')->delete();
             $factory_reset = DB::table('revenues')->delete();
             $factory_reset = DB::table('project_revenues')->delete();
+            $factory_reset = DB::table('consulting_pricing')->delete();
+            $factory_reset = DB::table('project_loe_consultant')->delete();
+            $factory_reset = DB::table('project_loe_history')->delete();
+            $factory_reset = DB::table('project_loe_site')->delete();
             $factory_reset = DB::table('project_loe')->delete();
             $factory_reset = DB::table('projects_comments')->delete();
             $factory_reset = DB::table('password_resets')->delete();
