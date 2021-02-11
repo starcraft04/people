@@ -151,7 +151,7 @@ class UserRepository
          *   Then we will need to use in the view page the name of the table.column. This is so that it knows how to do proper sorting or search.
          **/
         $userList = DB::table('users')
-            ->select('users.id', 'users.name','users.email','users.is_manager', 'users.region',
+            ->select('users.id', 'users.name','users.email','users.pimsid','users.ftid','users.is_manager', 'users.region',
             'users.country', 'users.domain', 'users.management_code', 'users.job_role','users.from_otl',
             'users.employee_type', 'users_users.manager_id', 'u2.name AS manager_name', 'users.activity_status', 'users.date_started', 'users.date_ended')
             ->leftjoin('users_users', 'users.id', '=', 'users_users.user_id')

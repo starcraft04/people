@@ -91,6 +91,30 @@
           </div>
 
           <div class="row">
+              <div class="form-group {!! $errors->has('user.pimsid') ? 'has-error' : '' !!} col-md-12">
+                  <div class="col-md-2">
+                      {!! Form::label('user[pimsid]', 'PIMS ID', ['class' => 'control-label']) !!}
+                  </div>
+                  <div class="col-md-10">
+                      {!! Form::text('user[pimsid]', (isset($user)) ? $user->pimsid : '', ['class' => 'form-control', 'placeholder' => 'PIMS ID']) !!}
+                      {!! $errors->first('user.pimsid', '<small class="help-block">:message</small>') !!}
+                  </div>
+              </div>
+          </div>
+
+          <div class="row">
+              <div class="form-group {!! $errors->has('user.ftid') ? 'has-error' : '' !!} col-md-12">
+                  <div class="col-md-2">
+                      {!! Form::label('user[ftid]', 'FT ID', ['class' => 'control-label']) !!}
+                  </div>
+                  <div class="col-md-10">
+                      {!! Form::text('user[ftid]', (isset($user)) ? $user->ftid : '', ['class' => 'form-control', 'placeholder' => 'FT ID']) !!}
+                      {!! $errors->first('user.ftid', '<small class="help-block">:message</small>') !!}
+                  </div>
+              </div>
+          </div>
+
+          <div class="row">
               <div class="form-group {!! $errors->has('manager.manager_id') ? 'has-error' : '' !!} col-md-12">
                   <div class="col-md-2">
                       {!! Form::label('manager[manager_id]', 'Manager', ['class' => 'control-label']) !!}

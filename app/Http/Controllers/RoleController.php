@@ -34,9 +34,9 @@ class RoleController extends Controller
      */
     public function index(Request $request)
     {
-        $roles = Role::orderBy('id','DESC')->paginate(5);
+        $roles = Role::orderBy('id','ASC')->paginate(10);
         return view('roles.index',compact('roles'))
-            ->with('i', ($request->input('page', 1) - 1) * 5);
+            ->with('i', ($request->input('page', 1) - 1) * 10);
     }
 
 
@@ -126,10 +126,17 @@ class RoleController extends Controller
 
 
         $role = Role::find($id);
+        if ($id == 1 && $request->input('name') != 'Admin') {
+            return redirect()->route('roles.index')
+                        ->with('error','You cannot change the name of the admin role');
+        }
         $role->name = $request->input('name');
         $role->save();
 
-
+        if ($id == 1 && (!in_array(1,$request->input('permission')) || !in_array(3,$request->input('permission')))) {
+            return redirect()->route('roles.index')
+                        ->with('error','You must keep role view and role edit for the admin');
+        }
         $role->syncPermissions($request->input('permission'));
 
 
@@ -144,8 +151,15 @@ class RoleController extends Controller
      */
     public function destroy($id)
     {
-        DB::table("roles")->where('id',$id)->delete();
-        return redirect()->route('roles.index')
+        if ($id != 1) {
+            DB::table("roles")->where('id',$id)->delete();
+            return redirect()->route('roles.index')
                         ->with('success','Role deleted successfully');
+        } else {
+            return redirect()->route('roles.index')
+                        ->with('error','Role Admin cannot be deleted');
+        }
+        
+        
     }
 }

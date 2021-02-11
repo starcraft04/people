@@ -73,6 +73,8 @@
                     <th>Name</th>
                     <th>Manager name</th>
                     <th>Email</th>
+                    <th>FT ID</th>
+                    <th>PIMS ID</th>
                     <th>Is Manager</th>
                     <th>Activity</th>
                     <th>Date started</th>
@@ -98,6 +100,8 @@
                     <th>Name</th>
                     <th>Manager name</th>
                     <th>Email</th>
+                    <th>FT ID</th>
+                    <th>PIMS ID</th>
                     <th>Is Manager</th>
                     <th>Activity</th>
                     <th>Date started</th>
@@ -254,6 +258,8 @@
             { name: 'users.name', data: 'name' , searchable: true , visible: true },
             { name: 'u2.name', data: 'manager_name' , searchable: true , visible: true  },
             { name: 'users.email', data: 'email' , searchable: true , visible: false },
+            { name: 'users.ftid', data: 'ftid' , searchable: true , visible: false },
+            { name: 'users.pimsid', data: 'pimsid' , searchable: true , visible: false },
             { name: 'users.is_manager', data: 'is_manager' , searchable: true , visible: true },
             { name: 'users.activity_status', data: 'activity_status' , searchable: true , visible: true },
             { name: 'users.date_started', data: 'date_started' , searchable: true , visible: true },
@@ -302,7 +308,7 @@
           {
             extend: "colvis",
             className: "btn-sm",
-            columns: [ 1,2,3,4,5,6,7,8,9,10,11,12,13,15 ]
+            columns: [ 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,17 ]
           },
           {
             extend: "pageLength",

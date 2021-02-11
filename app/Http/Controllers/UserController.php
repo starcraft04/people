@@ -220,6 +220,10 @@ class UserController extends Controller
     {
         $inputs = $request->all();
 
+        if ($inputs['user_id'] == 1 && ($inputs['user']['name'] != 'admin' || $inputs['user']['email'] != 'admin@orange.com')) {
+            return redirect('userList')->with('error', 'You cannot change the name or the email of the admin');
+        }
+
         $user->update($inputs['user']);
 
 
@@ -255,6 +259,9 @@ class UserController extends Controller
             $user->clusters()->delete();
         }
 
+        if ($inputs['user_id'] == 1 && !in_array(1,$inputs['roles'])) {
+            return redirect('userList')->with('error', 'You cannot remove the admin role from the admin user');
+        }
         // Now we need to save the roles
         if (isset($inputs['roles'])) {
             $user->syncRoles($inputs['roles']);
