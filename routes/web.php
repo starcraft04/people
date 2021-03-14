@@ -14,6 +14,9 @@
 //Help section
 Route::get('help', ['as' => 'help', 'uses' => 'GeneralController@help']);
 
+//Offer section
+Route::get('offer/isco', ['as' => 'offer_isco', 'uses' => 'OfferController@isco']);
+
 //Auth
 // Authentication Routes...
 Route::get('login', 'Auth\LoginController@showLoginForm');
