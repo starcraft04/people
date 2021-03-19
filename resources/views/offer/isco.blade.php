@@ -71,7 +71,9 @@
         <div class="col">
             <label for="duration" class="control-label">Contract duration (years)</label>
             <select class="form-select" id="duration" name="duration" data-placeholder="Select a duration">
-                <option value="3" selected>3</option>
+                <option value="1" selected>1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
                 <option value="4">4</option>
                 <option value="5">5</option>
                 <option value="6">6</option>
@@ -81,10 +83,28 @@
         <div class="col">
             <label for="size" class="control-label">Organization size (employees)</label>
             <select class="form-select" id="size" name="size" data-placeholder="Select a size">
-                <option value="3000" selected>3000</option>
+                <option value="1000" selected>1000</option>
+                <option value="3000">3000</option>
                 <option value="5000">5000</option>
                 <option value="10000">10000</option>
                 <option value="10000+">10000+</option>
+            </select>
+        </div>
+        <div class="col">
+            <label for="md" class="control-label">Regular follow-up by expert (days per month)</label>
+            <select class="form-select" id="md" name="md" data-placeholder="Select a man days">
+                <option value="0" selected>0 (0 day per month)</option>
+                <option value="1" selected>1 (1 day per month)</option>
+                <option value="4">4 (1 day per week)</option>
+                <option value="8">8 (2 days per week)</option>
+                <option value="20">20 (5 days per week)</option>
+            </select>
+        </div>
+        <div class="col">
+            <label for="onshore" class="control-label">Regular follow-up by expert</label>
+            <select class="form-select" id="onshore" name="onshore" data-placeholder="Select onshore/offshore">
+                <option value="onshore" selected>onshore</option>
+                <option value="offshore">offshore</option>
             </select>
         </div>
     </div>
@@ -101,114 +121,10 @@
         </div>
         <div class="card-body">
         <h1 class="card-title pricing-card-title">€<span id="price_silver">1800</span> <small class="text-muted">/ mo</small></h1>
-            <h5 class="mb-1">Strategy & Transformation</h5>
-            <ul class="list-styled">
-                <li>Information Security Policies and Information Classification</li>
-                <li>Monitoring, measurement, analysis and evaluation of the Security Strategy implementation</li>
-            </ul>
+            <h5 class="mb-1">Strategy & Transformation <span>(based on ISO27001 & 27002)</span></h5>
+            <p>-</p>
             <hr>
-            <h5 class="mb-1">Implementation & Operation</h5>
-            <ul class="list-styled">
-                <li>Inventory and Control of Hardware & Software Assets</li>
-                <li>Continuous Vulnerability Management</li>
-                <li>Controlled Use of Administrative Privileges</li>
-                <li>Secure Configuration for Servers and End-Point</li>
-                <li>Maintenance, Monitoring and Analysis of Audit Logs</li>
-                <li>Secure Configuration for Network Devices, such as Firewalls, Routers and Switches</li>
-                <li>Penetration test <button type="button" class="btn btn-danger btn-sm">option</button></li>
-            </ul>
-            <hr>
-            <h5 class="mb-1">Security Incident and Crisis Management</h5>
-            <ul class="list-styled">
-                <li>Incident Response & Crisis management</li>
-            </ul>
-            <hr>
-            <h5 class="mb-1">Monthly follow up</h5>
-            <ul class="list-styled">
-                <li>Our expert follow up <small>1 day per month</small></li>
-            </ul>
-            <hr>
-            <button type="button" class="w-100 btn btn-lg btn-outline-primary">Get this offer</button>
-        </div>
-        </div>
-        </div>
-        <!-- Silver -->
-
-        <!-- Gold -->
-        <div class="col">
-        <div class="card mb-3 shadow-sm">
-        <div class="card-header">
-            <h4 class="my-0 fw-normal">Gold</h4>
-        </div>
-        <div class="card-body">
-            <h1 class="card-title pricing-card-title">€<span id="price_gold">3000</span> <small class="text-muted">/ mo</small></h1>
-            <h5 class="mb-1">Strategy & Transformation</h5>
-            <ul class="list-styled">
-                <li>Information Security Policies and Information Classification</li>
-                <li>Information Security Risk Management</li>
-                <li>Information security objectives and planning</li>
-                <li>Monitoring, measurement, analysis and evaluation of the Security Strategy implementation</li>
-            </ul>
-            <hr>
-            <h5 class="mb-1">Implementation & Operation</h5>
-            <ul class="list-styled">
-                <li>Inventory and Control of Hardware & Software Assets</li>
-                <li>Continuous Vulnerability Management</li>
-                <li>Controlled Use of Administrative Privileges</li>
-                <li>Secure Configuration for Servers and End-Point</li>
-                <li>Maintenance, Monitoring and Analysis of Audit Logs</li>
-                <li>Email and Web Browser Protections</li>
-                <li>Malware Defenses</li>
-                <li>Limitation and Control of Network Ports, Protocols and Services</li>
-                <li>Data Recovery Capabilities</li>
-                <li>Secure Configuration for Network Devices, such as Firewalls, Routers and Switches</li>
-                <li>Boundary Defense</li>
-                <li>Controlled Access Based on the Need to Know</li>
-                <li>Penetration test <button type="button" class="btn btn-danger btn-sm">option</button></li>
-            </ul>
-            <hr>
-            <h5 class="mb-1">Security Incident and Crisis Management</h5>
-            <ul class="list-styled">
-                <li>Incident Response & Crisis management</li>
-            </ul>
-            <hr>
-            <h5 class="mb-1">Monthly follow up</h5>
-            <ul class="list-styled">
-                <li>Our expert follow up <small>2 days per month</small></li>
-            </ul>
-            <hr>
-            <button type="button" class="w-100 btn btn-lg btn-outline-primary">Get this offer</button>
-        </div>
-        </div>
-        </div>
-        <!-- Gold -->
-
-        <!-- Platinum -->
-        <div class="col">
-        <div class="card mb-3 shadow-sm">
-        <div class="card-header">
-            <h4 class="my-0 fw-normal">Platinum</h4>
-        </div>
-        <div class="card-body">
-            <h1 class="card-title pricing-card-title">€<span id="price_platinum">6200</span> <small class="text-muted">/ mo</small></h1>
-            <h5 class="mb-1">Strategy & Transformation</h5>
-            <ul class="list-styled">
-                <li>Strategy & operation evaluation</li>
-                <li>Leadership and commitment evaluation</li>
-                <li>Information Security Policies and Information Classification</li>
-                <li>Organizational roles and responsibilities</li>
-                <li>Information Security Risk Management</li>
-                <li>Information security objectives and planning</li>
-                <li>Managing Resources and Competences</li>
-                <li>Security Awareness</li>
-                <li>Monitoring, measurement, analysis and evaluation of the Security Strategy implementation</li>
-                <li>Human Resources Security</li>
-                <li>Supplier relationships</li>
-                <li>Physical and environmental security</li>
-                <li>Law and Regulations Compliance</li>
-            </ul>
-            <hr>
-            <h5 class="mb-1">Implementation & Operation</h5>
+            <h5 class="mb-1">Implementation & Operation <small>(based on CIS20)</small></h5>
             <ul class="list-styled">
                 <li>Inventory and Control of Hardware & Software Assets</li>
                 <li>Continuous Vulnerability Management</li>
@@ -225,7 +141,60 @@
                 <li>Controlled Access Based on the Need to Know</li>
                 <li>Wireless Access Control</li>
                 <li>Account Monitoring and Control</li>
-                <li>Penetration test <button type="button" class="btn btn-danger btn-sm">option</button></li>
+            </ul>
+            <hr>
+            <h5 class="mb-1">Security Incident and Crisis Management</h5>
+            <p>-</p>
+            <hr>
+            <h5 class="mb-1">Options (Ask our experts for pricing)</h5>
+            <ul class="list-styled">
+                <li>Penetration test</li>
+                <li>Emergency Response</li>
+                <li>Compromise assessment</li>
+                <li>Forensics investigation</li>
+                <li>Malware forensics</li>
+                <li>Threat Intelligence</li>
+            </ul>
+            <hr>
+            <h5 class="mb-1">Monthly follow up</h5>
+            <ul class="list-styled">
+                <li>Our expert follow up</li>
+            </ul>
+            <hr>
+            <button type="button" class="w-100 btn btn-lg btn-outline-primary">Get this offer</button>
+        </div>
+        </div>
+        </div>
+        <!-- Silver -->
+
+        <!-- Gold -->
+        <div class="col">
+        <div class="card mb-3 shadow-sm">
+        <div class="card-header">
+            <h4 class="my-0 fw-normal">Gold</h4>
+        </div>
+        <div class="card-body">
+            <h1 class="card-title pricing-card-title">€<span id="price_gold">3000</span> <small class="text-muted">/ mo</small></h1>
+            <h5 class="mb-1">Strategy & Transformation <span>(based on ISO27001 & 27002)</span></h5>
+            <p>-</p>
+            <hr>
+            <h5 class="mb-1">Implementation & Operation <small>(based on CIS20)</small></h5>
+            <ul class="list-styled">
+                <li>Inventory and Control of Hardware & Software Assets</li>
+                <li>Continuous Vulnerability Management</li>
+                <li>Controlled Use of Administrative Privileges</li>
+                <li>Secure Configuration for Servers and End-Point</li>
+                <li>Maintenance, Monitoring and Analysis of Audit Logs</li>
+                <li>Email and Web Browser Protections</li>
+                <li>Malware Defenses</li>
+                <li>Limitation and Control of Network Ports, Protocols and Services</li>
+                <li>Data Recovery Capabilities</li>
+                <li>Secure Configuration for Network Devices, such as Firewalls, Routers and Switches</li>
+                <li>Boundary Defense</li>
+                <li>Data Protection</li>
+                <li>Controlled Access Based on the Need to Know</li>
+                <li>Wireless Access Control</li>
+                <li>Account Monitoring and Control</li>
             </ul>
             <hr>
             <h5 class="mb-1">Security Incident and Crisis Management</h5>
@@ -233,17 +202,95 @@
                 <li>Incident Response & Crisis management</li>
                 <li>Incident Response Preparedness</li>
                 <li>Incident Response Playbook </li>
-                <li>Emergency Response <button type="button" class="btn btn-danger btn-sm">option</button></li>
-                <li>Compromise assessment <button type="button" class="btn btn-danger btn-sm">option</button></li>
-                <li>Forensics investigation <button type="button" class="btn btn-danger btn-sm">option</button></li>
-                <li>Malware forensics <button type="button" class="btn btn-danger btn-sm">option</button></li>
-                <li>Threat Intelligence <button type="button" class="btn btn-danger btn-sm">option</button></li>
                 <li>Cyber Incident & Crisis simulation</li>
+            </ul>
+            <hr>
+            <h5 class="mb-1">Options (Ask our experts for pricing)</h5>
+            <ul class="list-styled">
+                <li>Penetration test</li>
+                <li>Emergency Response</li>
+                <li>Compromise assessment</li>
+                <li>Forensics investigation</li>
+                <li>Malware forensics</li>
+                <li>Threat Intelligence</li>
             </ul>
             <hr>
             <h5 class="mb-1">Monthly follow up</h5>
             <ul class="list-styled">
-                <li>Our expert follow up <small>4 days per month</small></li>
+                <li>Our expert follow up</li>
+            </ul>
+            <hr>
+            <button type="button" class="w-100 btn btn-lg btn-outline-primary">Get this offer</button>
+        </div>
+        </div>
+        </div>
+        <!-- Gold -->
+
+        <!-- Platinum -->
+        <div class="col">
+        <div class="card mb-3 shadow-sm">
+        <div class="card-header">
+            <h4 class="my-0 fw-normal">Platinum</h4>
+        </div>
+        <div class="card-body">
+            <h1 class="card-title pricing-card-title">€<span id="price_platinum">6200</span> <small class="text-muted">/ mo</small></h1>
+            <h5 class="mb-1">Strategy & Transformation <span>(based on ISO27001 & 27002)</span></h5>
+            <ul class="list-styled">
+                <li>Strategy & operation evaluation</li>
+                <li>Leadership and commitment evaluation</li>
+                <li>Information Security Policies and Information Classification</li>
+                <li>Organizational roles and responsibilities</li>
+                <li>Information Security Risk Management</li>
+                <li>Information security objectives and planning</li>
+                <li>Managing Resources and Competences</li>
+                <li>Security Awareness</li>
+                <li>Monitoring, measurement, analysis and evaluation of the Security Strategy implementation</li>
+                <li>Human Resources Security</li>
+                <li>Supplier relationships</li>
+                <li>Physical and environmental security</li>
+                <li>Law and Regulations Compliance</li>
+            </ul>
+            <hr>
+            <h5 class="mb-1">Implementation & Operation <small>(based on CIS20)</small></h5>
+            <ul class="list-styled">
+                <li>Inventory and Control of Hardware & Software Assets</li>
+                <li>Continuous Vulnerability Management</li>
+                <li>Controlled Use of Administrative Privileges</li>
+                <li>Secure Configuration for Servers and End-Point</li>
+                <li>Maintenance, Monitoring and Analysis of Audit Logs</li>
+                <li>Email and Web Browser Protections</li>
+                <li>Malware Defenses</li>
+                <li>Limitation and Control of Network Ports, Protocols and Services</li>
+                <li>Data Recovery Capabilities</li>
+                <li>Secure Configuration for Network Devices, such as Firewalls, Routers and Switches</li>
+                <li>Boundary Defense</li>
+                <li>Data Protection</li>
+                <li>Controlled Access Based on the Need to Know</li>
+                <li>Wireless Access Control</li>
+                <li>Account Monitoring and Control</li>
+            </ul>
+            <hr>
+            <h5 class="mb-1">Security Incident and Crisis Management</h5>
+            <ul class="list-styled">
+                <li>Incident Response & Crisis management</li>
+                <li>Incident Response Preparedness</li>
+                <li>Incident Response Playbook </li>
+                <li>Cyber Incident & Crisis simulation</li>
+            </ul>
+            <hr>
+            <h5 class="mb-1">Options (Ask our experts for pricing)</h5>
+            <ul class="list-styled">
+                <li>Penetration test</li>
+                <li>Emergency Response</li>
+                <li>Compromise assessment</li>
+                <li>Forensics investigation</li>
+                <li>Malware forensics</li>
+                <li>Threat Intelligence</li>
+            </ul>
+            <hr>
+            <h5 class="mb-1">Monthly follow up</h5>
+            <ul class="list-styled">
+                <li>Our expert follow up</li>
             </ul>
             <hr>
 
@@ -278,37 +325,51 @@
 
     </main>
     <script>
-    var price_silver = 1800;
-    var price_gold = 3000;
-    var price_platinum = 6200;
-    $(document).ready(function() {
-        $('#duration,#size').on('change', function() {
-            duration = $('select#duration').children("option:selected").val();
-            size = $('select#size').children("option:selected").val();
-            if (duration == 3 && size == 3000) {
-                $('#price_silver').text(price_silver);
-                $('#price_gold').text(price_gold);
-                $('#price_platinum').text(price_platinum);
-            } else {
-                switch (size) {
+    var price_silver = 3200;
+    var price_gold = 6000;
+    var price_platinum = 13000;
+    var regular_onshore_consulting_price = 1440;
+    var regular_offshore_consulting_price = 900;
+
+    function update_price() {
+        duration = $('select#duration').children("option:selected").val();
+        size = $('select#size').children("option:selected").val();
+        md = $('select#md').children("option:selected").val();
+        onshore = $('select#onshore').children("option:selected").val();
+        switch (size) {
+                    case '1000':
+                        multiplier = 1/ duration;
+                        break;
                     case '3000':
-                        multiplier = 1;
+                        multiplier = 1/ duration;
                         break;
                     case '5000':
-                        multiplier = 1.7;
+                        multiplier = 1.5/ duration;
                         break;
                     case '10000':
-                        multiplier = 3;
+                        multiplier = 2/ duration;
                         break;
                     case '10000+':
-                        multiplier = 3.5;
+                        multiplier = 2.5/ duration;
                         break;
-                }
-                multiplier = multiplier * 3 / duration;
-                $('#price_silver').text(Math.round(price_silver*multiplier));
-                $('#price_gold').text(Math.round(price_gold*multiplier));
-                $('#price_platinum').text(Math.round(price_platinum*multiplier));
-            }
+        }
+
+        if (onshore == 'onshore') {
+            added_price = md*regular_onshore_consulting_price;
+        } else {
+            added_price = md*regular_offshore_consulting_price;
+        }
+
+        $('#price_silver').text(Math.round((price_silver*multiplier)+added_price));
+        $('#price_gold').text(Math.round((price_gold*multiplier)+added_price));
+        $('#price_platinum').text(Math.round((price_platinum*multiplier)+added_price));
+        
+    }
+
+    $(document).ready(function() {
+        update_price();
+        $('#duration,#size,#md,#onshore').on('change', function() {
+            update_price();
         });
     });
     </script>
