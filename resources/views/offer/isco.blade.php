@@ -325,11 +325,11 @@
 
     </main>
     <script>
-    var price_silver = 3200;
-    var price_gold = 6000;
-    var price_platinum = 13000;
+    var price_silver = 3300;
+    var price_gold = 6100;
+    var price_platinum = 9600;
     var regular_onshore_consulting_price = 1440;
-    var regular_offshore_consulting_price = 900;
+    var regular_offshore_consulting_price = 710;
 
     function update_price() {
         duration = $('select#duration').children("option:selected").val();
