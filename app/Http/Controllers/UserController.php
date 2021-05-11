@@ -14,6 +14,9 @@ use App\User;
 use Spatie\Permission\Models\Role;
 use Auth;
 use DB;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\UsersImport;
+
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -321,5 +324,27 @@ class UserController extends Controller
     public function ListOfusers($exclude_contractors = 0)
     {
         return $this->userRepository->getListOfUsers($exclude_contractors);
+    }
+
+    // update FTID and PIMSID function using the UsersImport class
+
+    public function store(Request $req)
+    {
+        $file = $req->file;
+        $data = Excel :: toArray(new UsersImport, $file);
+        //dd($data);
+        // var_dump($data[0][0]);
+        // echo $data[0][0]['email'];
+        // // DB::tables('users')->where('email',)
+        
+        for($i=0;$i<sizeof($data[0]);$i++){
+            $fields = [
+            'pimsid' => $data[0][$i]['pimsid'],
+            'ftid'   => $data[0][$i]['ftid']
+        ];
+            DB::table('users')->where('email',$data[0][$i]['email'])->update($fields);
+
+        }
+        return redirect()->route('userList');
     }
 }

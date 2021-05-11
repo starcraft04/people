@@ -257,3 +257,10 @@ Route::group(['middleware' => ['auth', 'general','last_login']], function () {
 });
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+
+// Route::get('updator',['uses'=>'UpdateTableController@updator', 'as'=>'updator']);
+
+Route::post('import', ['uses' => 'UserController@store', 'as' => 'store', 'middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
+// Route::get('export', 'UpdateTableController@export');
+// Route::get('import',['uses'=>'UpdateTableController@show', 'as' =>'show']);

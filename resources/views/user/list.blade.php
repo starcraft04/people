@@ -62,6 +62,32 @@
         </ul>
         <div class="clearfix"></div>
       </div>
+      <div class="container">
+        <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card" style="padding: 12px;">
+          <div class="card-header">This field used to update FTID and PIMSID Only</div>
+          <div class="card-body">
+            @if(session('status'))
+              <div class="alert alert-sucess" role="alert">
+                {{ session('ststus') }}
+              </div>
+            @endif
+            <form action="import" method="post" enctype="multipart/form-data">
+              @csrf
+              <div class="form-group">
+                <input type="file" name="file" style="display: inline-block;margin: 12px;">
+                <button type="submit" class="btn btn-primary" style = "display: inline-block;">Import</button>
+              </div>
+            </form>
+          </div>
+          
+        </div>
+        
+      </div>
+      
+    </div>
+      </div>
       <!-- Window title -->
 
       <!-- Window content -->
