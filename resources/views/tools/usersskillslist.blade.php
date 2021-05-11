@@ -86,6 +86,8 @@
                                 <th>User Name</th>
                                 <th>Activity</th>
                                 <th>Email</th>
+                                <th>PIMSID</th>
+                                <th>FTID</th>
                                 <th>Region</th>
                                 <th>Country</th>
                                 <th>Role</th>
@@ -98,6 +100,8 @@
                         </thead>
                         <tfoot>
                             <tr>
+                                <th></th>
+                                <th></th>
                                 <th></th>
                                 <th></th>
                                 <th></th>
@@ -133,6 +137,8 @@
                                 <th>User Name</th>
                                 <th>Activity</th>
                                 <th>Email</th>
+                                <th>PIMSID</th>
+                                <th>FTID</th>
                                 <th>Region</th>
                                 <th>Country</th>
                                 <th>Role</th>
@@ -145,6 +151,8 @@
                         </thead>
                         <tfoot>
                             <tr>
+                                <th></th>
+                                <th></th>
                                 <th></th>
                                 <th></th>
                                 <th></th>
@@ -214,6 +222,9 @@
                     { name: 'u.name', data: 'user_name', searchable: true , visible: true },
                     { name: 'u.activity_status', data: 'user_activity', searchable: true , visible: false },
                     { name: 'u.email', data: 'user_email', searchable: true , visible: true },
+
+                    { name: 'u.pimsid', data: 'pimsid', searchable: true , visible: true },
+                    { name: 'u.ftid', data: 'ftid', searchable: true , visible: true },
                     { name: 'u.region', data: 'region', searchable: true , visible: false },
                     { name: 'u.country', data: 'country', searchable: true , visible: false },
                     { name: 'u.job_role', data: 'job_role', searchable: true , visible: false },
@@ -335,6 +346,8 @@
                     { name: 'u.name', data: 'user_name', searchable: true , visible: true },
                     { name: 'u.activity_status', data: 'user_activity', searchable: true , visible: false },
                     { name: 'u.email', data: 'user_email', searchable: true , visible: true },
+                    { name: 'u.pimsid', data: 'pimsid', searchable: true , visible: true },
+                    { name: 'u.ftid', data: 'ftid', searchable: true , visible: true },
                     { name: 'u.region', data: 'region', searchable: true , visible: false },
                     { name: 'u.country', data: 'country', searchable: true , visible: false },
                     { name: 'u.job_role', data: 'job_role', searchable: true , visible: false },
