@@ -19,6 +19,7 @@ return [
         'NAM' => 'NAM',
         'LATAM' => 'LATAM',
         'APAC' => 'APAC',
+        'Russia' => 'Russia',
     ],
     'job_role' => [
         '' => '',
