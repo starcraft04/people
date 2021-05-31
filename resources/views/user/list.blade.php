@@ -66,7 +66,7 @@
         <div class="row justify-content-center">
       <div class="col-md-8">
         <div class="card" style="padding: 12px;">
-          <div class="card-header">This field used to update FTID and PIMSID Only</div>
+          <div class="card-header">This Field Uses to Update Users and cretae new user by uploading ExcelSheet (Ex. CaC Manager, Cac User) <br> Note: Upload Managers before Users</div>
           <div class="card-body">
             @if(session('status'))
               <div class="alert alert-sucess" role="alert">

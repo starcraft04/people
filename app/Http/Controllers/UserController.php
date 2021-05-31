@@ -16,6 +16,7 @@ use Auth;
 use DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\UsersImport;
+use App\Imports\UserFullImport;
 
 use Illuminate\Http\Request;
 
@@ -346,5 +347,202 @@ class UserController extends Controller
 
         }
         return redirect()->route('userList');
+    }
+
+    
+    public function UpdateCreateUsersByExcel(Request $request)
+    {
+
+        // $managerID = DB::table('users')->select('id')->where('email','mostafa.mossallam@orange.com')->get();
+        
+        // $TheID = $managerID[0]->id;
+
+
+
+        $file = $request->file;
+        $employes = Excel::toArray(new UserFullImport, $file);
+
+
+        for($i=0;$i<sizeof($employes[0]);$i++){
+
+            // Region check
+            $region = trim(str_replace('Region',"",$employes[0][$i]['region'])," ");
+            $get_region = $this->GetRegion($region);
+            //managment code list from config/select
+            $management_code_list = config('select.MC');
+
+            // check if this file for managers or for normail employee
+            if(!isset($employes[0][$i]['manager_email'])){
+                //Create User as manager without manager mail.
+                $user_fields = [
+                    'email'=> $employes[0][$i]['email'],
+                    'name' => $employes[0][$i]['name'],
+                    'pimsid'=> $employes[0][$i]['pims_id'],
+                    'ftid' => $employes[0][$i]['ft_id'],
+                    'region'=>$region,
+                    'country' =>$employes[0][$i]['country'],
+                    'management_code'=> $employes[0][$i]['management_code'],
+                    'employee_type' =>$employes[0][$i]['type']
+                ];
+
+                $user = User::create($user_fields);
+                $user->managers()->attach($user->id);
+            $employee = User::where('email',$employes[0][$i]['email'])->first();
+            $employee->update_password('Welcome1',true);
+            $employee->syncRoles('User');                //assign the manager to himself
+                
+
+
+
+            }
+            else
+            {
+                $manager_id_to_assign = User::where('email',$employes[0][$i]['manager_email'])->pluck('id');
+
+                echo $manager_id_to_assign[0];
+                if(isset($employes[0][$i]['started_date'])){
+
+            $employee = User::where('email',$employes[0][$i]['email'])->first();
+            if($employee){
+                User::where('email',$employes[0][$i]['email'])->Update([
+                    'pimsid'=> $employes[0][$i]['pims_id'],
+                    'ftid' => $employes[0][$i]['ft_id'],
+                    'management_code'=> $employes[0][$i]['management_code'],
+                    'date_started'=>$employes[0][$i]['started_date']
+                ]);
+            }
+            else{
+                User::create([ 
+                    'email'=> $employes[0][$i]['email'],
+                    'name' => $employes[0][$i]['name'],
+                    'pimsid'=> $employes[0][$i]['pims_id'],
+                    'ftid' => $employes[0][$i]['ft_id'],
+                    'region'=>$get_region,
+                    'is_manager'=>0,
+                    'activity_status'=>'active',
+                    'date_started'=>$employes[0][$i]['started_date'],
+                    'country' =>$employes[0][$i]['country'],
+                    'management_code'=> $employes[0][$i]['management_code'],
+                    'employee_type' =>$employes[0][$i]['type']
+                ]);
+
+
+            $employee = User::where('email',$employes[0][$i]['email'])->first();
+            $employee->update_password('Welcome1',true);
+            $employee->syncRoles('User');
+            $employee->managers()->attach($manager_id_to_assign[0]);
+
+            }
+                }
+                if(isset($employes[0][$i]['job_role'])){
+
+            $employee = User::where('email',$employes[0][$i]['email'])->first();
+            if($employee){
+                User::where('email',$employes[0][$i]['email'])->Update([
+                    'pimsid'=> $employes[0][$i]['pims_id'],
+                    'ftid' => $employes[0][$i]['ft_id'],
+                    'management_code'=> $employes[0][$i]['management_code'],
+                    'job_role' => $employes[0][$i]['job_role']
+                ]);
+            }
+            else{
+                $user = User::create([ 
+                    'email'=> $employes[0][$i]['email'],
+                    'name' => $employes[0][$i]['name'],
+                    'pimsid'=> $employes[0][$i]['pims_id'],
+                    'ftid' => $employes[0][$i]['ft_id'],
+                    'job_role' =>$employes[0][$i]['job_role'],
+                    'region'=>$get_region,
+                    'is_manager'=>0,
+                    'activity_status'=>'active',
+                    'date_started'=>date('Y.m.d'),
+                    'country' =>$employes[0][$i]['country'],
+                    'management_code'=> $employes[0][$i]['management_code'],
+                    'employee_type' =>$employes[0][$i]['type'],
+                    'role'=>'User'
+                ]);
+                
+
+            $employee = User::where('email',$employes[0][$i]['email'])->first();
+            $employee->update_password('Welcome1',true);
+            $employee->syncRoles('User');
+            $employee->managers()->attach($manager_id_to_assign[0]);
+
+                        
+
+            }
+                }
+                else{
+            $employee = User::where('email',$employes[0][$i]['email'])->first();
+            if($employee){
+                User::where('email',$employes[0][$i]['email'])->Update([
+                    'pimsid'=> $employes[0][$i]['pims_id'],
+                    'ftid' => $employes[0][$i]['ft_id'],
+                    'management_code'=> $employes[0][$i]['management_code']
+                ]);
+            }
+            else{
+                $user = User::create([ 
+                    'email'=> $employes[0][$i]['email'],
+                    'name' => $employes[0][$i]['name'],
+                    'pimsid'=> $employes[0][$i]['pims_id'],
+                    'ftid' => $employes[0][$i]['ft_id'],
+                    'region'=>$get_region,
+                    'is_manager'=>0,
+                    'activity_status'=>'active',
+                    'date_started'=>date('Y.m.d'),
+                    'country' =>$employes[0][$i]['country'],
+                    'management_code'=> $employes[0][$i]['management_code'],
+                    'employee_type' =>$employes[0][$i]['type']
+                ]);
+
+            $employee = User::where('email',$employes[0][$i]['email'])->first();
+            $employee->update_password('Welcome1',true);
+            $employee->syncRoles('User');
+            $employee->managers()->attach($manager_id_to_assign[0]);
+            }
+                }
+
+
+            }
+        }
+        return redirect('userList')->with('success', 'Record created successfully');
+
+    }
+    public function GetRegion($region)
+    {
+        $get_regions = config('select.region');
+
+        switch ($region) {
+            case 'Middle East and Africa':
+                // code...
+             $region = $get_regions['MEA'];
+                break;
+
+            case 'Europe':
+                // code...
+             $region = $get_regions['Europe'];
+                break;
+
+            case 'Asia Pacific':
+                // code...
+             $region = $get_regions['APAC'];
+                break;
+
+            case 'Russia':
+                // code...
+            $region = $get_regions['Russia'];
+                break;
+
+            case 'Americas':
+                // code...
+            $region = $get_regions['NAM'];
+                break;
+            
+            default:
+                // code...
+                break;
+        }
+        return $region;
     }
 }
