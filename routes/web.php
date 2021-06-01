@@ -261,6 +261,6 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 // Route::get('updator',['uses'=>'UpdateTableController@updator', 'as'=>'updator']);
 
-Route::post('import', ['uses' => 'UserController@UpdateCreateUsersByExcel', 'as' => 'UpdateCreateUsersByExcel', 'middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
+Route::post('import', ['uses' => 'UserController@UploadExcelToCreateOrUpdateUsers', 'as' => 'UploadExcelToCreateOrUpdateUsers', 'middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
 // Route::get('export', 'UpdateTableController@export');
 // Route::get('import',['uses'=>'UpdateTableController@show', 'as' =>'show']);
