@@ -414,6 +414,8 @@ class UserController extends Controller
                 'pimsid' => $man_emp_pimsid,
                 'ftid'   => $man_emp_ftid,
             ];
+            $employes_email_exists = User::where('email', $man_emp_email)->first();
+            $employes_email_exists_in = $employes_email_exists->email;
 
             // If manager mail does not exists in the file 
             // Check if manager_email field not exits then check if this manager already 
@@ -437,6 +439,13 @@ class UserController extends Controller
                     
             }
         }
+            elseif($employes_email_exists_in && !isset($efl[$i]['manager_email']))
+            {
+                
+                User::where('email',$employes_email_exists_in)->update($cac_update_user);
+
+            }
+
             // end of manager file
             //Start of Deafult User (employee)
             else{
@@ -456,6 +465,8 @@ class UserController extends Controller
                 }
 
             }
+
+           
 
 
         }

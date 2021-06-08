@@ -221,7 +221,8 @@ return [
         'SPS31' => 'SPS31',
         'SPS32' => 'SPS32',
         'SPV02' => 'SPV02',
-        'SSM34' => 'SSM34'
+        'SSM34' => 'SSM34',
+        'SPI02' => 'SPI02'
     ],
     'action_status' => [
         'OPEN' => 'OPEN',
