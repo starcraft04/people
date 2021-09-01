@@ -87,7 +87,7 @@
                         <thead>
                             <tr>
                                 <th>Skill ID</th>
-                                <th>Domain</th>
+                                <th>Practice</th>
                                 <th>Sub Domain</th>
                                 <th>technology</th>
                                 <th>Skill</th>
@@ -109,7 +109,7 @@
                         <thead>
                             <tr>
                                 <th>Skill ID</th>
-                                <th>Domain</th>
+                                <th>Practice</th>
                                 <th>Sub Domain</th>
                                 <th>technology</th>
                                 <th>Certification</th>
@@ -142,7 +142,7 @@
           {!! Form::open(['url' => 'userskillFormUpdate/'.$userskill->id, 'method' => 'post', 'class' => 'form-horizontal']) !!}
           @endif
           <div class="row">
-            <div class="col-md-1"><b>Domain</b></div>
+            <div class="col-md-1"><b>Practice</b></div>
             <div class="col-md-2"><b>Sub-domain</b></div>
             <div class="col-md-2"><b>Technology</b></div>
             <div class="col-md-2"><b>Skill</b></div>
