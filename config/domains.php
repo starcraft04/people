@@ -3,10 +3,13 @@
 return [
     'domain-users' => [
         '' => '',
-        'APM' => 'APM',
-        'Security' => 'Security',
-        'Network' => 'Network',
-        'UC' => 'UC',
+        'Service Assurance and Performance' => 'Service Assurance and Performance',
+        'Business Cybersecurity' => ' Business Cybersecurity',
+        'Cloud Networking' => 'Cloud Networking',
+        'Employee Experience' => 'Employee Experience',
+        'IoT and Edge' => 'IoT and Edge',
+        'Customer Experience' => 'Customer Experience',
+        'Digital Data & Cloud' => 'Digital Data & Cloud',
     ],
     'domain-fpc' => [
         'APM' => ['P07', 'F27', 'H10'],
