@@ -245,7 +245,7 @@
           <div class="row">
               <div class="form-group {!! $errors->has('user.domain') ? 'has-error' : '' !!} col-md-12">
                   <div class="col-md-2">
-                      {!! Form::label('user[domain]', 'Domain', ['class' => 'control-label']) !!}
+                      {!! Form::label('user[domain]', 'Practice', ['class' => 'control-label']) !!}
                   </div>
                   <div class="col-md-10">
                       {!! Form::select('user[domain]', config('domains.domain-users'), (isset($user)) ? $user->domain : '', ['id' => 'user_domain','class' => 'form-control']) !!}
