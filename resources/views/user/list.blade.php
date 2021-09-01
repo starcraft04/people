@@ -107,7 +107,7 @@
                     <th>Date ended</th>
                     <th>Region</th>
                     <th>Country</th>
-                    <th>Domain</th>
+                    <th>Practice</th>
                     <th>Management Code</th>
                     <th>Job role</th>
                     <th>Type</th>
