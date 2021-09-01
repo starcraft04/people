@@ -66,7 +66,7 @@
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Domain</th>
+                        <th>Practice</th>
                         <th>Sub Domain</th>
                         <th>technology</th>
                         <th>Skill</th>

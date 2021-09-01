@@ -46,10 +46,10 @@
           <div class="row">
             <div class="form-group {!! $errors->has('domain') ? 'has-error' : '' !!} col-md-12">
               <div class="col-md-3">
-                {!! Form::label('domain', 'Domain', ['class' => 'control-label']) !!}
+                {!! Form::label('domain', 'Practice', ['class' => 'control-label']) !!}
               </div>
               <div class="col-md-9">
-                {!! Form::text('domain', (isset($skill)) ? $skill->domain : '', ['class' => 'form-control', 'placeholder' => 'domain']) !!}
+                {!! Form::text('domain', (isset($skill)) ? $skill->domain : '', ['class' => 'form-control', 'placeholder' => 'Practice']) !!}
                 {!! $errors->first('domain', '<small class="help-block">:message</small>') !!}
               </div>
             </div>
