@@ -364,7 +364,7 @@ $(document).ready(function() {
   });
 
   $("#user_domain").select2({
-    placeholder: 'Select a domain',
+    placeholder: 'Select a Practice',
     allowClear: true
   });
 
