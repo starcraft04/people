@@ -134,7 +134,7 @@
               <th>Manager name</th>
               <th>User ID</th>
               <th>User name</th>
-              <th>User domain</th>
+              <th>User Practice</th>
               <th>User country</th>
               <th>Employee type</th>
               <th>Customer name</th>
