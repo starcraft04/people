@@ -1,0 +1,11 @@
+.left_col {
+    background: #ad4f4f;
+}
+
+.nav.side-menu>li.active>a {
+    background: linear-gradient(#ad4f4f,#ad4f4f),#000000;
+}
+
+.nav_title {
+    background: #ad4f4f;
+}

@@ -19,6 +19,7 @@
   <link href="{{ asset('/plugins/gentelella/vendors/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
   <!-- Custom Theme Style -->
   <link href="{{ asset('/plugins/gentelella/build/css/custom.min.css') }}" rel="stylesheet">
+  @if(env('APP_DEBUG') == 'true') <link href="{{ asset('/css/debug.css') }}" rel="stylesheet"> @endif
   <link href="{{ asset('/css/animate.css') }}" rel="stylesheet">
   <link href="{{ asset('/css/alert.css') }}" rel="stylesheet">
   @yield('style')
@@ -45,7 +46,9 @@
       <div class="col-md-3 left_col menu_fixed">
         <div class="left_col scroll-view">
           <div class="navbar nav_title" style="border: 0;">
-            <a href="{!!route('home')!!}" class="site_title"><img src="{{ asset("/img/dolphin-logo.png") }}"><span>Dolphin</span></a>
+            <a href="{!!route('home')!!}" class="site_title"><img src="{{ asset("/img/dolphin-logo.png") }}">
+              <span>Dolphin @if(env('APP_DEBUG') == 'true') TEST @endif</span>
+            </a>
           </div>
 
           <div class="clearfix"></div>
