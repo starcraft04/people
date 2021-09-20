@@ -77,7 +77,7 @@ class ProjectTableRepositoryV2
                     m12_id INT(10),
                     m12_com double(8,2) DEFAULT 0,
                     m12_from_otl tinyint(1) DEFAULT 0
-                    ) engine=memory;
+                    ) ;
             ')
         );
 

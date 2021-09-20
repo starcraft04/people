@@ -4338,4 +4338,1028 @@ $(document).ready(function() {
 
 });
 </script>
+
+
+</script>
+
+
+
+<script type="text/javascript">
+  var quantity;
+  var loe_per_unit;
+  var row_id;
+  var total_loe_reccurent=0;
+  //--->make div editable > start
+
+function change_totals(className){
+      row_id = $(className).closest('tr').attr("data-id"); 
+
+    console.log("change totals is here "+row_id);
+      quantity = $(className).closest("tr").find('#quantity').html();
+      console.log("quantity from totals "+ quantity);
+      loe_per_unit = $(className).closest("tr").find('#loe_per_unit').html();
+      console.log("loe from totals "+ loe_per_unit);
+
+    // change md field on change quantity or loe
+    var md_fields = $(className).closest("tr[data-id="+row_id+"]").find("td[id*='fill_md']" ).map(function(){return this.id;}).get().join();
+
+    
+    var percentage_fields = $(className).closest("tr[data-id="+row_id+"]").find("td[id*='fill_percent']" ).map(function(){return this.id;}).get().join();
+
+    var percentage_fields_array = percentage_fields.split(',');
+    var md_fields_array = md_fields.split(',');
+    var get_percent;
+    var get_md;
+    var calc ;
+    for(const cont of percentage_fields_array){
+      var contries = cont.split('_');
+
+      console.log("contrieeeeeee  "+contries);
+
+    }
+    var number_of_days = $(className).closest("tr").find("td[id=number_of_days]").html();
+    for(let i=0;i<percentage_fields_array.length;i++){
+      console.log("iiiiiiiiiiii "+percentage_fields_array[i]);
+    /*var index = $(this).closest('tr').find('#'+percent).index();*/
+      get_percent = $(className).closest("tr[data-id="+row_id+"]").find("td[id*="+percentage_fields_array[i]+"]").html();
+      calc = (quantity*loe_per_unit*get_percent)/100;
+      console.log("per "+get_percent);
+      var contry = percentage_fields_array[i].split("_")[2];
+      $(className).closest("tr[data-id="+row_id+"]").find("#fill_md_"+contry).html(calc);
+
+      if($(className).closest("tr").find("#loe_recurrent").is(":checked")){
+        total_loe_reccurent = (quantity*loe_per_unit*number_of_days)*(200/12);
+        var md_changed_reccurent = (get_percent*total_loe_reccurent)/100;
+
+      $(className).closest("tr[data-id="+row_id+"]").find("#total_loe").html(total_loe_reccurent.toFixed(1));
+      $(className).closest("tr[data-id="+row_id+"]").find("#fill_md_"+contry).html(md_changed_reccurent.toFixed(1));
+      }
+      else{
+      $(className).closest("tr[data-id="+row_id+"]").find("#total_loe").html(quantity*loe_per_unit);
+      }
+  }
+   
+  // cost and price
+  var cost_fields = $(className).closest("tr[data-id="+row_id+"]").find("td[id*='fill_cost']" ).map(function(){return this.id;}).get().join();
+    var cost_fields_array = cost_fields.split(',');
+    var sum =0;
+    var sum_price=0;
+    var total_cost_for_calc=0;
+
+    for(const field of cost_fields_array){
+      console.log(field);
+    var country = field.split("_")[2];
+    var get_md_for_calc = $(className).closest("tr[data-id="+row_id+"]").find("td[id=fill_md_"+country+"]").html();
+
+      //cost
+      sum =parseFloat($(className).closest("tr[data-id="+row_id+"]").find('td[id='+field+']').html());
+      console.log("ssssssssuummm "+ sum);
+
+      total_cost_for_calc +=(sum*get_md_for_calc);
+      console.log(total_cost_for_calc);
+      console.log("get md "+get_md_for_calc);
+      //price 
+      var the_price = $(className).closest("tr[data-id="+row_id+"]").find("td[id=fill_price_"+country+"]").html();
+
+      sum_price+=(get_md_for_calc*the_price);
+
+
+
+}
+  // add to total cose
+  $(className).closest("tr[data-id="+row_id+"]").find("td[id=total_cost]").html(parseFloat(total_cost_for_calc).toFixed(1));
+  //add to total price
+
+  $(className).closest("tr[data-id="+row_id+"]").find("td[id=total_price]").html(sum_price.toFixed(1));
+
+    var total_cost = $(className).closest("tr[data-id="+row_id+"]").find("td[id=total_cost]").html();
+  console.log("total cost from price "+total_cost);
+  
+  var total_price = $(className).closest("tr[data-id="+row_id+"]").find("td[id=total_price]").html();
+console.log("total cost from price "+total_price);
+  var marign_after_change = (100*(total_price-total_cost))/total_price;
+  console.log(marign_after_change);
+  $(className).closest("tr[data-id="+row_id+"]").find("#margin").html(marign_after_change.toFixed(1));
+
+    //get totals
+console.log("---------------------");    
+  
+console.log("---------------------");
+ 
+   //end of function 
+    }
+
+
+  $(document).on('click', '.row_data', function(event) 
+  {
+    event.preventDefault(); 
+
+    if($(this).attr('edit_type') == 'button')
+    {
+      return false; 
+    }
+    row_id = $(this).closest('tr').attr("data-id"); 
+    console.log(row_id);
+    var column = $(this).attr('data-colname');
+    console.log("on click get colname "+column);
+    var location = $(this).attr("data-conType");
+
+    console.log("locaaaaaaaaaaaaaaaa "+location);
+
+    if(column == "domain"){
+
+      $('#domain').replaceWith(`<td data-colname="domain">
+                <div id="loe_div_domain" class="form-group">
+                  <select class="form-control select2" style="width: 100%;" id="loe_domain" data-placeholder="Select a domain">
+                    <option value="" ></option>
+                    @foreach(config('select.domain-users') as $key => $value)
+                    <option value="{{ $key }}">
+                      {{ $value }}
+                    </option>
+                    @endforeach
+                  </select>
+                  <span id="loe_domain_error" class="help-block"></span>
+                </div>
+              </td>`);
+      $(this).addClass('bg-warning').css('padding','5px');
+    }
+    else if(column == "recurrent" ){
+      $("#recurrent").replaceWith(`<td data-colname="recurrent">
+                <div id="loe_div_recurrent" class="form-group">
+                  <input data-test="test" type="checkbox" id="loe_recurrent" class="form-group"></input>
+                  <span id="loe_recurrent_error" class="help-block"></span>
+                </div>
+              </td>`);
+            $(this).addClass('bg-warning').css('padding','5px');
+
+    }
+     $(this).closest('td').attr('contenteditable', 'true');
+    //add bg css
+    $(this).addClass('bg-warning').css('padding','5px');
+
+    $(this).focus();
+    
+    //make div editable
+   
+  })  
+
+ $(document).on('click', '.row_data_md', function(event) 
+  {
+    event.preventDefault(); 
+
+    if($(this).attr('edit_type') == 'button')
+    {
+      return false; 
+    }
+    row_id = $(this).closest('tr').attr("data-id"); 
+    console.log(row_id);
+    var column = $(this).attr('data-colname');
+    console.log("on click get colname "+column);
+    var location = $(this).attr("data-conType");
+
+    console.log("locaaaaaaaaaaaaaaaa "+location);
+    $(this).addClass('bg-warning').css('padding','5px');
+
+    
+    //make div editable
+    $(this).closest('td').attr('contenteditable', 'true');
+    //add bg css
+    $(this).addClass('bg-warning').css('padding','5px');
+
+    $(this).focus();
+  }) 
+
+
+ $(document).on('click', '.row_data_cost', function(event) 
+  {
+    event.preventDefault(); 
+
+    if($(this).attr('edit_type') == 'button')
+    {
+      return false; 
+    }
+    row_id = $(this).closest('tr').attr("data-id"); 
+    console.log(row_id);
+    var column = $(this).attr('data-colname');
+    console.log("on click get colname "+column);
+    var location = $(this).attr("data-conType");
+
+    console.log("locaaaaaaaaaaaaaaaa "+location);
+    $(this).addClass('bg-warning').css('padding','5px');
+
+    
+    //make div editable
+    $(this).closest('td').attr('contenteditable', 'true');
+    //add bg css
+    $(this).addClass('bg-warning').css('padding','5px');
+
+    $(this).focus();
+  }) 
+
+ $(document).on('click', '.row_data_percent', function(event) 
+  {
+    event.preventDefault(); 
+
+    if($(this).attr('edit_type') == 'button')
+    {
+      return false; 
+    }
+    row_id = $(this).closest('tr').attr("data-id"); 
+    console.log(row_id);
+    var column = $(this).attr('data-colname');
+    console.log("on click get colname "+column);
+    var location = $(this).attr("data-conType");
+
+    console.log("locaaaaaaaaaaaaaaaa "+location);
+  $(this).addClass('bg-warning').css('padding','5px');
+
+    //make div editable
+    $(this).closest('td').attr('contenteditable', 'true');
+    //add bg css
+    $(this).addClass('bg-warning').css('padding','5px');
+
+    $(this).focus();
+  }) 
+
+
+
+  // for domain
+$(document).on('focusout', '#loe_div_domain', function(event)
+    {
+        console.log("domain focusout");
+    event.preventDefault();
+    
+      var domain_value = $('#loe_domain').val();
+      console.log("domain value "+ domain_value);
+       var arr = {};
+    if(domain_value == ''){
+          arr['domain'] = null;
+
+    }
+    else{
+      arr['domain'] = domain_value;
+
+    }
+    var id = row_id;
+    console.log("Project_id "+id);
+
+    //use the "arr" object for your ajax call
+    $.extend(arr, {row_id:row_id});
+    console.log("Aaaaaaaaaa " + arr);
+    //out put to show
+    
+    $.ajax({
+
+        type:"POST",
+        url:"{!! route('loeUpdate','') !!}/"+id,
+        data:arr,
+        dataType:'json',
+        success:function(data){
+          console.log("added");
+        }
+
+    });
+    
+  
+  });
+
+
+$(document).on('change','#loe_recurrent', function() {
+      console.log("get changed");
+      var arr = {};
+      row_id = $(this).closest('tr').attr("data-id"); 
+      console.log(row_id);
+        if(this.checked) {
+          console.log("changedcccccc");
+          arr['recurrent'] ="1";
+          var loe_per_unit_rec = $(this).closest("tr").find("#loe_per_unit").html();
+
+          if(loe_per_unit_rec > 1){
+            alert("number must be between 0 and 1");
+            $(this).closest("tr").find("#loe_per_unit").html(1);
+          }
+        else{
+          alert("good");
+        }
+        }
+        else{
+        arr['recurrent'] ="0";
+        console.log("not changed");
+    }
+
+    console.log("Project_id "+row_id);
+
+    //use the "arr" object for your ajax call
+    $.extend(arr, {row_id:row_id});
+    console.log("recrrent " + arr);
+    //out put to show
+    
+    $.ajax({
+
+        type:"POST",
+        url:"{!! route('loeUpdate','') !!}/"+row_id,
+        data:arr,
+        dataType:'json',
+        success:function(data){
+          console.log("added");
+        }
+
+    });
+
+      
+    });
+
+// for recurrent
+$(document).on('focusout', '#loe_div_recurrent', function(event)
+    {
+        console.log("recrrent focusout");
+    event.preventDefault();
+    
+      var recurrent_value = $('#loe_recurrent').val();
+      console.log("recrrent value "+ recurrent_value);
+       var arr = {};
+       if(recurrent_value == 'on'){
+            arr['recurrent'] = "1";
+            console.log();
+       }
+       else{
+            arr['recurrent'] = "0";
+            $("#number_of_days").hide();
+       }
+    var id = row_id;
+    console.log("Project_id "+id);
+
+    //use the "arr" object for your ajax call
+    $.extend(arr, {row_id:row_id});
+    console.log("recrrent " + arr);
+
+
+   
+    //out put to show
+    
+    $.ajax({
+
+        type:"POST",
+        url:"{!! route('loeUpdate','') !!}/"+id,
+        data:arr,
+        dataType:'json',
+        success:function(data){
+          console.log("added");
+        }
+
+    });
+
+
+  
+  });
+// add cost to db
+$(document).on('focusout', '.row_data_cost',function(event){
+
+  var conType = $(this).attr("data-conType");
+  const loc_arr = conType.split(/[\b\-\_]/);
+        var arr_perc = {};
+      var col_name = $(this).attr('id');  
+      var col_val  =  $(this).html();    
+      arr_perc[col_name] = col_val;
+          var div_name = loc_arr[0];
+
+    var row_div = $(this)       
+    .removeClass('bg-warning') //add bg css
+    .css('padding','')
+
+
+      var id = row_id;
+      console.log("the id "+id);
+  console.log('contType dddddddddd'+loc_arr);
+
+    console.log(loc_arr[2]);
+        
+    $.extend(arr_perc, {name:div_name},{row_id:row_id},{location:loc_arr[2]});
+    console.log("Aaaaaaaaaa " + "  "+ arr_perc['row_id']+"  "+ arr_perc['location']);
+    //out put to show
+  
+
+
+  $.ajax({
+
+        type:"POST",
+        url:"{!! route('loeUpdate','') !!}/"+id,
+        data:arr_perc,
+        dataType:'json',
+        success:function(data){
+          console.log(data);
+        },
+        error:function(data){
+          console.log(data);
+        }
+
+
+      });
+
+  var cost_fields = $(this).closest("tr").find("td[id*='fill_cost']" ).map(function(){return this.id;}).get().join();
+    var cost_fields_array = cost_fields.split(',');
+    var sum =0;
+    var total_cost_for_calc=0;
+
+    for(const field of cost_fields_array){
+      console.log(field);
+    var country = field.split("_")[2];
+    var get_md_for_calc = $(this).closest("tr").find("#fill_md_"+country).html();
+
+      sum =parseFloat($(this).closest("tr").find('#'+field).html());
+      console.log("ssssssssuummm "+ sum);
+
+      total_cost_for_calc +=(sum*get_md_for_calc);
+      console.log(total_cost_for_calc);
+      console.log("get md "+get_md_for_calc);
+
+}
+  $(this).closest("tr").find("#total_cost").html(parseFloat(total_cost_for_calc).toFixed(1));
+
+
+    var total_cost = $(this).closest("tr").find("#total_cost").html();
+  console.log("total cost from price "+total_cost);
+  
+  var total_price = $(this).closest("tr").find("#total_price").html();
+console.log("total cost from price "+total_price);
+  var marign_after_change = (100*(total_price-total_cost))/total_price;
+  console.log(marign_after_change);
+  $(this).closest("tr").find("#margin").html(marign_after_change.toFixed(1));
+});
+
+// end of add cost
+ $(document).on('click', '.row_data_price', function(event) 
+  {
+    event.preventDefault(); 
+
+    if($(this).attr('edit_type') == 'button')
+    {
+      return false; 
+    }
+    row_id = $(this).closest('tr').attr("data-id"); 
+    console.log(row_id);
+    var column = $(this).attr('data-colname');
+    console.log("on click get colname "+column);
+    var location = $(this).attr("data-conType");
+
+    console.log("locaaaaaaaaaaaaaaaa "+location);
+    $(this).addClass('bg-warning').css('padding','5px');
+
+    
+    //make div editable
+    $(this).closest('td').attr('contenteditable', 'true');
+    //add bg css
+    $(this).addClass('bg-warning').css('padding','5px');
+
+    $(this).focus();
+  }) 
+
+$(document).on('focusout', '.row_data_price',function(event){
+
+  var conType = $(this).attr("data-conType");
+  const loc_arr = conType.split(/[\b\-\_]/);
+        var arr_perc = {};
+      var col_name = $(this).attr('id');  
+      var col_val  =  $(this).html();    
+      arr_perc[col_name] = col_val;
+          var div_name = loc_arr[0];
+
+    var row_div = $(this)       
+    .removeClass('bg-warning') //add bg css
+    .css('padding','')
+
+      var id = row_id;
+      console.log("the id "+id);
+  console.log('contType dddddddddd'+loc_arr);
+
+    console.log(loc_arr[2]);
+        
+    $.extend(arr_perc, {name:div_name},{row_id:row_id},{location:loc_arr[2]});
+    console.log("Aaaaaaaaaa " + "  "+ arr_perc['row_id']+"  "+ arr_perc['location']);
+    //out put to show
+  
+
+  $.ajax({
+
+        type:"POST",
+        url:"{!! route('loeUpdate','') !!}/"+id,
+        data:arr_perc,
+        dataType:'json',
+        success:function(data){
+          console.log(data);
+        },
+        error:function(data){
+          console.log(data);
+        }
+
+
+      });
+
+  var price_fields = $(this).closest("tr").find("td[id*='fill_price']" ).map(function(){return this.id;}).get().join();
+    var price_fields_array = price_fields.split(',');
+    var sum =0;
+    var total_price_for_calc=0;
+
+    for(const field of price_fields_array){
+      console.log(field);
+    var country = field.split("_")[2];
+    var get_md_for_calc = $(this).closest("tr").find("#fill_md_"+country).html();
+
+      sum =parseFloat($(this).closest("tr").find('#'+field).html());
+      total_price_for_calc +=(sum*get_md_for_calc);
+      console.log(total_price_for_calc);
+      console.log("get md "+get_md_for_calc);
+
+}
+  var total_cost = $(this).closest("tr").find("#total_cost").html();
+  console.log("total cost from price "+total_cost);
+  $(this).closest("tr").find("#total_price").html(parseFloat(total_price_for_calc).toFixed(2));
+  var total_price = $(this).closest("tr").find("#total_price").html();
+
+  var marign_after_change = 100*(total_price-total_cost)/total_price;
+  console.log(marign_after_change);
+  $(this).closest("tr").find("#margin").html(parseFloat(marign_after_change).toFixed(1));
+});
+
+
+//add price to db 
+
+function changePrice(click){
+  var conType = click.attr("data-conType");
+  const loc_arr = conType.split(/[\b\-\_]/);
+  var arr_perc = {};
+  var col_name = click.attr('id');  
+  var col_val  =  click.html();    
+  arr_perc[col_name] = col_val;
+  var div_name = loc_arr[0];
+  var row_div = $(this)       
+    .removeClass('bg-warning') //add bg css
+    .css('padding','')
+
+  var id = row_id;
+  console.log("the id "+id);
+  console.log('contType dddddddddd'+loc_arr);
+
+  var quantity = click.closest("tr").find("#quantity").html();
+  var loe_per_unit = click.closest("tr").find("#loe_per_unit").html();
+  var md = click.parent().find("#fill_md_"+loc_arr[2]).html();
+}
+
+
+//end of add price to db 
+
+$(document).on('focusout', '.row_data_percent',function(event){
+
+  var conType = $(this).attr("data-conType");
+  const loc_arr = conType.split(/[\b\-\_]/);
+        var arr_perc = {};
+      var col_name = $(this).attr('id');  
+      var col_val  =  $(this).html();    
+      arr_perc[col_name] = col_val;
+          var div_name = loc_arr[0];
+
+    var row_div = $(this)       
+    .removeClass('bg-warning') //add bg css
+    .css('padding','')
+
+      var id = row_id;
+      console.log("the id "+id);
+  console.log('contType dddddddddd'+loc_arr);
+
+    quantity = $(this).closest("tr").find('#quantity').html();
+    loe_per_unit = $(this).closest("tr").find('#loe_per_unit').html();
+    var percent = $('#fill_percent_'+loc_arr[1]).val();
+
+    var index = $(this).parent().find('td').index(this);
+    var percent = $(this).parent().find('#fill_percent_'+loc_arr[2]).html();
+  console.log("quality"+quantity);
+  console.log("indexxxx "+index);
+  console.log("loe_per"+loe_per_unit);
+      var md = (quantity * loe_per_unit);
+      var nd = (index/100);
+      var fill_md = md * (percent/100);
+console.log(loc_arr[2]);
+        
+    console.log("Ssssssss"+percent+" loe "+loe_per_unit+" index "+index+" md "+ md+" index/100 "+nd+" fill_md "+fill_md);
+    $(this).parent().find("#fill_md_"+loc_arr[2]).html(fill_md);
+
+    // var sss = $(this).closest('tr').find("td:nth-child(18)").html(100-percent);
+    // var sec_md = md * ($(this).closest('tr').find("td:nth-child(18)").html()/100);
+    // $(this).closest('tr').find("td:nth-child(19)").html(sec_md);
+    // console.log("sss"+sss);
+
+    $.extend(arr_perc, {name:div_name},{row_id:row_id},{location:loc_arr[2]});
+    console.log("Aaaaaaaaaa " + "  "+ arr_perc['row_id']+"  "+ arr_perc['location']);
+    //out put to show
+    var percentage_fields = $(this).closest("tr").find("td[id*='fill_percent']" ).map(function(){return this.id;}).get().join();
+    var percentage_fields_array = percentage_fields.split(',');
+    var sum =0;
+    for(const field of percentage_fields_array){
+      sum +=parseFloat($(this).closest("tr").find('#'+field).html());
+}
+    for(const field of percentage_fields_array){
+
+    if(sum > 100 || sum < 100){
+      $(this).closest("tr").find('#'+field).css("background-color", "red");
+      $(this).closest("tr").find('#'+field).css("color", "white");
+
+    }
+    else if(sum == 100){
+      $(this).closest("tr").find('#'+field).css("background-color", "white");
+      $(this).closest("tr").find('#'+field).css("color",'#73879c');
+       
+    }
+  }
+
+
+
+ console.log("momkn wala ah "+ percentage_fields);
+  $.ajax({
+
+        type:"POST",
+        url:"{!! route('loeUpdate','') !!}/"+id,
+        data:arr_perc,
+        dataType:'json',
+        success:function(data){
+          console.log(data);
+        },
+        error:function(data){
+          console.log(data);
+        }
+
+
+      });
+
+  change_totals('.row_data_percent');
+  
+});
+
+
+ 
+$(document).on('focusout', '.row_data_md',function(event){
+
+  var conType = $(this).attr("data-conType");
+  const loc_arr = conType.split(/[\b\-\_]/);
+        var arr_perc = {};
+      var col_name = $(this).attr('id');  
+      var col_val  =  $(this).html();    
+      arr_perc[col_name] = col_val;
+          var div_name = loc_arr[0];
+
+    var row_div = $(this)       
+    .removeClass('bg-warning') //add bg css
+    .css('padding','')
+
+      var id = row_id;
+      console.log("the id "+id);
+  console.log('contType dddddddddd'+loc_arr);
+
+
+    quantity = $(this).closest("tr").find('#quantity').html();
+
+    loe_per_unit = $(this).closest("tr").find('#loe_per_unit').html();
+  var md_changed = $(this).closest("tr").find('#fill_md_'+loc_arr[2]).html();
+console.log("qqqq"+quantity+" loe"+loe_per_unit+" md_changed "+md_changed);
+
+var percent_after_md_changed =(md_changed/(quantity*loe_per_unit)) * 100;
+
+console.log("percentage    "+percent_after_md_changed);
+
+$('#fill_percent_'+loc_arr[2]).html(parseFloat(percent_after_md_changed).toFixed(1));
+  var arr_perc = {};
+  var col_name = $('#fill_percent_'+loc_arr[2]).attr('id');  
+  var col_val  =  percent_after_md_changed;    
+  arr_perc[col_name] = col_val;
+  
+  $.extend(arr_perc,{name:div_name},{row_id:row_id},{location:loc_arr[2]});
+
+ var percentage_fields = $(this).closest("tr").find("td[id*='fill_percent']" ).map(function(){return this.id;}).get().join();
+    var percentage_fields_array = percentage_fields.split(',');
+    var sum =0;
+    for(const field of percentage_fields_array){
+      console.log(field);
+      sum +=parseFloat($(this).closest("tr").find('#'+field).html());
+}
+    for(const field of percentage_fields_array){
+
+    if(sum > 100 || sum < 100){
+      $(this).closest("tr").find('#'+field).css("background-color", "red");
+    }
+    else if(sum == 100){
+      $(this).closest("tr").find('#'+field).css("background-color", "white");
+       
+    }
+  }
+
+    //var percent = $('#fill_percent_'+loc_arr[2]).val();
+
+ $.ajax({
+
+        type:"POST",
+        url:"{!! route('loeUpdate','') !!}/"+id,
+        data:arr_perc,
+        dataType:'json',
+        success:function(data){
+          console.log(data);
+        },
+        error:function(data){
+          console.log(data);
+        }
+
+
+      });
+ change_totals(".row_data_md");
+});
+
+
+
+  //--->save single field data > start
+  $(document).on('focusout', '.row_data', function(event) 
+  {
+    console.log("focusout");
+    
+
+    event.preventDefault();
+
+    if($(this).attr('edit_type') == 'button')
+    {
+      return false; 
+    }
+
+    var row_div = $(this)       
+    .removeClass('bg-warning') //add bg css
+    .css('padding','')
+
+    var col_name = row_div.attr('data-colname'); 
+    console.log(col_name);
+    var col_val = row_div.html(); 
+    console.log("val  "+col_val)
+    var arr = {};
+    if(col_val == null){
+      console.log("emptyyyyyy  "+col_val+"emooo");
+      arr[col_name] = null;
+      console.log(arr[col_name]);
+    }
+    else{
+      arr[col_name] = col_val;
+
+    }
+    
+    var id = row_id;
+    console.log("Project_id "+id);
+
+    // loe per unit check for recurrent
+
+    var col_id = $(this).attr('id');  
+
+    console.log("--------------");
+    console.log(col_id);
+    console.log("--------------");
+
+    if(col_id == 'loe_per_unit'){
+      if($(this).closest("tr").find("#loe_recurrent").is(":checked")){
+
+      alert("checked put 0 or 1");
+    }
+    else{
+      alert("peace");
+     }
+    }
+
+
+
+    //use the "arr" object for your ajax call
+    $.extend(arr, {row_id:row_id});
+    console.log("Aaaaaaaaaa " + arr);
+    //out put to show
+    
+    $.ajax({
+
+        type:"POST",
+        url:"{!! route('loeUpdate','') !!}/"+id,
+        data:arr,
+        dataType:'json',
+        success:function(data){
+          console.log("added");
+        }
+
+    });
+    change_totals('.row_data');
+    
+  })  
+  //--->save single field data > end
+
+  // leo per day on recurrent mode
+
+
+$(document).on('click', '.row_data_loe_unit', function(event) 
+  {
+    event.preventDefault(); 
+
+    if($(this).attr('edit_type') == 'button')
+    {
+      return false; 
+    }
+    row_id = $(this).closest('tr').attr("data-id"); 
+    console.log(row_id);
+    var column = $(this).attr('data-colname');
+    console.log("on click get colname "+column);
+    var location = $(this).attr("data-conType");
+
+    console.log("locaaaaaaaaaaaaaaaa "+location);
+    $(this).addClass('bg-warning').css('padding','5px');
+    
+     $(this).closest('td').attr('contenteditable', 'true');
+    //add bg css
+    $(this).addClass('bg-warning').css('padding','5px');
+
+    $(this).focus();
+    
+    //make div editable
+   
+  });
+
+
+  $(document).on('focusout', '.row_data_loe_unit', function(event) 
+  {
+    console.log("focusout");
+    
+
+    event.preventDefault();
+
+    if($(this).attr('edit_type') == 'button')
+    {
+      return false; 
+    }
+
+    var row_div = $(this)       
+    .removeClass('bg-warning') //add bg css
+    .css('padding','')
+
+    var col_name = row_div.attr('data-colname'); 
+    console.log(col_name);
+    var col_val = row_div.html(); 
+    console.log("val  "+col_val)
+    var arr = {};
+    if(col_val == null){
+      console.log("emptyyyyyy  "+col_val+"emooo");
+      arr[col_name] = null;
+      console.log(arr[col_name]);
+    }
+    else{
+      arr[col_name] = col_val;
+
+    }
+    
+    var id = row_id;
+    console.log("Project_id "+id);
+
+    // loe per unit check for recurrent
+
+    var col_id = $(this).attr('id');  
+
+    console.log("--------------");
+    console.log(col_id);
+    console.log("--------------");
+
+    if(col_id == 'loe_per_unit'){
+      if($(this).closest("tr").find("#loe_recurrent").is(":checked") && $(this).html()>1){
+
+      alert("checked put 0 or 1");
+    }
+    else{
+      $.extend(arr, {row_id:row_id});
+    console.log("Aaaaaaaaaa " + arr);
+    //out put to show
+    
+    $.ajax({
+
+        type:"POST",
+        url:"{!! route('loeUpdate','') !!}/"+id,
+        data:arr,
+        dataType:'json',
+        success:function(data){
+        }
+
+    });
+      alert("peace");
+      }
+    }
+
+    change_totals('.row_data_loe_unit');
+    console.log("after");
+    //use the "arr" object for your ajax call
+    
+
+   
+  });
+ 
+  //--->button > edit > start 
+  $(document).on('click', '.btn_edit', function(event) 
+  {
+    event.preventDefault();
+    var tbl_row = $(this).closest('tr');
+
+    var row_id = tbl_row.attr('row_id');
+
+    tbl_row.find('.btn_save').show();
+    tbl_row.find('.btn_cancel').show();
+
+    //hide edit button
+    tbl_row.find('.btn_edit').hide(); 
+
+    //make the whole row editable
+    tbl_row.find('.row_data')
+    .attr('contenteditable', 'true')
+    .attr('edit_type', 'button')
+    .addClass('bg-warning')
+    .css('padding','3px')
+
+    //--->add the original entry > start
+    tbl_row.find('.row_data').each(function(index, val) 
+    {  
+      //this will help in case user decided to click on cancel button
+      $(this).attr('original_entry', $(this).html());
+    });     
+    //--->add the original entry > end
+
+  });
+  //--->button > edit > end
+
+
+  //--->button > cancel > start 
+  $(document).on('click', '.btn_cancel', function(event) 
+  {
+    event.preventDefault();
+
+    var tbl_row = $(this).closest('tr');
+
+    var row_id = tbl_row.attr('row_id');
+
+    //hide save and cacel buttons
+    tbl_row.find('.btn_save').hide();
+    tbl_row.find('.btn_cancel').hide();
+
+    //show edit button
+    tbl_row.find('.btn_edit').show();
+
+    //make the whole row editable
+    tbl_row.find('.row_data')
+    .attr('edit_type', 'click')
+    .removeClass('bg-warning')
+    .css('padding','') 
+
+    tbl_row.find('.row_data').each(function(index, val) 
+    {   
+      $(this).html( $(this).attr('original_entry') ); 
+    });  
+  });
+  //--->button > cancel > end
+
+  
+  //--->save whole row entery > start 
+  $(document).on('click', '.btn_save', function(event) 
+  {
+    event.preventDefault();
+    var tbl_row = $(this).closest('tr');
+
+    var row_id = tbl_row.attr('row_id');
+
+    
+    //hide save and cacel buttons
+    tbl_row.find('.btn_save').hide();
+    tbl_row.find('.btn_cancel').hide();
+
+    //show edit button
+    tbl_row.find('.btn_edit').show();
+
+
+    //make the whole row editable
+    tbl_row.find('.row_data')
+    .attr('edit_type', 'click')
+    .removeClass('bg-warning')
+    .css('padding','') 
+
+    //--->get row data > start
+    var arr = {}; 
+    tbl_row.find('.row_data').each(function(index, val) 
+    {   
+      var col_name = $(this).attr('col_name');  
+      var col_val  =  $(this).html();
+      arr[col_name] = col_val;
+    });
+    //--->get row data > end
+
+    //use the "arr" object for your ajax call
+    $.extend(arr, {row_id:row_id});
+
+    //out put to show
+    $('.post_msg').html( '<pre class="bg-success">'+JSON.stringify(arr, null, 2) +'</pre>')
+     
+
+  });
+  //--->save whole row entery > end
+
+
+</script>
 @stop

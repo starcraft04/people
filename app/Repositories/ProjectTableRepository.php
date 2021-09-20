@@ -64,7 +64,7 @@ class ProjectTableRepository
   nov_from_otl tinyint(1) DEFAULT 0,
   dec_com double(8,2) DEFAULT 0,
   dec_from_otl tinyint(1) DEFAULT 0
-) engine=memory;
+);
 
 ALTER TABLE '.$table_name_cols.' ADD UNIQUE( `year`,`project_id`, `user_id`);
 
