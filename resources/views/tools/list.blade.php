@@ -530,7 +530,25 @@
         { name: 'c.country_owner', data: 'customer_country_owner' , searchable: true , visible: false, className: "dt-nowrap"},
         { name: 'temp_a.project_id', data: 'project_id' , searchable: false , visible: false},
         { name: 'p.project_name', data: 'project_name', className: "dt-nowrap"},
-        { name: 'p.project_type', data: 'project_type', visible: true, className: "dt-nowrap"},
+        { name: 'p.project_type', data: 'project_type', 
+        render: function (data,type, rowData) {
+          if (type === 'display') {
+            @can('projectLoe-view')
+            if (data == 'Pre-sales') {
+              if (rowData.num_of_loe >=1) {
+                return data + '<a href="{!! route('loeView','') !!}/'+rowData.project_id+'"><img src="{{ asset("/img/loe.png") }}" width="20" height="20" style="margin-left:10px;"></a>';
+              } 
+              @can('projectLoe-create')
+              else {
+                return data + '<span><img class="create_loe" data-project_id="'+rowData.project_id+'" src="{{ asset("/img/loe-bw.png") }}" width="20" height="20" style="margin-left:10px;"></span>';
+              }
+              @endcan
+            }
+            @endcan
+          }
+          return data;
+        },
+        visible: true, className: "dt-nowrap"},
         { name: 'p.activity_type', data: 'activity_type', visible: false, className: "dt-nowrap"},
         { name: 'p.project_status', data: 'project_status' , visible: true, className: "dt-nowrap"},
         { name: 'p.otl_project_code', data: 'otl_project_code' , searchable: true , visible: false, className: "dt-nowrap"},
@@ -655,6 +673,45 @@
         }
       }
     });
+
+    //Create LoE
+    @can('projectLoe-create')
+    $('#activitiesTable').on('click','.create_loe', function() {
+      var project_id = $(this).data('project_id');
+      var span = $(this).closest('span');
+      $.ajax({
+        type: 'get',
+        url: "{!! route('loeInit','') !!}/"+project_id,
+        dataType: 'json',
+        beforeSend: function () { // Before we send the request, remove the .hidden class from the spinner and default to inline-block.
+                span.empty();
+            },
+        success: function(data) {
+          if (data.result == 'success'){
+              box_type = 'success';
+              message_type = 'success';
+          }
+          else {
+              box_type = 'danger';
+              message_type = 'error';
+          }
+
+          $('#flash-message').empty();
+          var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+          $('#flash-message').append(box);
+          $('#delete-message').delay(2000).queue(function () {
+              $(this).addClass('animated flipOutX')
+          });
+        },
+        error: function (jqXhr, textStatus, errorMessage) { // error callback 
+          console.log('Error: ' + errorMessage);
+        },
+        complete: function () { // Set our complete callback, adding the .hidden class and hiding the spinner.
+          activitiesTable.ajax.reload(update_headers());
+            }
+      });
+    });
+    @endcan
 
     @can('tools-activity-edit')
     $('#activitiesTable').on('click', 'tbody td', function() {

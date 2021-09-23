@@ -18,6 +18,61 @@ use App\ConsultingPricing;
 
 class LoeController extends Controller
 {
+    
+
+    //region LoE general
+    public function view($id)
+    {
+        $project = Project::find($id);
+        $customer = Customer::find($project->customer_id);
+        return view('loe/create_update', compact('project','customer'));
+    }
+
+    public function init($id)
+    {
+        $result = new \stdClass();
+        $inputs = [
+            'project_id' => $id,
+            'user_id' => Auth::user()->id,
+            'quantity' => 1,
+            'loe_per_quantity' => 0,
+            'first_line' => 1
+        ];
+        $insert_result = Loe::create($inputs);
+        if ($insert_result != null) {
+            LoeHistory::create([
+                'project_loe_id' => $insert_result->id,
+                'user_id' => Auth::user()->id,
+                'description' => 'LoE table created'
+            ]);
+            $result->result = 'success';
+            $result->msg = 'LoE initiated successfuly';
+        } else {
+            $result->result = 'error';
+            $result->msg = 'Record issue';
+        }
+
+        //Because we want to have some consulting columns to be created by default, we will call the existing function in this controller and give it a $request as if coming from the form
+        //This will create the $request as it should be from a form in the main page
+        $request = new Request([
+            'name'   => 'Lead_consultant',
+            'location' => 'Germany',
+            'seniority' => 'Senior Consultant',
+        ]);
+        //This will call the function that is adding a consulting type to the LoE
+        $this->cons_create($request,$id);
+
+        $request = new Request([
+            'name'   => 'Offshore_consultant',
+            'location' => 'Egypt',
+            'seniority' => 'Senior Consultant',
+        ]);
+
+        $this->cons_create($request,$id);
+        
+        return json_encode($result);
+    }
+
     public function listFromProjectID($id)
     {
         $results = array();
@@ -139,33 +194,64 @@ class LoeController extends Controller
         return $loe_history;
     }
 
-    public function init($id)
+    public function masssignoff(Request $request,$id)
     {
         $result = new \stdClass();
-        $inputs = [
-            'project_id' => $id,
-            'user_id' => Auth::user()->id,
-            'quantity' => 1,
-            'loe_per_quantity' => 0,
-            'first_line' => 1
-        ];
-        $insert_result = Loe::create($inputs);
-        if ($insert_result != null) {
-            LoeHistory::create([
-                'project_loe_id' => $insert_result->id,
-                'user_id' => Auth::user()->id,
-                'description' => 'LoE table created'
-            ]);
-            $result->result = 'success';
-            $result->msg = 'LoE initiated successfuly';
+        $result->result = 'success';
+        $result->msg = 'Mass sign off success';
+
+        $inputs = $request->all();
+        if ($inputs['domain'] == 'All') {
+            $loes = Loe::where('project_id',$id)->get();
         } else {
-            $result->result = 'error';
-            $result->msg = 'Record issue';
+            $loes = Loe::where('project_id',$id)->where('domain',$inputs['domain'])->get();
         }
         
+        foreach ($loes as $key => $loe) {
+            Loe::find($loe->id);
+            if ($loe->signoff_user_id == null) {
+                LoeHistory::create([
+                    'project_loe_id' => $loe->id,
+                    'user_id' => Auth::user()->id,
+                    'description' => 'Value modified',
+                    'field_modified' => 'Signoff',
+                    'field_old_value' => 'unset',
+                    'field_new_value' => Auth::user()->name,
+                ]);
+            }
+            $loe->signoff_user_id = Auth::user()->id;
+            $loe->save();
+            
+        }
+
+
         return json_encode($result);
     }
 
+    public function dashboard()
+    {
+        $customers_list = Customer::leftjoin('projects','projects.customer_id','=','customers.id')
+        ->leftjoin('project_loe','project_loe.project_id','=','projects.id')
+        ->whereNotNull('project_loe.id')
+        ->pluck('customers.name', 'customers.id');
+
+        return view('dashboard/loe', compact('customers_list'));
+    }
+
+    public function dashboardProjects($id)
+    {
+        $project_list = Project::leftjoin('project_loe','project_loe.project_id','=','projects.id')
+                ->select('projects.id','projects.project_name')
+                ->where('projects.customer_id', $id)
+                ->whereNotNull('project_loe.id')
+                ->groupBy('projects.id')
+                ->get();
+
+        return json_encode($project_list);
+    }
+    //endregion
+
+    //region Sites
     public function site_delete(Request $request, $id)
     {
         $result = new \stdClass();
@@ -328,7 +414,9 @@ class LoeController extends Controller
             return json_encode($result);
         }
     }
+    //endregion
 
+    //region Consulting
     public function cons_delete(Request $request, $id)
     {
         $result = new \stdClass();
@@ -495,7 +583,9 @@ class LoeController extends Controller
 
         return json_encode($result);
     }
+    //endregion
 
+    //region Row functions
     public function delete($id)
     {
         $result = new \stdClass();
@@ -539,6 +629,51 @@ class LoeController extends Controller
 
         $result->result = 'success';
         $result->msg = 'Record deleted successfuly';
+
+        return json_encode($result);
+    }
+
+    public function create($id)
+    {
+        $result = new \stdClass();
+
+        $origin = Loe::find($id);
+
+        $new = Loe::create([
+            'project_id' => $origin->project_id,
+            'user_id' => Auth::user()->id,
+            'quantity' => 1,
+            'loe_per_quantity' => 0,
+            'first_line' => 0
+        ]);
+
+        $origin_site = LoeSite::where('project_loe_id',$id)->get();
+
+        foreach ($origin_site as $key => $site) {
+            $new_site = LoeSite::create([
+                'project_loe_id' => $new->id,
+                'name' => $site->name,
+                'quantity' => 1,
+                'loe_per_quantity' => 0
+            ]);
+        }
+
+        $origin_consultant = LoeConsultant::where('project_loe_id',$id)->get();
+
+        foreach ($origin_consultant as $key => $consultant) {
+            $new_consultant = LoeConsultant::create([
+                'project_loe_id' => $new->id,
+                'name' => $consultant->name,
+                'location' => $consultant->location,
+                'seniority' => $consultant->seniority,
+                'cost' => $consultant->cost,
+                'price' => $consultant->price,
+                'percentage' => 0
+            ]);
+        }
+
+        $result->result = 'success';
+        $result->msg = 'Record duplicated successfuly';
 
         return json_encode($result);
     }
@@ -946,59 +1081,34 @@ class LoeController extends Controller
         return json_encode($result);
     }
 
-    public function masssignoff(Request $request,$id)
+    //Various Edit
+    public function edit_general(Request $request)
     {
         $result = new \stdClass();
         $result->result = 'success';
-        $result->msg = 'Mass sign off success';
 
         $inputs = $request->all();
-        if ($inputs['domain'] == 'All') {
-            $loes = Loe::where('project_id',$id)->get();
-        } else {
-            $loes = Loe::where('project_id',$id)->where('domain',$inputs['domain'])->get();
-        }
-        
-        foreach ($loes as $key => $loe) {
-            Loe::find($loe->id);
-            if ($loe->signoff_user_id == null) {
-                LoeHistory::create([
-                    'project_loe_id' => $loe->id,
-                    'user_id' => Auth::user()->id,
-                    'description' => 'Value modified',
-                    'field_modified' => 'Signoff',
-                    'field_old_value' => 'unset',
-                    'field_new_value' => Auth::user()->name,
-                ]);
+        //region Error check
+        //Quantity and Loe per unit must be a numerical value
+        if ($inputs['colname'] == 'quantity' || $inputs['colname'] == 'loe_per_unit') {
+            if (!is_numeric($inputs['value'])) {
+                $result->result = 'error';
+                $result->msg = 'Only numerical value accepted';
+                return json_encode($result);
+            } elseif ($inputs['value'] < 0) {
+                $result->result = 'error';
+                $result->msg = 'Must be positive';
+                return json_encode($result);
             }
-            $loe->signoff_user_id = Auth::user()->id;
-            $loe->save();
-            
         }
+        //endregion
 
+
+        $loe = LOE::find($inputs['id']);
+        $loe->update([$inputs['colname'] => $inputs['value']]);
 
         return json_encode($result);
     }
+    //endregion
 
-    public function dashboard()
-    {
-        $customers_list = Customer::leftjoin('projects','projects.customer_id','=','customers.id')
-        ->leftjoin('project_loe','project_loe.project_id','=','projects.id')
-        ->whereNotNull('project_loe.id')
-        ->pluck('customers.name', 'customers.id');
-
-        return view('dashboard/loe', compact('customers_list'));
-    }
-
-    public function dashboardProjects($id)
-    {
-        $project_list = Project::leftjoin('project_loe','project_loe.project_id','=','projects.id')
-                ->select('projects.id','projects.project_name')
-                ->where('projects.customer_id', $id)
-                ->whereNotNull('project_loe.id')
-                ->groupBy('projects.id')
-                ->get();
-
-        return json_encode($project_list);
-    }
 }

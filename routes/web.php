@@ -233,13 +233,15 @@ Route::group(['middleware' => ['auth', 'general','last_login']], function () {
     Route::post('listOfSkillsAjax', ['uses' => 'SkillController@listOfSkills', 'as' => 'listOfSkillsAjax', 'middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
     Route::get('test', ['uses' => 'ActivityController@test', 'middleware' => ['permission:user-view']]);
 
-    // LOE
-    
+    //region LOE
     Route::get('loeHistory/{id}', ['uses' => 'LoeController@loeHistory', 'as' => 'loeHistory', 'middleware' => ['permission:projectLoe-view']]);
     Route::get('loe/init/{id}', ['uses' => 'LoeController@init', 'as' => 'loeInit', 'middleware' => ['permission:projectLoe-create']]);
     Route::get('loe/delete/{id}', ['uses' => 'LoeController@delete', 'as' => 'loeDelete', 'middleware' => ['permission:projectLoe-delete']]);
+    Route::get('loe/create/{id}', ['uses' => 'LoeController@create', 'as' => 'loeCreate', 'middleware' => ['permission:projectLoe-create']]);
     Route::get('loe/duplicate/{id}', ['uses' => 'LoeController@duplicate', 'as' => 'loeDuplicate', 'middleware' => ['permission:projectLoe-create']]);
     Route::post('loe/create_update/{id}', ['uses' => 'LoeController@create_update', 'as' => 'loeCreateUpdate', 'middleware' => ['permission:projectLoe-create|projectLoe-edit']]);
+    //Various AJAX edit
+    Route::post('loe/edit_general', ['uses' => 'LoeController@edit_general', 'as' => 'loeEditGeneral', 'middleware' => ['permission:projectLoe-edit']]);
 
     Route::get('loe/site_delete/{id}', ['uses' => 'LoeController@site_delete', 'as' => 'loeSiteDelete', 'middleware' => ['permission:projectLoe-delete']]);
     Route::post('loe/site_create/{id}', ['uses' => 'LoeController@site_create', 'as' => 'loeSiteCreate', 'middleware' => ['permission:projectLoe-create']]);
@@ -251,9 +253,11 @@ Route::group(['middleware' => ['auth', 'general','last_login']], function () {
     Route::get('loe/signoff/{id}', ['uses' => 'LoeController@signoff', 'as' => 'loeSignoff', 'middleware' => ['permission:projectLoe-signoff']]);
     Route::get('loe/masssignoff/{id}', ['uses' => 'LoeController@masssignoff', 'as' => 'loeMassSignoff', 'middleware' => ['permission:projectLoe-signoff']]);
     
+    Route::get('loeCreateUpdate/{id}', ['uses' => 'LoeController@view', 'as' => 'loeView', 'middleware' => ['permission:projectLoe-view']]);
     Route::get('loe/dashboard', ['uses' => 'LoeController@dashboard', 'as' => 'loeDashboard', 'middleware' => ['permission:projectLoe-dashboard_view']]);
     Route::get('loe/dashboard/projects/{id}', ['uses' => 'LoeController@dashboardProjects', 'as' => 'loeDashboardProjects', 'middleware' => ['permission:projectLoe-dashboard_view']]);
     Route::get('loe/{id}', ['uses' => 'LoeController@listFromProjectID', 'as' => 'listFromProjectID', 'middleware' => ['permission:projectLoe-view|projectLoe-dashboard_view']]);
+    //endregion
 });
 
 Route::get('/home', 'HomeController@index')->name('home');

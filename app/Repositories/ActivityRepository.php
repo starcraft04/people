@@ -217,9 +217,11 @@ class ActivityRepository
                             'm1_id','m1_com', 'm1_from_otl','m2_id','m2_com', 'm2_from_otl','m3_id','m3_com', 'm3_from_otl',
                             'm4_id','m4_com', 'm4_from_otl','m5_id','m5_com', 'm5_from_otl','m6_id','m6_com', 'm6_from_otl',
                             'm7_id','m7_com', 'm7_from_otl','m8_id','m8_com', 'm8_from_otl','m9_id','m9_com', 'm9_from_otl',
-                            'm10_id','m10_com', 'm10_from_otl','m11_id','m11_com', 'm11_from_otl','m12_id','m12_com', 'm12_from_otl'
+                            'm10_id','m10_com', 'm10_from_otl','m11_id','m11_com', 'm11_from_otl','m12_id','m12_com', 'm12_from_otl',
+                            DB::raw('COUNT(loe.id) as num_of_loe')
         );
         $activityList->leftjoin('projects AS p', 'p.id', '=', 'temp_a.project_id');
+        $activityList->leftjoin('project_loe AS loe', 'temp_a.project_id', '=', 'loe.project_id');
         $activityList->leftjoin('users AS u', 'temp_a.user_id', '=', 'u.id');
         $activityList->leftjoin('users_users AS uu', 'u.id', '=', 'uu.user_id');
         $activityList->leftjoin('users AS m', 'm.id', '=', 'uu.manager_id');
@@ -305,6 +307,8 @@ class ActivityRepository
         else {
             $activityList->where('temp_a.user_id', '=', Auth::user()->id);
         }
+
+        $activityList->groupBy('p.id');
 
         //$activityList->groupBy('manager_id','manager_name','user_id','user_name','project_id','project_name','year');
         if (isset($where['no_datatables']) && $where['no_datatables']) {

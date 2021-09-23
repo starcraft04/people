@@ -42,3 +42,11 @@ table#LoeTable th{
   /* OPTIONAL pointer-events setting above blocks cursor setting, so set it here */
   cursor: not-allowed;
 }
+
+.update_success {
+  background-color : rgb(196, 231, 157);
+}
+
+.update_error {
+  background-color : #d9534f;
+}
