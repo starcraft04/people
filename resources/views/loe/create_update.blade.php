@@ -1737,8 +1737,9 @@ $(document).ready(function() {
                   }, 1000);
                 } else {
                   // ERROR
-
-                  td.html(old_value);
+                  if (colname != 'recurrent') {
+                    td.html(old_value);
+                  }
                   td.addClass('update_error');
                   setTimeout(function () {
                     td.removeClass('update_error');
@@ -1772,6 +1773,8 @@ $(document).ready(function() {
               var total_loe = tr.find('td[data-colname=total_loe]').html();
               //If total_value is 0 then we don't do anything
               if (total_loe == 0) {
+                td.html(old_value);
+                flash_message('warning','Total Loe is 0 so cannot calculate percentage from man days');
                 break;
               } else {
                 var percentage = 100 * value / total_loe;

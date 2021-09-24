@@ -774,316 +774,6 @@ class LoeController extends Controller
         return json_encode($result);
     }
 
-    public function create_update(Request $request,$id)
-    {
-        $result = new \stdClass();
-        $result->result = 'success';
-
-        $inputs = $request->all();
-        $cons = json_decode($inputs['cons'], true);
-        $sites = json_decode($inputs['site'], true);
-
-        if ($inputs['action'] == 'update') {
-            $loe = Loe::find($id);
-            if ($loe->user_id != Auth::user()->id && !Auth::user()->can('projectLoe-editAll')) {
-                $result->result = 'error';
-                $result->msg = 'You cannot update this LoE as you did not create it';
-                return json_encode($result);
-            }
-        }
-            
-        if ($inputs['action'] == 'create') {
-            $result->msg = 'LoE created';
-        } else {
-            $result->msg = 'LoE updated';
-        }
-        
-        //$result->sites = $sites;
-
-        $result->errors = [];
-
-        //region validation process
-
-        //sites not empty
-        $one_site_empty = False;
-        foreach ($sites as $key => $site) {
-            if ($site['quantity'] == null) {
-                $result->result = 'validation_errors';
-                $error = [];
-                $error['field'] = 'site_quantity_'.$site['name'];
-                $error['msg'] = 'Cannot be empty';
-                array_push($result->errors,$error);
-                $one_site_empty = True;
-            }
-            if ($site['loe_per_quantity'] == null) {
-                $result->result = 'validation_errors';
-                $error = [];
-                $error['field'] = 'site_loe_per_quantity_'.$site['name'];
-                $error['msg'] = 'Cannot be empty';
-                array_push($result->errors,$error);
-                $one_site_empty = True;
-            }
-        }
-        //quantity not empty
-        if ($inputs['quantity'] == null) {
-            $result->result = 'validation_errors';
-            $error = [];
-            $error['field'] = 'quantity';
-            $error['msg'] = 'Cannot be empty';
-            array_push($result->errors,$error);
-        }
-        //loe_per_quantity not empty and check if recurrent then between 0 and 1
-        if ($inputs['loe_per_quantity'] == null) {
-            $result->result = 'validation_errors';
-            $error = [];
-            $error['field'] = 'loe_per_quantity';
-            $error['msg'] = 'Cannot be empty';
-            array_push($result->errors,$error);
-        } else if ($inputs['recurrent'] == 1 && ($inputs['loe_per_quantity']<0 || $inputs['loe_per_quantity']>1)) {
-            $result->result = 'validation_errors';
-            $error = [];
-            $error['field'] = 'loe_per_quantity';
-            $error['msg'] = 'If recurrent is selected, must be between 0 and 1';
-            array_push($result->errors,$error);
-        }
-        //cons not empty and percentage between 0 and 100
-        $percent_total = 0;
-        foreach ($cons as $key => $cons_type) {
-            if ($cons_type['percentage'] == null) {
-                $result->result = 'validation_errors';
-                $error = [];
-                $error['field'] = 'cons_percentage_'.$cons_type['name'];
-                $error['msg'] = 'Cannot be empty';
-                array_push($result->errors,$error);
-            } else if ($cons_type['percentage'] < 0 || $cons_type['percentage'] > 100) {
-                $result->result = 'validation_errors';
-                $error = [];
-                $error['field'] = 'cons_percentage_'.$cons_type['name'];
-                $error['msg'] = 'Must be between 0 and 100';
-                array_push($result->errors,$error);
-            } else {
-                $percent_total += $cons_type['percentage'];
-            }
-
-            if ($cons_type['cost'] == null) {
-                $result->result = 'validation_errors';
-                $error = [];
-                $error['field'] = 'cons_cost_'.$cons_type['name'];
-                $error['msg'] = 'Cannot be empty';
-                array_push($result->errors,$error);
-            }
-
-            if ($cons_type['price'] == null) {
-                $result->result = 'validation_errors';
-                $error = [];
-                $error['field'] = 'cons_price_'.$cons_type['name'];
-                $error['msg'] = 'Cannot be empty';
-                array_push($result->errors,$error);
-            }
-        }
-        if ($percent_total != 0 && $percent_total != 100) {
-            foreach ($cons as $key => $cons_type) {
-                $result->result = 'validation_errors';
-                $error = [];
-                $error['field'] = 'cons_percentage_'.$cons_type['name'];
-                $error['msg'] = 'The sum must be 100';
-                array_push($result->errors,$error);
-            }
-        }
-
-        //check dates when recurrent
-        if ($inputs['recurrent'] == 1) {
-            if ($inputs['start_date'] == null) {
-                $result->result = 'validation_errors';
-                $error = [];
-                $error['field'] = 'start_date';
-                $error['msg'] = 'If recurrent is selected, cannot be empty';
-                array_push($result->errors,$error);
-            }
-            if ($inputs['end_date'] == null) {
-                $result->result = 'validation_errors';
-                $error = [];
-                $error['field'] = 'end_date';
-                $error['msg'] = 'If recurrent is selected, cannot be empty';
-                array_push($result->errors,$error);
-            }
-        } else if ($inputs['start_date'] == null && $inputs['end_date'] != null) {
-            $result->result = 'validation_errors';
-            $error = [];
-            $error['field'] = 'start_date';
-            $error['msg'] = 'If end date is selected, cannot be empty';
-            array_push($result->errors,$error);
-        } else if ($inputs['start_date'] != null && $inputs['end_date'] == null) {
-            $result->result = 'validation_errors';
-            $error = [];
-            $error['field'] = 'end_date';
-            $error['msg'] = 'If start date is selected, cannot be empty';
-            array_push($result->errors,$error);
-        }
-        //check start < end date
-        $start_date = new \DateTime($inputs['start_date']);
-        $end_date = new \DateTime($inputs['end_date']);
-        if (($inputs['start_date'] != null && $inputs['end_date'] != null) && $end_date < $start_date) {
-            $result->result = 'validation_errors';
-            $error = [];
-            $error['field'] = 'start_date';
-            $error['msg'] = 'start date must be before end date';
-            array_push($result->errors,$error);
-        }
-
-        $new_formula = $inputs['formula'];
-        $new_formula_validated = False;
-        //check formulas
-        if ($new_formula != null) {
-            if ($inputs['recurrent'] == 1) {
-                $result->result = 'validation_errors';
-                $error = [];
-                $error['field'] = 'recurrent';
-                $error['msg'] = 'Recurrent cannot be set up when formula is used';
-                array_push($result->errors,$error);
-            } else {
-                if ($one_site_empty) {
-                    $result->result = 'validation_errors';
-                    $error = [];
-                    $error['field'] = 'formula';
-                    $error['msg'] = 'To evaluate formula, no calculation field can be empty';
-                    array_push($result->errors,$error);
-                } else {
-                    foreach ($sites as $key => $site) {
-                        $product = $site['quantity']*$site['loe_per_quantity'];
-                        $new_formula = str_replace("{{".$site['name']."}}",$product,$new_formula);
-                    }
-                    $alphanum = preg_match("/^(-?[0-9.]+[\+\-\*\/])+[0-9.]+$/",$new_formula);
-                    if ($alphanum == 0) {
-                        $result->result = 'validation_errors';
-                        $error = [];
-                        $error['field'] = 'formula';
-                        $error['msg'] = 'There is a problem with your formula: '.$new_formula;
-                        array_push($result->errors,$error);
-                    } else {
-                        $new_formula_validated = True;
-                    }
-                }    
-            }
-            
-        }
-
-        if ($new_formula_validated) {
-            $executor = new MathExecutor();
-            // If division by 0 then equals 0
-            $inputs['loe_per_quantity'] = $executor->setDivisionByZeroIsZero()->execute($new_formula);
-        }
-
-        //endregion
-
-        if ($result->result != 'validation_errors') {
-            $loe_values = [
-                'main_phase' => $inputs['main_phase'],
-                'secondary_phase' => $inputs['secondary_phase'],
-                'domain' => $inputs['domain'],
-                'description' => $inputs['description'],
-                'option' => $inputs['option'],
-                'assumption' => $inputs['assumption'],
-                'quantity' => $inputs['quantity'],
-                'loe_per_quantity' => $inputs['loe_per_quantity'],
-                'formula' => $inputs['formula'],
-                'recurrent' => $inputs['recurrent'],
-                'start_date' => $inputs['start_date'],
-                'end_date' => $inputs['end_date']
-            ];
-    
-            if ($inputs['action'] == 'create') {
-                $loe_values['project_id'] = $inputs['project_id'];
-                $loe_values['user_id'] = Auth::user()->id;
-                $loe = Loe::create($loe_values);
-            } else {
-                if ($loe->quantity != $loe_values['quantity']) {
-                    LoeHistory::create([
-                        'project_loe_id' => $id,
-                        'user_id' => Auth::user()->id,
-                        'description' => 'Value modified',
-                        'field_modified' => 'Quantity',
-                        'field_old_value' => $loe->quantity,
-                        'field_new_value' => $loe_values['quantity'],
-                    ]);
-                }
-                if ($loe->loe_per_quantity != $loe_values['loe_per_quantity']) {
-                    LoeHistory::create([
-                        'project_loe_id' => $id,
-                        'user_id' => Auth::user()->id,
-                        'description' => 'Value modified',
-                        'field_modified' => 'Loe per Quantity',
-                        'field_old_value' => $loe->loe_per_quantity,
-                        'field_new_value' => $loe_values['loe_per_quantity'],
-                    ]);
-                }
-                $loe->update($loe_values);
-            }
-    
-            foreach ($sites as $key => $site) {
-                LoeSite::updateOrCreate(
-                    [
-                        'project_loe_id' => $loe->id, 
-                        'name' => $site['name']
-                    ],
-                    [
-                        'quantity' => $site['quantity'],
-                        'loe_per_quantity' => $site['loe_per_quantity']
-                    ]
-                );
-            }
-    
-            foreach ($cons as $key => $cons_type) {
-                if ($inputs['action'] == 'update') {
-                    $loe_consultant = LoeConsultant::where('project_loe_id',$loe->id)->where('name',$cons_type['name'])->first();
-                    if ($loe_consultant->cost != $cons_type['cost']) {
-                        LoeHistory::create([
-                            'project_loe_id' => $loe->id,
-                            'user_id' => Auth::user()->id,
-                            'description' => 'Value consulting type "'.$cons_type['name'].'" modified',
-                            'field_modified' => 'Cost',
-                            'field_old_value' => $loe_consultant->cost,
-                            'field_new_value' => $cons_type['cost'],
-                        ]);
-                    }
-                    if ($loe_consultant->price != $cons_type['price']) {
-                        LoeHistory::create([
-                            'project_loe_id' => $loe->id,
-                            'user_id' => Auth::user()->id,
-                            'description' => 'Value consulting type "'.$cons_type['name'].'" modified',
-                            'field_modified' => 'Price',
-                            'field_old_value' => $loe_consultant->price,
-                            'field_new_value' => $cons_type['price'],
-                        ]);
-                    }
-                    if ($loe_consultant->percentage != $cons_type['percentage']) {
-                        LoeHistory::create([
-                            'project_loe_id' => $loe->id,
-                            'user_id' => Auth::user()->id,
-                            'description' => 'Value consulting type "'.$cons_type['name'].'" modified',
-                            'field_modified' => 'Percentage',
-                            'field_old_value' => $loe_consultant->percentage,
-                            'field_new_value' => $cons_type['percentage'],
-                        ]);
-                    }
-                }
-                LoeConsultant::updateOrCreate(
-                    [
-                        'project_loe_id' => $loe->id, 
-                        'name' => $cons_type['name']
-                    ],
-                    [
-                        'cost' => $cons_type['cost'],
-                        'price' => $cons_type['price'],
-                        'percentage' => $cons_type['percentage']
-                    ]
-                );
-            }
-        }
-
-        return json_encode($result);
-    }
-
     public function signoff($id)
     {
         $result = new \stdClass();
@@ -1151,6 +841,13 @@ class LoeController extends Controller
 
         $inputs = $request->all();
         //region Error check
+        $loe_to_edit = LOE::find($inputs['id']);
+
+        if ($loe_to_edit->user_id != Auth::user()->id && !Auth::user()->can('projectLoe-editAll')) {
+            $result->result = 'error';
+            $result->msg = 'You cannot edit this LoE as you did not create it';
+            return json_encode($result);
+        }
         //Quantity and Loe per unit must be a numerical value
         if ($inputs['colname'] == 'quantity' || $inputs['colname'] == 'loe_per_quantity' || $inputs['colname'] == 'fte' || $inputs['colname'] == 'num_of_months') {
             
@@ -1187,6 +884,14 @@ class LoeController extends Controller
 
         $inputs = $request->all();
         //region Error check
+        $loe_cons = LoeConsultant::find($inputs['id']);
+        $loe_to_edit = LOE::find($loe_cons->project_loe_id);
+
+        if ($loe_to_edit->user_id != Auth::user()->id && !Auth::user()->can('projectLoe-editAll')) {
+            $result->result = 'error';
+            $result->msg = 'You cannot edit this LoE as you did not create it';
+            return json_encode($result);
+        }
         //Value must be a numerical value
         if (!is_numeric($inputs['value'])) {
             $result->result = 'error';
@@ -1216,6 +921,15 @@ class LoeController extends Controller
         //We have 2 cases: First one is the formula and second one is the site information
         if ($inputs['colname'] == 'formula') {
             //FORMULA
+            //region Error check
+            $loe_to_edit = LOE::find($inputs['id']);
+
+            if ($loe_to_edit->user_id != Auth::user()->id && !Auth::user()->can('projectLoe-editAll')) {
+                $result->result = 'error';
+                $result->msg = 'You cannot edit this LoE as you did not create it';
+                return json_encode($result);
+            }
+            //endregion
             //First we need to get all data from site table associated to this formula
             $old_formula = $inputs['value'];
             $new_formula = $inputs['value'];
@@ -1224,6 +938,14 @@ class LoeController extends Controller
         } else {
             //SITE INFO
             //region Error check
+            $loe_site = LoeSite::find($inputs['id']);
+            $loe_to_edit = LOE::find($loe_site->project_loe_id);
+
+            if ($loe_to_edit->user_id != Auth::user()->id && !Auth::user()->can('projectLoe-editAll')) {
+                $result->result = 'error';
+                $result->msg = 'You cannot edit this LoE as you did not create it';
+                return json_encode($result);
+            }
             //Value must be a numerical value
             if (!is_numeric($inputs['value'])) {
                 $result->result = 'error';
