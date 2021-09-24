@@ -23,8 +23,6 @@
 <script src="{{ asset('/plugins/daterangepicker/daterangepicker.js') }}" type="text/javascript"></script>
 <script src="{{ asset('/plugins/sweetalert2/sweetalert2.min.js') }}" type="text/javascript"></script>
 <script src="{{ asset('/plugins/gentelella/vendors/switchery/dist/switchery.min.js') }}" type="text/javascript"></script>
-<!-- Some functions made by John -->
-<script src="{{ asset('/js/people_general_functions.js') }}" type="text/javascript"></script>
 @stop
 
 @section('content')

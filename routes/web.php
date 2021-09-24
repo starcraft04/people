@@ -245,6 +245,7 @@ Route::group(['middleware' => ['auth', 'general','last_login']], function () {
     Route::post('loe/edit_consulting', ['uses' => 'LoeController@edit_consulting', 'as' => 'loeEditConsulting', 'middleware' => ['permission:projectLoe-edit']]);
     Route::post('loe/edit_site', ['uses' => 'LoeController@edit_site', 'as' => 'loeEditSite', 'middleware' => ['permission:projectLoe-edit']]);
     Route::post('loe/edit_row_order', ['uses' => 'LoeController@edit_row_order', 'as' => 'loeEditRowOrder', 'middleware' => ['permission:projectLoe-edit']]);
+    Route::post('loe/cons_set_default', ['uses' => 'LoeController@cons_set_default', 'as' => 'loeConsSetDefault', 'middleware' => ['permission:projectLoe-edit']]);
 
     Route::get('loe/site_delete/{id}', ['uses' => 'LoeController@site_delete', 'as' => 'loeSiteDelete', 'middleware' => ['permission:projectLoe-delete']]);
     Route::post('loe/site_create/{id}', ['uses' => 'LoeController@site_create', 'as' => 'loeSiteCreate', 'middleware' => ['permission:projectLoe-create']]);

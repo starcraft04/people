@@ -134,6 +134,8 @@
   <script src="{{ asset('/plugins/gentelella/build/js/customV1.3.min.js') }}" type="text/javascript"></script>
   <!-- JS cookie -->
   <script src="{{ asset('/plugins/jscookie/js.cookie.js') }}" type="text/javascript"></script>
+  <!-- Some functions made by John -->
+  <script src="{{ asset('/js/people_general_functions.js') }}" type="text/javascript"></script>
   @yield('scriptsrc')
   <!-- END All script sources -->
   <!-- All scripts -->

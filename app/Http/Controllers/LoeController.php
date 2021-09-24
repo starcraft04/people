@@ -18,8 +18,6 @@ use App\ConsultingPricing;
 
 class LoeController extends Controller
 {
-    
-
     //region LoE general
     public function view($id)
     {
@@ -497,6 +495,7 @@ class LoeController extends Controller
                                 ->get();
 
             // If all validation test are good we execute the create
+            //We check first the default prices
             $cons_price = ConsultingPricing::where('country',$inputs['location'])->where('role',$inputs['seniority'])->first();
             if (!empty($cons_price)) {
                 $price = $cons_price->unit_price;
@@ -504,6 +503,15 @@ class LoeController extends Controller
             } else {
                 $price = 0;
                 $cost = 0;
+            }
+            //If this is the first consulting type we add, we put the percentage to 100
+            $cons_on_this_project = LoeConsultant::join('project_loe', 'project_loe.id', '=', 'project_loe_consultant.project_loe_id')
+                                        ->where('project_id',$id)
+                                        ->count();
+            if ($cons_on_this_project == 0) {
+                $percentage = 100;
+            } else {
+                $percentage = 0;
             }
             foreach ($loes as $key => $loe) {
 
@@ -513,7 +521,7 @@ class LoeController extends Controller
                         'name'=>$inputs['name'],
                         'location'=>$inputs['location'],
                         'seniority'=>$inputs['seniority'],
-                        'percentage'=>0,
+                        'percentage'=>$percentage,
                         'price'=>$price,
                         'cost'=>$cost
                     ]);
@@ -584,6 +592,26 @@ class LoeController extends Controller
 
         return json_encode($result);
     }
+
+    public function cons_set_default(Request $request)
+    {
+        $result = new \stdClass();
+        $inputs = $request->all();
+        
+        $pricing = ConsultingPricing::where('country',$inputs['location'])->where('role',$inputs['seniority'])->first();
+
+        if (!is_null($pricing)) {
+            $result->result = 'success';
+            $result->msg = 'Default set successfuly';
+
+            LoeConsultant::join('project_loe','project_loe_consultant.project_loe_id','=','project_loe.id')->where('project_loe.project_id',$inputs['project_id'])->update(['price'=>$pricing->unit_price,'cost'=>$pricing->unit_cost]);
+        } else {
+            $result->result = 'error';
+            $result->msg = 'No default found';
+        }
+
+        return json_encode($result);
+    }
     //endregion
 
     //region Row functions
@@ -592,8 +620,6 @@ class LoeController extends Controller
         $result = new \stdClass();
 
         $loe_to_delete = Loe::find($id);
-
-        $this->reorder($id,0);
 
         if ($loe_to_delete->user_id != Auth::user()->id && !Auth::user()->can('projectLoe-deleteAll')) {
             $result->result = 'error';
@@ -604,11 +630,13 @@ class LoeController extends Controller
         $list_with_same_project_id = Loe::where('project_id',$loe_to_delete->project_id)->get();
         $num_of_loe = $list_with_same_project_id->count();
 
-        if ($loe_to_delete->first_line == 1 && $num_of_loe > 1) {
-            $result->result = 'error';
-            $result->msg = 'For integrity of the tool, the first line created must be deleted when all other lines have been deleted.';
+        $result->num_of_records = $num_of_loe-1;
 
-        return json_encode($result);
+        if ($loe_to_delete->first_line == 1 && $result->num_of_records != 0) {
+            //In case we need to delete the first line, we have to assign it to a new one and move the history create record to this new loe
+            $new_loe_first_line = Loe::where('project_id',$loe_to_delete->project_id)->where('id','!=',$id)->first();
+            $new_loe_first_line->update(['first_line'=>1]);
+            LoeHistory::where('project_loe_id',$id)->where('description','LoE table created')->update(['project_loe_id' => $new_loe_first_line->id]);
         }
 
         $history = LoeHistory::where('project_loe_id',$id)->get();
@@ -627,6 +655,8 @@ class LoeController extends Controller
         if($consultant){
             LoeConsultant::where('project_loe_id',$id)->delete();
         }
+
+        $this->reorder($id,0);
         Loe::find($id)->delete();
 
         $result->result = 'success';
@@ -1223,7 +1253,8 @@ class LoeController extends Controller
                 $product = $data->quantity*$data->loe_per_quantity;
                 $new_formula = str_replace("{{".$data->name."}}",$product,$new_formula);
             }
-            $alphanum = preg_match("/^(-?[0-9.]+[\+\-\*\/])+[0-9.]+$/",$new_formula);
+            $alphanum = preg_match("/^(-?[0-9.]+[\+\-\*\/])+[0-9.]+$|-?[0-9.]+/",$new_formula);
+            
             if ($alphanum == 0) {
                 $result->result = 'error';
                 $result->msg = 'There is a problem with your formula: '.$old_formula;
@@ -1232,8 +1263,14 @@ class LoeController extends Controller
                 $executor = new MathExecutor();
                 // If division by 0 then equals 0
                 $new_loe_per_quantity = $executor->setDivisionByZeroIsZero()->execute($new_formula);
-                $loe->update(['formula' => $old_formula,'loe_per_quantity' => $new_loe_per_quantity]);
-                $result->new_loe_per_quantity = $new_loe_per_quantity;
+                if ($new_loe_per_quantity < 0) {
+                    $result->result = 'error';
+                    $result->msg = 'The formula returns a negative value';
+                    return json_encode($result);
+                } else {
+                    $loe->update(['formula' => $old_formula,'loe_per_quantity' => $new_loe_per_quantity]);
+                    $result->new_loe_per_quantity = $new_loe_per_quantity;
+                }
             }
         }
         

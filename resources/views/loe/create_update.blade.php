@@ -2,6 +2,9 @@
 
 @section('style')
 <!-- CSS -->
+<!-- Select2 -->
+<link href="{{ asset('/plugins/select2/select2.min.css') }}" rel="stylesheet" type="text/css" />
+<link href="{{ asset('/css/forms.css') }}" rel="stylesheet" />
 <!-- bootstrap-daterangepicker -->
 <link href="{{ asset('/plugins/daterangepicker/daterangepicker.css') }}" rel="stylesheet" />
 <!-- Document styling -->
@@ -10,7 +13,10 @@
 
 @section('scriptsrc')
 <!-- JS -->
+<!-- jquery-ui -->
 <script src="{{ asset('/plugins/jQueryUI/jquery-ui.min.js') }}" type="text/javascript"></script>
+<!-- Select2 -->
+<script src="{{ asset('/plugins/select2/select2.full.min.js') }}" type="text/javascript"></script>
 <!-- Bootbox -->
 <script src="{{ asset('/plugins/bootbox/bootbox.min.js') }}"></script>
 <!-- bootstrap-daterangepicker -->
@@ -354,6 +360,7 @@ $(document).ready(function() {
     }
     //endregion
 
+    //region functions for row orders
     function activate_change_row_order() {
       $("#LoeTableTbody").sortable({
         handle: ".drag-handler",
@@ -385,10 +392,10 @@ $(document).ready(function() {
             $('#table_loader').show();
               },
         success: function(data) {
-          
+          $('#table_loader').hide();
+          $('#LoeTable').show();
           if (data.result == 'success'){
             //SUCCESS
-            $('#LoeTable').show();
             getLoeList(project_id);
           } else {
             // ERROR
@@ -405,6 +412,8 @@ $(document).ready(function() {
         }
       });
     }
+    //endregion
+
     //endregion
 
     //region Show Loe
@@ -552,7 +561,11 @@ $(document).ready(function() {
       $('#LoeTable tfoot tr td[data-colname=total_loe]').html(grand_total_loe);
       $('#LoeTable tfoot tr td[data-colname=total_cost]').html(grand_total_cost);
       $('#LoeTable tfoot tr td[data-colname=total_price]').html(grand_total_price);
-      grand_margin = 100*(grand_total_price-grand_total_cost)/grand_total_cost;
+      if (grand_total_cost == 0) {
+        grand_margin = 0;
+      } else {
+        grand_margin = 100*(grand_total_price-grand_total_cost)/grand_total_cost;
+      }
       $('#LoeTable tfoot tr td[data-colname=margin]').html(grand_margin.toFixed(2));
 
       //Now we activate the sortable on the table
@@ -648,6 +661,7 @@ $(document).ready(function() {
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-sort-desc"></i></a>
                         <ul class="dropdown-menu">
                           <li class="dropdown-header">Consulting type</li>
+                          <li><a class="dropdown-selection cons_set_default" data-name="`+cons.name+`" data-seniority="`+cons.seniority+`" data-location="`+cons.location+`" href="#">Set default</a></li>
                           <li><a class="dropdown-selection cons_edit" data-name="`+cons.name+`" data-seniority="`+cons.seniority+`" data-location="`+cons.location+`" href="#">Edit</a></li>
                           <li><a class="dropdown-selection cons_delete" data-name="`+cons.name+`" data-seniority="`+cons.seniority+`" data-location="`+cons.location+`" href="#">Delete</a></li>
                         </ul>
@@ -1463,6 +1477,40 @@ $(document).ready(function() {
       });
 
     });
+
+    // CONS SET DEFAULT
+    $(document).on('click', '.cons_set_default', function () {
+      var request = {'project_id':project_id,'name':$(this).data('name'),'seniority':$(this).data('seniority'),'location':$(this).data('location')};
+      $.ajax({
+        type: 'post',
+        url: "{!! route('loeConsSetDefault') !!}",
+        data:request,
+        dataType: 'json',
+        beforeSend: function () { // Before we send the request, remove the .hidden class from the spinner and default to inline-block.
+            $('#LoeTable').hide();
+            $('#table_loader').show();
+              },
+        success: function(data) {
+          $('#table_loader').hide();
+          $('#LoeTable').show();
+          if (data.result == 'success'){
+            //SUCCESS
+            getLoeList(project_id);
+          } else {
+            // ERROR
+            box_type = 'danger';
+            message_type = 'error';
+
+            $('#flash-message').empty();
+            var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+            $('#flash-message').append(box);
+            $('#delete-message').delay(2000).queue(function () {
+                $(this).addClass('animated flipOutX')
+            });
+          }
+        }
+      });
+    });
     //endregion
 
     //region Row actions
@@ -1482,19 +1530,23 @@ $(document).ready(function() {
               //console.log(data);
 
               if (data.result == 'success'){
+                if (data.num_of_records == 0) {
+                  window.location.href = "{!! route('toolsActivities') !!}";
+                  return;
+                  box_type = 'success';
+                  message_type = 'success';
+                  delay = 2000;
+                } else {
                   box_type = 'success';
                   message_type = 'success';
                   delay = 2000;
                   getLoeList(project_id);
+                }
               }
               else {
                   box_type = 'danger';
                   message_type = 'error';
                   delay = 10000;
-              }
-
-              if (first_line == 1) {
-                window.location.href = "{!! route('toolsActivities') !!}/";
               }
 
               $('#flash-message').empty();
@@ -1651,6 +1703,7 @@ $(document).ready(function() {
               //In case there is a formula, we don't do anything
               formula = tr.find('td[data-colname=formula]').html();
               if (formula != '') {
+                flash_message('warning','Cannot use recurrent when working with formula');
                 return;
               }
               if (td.data('value') == 0) {

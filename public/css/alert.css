@@ -11,3 +11,10 @@
     left: 10px;
     z-index: 10;
 }
+
+.flash-warning {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+}
