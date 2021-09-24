@@ -380,10 +380,15 @@ $(document).ready(function() {
         url: "{!! route('loeEditRowOrder') !!}",
         data:request,
         dataType: 'json',
+        beforeSend: function () { // Before we send the request, remove the .hidden class from the spinner and default to inline-block.
+            $('#LoeTable').hide();
+            $('#table_loader').show();
+              },
         success: function(data) {
           
           if (data.result == 'success'){
             //SUCCESS
+            $('#LoeTable').show();
             getLoeList(project_id);
           } else {
             // ERROR
