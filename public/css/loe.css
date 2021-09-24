@@ -50,3 +50,7 @@ table#LoeTable th{
 .update_error {
   background-color : #d9534f;
 }
+
+.update_warning {
+  background-color : #ffb13b;
+}

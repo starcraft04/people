@@ -77,6 +77,7 @@ class LoeController extends Controller
     {
         $results = array();
         $loe_data = Loe::where('project_id',$id)
+                    ->orderBy('row_order','asc')
                     ->orderBy('main_phase','asc')
                     ->orderBy('secondary_phase','asc')
                     ->orderBy('domain','asc')
@@ -592,6 +593,7 @@ class LoeController extends Controller
 
         $loe_to_delete = Loe::find($id);
 
+        $this->reorder($id,0);
 
         if ($loe_to_delete->user_id != Auth::user()->id && !Auth::user()->can('projectLoe-deleteAll')) {
             $result->result = 'error';
@@ -639,13 +641,18 @@ class LoeController extends Controller
 
         $origin = Loe::find($id);
 
+        $num_of_rows = Loe::where('project_id',$origin->project_id)->count();
+
         $new = Loe::create([
             'project_id' => $origin->project_id,
             'user_id' => Auth::user()->id,
             'quantity' => 1,
             'loe_per_quantity' => 0,
-            'first_line' => 0
+            'first_line' => 0,
+            'row_order' => $num_of_rows + 1
         ]);
+
+        $this->reorder($new->id,$origin->row_order + 1);
 
         $origin_site = LoeSite::where('project_loe_id',$id)->get();
 
@@ -673,7 +680,7 @@ class LoeController extends Controller
         }
 
         $result->result = 'success';
-        $result->msg = 'Record duplicated successfuly';
+        $result->msg = 'Record created successfuly';
 
         return json_encode($result);
     }
@@ -683,6 +690,8 @@ class LoeController extends Controller
         $result = new \stdClass();
 
         $origin = Loe::find($id);
+
+        $num_of_rows = Loe::where('project_id',$origin->project_id)->count();
 
         $new = Loe::create([
             'project_id' => $origin->project_id,
@@ -698,8 +707,11 @@ class LoeController extends Controller
             'formula' => $origin->formula,
             'recurrent' => $origin->recurrent,
             'start_date' => $origin->start_date,
-            'end_date' => $origin->end_date
+            'end_date' => $origin->end_date,
+            'row_order' => $num_of_rows + 1
         ]);
+
+        $this->reorder($new->id,$origin->row_order + 1);
 
         $origin_site = LoeSite::where('project_loe_id',$id)->get();
 
@@ -1081,6 +1093,26 @@ class LoeController extends Controller
         return json_encode($result);
     }
 
+    public function reorder($id,$new_row_order)
+    {
+        // This function will take the id of the record, look this in the database and select all records on the same project_id
+        // It will then insert the record at the new_row_order and move the rest of the records
+        $record = Loe::find($id);
+        $rows = Loe::select('id','row_order')->where('project_id',$record->project_id)->where('id','!=',$id)->orderBy('row_order','asc')->get();
+        $i = 1;
+        foreach ($rows as $row) {
+            if ($i == $new_row_order) {
+                $i++;
+            } 
+            if ($row->row_order != $i) {
+                $record_to_change = Loe::find($row->id);
+                $record_to_change->update(['row_order' => $i]);
+            }
+            $i++;
+        }
+        $record->update(['row_order' => $new_row_order]);
+    }
+
     //Various Edit
     public function edit_general(Request $request)
     {
@@ -1090,7 +1122,8 @@ class LoeController extends Controller
         $inputs = $request->all();
         //region Error check
         //Quantity and Loe per unit must be a numerical value
-        if ($inputs['colname'] == 'quantity' || $inputs['colname'] == 'loe_per_unit') {
+        if ($inputs['colname'] == 'quantity' || $inputs['colname'] == 'loe_per_quantity' || $inputs['colname'] == 'fte' || $inputs['colname'] == 'num_of_months') {
+            
             if (!is_numeric($inputs['value'])) {
                 $result->result = 'error';
                 $result->msg = 'Only numerical value accepted';
@@ -1100,6 +1133,13 @@ class LoeController extends Controller
                 $result->msg = 'Must be positive';
                 return json_encode($result);
             }
+
+            //FTE must be between 0 and 1. We already checked above that this is numeric and non negative
+            if ($inputs['colname'] == 'fte' && $inputs['value'] > 1) {
+                $result->result = 'error';
+                $result->msg = 'Must be between 0 and 1';
+                return json_encode($result);
+            }
         }
         //endregion
 
@@ -1107,6 +1147,96 @@ class LoeController extends Controller
         $loe = LOE::find($inputs['id']);
         $loe->update([$inputs['colname'] => $inputs['value']]);
 
+        return json_encode($result);
+    }
+
+    public function edit_consulting(Request $request)
+    {
+        $result = new \stdClass();
+        $result->result = 'success';
+
+        $inputs = $request->all();
+        //region Error check
+        //Value must be a numerical value
+        if (!is_numeric($inputs['value'])) {
+            $result->result = 'error';
+            $result->msg = 'Only numerical value accepted';
+            return json_encode($result);
+        } elseif ($inputs['value'] < 0) {
+            $result->result = 'error';
+            $result->msg = 'Must be positive';
+            return json_encode($result);
+        }
+        //endregion
+
+
+        $loe_cons = LoeConsultant::find($inputs['id']);
+        $loe_cons->update([$inputs['colname'] => $inputs['value']]);
+
+        return json_encode($result);
+    }
+
+    public function edit_site(Request $request)
+    {
+        $result = new \stdClass();
+        $result->result = 'success';
+
+        $inputs = $request->all();
+
+        //We have 2 cases: First one is the formula and second one is the site information
+        if ($inputs['colname'] == 'formula') {
+            //FORMULA
+            //First we need to get all data from site table associated to this formula
+            $old_formula = $inputs['value'];
+            $new_formula = $inputs['value'];
+            $loe_id = $inputs['id'];
+            $loe = LOE::find($loe_id);
+        } else {
+            //SITE INFO
+            //region Error check
+            //Value must be a numerical value
+            if (!is_numeric($inputs['value'])) {
+                $result->result = 'error';
+                $result->msg = 'Only numerical value accepted';
+                return json_encode($result);
+            } elseif ($inputs['value'] < 0) {
+                $result->result = 'error';
+                $result->msg = 'Must be positive';
+                return json_encode($result);
+            }
+            //endregion
+            $loe_site = LoeSite::find($inputs['id']);
+            $loe_id = $loe_site->project_loe_id;
+            $loe = LOE::find($loe_id);
+            $old_formula = $loe->formula;
+            $new_formula = $loe->formula;
+            $loe_site->update([$inputs['colname'] => $inputs['value']]);
+        }
+
+        if (empty($new_formula)) {
+            $loe->update(['formula' => null,'loe_per_quantity' => 0]);
+            $result->new_loe_per_quantity = 0;
+        } else {
+            //Now we need to calculate the new information with the formula and verify it doesn't get an error
+            $site_data = LoeSite::where('project_loe_id',$loe_id)->get();
+            foreach ($site_data as $key => $data) {
+                $product = $data->quantity*$data->loe_per_quantity;
+                $new_formula = str_replace("{{".$data->name."}}",$product,$new_formula);
+            }
+            $alphanum = preg_match("/^(-?[0-9.]+[\+\-\*\/])+[0-9.]+$/",$new_formula);
+            if ($alphanum == 0) {
+                $result->result = 'error';
+                $result->msg = 'There is a problem with your formula: '.$old_formula;
+                return json_encode($result);
+            } else {
+                $executor = new MathExecutor();
+                // If division by 0 then equals 0
+                $new_loe_per_quantity = $executor->setDivisionByZeroIsZero()->execute($new_formula);
+                $loe->update(['formula' => $old_formula,'loe_per_quantity' => $new_loe_per_quantity]);
+                $result->new_loe_per_quantity = $new_loe_per_quantity;
+            }
+        }
+        
         return json_encode($result);
     }
     //endregion

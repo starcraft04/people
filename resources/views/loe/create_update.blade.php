@@ -331,6 +331,7 @@ $(document).ready(function() {
       var colhide = JSON.parse(load_loe_hide_cookie);
     } else {
       var colhide = [
+        {'name':'row_order','hide':false},
         {'name':'main_phase','hide':false},
         {'name':'secondary_phase','hide':false},
         {'name':'domain','hide':false},
@@ -339,9 +340,11 @@ $(document).ready(function() {
         {'name':'assumption','hide':false},
         {'name':'site','hide':false},
         {'name':'quantity','hide':false},
-        {'name':'loe_per_unit','hide':false},
-        {'name':'formula','hide':false},
         {'name':'recurrent','hide':false},
+        {'name':'loe_per_quantity','hide':false},
+        {'name':'fte','hide':false},
+        {'name':'num_of_months','hide':false},
+        {'name':'formula','hide':false},
         {'name':'start_date','hide':false},
         {'name':'end_date','hide':false},
         {'name':'consulting','hide':false},
@@ -399,9 +402,68 @@ $(document).ready(function() {
 
         //region Total LoE
         quantity = tr.find('td[data-colname=quantity]').html();
-        loe_per_unit = tr.find('td[data-colname=loe_per_unit]').html();
-        total_loe = quantity * loe_per_unit;
+        
+        loe_per_quantity = tr.find('td[data-colname=loe_per_quantity]').data('value');
+        fte = tr.find('td[data-colname=fte]').data('value');
+        num_of_months = tr.find('td[data-colname=num_of_months]').data('value');
 
+        //formula cases
+        formula = tr.find('td[data-colname=formula]').html();
+        td_recurrent = tr.find('td[data-colname=recurrent]');
+        if (formula != '') {
+          //Here is the case when we have a formula
+          total_loe = quantity * loe_per_quantity;
+
+          td_recurrent.html('');
+          td_recurrent.attr('contenteditable',false);
+          td_loe_per_quantity = tr.find('td[data-colname=loe_per_quantity]');
+          td_loe_per_quantity.html(loe_per_quantity);
+          td_loe_per_quantity.attr('contenteditable',false);
+          td_fte = tr.find('td[data-colname=fte]');
+          td_fte.html('');
+          td_fte.attr('contenteditable',false);
+          td_num_of_months = tr.find('td[data-colname=num_of_months]');
+          td_num_of_months.html('');
+          td_num_of_months.attr('contenteditable',false);
+        } else {
+          //Here is the case when we don't have a formula
+          //Recurrent cases
+
+          td_recurrent.attr('contenteditable',false);
+          if (tr.find('td[data-colname=recurrent]').data('value') == 1) {
+            var recurrent = true;
+            total_loe = 200/12*quantity*fte*num_of_months;
+            td_recurrent.html('<i class="fa fa-check"></i>');
+            //If recurrent, we don't need to use loe per quantity
+            td_loe_per_quantity = tr.find('td[data-colname=loe_per_quantity]');
+            td_loe_per_quantity.html('');
+            td_loe_per_quantity.attr('contenteditable',false);
+            td_fte = tr.find('td[data-colname=fte]');
+            td_fte.html(fte);
+            td_fte.attr('contenteditable',true);
+            td_num_of_months = tr.find('td[data-colname=num_of_months]');
+            td_num_of_months.html(num_of_months);
+            td_num_of_months.attr('contenteditable',true);
+
+          } else {
+            var recurrent = false;
+            total_loe = quantity * loe_per_quantity;
+            td_recurrent.html('');
+            //If not recurrent, we don't need to use fte and num of months
+            td_loe_per_quantity = tr.find('td[data-colname=loe_per_quantity]');
+            td_loe_per_quantity.html(loe_per_quantity);
+            td_loe_per_quantity.attr('contenteditable',true);
+            td_fte = tr.find('td[data-colname=fte]');
+            td_fte.html('');
+            td_fte.attr('contenteditable',false);
+            td_num_of_months = tr.find('td[data-colname=num_of_months]');
+            td_num_of_months.html('');
+            td_num_of_months.attr('contenteditable',false);
+          }
+        }
+
+        
+        
         tr.find('td[data-colname=total_loe]').html(total_loe);
 
         grand_total_loe += total_loe;
@@ -412,20 +474,29 @@ $(document).ready(function() {
         if (loe_data.col.cons.length > 0) {
           total_cost = 0;
           total_price = 0;
+          total_percentage = 0;
           loe_data.col.cons.forEach(function(item){
-            percent = tr.find('td[data-colname=consulting][data-colconsname='+item.name+'][data-colsubname=percent]').html();
-            md = (total_loe * percent)/100;
+            percentage = tr.find('td[data-colname=consulting][data-colconsname='+item.name+'][data-colsubname=percentage]').html();
+            md = (total_loe * percentage)/100;
             tr.find('td[data-colname=consulting][data-colconsname='+item.name+'][data-colsubname=md]').html(md);
             cost = tr.find('td[data-colname=consulting][data-colconsname='+item.name+'][data-colsubname=cost]').html();
             price = tr.find('td[data-colname=consulting][data-colconsname='+item.name+'][data-colsubname=price]').html();
             total_cost += md*cost;
             total_price += md*price;
+            total_percentage += Number(percentage);
           });
 
+          //We need to prevent division by 0
           if (total_cost == 0) {
             margin = 0;
           } else {
             margin = 100*(total_price-total_cost)/total_cost;
+          }
+          //We need to check if the sum of percentage is 100
+          if (total_percentage != 100) {
+            tr.find('td[data-colsubname=percentage]').addClass('update_warning');
+          } else {
+            tr.find('td[data-colsubname=percentage]').removeClass('update_warning');
           }
 
           tr.find('td[data-colname=total_cost]').html(total_cost);
@@ -466,6 +537,7 @@ $(document).ready(function() {
             //region First header
             html += '<tr>';
             html += '<th rowspan="3" data-colname="action" style="min-width:140px;" data-tableexport-display="none">'+'Action'+'</th>';
+            html += '<th rowspan="3" data-colname="row_order" style="min-width:20px;" data-tableexport-display="none">'+'#'+'</th>';
             html += '<th rowspan="3" data-colname="main_phase" style="min-width:150px;">'+'Main Phase'+'</th>';
             html += '<th rowspan="3" data-colname="secondary_phase" style="min-width:150px;">'+'Secondary Phase'+'</th>';
             html += '<th rowspan="3" data-colname="domain" style="min-width:150px;">'+'Domain'+'</th>';
@@ -473,15 +545,16 @@ $(document).ready(function() {
             html += '<th rowspan="3" data-colname="option" style="min-width:150px;">'+'Option'+'</th>';
             html += '<th rowspan="3" data-colname="assumption" style="min-width:250px;">'+'Assumption'+'</th>';
             if (data.col.site.length>0) {
+              html += '<th data-colname="formula" rowspan="3" style="min-width:150px;">'+'Formula'+'</th>';
+            }
+            if (data.col.site.length>0) {
               html += '<th data-colname="site" colspan="'+2*data.col.site.length+'">'+'Site calculation'+'</th>';
             }
             html += '<th data-colname="quantity" rowspan="3">'+'Quantity'+'</th>';
-            html += '<th data-colname="loe_per_unit" rowspan="3">'+'LoE<br>(per unit)<br>in days'+'</th>';
-            if (data.col.site.length>0) {
-              html += '<th data-colname="formula" rowspan="3" style="min-width:150px;">'+'Formula'+'</th>';
-            }
-            
-            html += '<th data-colname="recurrent" rowspan="3">'+'recurrent'+'</th>';
+            html += '<th data-colname="recurrent" rowspan="3">'+'Recurrent'+'</th>';
+            html += '<th data-colname="loe_per_quantity" rowspan="3">'+'LoE<br>(per unit)<br>in days'+'</th>';
+            html += '<th data-colname="fte" rowspan="3">'+'FTE'+'</th>';
+            html += '<th data-colname="num_of_months" rowspan="3">'+'Number<br>of<br>months'+'</th>';
             html += '<th data-colname="start_date" rowspan="3" style="min-width:150px;">'+'Start date'+'</th>';
             html += '<th data-colname="end_date" rowspan="3" style="min-width:150px;">'+'End date'+'</th>';
             if (data.col.cons.length>0) {
@@ -592,62 +665,50 @@ $(document).ready(function() {
               //endregion
 
               //region main text
+              html += '<td data-colname="row_order" data-tableexport-display="none">'+row.row_order+'</td>';
               html += td_no_null(row.main_phase,'','main_phase','editable');
               html += td_no_null(row.secondary_phase,'','secondary_phase','editable');
               html += td_no_null(row.domain,'','domain','editable');
-              html += td_no_null(row.description,'','description','editable',true);
+              html += td_no_null(row.description,'','description','editable cr',true);
               html += td_no_null(row.option,'','option','editable');
-              html += td_no_null(row.assumption,'','assumption','editable',true);
+              html += td_no_null(row.assumption,'','assumption','editable cr',true);
               //endregion
 
               //region sites
-              data.col.site.forEach(fill_site_data);
-              function fill_site_data (site){
-                
-                if (data.data.site.hasOwnProperty(row.id) && data.data.site[row.id].hasOwnProperty(site.name)) {
-                  //console.log(site.name+': '+data.data.site[row.id][site.name]['quantity']);
-                  fill_quantity = data.data.site[row.id][site.name].quantity;
-                  fill_loe_per_quantity = data.data.site[row.id][site.name].loe_per_quantity;
+              if (data.col.site.length>0) {
+                //formula
+                if (row.formula != null) {
+                  formula = row.formula;
                 } else {
-                  //console.log(site.name+': -');
-                  fill_quantity = 0;
-                  fill_loe_per_quantity = 0;
+                  formula = '';
                 }
-                html += '<td data-colname="site">'+fill_quantity+'</td>';
-                html += '<td data-colname="site">'+fill_loe_per_quantity+'</td>';
+                html +=  '<td data-colname="formula" @can('projectLoe-edit') contenteditable="true" @endcan @can('projectLoe-edit') class="editable" @endcan>'+formula+'</td>';
+                //site calculation
+                //Being in row.id, we will loop through the different site values
+                for (const item in data.data.site[row.id]) {
+                  site_id = data.data.site[row.id][item].id;
+                  site_quantity = data.data.site[row.id][item].quantity;
+                  site_loe_per_quantity = data.data.site[row.id][item].loe_per_quantity;
+                  html += '<td data-id="'+site_id+'" data-colname="site" data-colsitename="'+item+'" data-colsubname="quantity" data-value="'+site_quantity+'" @can('projectLoe-edit') contenteditable="true" @endcan @can('projectLoe-edit') class="editable" @endcan>'+site_quantity+'</td>';
+                  html += '<td data-id="'+site_id+'" data-colname="site" data-colsitename="'+item+'" data-colsubname="loe_per_quantity" data-value="'+site_loe_per_quantity+'" @can('projectLoe-edit') contenteditable="true" @endcan @can('projectLoe-edit') class="editable" @endcan>'+site_loe_per_quantity+'</td>';
+                }
               }
               //endregion
 
               //region quantity
-              html += '<td data-colname="quantity" @can('projectLoe-edit') contenteditable="true" @endcan @can('projectLoe-edit') class="editable" @endcan>'+row.quantity+'</td>';
-              html += '<td data-colname="loe_per_unit" @can('projectLoe-edit') contenteditable="true" @endcan @can('projectLoe-edit') class="editable" @endcan>'+row.loe_per_quantity+'</td>';
+              html += '<td data-colname="quantity" data-value="'+row.quantity+'" @can('projectLoe-edit') contenteditable="true" @endcan @can('projectLoe-edit') class="editable" @endcan>'+row.quantity+'</td>';
+              if (row.recurrent == 1) {
+                html += '<td data-colname="recurrent" data-value="1"></td>';
+              } else {
+                html += '<td data-colname="recurrent" data-value="0" ></td>';
+              }
+              html += '<td data-colname="loe_per_quantity" data-value="'+row.loe_per_quantity+'" @can('projectLoe-edit') contenteditable="true" @endcan @can('projectLoe-edit') class="editable" @endcan>'+row.loe_per_quantity+'</td>';
+              html += '<td data-colname="fte" @can('projectLoe-edit') data-value="'+row.fte+'" contenteditable="true" @endcan @can('projectLoe-edit') class="editable" @endcan>'+row.fte+'</td>';
+              html += '<td data-colname="num_of_months" @can('projectLoe-edit') data-value="'+row.num_of_months+'" contenteditable="true" @endcan @can('projectLoe-edit') class="editable" @endcan>'+row.num_of_months+'</td>';
+              
               //endregion
 
-              //region formulas and recurrent
-              if (data.col.site.length>0) {
-                if (row.formula != null && row.formula != '') {
-                  html +=  '<td class="formula_cell" data-colname="formula">';
-                  html += `<div class="dropdown">
-                        
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-check"></i></a>
-                            
-                            <ul class="dropdown-menu">
-                              <li class="dropdown-header">Calculation</li>
-                              <li class="formula_text" >`+row.formula+`</li>
-                            </ul>
-                          </div>`;
-                    html +=  '</td>';
-                } else {
-                  html +=  '<td data-colname="formula"></td>';
-                }
-              }
-              
-              if (row.recurrent == 1) {
-                html += '<td data-colname="recurrent" class="table_recurrent"><i class="fa fa-check"></i></td>';
-              } else {
-                html += '<td data-colname="recurrent"></td>';
-              }
-              
+              //region dates
               html += td_no_null(row.start_date,'','start_date','editable');
               html += td_no_null(row.end_date,'','end_date','editable');
               //endregion
@@ -656,10 +717,10 @@ $(document).ready(function() {
               //Being in row.id, we will loop through the different consulting values
               for (const item in data.data.cons[row.id]) {
                 consulting_id = data.data.cons[row.id][item].id;
-                consulting_percent = data.data.cons[row.id][item].percentage;
+                consulting_percentage = data.data.cons[row.id][item].percentage;
                 consulting_cost = data.data.cons[row.id][item].cost;
                 consulting_price = data.data.cons[row.id][item].price;
-                html += '<td data-id="'+consulting_id+'" data-colname="consulting" data-colconsname="'+item+'" data-colsubname="percent" @can('projectLoe-edit') contenteditable="true" @endcan @can('projectLoe-edit') class="editable" @endcan>'+consulting_percent.toFixed(2)+'</td>';
+                html += '<td data-id="'+consulting_id+'" data-colname="consulting" data-colconsname="'+item+'" data-colsubname="percentage" @can('projectLoe-edit') contenteditable="true" @endcan @can('projectLoe-edit') class="editable" @endcan>'+consulting_percentage.toFixed(2)+'</td>';
                 html += '<td data-id="'+consulting_id+'" data-colname="consulting" data-colconsname="'+item+'" data-colsubname="md" @can('projectLoe-edit') contenteditable="true" @endcan @can('projectLoe-edit') class="editable" @endcan></td>';
                 html += '<td data-id="'+consulting_id+'" data-colname="consulting" data-colconsname="'+item+'" data-colsubname="cost" @can('projectLoe-edit') contenteditable="true" @endcan @can('projectLoe-edit') class="editable" @endcan>'+consulting_cost.toFixed(1)+'</td>';
                 html += '<td data-id="'+consulting_id+'" data-colname="consulting" data-colconsname="'+item+'" data-colsubname="price" @can('projectLoe-edit') contenteditable="true" @endcan @can('projectLoe-edit') class="editable" @endcan>'+consulting_price.toFixed(1)+'</td>';
@@ -684,6 +745,7 @@ $(document).ready(function() {
             html += '<tfoot>';
             
             html += '<td data-colname="action" data-tableexport-display="none"></td>';
+            html += '<td data-colname="row_order" data-tableexport-display="none"></td>';
             html += '<td data-colname="main_phase" class="grand_total">Grand Total</td>';
             html += '<td data-colname="secondary_phase"></td>';
             html += '<td data-colname="domain"></td>';
@@ -691,16 +753,19 @@ $(document).ready(function() {
             html += '<td data-colname="option"></td>';
             html += '<td data-colname="assumption"></td>';
             // We need to remove one column named formula in case there is no calculation
+            if (data.col.site.length != 0) {
+              html += '<td data-colname="formula"></td>';
+            }
             for (let index = 0; index < data.col.site.length; index++) {
               html += '<td data-colname="site"></td>';
               html += '<td data-colname="site"></td>';
             }
             html += '<td data-colname="quantity"></td>';
-            html += '<td data-colname="loe_per_unit"></td>';
-            if (data.col.site.length != 0) {
-              html += '<td data-colname="formula"></td>';
-            }
             html += '<td data-colname="recurrent"></td>';
+            html += '<td data-colname="loe_per_quantity"></td>';
+            html += '<td data-colname="fte"></td>';
+            html += '<td data-colname="num_of_months"></td>';
+            
             html += '<td data-colname="start_date"></td>';
             html += '<td data-colname="end_date"></td>';
             for (let index = 0; index < data.col.cons.length; index++) {
@@ -709,9 +774,7 @@ $(document).ready(function() {
               html += '<td data-colname="consulting"></td>';
               html += '<td data-colname="consulting"></td>';
             }
-
             html += '<td data-colname="total_loe"></td>';
-
             if (data.col.cons.length>0) {
               html += '<td data-colname="total_cost"></td>';
               html += '<td data-colname="total_price"></td>';
@@ -1132,7 +1195,6 @@ $(document).ready(function() {
                 modal_loe_site_form_error_clean();
                 //console.log(data.errors);
                 $.each(data.errors, function (key, value) {
-                  //console.log(value);
                   $('#modal_loe_site_formgroup_'+value.field).addClass('has-error');
                   $('#modal_loe_site_form_'+value.field+'_error').text(value.msg);
                 });
@@ -1333,7 +1395,6 @@ $(document).ready(function() {
                 modal_loe_cons_form_error_clean();
                 //console.log(data.errors);
                 $.each(data.errors, function (key, value) {
-                  //console.log(value);
                   $('#modal_loe_cons_formgroup_'+value.field).addClass('has-error');
                   $('#modal_loe_cons_form_'+value.field+'_error').text(value.msg);
                 });
@@ -1375,7 +1436,7 @@ $(document).ready(function() {
             url: "{!! route('loeDelete','') !!}/"+id,
             dataType: 'json',
             success: function(data) {
-              console.log(data);
+              //console.log(data);
 
               if (data.result == 'success'){
                   box_type = 'success';
@@ -1414,11 +1475,11 @@ $(document).ready(function() {
       //console.log($(this).data('id'));
       var id = $(this).data('id');
       $.ajax({
-            type: 'post',
+            type: 'get',
             url: "{!! route('loeDuplicate','') !!}/"+id,
             dataType: 'json',
             success: function(data) {
-              console.log(data);
+              //console.log(data);
 
               if (data.result == 'success'){
                   box_type = 'success';
@@ -1455,7 +1516,7 @@ $(document).ready(function() {
             url: "{!! route('loeCreate','') !!}/"+id,
             dataType: 'json',
             success: function(data) {
-              console.log(data);
+              //console.log(data);
 
               if (data.result == 'success'){
                   box_type = 'success';
@@ -1494,14 +1555,36 @@ $(document).ready(function() {
         editable_old_value = $(this).html();
     });
 
-    //Now this is the part when we edit a cell
+    //Now this is the part when we edit a cell and hit enter in the cell
+    $(document).on('keydown', '.editable', function(event){
+      var keycode = (event.keyCode ? event.keyCode : event.which);
+      if (keycode  == 13) { //Enter key's keycode
+        if ($(this).hasClass('cr')) {
+          return true;
+        } else {
+          update_cell($(this));
+          return false;
+        }
+      }
+    });
+
+    //Now this is the part when we edit a cell and click outside of the cell
     $(document).on('blur', '.editable', function(e){
-      var td = $(this);
+      update_cell($(this));
+    });
+
+    //This part is to edit when we click on recurrent
+    $(document).on("click","td[data-colname=recurrent]", function() {
+      update_cell($(this));
+    });
+
+    function update_cell(td) {
       var tr = td.closest('tr');
       var loe_id = tr.data('id');
       var colname = td.data('colname');
       var value = td.html();
       var old_value = editable_old_value;
+      //console.log(value);
 
       if (value != editable_old_value) {
         switch (colname) {
@@ -1515,8 +1598,26 @@ $(document).ready(function() {
           case 'start_date':
           case 'end_date':
           case 'quantity':
-          case 'loe_per_unit':
+          case 'recurrent':
+          case 'loe_per_quantity':
+          case 'fte':
+          case 'num_of_months':
+            //In case we modify recurrent, we need to send 0 or 1 to the database
+            //IF it was 1 and we click on it, it should be 0
+            if (colname=='recurrent') {
+              //In case there is a formula, we don't do anything
+              formula = tr.find('td[data-colname=formula]').html();
+              if (formula != '') {
+                return;
+              }
+              if (td.data('value') == 0) {
+                value = 1;
+              } else {
+                value = 0;
+              }
+            }
             var request = {'id':loe_id,'colname':colname,'value':value};
+            //console.log(request);
             $.ajax({
               type: 'post',
               url: "{!! route('loeEditGeneral') !!}",
@@ -1526,10 +1627,78 @@ $(document).ready(function() {
                td.attr('contenteditable', false);
               },
               success: function(data) {
+                
                 if (data.result == 'success'){
-                  if (colname == 'quantity' || colname == 'loe_per_unit') {
+                  //SUCCESS
+
+                  if (colname == 'quantity' || colname == 'loe_per_quantity' || colname == 'fte' || colname == 'num_of_months' || colname == 'recurrent') {
+                    td.data('value',value);
                     fill_total();
                   }
+                  td.addClass('update_success');
+                  setTimeout(function () {
+                    td.removeClass('update_success');
+                  }, 1000);
+                } else {
+                  // ERROR
+
+                  td.html(old_value);
+                  td.addClass('update_error');
+                  setTimeout(function () {
+                    td.removeClass('update_error');
+                  }, 2000);
+
+                  box_type = 'danger';
+                  message_type = 'error';
+
+                  $('#flash-message').empty();
+                  var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+                  $('#flash-message').append(box);
+                  $('#delete-message').delay(2000).queue(function () {
+                      $(this).addClass('animated flipOutX')
+                  });
+                }
+              },
+              complete: function () { // Set our complete callback, adding the .hidden class and hiding the spinner.
+                if (colname != 'recurrent') {
+                  td.attr('contenteditable', true);
+                }
+                
+              }
+            });
+            break;
+          //endregion
+          //region Edit CONSULTING
+          case 'consulting':
+            var consulting_id = td.data('id');
+            var consulting_colsubname = td.data('colsubname');
+            if (consulting_colsubname == 'md') {
+              var total_loe = tr.find('td[data-colname=total_loe]').html();
+              //If total_value is 0 then we don't do anything
+              if (total_loe == 0) {
+                break;
+              } else {
+                var percentage = 100 * value / total_loe;
+                var request = {'id':consulting_id,'colname':'percentage','value':percentage};
+              }
+            } else {
+              var request = {'id':consulting_id,'colname':consulting_colsubname,'value':value};
+            }
+            $.ajax({
+              type: 'post',
+              url: "{!! route('loeEditConsulting') !!}",
+              data:request,
+              dataType: 'json',
+              beforeSend: function () { // Before we send the request, remove the .hidden class from the spinner and default to inline-block.
+               td.attr('contenteditable', false);
+              },
+              success: function(data) {
+                if (data.result == 'success'){
+                  //If we modified the MD, then we need to update the %
+                  if (colname == 'consulting' && consulting_colsubname == 'md') {
+                    tr.find('td[data-id='+consulting_id+'][data-colsubname=percentage]').html(percentage);
+                  }
+                  fill_total();
                   //SUCCESS
                   td.addClass('update_success');
                   setTimeout(function () {
@@ -1560,13 +1729,64 @@ $(document).ready(function() {
             });
             break;
           //endregion
+          //region Edit SITE
+          case 'formula':
+          case 'site':
+            if (colname == 'formula') {
+              var request = {'id':loe_id,'colname':'formula','value':value};
+            } else {
+              var site_id = td.data('id');
+              var site_colsubname = td.data('colsubname');
+              var request = {'id':site_id,'colname':site_colsubname,'value':value};
+            }
+            
+            $.ajax({
+              type: 'post',
+              url: "{!! route('loeEditSite') !!}",
+              data:request,
+              dataType: 'json',
+              beforeSend: function () { // Before we send the request, remove the .hidden class from the spinner and default to inline-block.
+               td.attr('contenteditable', false);
+              },
+              success: function(data) {
+                if (data.result == 'success'){
+                  tr.find('td[data-colname=loe_per_quantity]').data('value',data.new_loe_per_quantity);
+                  fill_total();
+                  //SUCCESS
+                  td.addClass('update_success');
+                  setTimeout(function () {
+                    td.removeClass('update_success');
+                  }, 1000);
+                } else {
+                  // ERROR
+                  td.html(old_value);
+                  td.addClass('update_error');
+                  setTimeout(function () {
+                    td.removeClass('update_error');
+                  }, 2000);
+
+                  box_type = 'danger';
+                  message_type = 'error';
+
+                  $('#flash-message').empty();
+                  var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+                  $('#flash-message').append(box);
+                  $('#delete-message').delay(2000).queue(function () {
+                      $(this).addClass('animated flipOutX')
+                  });
+                }
+              },
+              complete: function () { // Set our complete callback, adding the .hidden class and hiding the spinner.
+                td.attr('contenteditable', true);
+              }
+            });
             break;
+          //endregion
           default:
             break;
         }
       }
-    });
-
+    }
     //endregion
 
     //region FORMULA

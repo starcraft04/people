@@ -242,6 +242,8 @@ Route::group(['middleware' => ['auth', 'general','last_login']], function () {
     Route::post('loe/create_update/{id}', ['uses' => 'LoeController@create_update', 'as' => 'loeCreateUpdate', 'middleware' => ['permission:projectLoe-create|projectLoe-edit']]);
     //Various AJAX edit
     Route::post('loe/edit_general', ['uses' => 'LoeController@edit_general', 'as' => 'loeEditGeneral', 'middleware' => ['permission:projectLoe-edit']]);
+    Route::post('loe/edit_consulting', ['uses' => 'LoeController@edit_consulting', 'as' => 'loeEditConsulting', 'middleware' => ['permission:projectLoe-edit']]);
+    Route::post('loe/edit_site', ['uses' => 'LoeController@edit_site', 'as' => 'loeEditSite', 'middleware' => ['permission:projectLoe-edit']]);
 
     Route::get('loe/site_delete/{id}', ['uses' => 'LoeController@site_delete', 'as' => 'loeSiteDelete', 'middleware' => ['permission:projectLoe-delete']]);
     Route::post('loe/site_create/{id}', ['uses' => 'LoeController@site_create', 'as' => 'loeSiteCreate', 'middleware' => ['permission:projectLoe-create']]);
