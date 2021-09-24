@@ -338,7 +338,7 @@ class LoeController extends Controller
                     [
                         'project_loe_id'=>$loe->id,
                         'name'=>$inputs['name'],
-                        'quantity'=>0,
+                        'quantity'=>1,
                         'loe_per_quantity'=>0
                     ]);
             }

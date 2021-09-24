@@ -461,7 +461,7 @@ $(document).ready(function() {
         //formula cases
         formula = tr.find('td[data-colname=formula]').html();
         td_recurrent = tr.find('td[data-colname=recurrent]');
-        if (formula != '') {
+        if (typeof formula !== 'undefined' && formula != '') {
           //Here is the case when we have a formula
           total_loe = quantity * loe_per_quantity;
 
@@ -513,7 +513,7 @@ $(document).ready(function() {
           }
         }
 
-        tr.find('td[data-colname=total_loe]').html(total_loe);
+        tr.find('td[data-colname=total_loe]').html(total_loe.toFixed(2));
 
         grand_total_loe += total_loe;
         //endregion
@@ -527,7 +527,7 @@ $(document).ready(function() {
           loe_data.col.cons.forEach(function(item){
             percentage = tr.find('td[data-colname=consulting][data-colconsname='+item.name+'][data-colsubname=percentage]').html();
             md = (total_loe * percentage)/100;
-            tr.find('td[data-colname=consulting][data-colconsname='+item.name+'][data-colsubname=md]').html(md);
+            tr.find('td[data-colname=consulting][data-colconsname='+item.name+'][data-colsubname=md]').html(md.toFixed(2));
             cost = tr.find('td[data-colname=consulting][data-colconsname='+item.name+'][data-colsubname=cost]').html();
             price = tr.find('td[data-colname=consulting][data-colconsname='+item.name+'][data-colsubname=price]').html();
             total_cost += md*cost;
@@ -548,8 +548,8 @@ $(document).ready(function() {
             tr.find('td[data-colsubname=percentage]').removeClass('update_warning');
           }
 
-          tr.find('td[data-colname=total_cost]').html(total_cost);
-          tr.find('td[data-colname=total_price]').html(total_price);
+          tr.find('td[data-colname=total_cost]').html(total_cost.toFixed(2));
+          tr.find('td[data-colname=total_price]').html(total_price.toFixed(2));
           tr.find('td[data-colname=margin]').html(margin.toFixed(2));
 
           grand_total_cost += total_cost;
@@ -558,9 +558,9 @@ $(document).ready(function() {
         //endregion
       });
 
-      $('#LoeTable tfoot tr td[data-colname=total_loe]').html(grand_total_loe);
-      $('#LoeTable tfoot tr td[data-colname=total_cost]').html(grand_total_cost);
-      $('#LoeTable tfoot tr td[data-colname=total_price]').html(grand_total_price);
+      $('#LoeTable tfoot tr td[data-colname=total_loe]').html(grand_total_loe.toFixed(2));
+      $('#LoeTable tfoot tr td[data-colname=total_cost]').html(grand_total_cost.toFixed(2));
+      $('#LoeTable tfoot tr td[data-colname=total_price]').html(grand_total_price.toFixed(2));
       if (grand_total_cost == 0) {
         grand_margin = 0;
       } else {
@@ -1702,7 +1702,7 @@ $(document).ready(function() {
             if (colname=='recurrent') {
               //In case there is a formula, we don't do anything
               formula = tr.find('td[data-colname=formula]').html();
-              if (formula != '') {
+              if (typeof formula !== 'undefined' && formula != '') {
                 flash_message('warning','Cannot use recurrent when working with formula');
                 return;
               }
