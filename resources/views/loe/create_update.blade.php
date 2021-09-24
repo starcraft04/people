@@ -2,9 +2,6 @@
 
 @section('style')
 <!-- CSS -->
-<!-- Select2 -->
-<link href="{{ asset('/plugins/select2/select2.min.css') }}" rel="stylesheet" type="text/css" />
-<link href="{{ asset('/css/forms.css') }}" rel="stylesheet" />
 <!-- bootstrap-daterangepicker -->
 <link href="{{ asset('/plugins/daterangepicker/daterangepicker.css') }}" rel="stylesheet" />
 <!-- Document styling -->
@@ -13,8 +10,7 @@
 
 @section('scriptsrc')
 <!-- JS -->
-<!-- Select2 -->
-<script src="{{ asset('/plugins/select2/select2.full.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/jQueryUI/jquery-ui.min.js') }}" type="text/javascript"></script>
 <!-- Bootbox -->
 <script src="{{ asset('/plugins/bootbox/bootbox.min.js') }}"></script>
 <!-- bootstrap-daterangepicker -->
@@ -324,6 +320,8 @@ $(document).ready(function() {
     var loe_data;
     var editable_old_value;
     var project_id = {{ $project->id }};
+
+    //region Load cookies for hide columns
     // Now we need to check if there is colhide in cookies...
     var load_loe_hide_cookie = Cookies.get("loe_hide_columns");
     
@@ -354,15 +352,54 @@ $(document).ready(function() {
         {'name':'margin','hide':false}
       ];
     }
+    //endregion
 
-    // Init select2 boxes in the modal
-    $("#modal_loe_cons_form_country").select2({
-        allowClear: true
-    });
-    $("#modal_loe_cons_form_seniority").select2({
-        allowClear: true
-    });
+    function activate_change_row_order() {
+      $("#LoeTableTbody").sortable({
+        handle: ".drag-handler",
+        stop: function (event, ui) {
+            var moved = ui.item;
+            var replaced = ui.item.prev();
 
+            // if replaced.length === 0 then the item has been pushed to the top of the list
+            // in this case we need the .next() sibling
+            if (replaced.length == 0) {
+                replaced = ui.item.next();
+            }
+            //console.log('id of Item moved = '+moved.data('id')+' id of Item replaced = '+replaced.data('position'));
+            change_row_order(moved.data('id'),replaced.data('position'));
+        }
+      });
+      $("#LoeTableTbody").disableSelection();
+    }
+
+    function change_row_order(row_id,new_position) {
+      var request = {'id':row_id,'new_position':new_position};
+      $.ajax({
+        type: 'post',
+        url: "{!! route('loeEditRowOrder') !!}",
+        data:request,
+        dataType: 'json',
+        success: function(data) {
+          
+          if (data.result == 'success'){
+            //SUCCESS
+            getLoeList(project_id);
+          } else {
+            // ERROR
+            box_type = 'danger';
+            message_type = 'error';
+
+            $('#flash-message').empty();
+            var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+            $('#flash-message').append(box);
+            $('#delete-message').delay(2000).queue(function () {
+                $(this).addClass('animated flipOutX')
+            });
+          }
+        }
+      });
+    }
     //endregion
 
     //region Show Loe
@@ -462,8 +499,6 @@ $(document).ready(function() {
           }
         }
 
-        
-        
         tr.find('td[data-colname=total_loe]').html(total_loe);
 
         grand_total_loe += total_loe;
@@ -514,6 +549,9 @@ $(document).ready(function() {
       $('#LoeTable tfoot tr td[data-colname=total_price]').html(grand_total_price);
       grand_margin = 100*(grand_total_price-grand_total_cost)/grand_total_cost;
       $('#LoeTable tfoot tr td[data-colname=margin]').html(grand_margin.toFixed(2));
+
+      //Now we activate the sortable on the table
+      activate_change_row_order();
     }
 
     function getLoeList(project_id){
@@ -634,10 +672,10 @@ $(document).ready(function() {
             //endregion
             //endregion
             //region BODY
-            html += '<tbody>';
+            html += '<tbody id="LoeTableTbody">';
             data.data.loe.forEach(function(row){
 
-              html += '<tr data-id="'+row.id+'">';
+              html += '<tr data-position="'+row.row_order+'" data-id="'+row.id+'">';
               //region actions
               html += '<td data-colname="action" data-tableexport-display="none">';
               html += '<div class="btn-group btn-group-xs">';
@@ -665,7 +703,7 @@ $(document).ready(function() {
               //endregion
 
               //region main text
-              html += '<td data-colname="row_order" data-tableexport-display="none">'+row.row_order+'</td>';
+              html += '<td data-colname="row_order" data-tableexport-display="none" class="drag-handler">'+row.row_order+'</td>';
               html += td_no_null(row.main_phase,'','main_phase','editable');
               html += td_no_null(row.secondary_phase,'','secondary_phase','editable');
               html += td_no_null(row.domain,'','domain','editable');
@@ -1787,23 +1825,11 @@ $(document).ready(function() {
         }
       }
     }
-    //endregion
 
-    //region FORMULA
-    function creat_tooltip_if_formula() {
-      if ($('textarea#loe_formula').val()) {
-        $("input#loe_loe_per_u").prop("disabled", true);
-        $('div#loe_loe_per_u_tooltip').tooltip({'placement': 'bottom' , 'title' : 'If formula is used, this field will be calculated!'});
-      } else {
-        $("input#loe_loe_per_u").prop("disabled", false);
-        $('div#loe_loe_per_u_tooltip').tooltip("destroy");
-      }
-    }
-
-    //Now we need to remove disable for the loe per unit in case formula is empty or not
-    $(document).on('keyup', 'textarea#loe_formula', function () {
-      creat_tooltip_if_formula();
-    });
+    //Change row orders
+    
+    //The change order function is defined in the function activate_change_row_order() and change_row_order() in the init phase
+    
     //endregion
 
     //region SIGNOFF

@@ -1239,6 +1239,19 @@ class LoeController extends Controller
         
         return json_encode($result);
     }
+
+    public function edit_row_order(Request $request)
+    {
+        $result = new \stdClass();
+        $result->result = 'success';
+
+        $inputs = $request->all();
+        
+        $this->reorder($inputs['id'],$inputs['new_position']);
+        $result->msg = 'Order changed successfully';
+
+        return json_encode($result);
+    }
     //endregion
 
 }
