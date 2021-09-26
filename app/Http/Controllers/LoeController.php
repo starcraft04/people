@@ -231,16 +231,6 @@ class LoeController extends Controller
         return json_encode($result);
     }
 
-    public function dashboard()
-    {
-        $customers_list = Customer::leftjoin('projects','projects.customer_id','=','customers.id')
-        ->leftjoin('project_loe','project_loe.project_id','=','projects.id')
-        ->whereNotNull('project_loe.id')
-        ->pluck('customers.name', 'customers.id');
-
-        return view('dashboard/loe', compact('customers_list'));
-    }
-
     public function dashboardProjects($id)
     {
         $project_list = Project::leftjoin('project_loe','project_loe.project_id','=','projects.id')
