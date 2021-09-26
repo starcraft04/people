@@ -72,6 +72,7 @@
                   @if (Auth::user()->can('projectLoe-signoff'))
                   <li><a class="dropdown-selection loe_mass_signoff" href="#">Mass Signoff</a></li>
                   @endif
+                  <li><a class="dropdown-selection loe_template" href="#">Load template</a></li>
                 </ul>
               </div>
             </div>
@@ -175,6 +176,53 @@
             </div>
         </div>
         <!-- Signoff Modal -->
+
+        <!-- Template Modal -->
+        <div class="modal fade" id="modal_loe_template" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" style="display:table;">
+                <div class="modal-content">
+                  <!-- Modal Header -->
+                  <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                      <h4 class="modal-title" id="modal_loe_template_title">Load template</h4>
+                  </div>
+                  <!-- Modal Header -->
+                
+                  <!-- Modal Body -->
+                  <div class="modal-body">
+                    <form id="modal_loe_template_form" role="form" method="POST" action="">
+                      <div id="modal_loe_template_formgroup_customer" class="form-group">
+                        <label  class="control-label" for="modal_loe_template_form_customer">Customer</label>
+                        <select class="form-control select2" style="width: 100%;" id="modal_loe_template_form_customer" data-placeholder="Select a customer">
+                          @foreach($customers_list as $key => $value)
+                          <option value="{{ $key }}">
+                            {{ $value }}
+                          </option>
+                          @endforeach  
+                        </select>
+                        <span id="modal_loe_template_form_customer_error" class="help-block"></span>
+                      </div>
+                      <div id="modal_loe_template_formgroup_project" class="form-group">
+                        <label  class="control-label" for="modal_loe_template_form_project">Project</label>
+                        <select class="form-control select2" style="width: 100%;" id="modal_loe_template_form_project" data-placeholder="Select a project">
+                        </select>
+                        <span id="modal_loe_template_form_project_error" class="help-block"></span>
+                      </div>
+                      <div class="form-group">
+                          <div id="modal_loe_template_form_hidden"></div>
+                      </div>
+                    </form>
+                  </div>
+                    
+                  <!-- Modal Footer -->
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      <button type="button" id="modal_loe_template_create_update_button" class="btn btn-success">Replace</button>
+                  </div>
+                </div>
+            </div>
+        </div>
+        <!-- Template Modal -->
 
         <!-- Site Modal -->
         <div class="modal fade" id="modal_loe_site" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -1101,6 +1149,100 @@ $(document).ready(function() {
     });
     //endregion
 
+    //region template
+    //This function is used to load from ajax the projects with an LoE for a certain customer
+    function change_project_select(customer_id) {
+      $.ajax({
+            type: 'get',
+            url: "{!! route('loeDashboardProjects','') !!}/"+customer_id,
+            dataType: 'json',
+            success: function(data) {
+              project_list = data;
+              //console.log(project_list);
+              var html = '';
+              project_list.forEach(fill_project_select);
+              function fill_project_select (project){
+                html += '<option value="'+project.id+'" >'+project.project_name+'</option>';
+              }
+
+              $('#modal_loe_template_form_project').empty();
+              $('#modal_loe_template_form_project').append(html);
+              // Set selected 
+              $('#modal_loe_template_form_project').val(project_list[0].id);
+              $('#modal_loe_template_form_project').select2().trigger('change');
+            },
+            error: function (jqXhr, textStatus, errorMessage) { // error callback 
+              console.log('Error: ' + errorMessage);
+            }
+      });
+    }
+
+    $(document).on('click', '.loe_template', function () {
+      var customer_id = $('#modal_loe_template_form_customer').val();
+
+      var hidden = '';
+      hidden += '<input class="form-control" id="modal_loe_template_form_project_id" type="hidden" value="'+{{ $project->id }}+'">';
+      $('#modal_loe_template_form_hidden').append(hidden);
+
+      // Init select2 boxes in the modal
+      $("#modal_loe_template_form_customer").select2({
+          allowClear: false
+      });
+      $("#modal_loe_template_form_project").select2({
+          allowClear: false
+      });
+
+      //Now we load all the projects with an LoE for the customer selected
+      change_project_select(customer_id);
+
+      $('#modal_loe_template').modal("show");
+    });
+
+    //Now each time we change the customer, we need to load the new list of projects with an LoE
+    $('#modal_loe_template_form_customer').on('change', function() {
+      $('select#modal_loe_template_form_project').val($(this).data(''));
+      $('select#modal_loe_template_form_project').select2().trigger('change');
+      customer_id = $('#modal_loe_template_form_customer').val();
+      change_project_select(customer_id);
+    });
+
+    //This is to load the template and append it to the loe
+    $(document).on('click', '#modal_loe_template_create_update_button', function () {
+      var template_project_id = $('#modal_loe_template_form_project').val();
+      var this_project_id = $('input#modal_loe_template_form_project_id').val();
+
+      //console.log('Project id: '+this_project_id+' - Template project id: '+template_project_id);
+      var request = {'template_project_id':template_project_id,'this_project_id':this_project_id};
+
+      $.ajax({
+        type: 'post',
+        url: "{!! route('loeAppendTemplate') !!}",
+        data:request,
+        dataType: 'json',
+        beforeSend: function () { // Before we send the request, remove the .hidden class from the spinner and default to inline-block.
+          $('#LoeTable').hide();        
+          $('#table_loader').show();
+        },
+        success: function(data) {
+          //console.log(data);
+          if (data.result == 'success'){
+            //SUCCESS
+            getLoeList(project_id);
+            $('#modal_loe_template').modal("hide");
+          } else {
+            // ERROR
+          }
+          flash_message(data.result,data.msg);
+        },
+        complete: function () { // Set our complete callback, adding the .hidden class and hiding the spinner.
+          $('#table_loader').hide();
+          $('#LoeTable').show(); 
+        }
+      });
+
+    });
+    //endregion
+
     //region Loe Sites
     // SITE DELETE
     $(document).on('click', '.site_delete', function () {
@@ -1657,7 +1799,6 @@ $(document).ready(function() {
         if ($(this).hasClass('cr')) {
           return true;
         } else {
-          update_cell($(this));
           return false;
         }
       }

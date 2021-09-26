@@ -186,8 +186,11 @@ class ProjectController extends Controller
                     'projects.activity_type','projects.project_status','projects.meta_activity','projects.region',
                     'projects.country','projects.technology','projects.description','projects.estimated_start_date','projects.estimated_end_date',
                     'projects.comments','projects.LoE_onshore','projects.LoE_nearshore','projects.samba_id',
-                    'projects.LoE_offshore', 'projects.LoE_contractor', 'projects.gold_order_number', 'projects.product_code', 'projects.revenue', 'projects.win_ratio');
+                    'projects.LoE_offshore', 'projects.LoE_contractor', 'projects.gold_order_number', 'projects.product_code', 'projects.revenue', 'projects.win_ratio',
+                    DB::raw('COUNT(loe.id) as num_of_loe'));
         $projectList->leftjoin('customers', 'projects.customer_id', '=', 'customers.id');
+        $projectList->leftjoin('project_loe AS loe', 'projects.id', '=', 'loe.project_id');
+        $projectList->groupBy('projects.id');
 
         $data = Datatables::of($projectList)->make(true);
   

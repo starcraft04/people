@@ -23,7 +23,11 @@ class LoeController extends Controller
     {
         $project = Project::find($id);
         $customer = Customer::find($project->customer_id);
-        return view('loe/create_update', compact('project','customer'));
+        $customers_list = Customer::leftjoin('projects','projects.customer_id','=','customers.id')
+        ->leftjoin('project_loe','project_loe.project_id','=','projects.id')
+        ->whereNotNull('project_loe.id')
+        ->pluck('customers.name', 'customers.id');
+        return view('loe/create_update', compact('project','customer','customers_list'));
     }
 
     public function init($id)
@@ -833,6 +837,67 @@ class LoeController extends Controller
         $record->update(['row_order' => $new_row_order]);
     }
 
+    public function append_template(Request $request)
+    {
+        $result = new \stdClass();
+        $result->result = 'success';
+
+        $inputs = $request->all();
+
+        $template_loe = Loe::where('project_id',$inputs['template_project_id'])->orderBy('row_order')->get();
+        
+        if ($template_loe->count() > 0) {
+
+            $this_loes = Loe::where('project_id',$inputs['this_project_id'])->get();
+            //Now we need to delete all existing records for the project id
+            foreach ($this_loes as $key => $this_loe) {
+                $this->delete($this_loe->id);
+            }
+
+            //Now we can replicate all data from the template
+            foreach ($template_loe as $key => $loe) {
+                //Duplicate each loe from template
+                $newLoe = $loe->replicate();
+                $newLoe->project_id = $inputs['this_project_id']; // the new project_id
+                $newLoe->user_id = Auth::user()->id;
+                $newLoe->signoff_user_id = null;
+                $newLoe->save();
+
+                if ($newLoe->first_line == 1) {
+                    LoeHistory::create([
+                        'project_loe_id' => $newLoe->id,
+                        'user_id' => Auth::user()->id,
+                        'description' => 'LoE table created from template'
+                    ]);
+                }
+
+                //Duplicate all sites for this loe
+                $template_loe_site = LoeSite::where('project_loe_id',$loe->id)->get();
+                foreach ($template_loe_site as $key => $loe_site) {
+                    $newLoeSite = $loe_site->replicate();
+                    $newLoeSite->project_loe_id = $newLoe->id;
+                    $newLoeSite->save();
+                }
+
+                //Duplicate all consultant for this loe
+                $template_loe_cons = LoeConsultant::where('project_loe_id',$loe->id)->get();
+                foreach ($template_loe_cons as $key => $loe_cons) {
+                    $newLoeCons = $loe_cons->replicate();
+                    $newLoeCons->project_loe_id = $newLoe->id;
+                    $newLoeCons->save();
+                }
+            }
+            
+            
+            $result->msg = 'LoE appended successfuly';
+        } else {
+            $result->result = 'error';
+            $result->msg = 'The LoE you selected doesn t have records that can be imported';
+        }
+
+        return json_encode($result);
+    }
+
     //Various Edit
     public function edit_general(Request $request)
     {
@@ -872,7 +937,22 @@ class LoeController extends Controller
 
 
         $loe = LOE::find($inputs['id']);
+        $loe_old_value = $loe[$inputs['colname']];
         $loe->update([$inputs['colname'] => $inputs['value']]);
+
+        //Working on saving to history
+        if ($inputs['colname'] == 'quantity' || $inputs['colname'] == 'loe_per_quantity' || $inputs['colname'] == 'fte' || $inputs['colname'] == 'num_of_months' || $inputs['colname'] == 'recurrent') {
+            if ($loe_old_value != $inputs['value']) {
+                LoeHistory::create([
+                    'project_loe_id' => $loe->id,
+                    'user_id' => Auth::user()->id,
+                    'description' => 'Value modified',
+                    'field_modified' => $inputs['colname'],
+                    'field_old_value' => $loe_old_value,
+                    'field_new_value' => $inputs['value'],
+                ]);
+            }
+        }
 
         return json_encode($result);
     }
@@ -906,7 +986,22 @@ class LoeController extends Controller
 
 
         $loe_cons = LoeConsultant::find($inputs['id']);
+        $loe_cons_old_value = $loe_cons[$inputs['colname']];
         $loe_cons->update([$inputs['colname'] => $inputs['value']]);
+
+        //Working on saving to history
+        if ($inputs['colname'] == 'price' || $inputs['colname'] == 'cost' || $inputs['colname'] == 'percentage') {
+            if ($loe_cons_old_value != $inputs['value']) {
+                LoeHistory::create([
+                    'project_loe_id' => $loe_cons->project_loe_id,
+                    'user_id' => Auth::user()->id,
+                    'description' => 'Consulting ('.$loe_cons->name.') value modified',
+                    'field_modified' => $inputs['colname'],
+                    'field_old_value' => $loe_cons_old_value,
+                    'field_new_value' => $inputs['value'],
+                ]);
+            }
+        }
 
         return json_encode($result);
     }
@@ -965,6 +1060,8 @@ class LoeController extends Controller
             $loe_site->update([$inputs['colname'] => $inputs['value']]);
         }
 
+        $loe_per_quantity_old_value = $loe->loe_per_quantity;
+
         if (empty($new_formula)) {
             $loe->update(['formula' => null,'loe_per_quantity' => 0]);
             $result->new_loe_per_quantity = 0;
@@ -994,6 +1091,18 @@ class LoeController extends Controller
                     $result->new_loe_per_quantity = $new_loe_per_quantity;
                 }
             }
+        }
+
+        //Working on saving to history
+        if ($loe_per_quantity_old_value != $new_loe_per_quantity) {
+            LoeHistory::create([
+                'project_loe_id' => $loe->id,
+                'user_id' => Auth::user()->id,
+                'description' => 'Calculation',
+                'field_modified' => 'LoE per quantity',
+                'field_old_value' => $loe_per_quantity_old_value,
+                'field_new_value' => $new_loe_per_quantity,
+            ]);
         }
         
         return json_encode($result);

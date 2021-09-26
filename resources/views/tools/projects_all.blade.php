@@ -170,7 +170,20 @@
                     { name: 'projects.otl_project_code', data: 'otl_project_code' },
                     { name: 'projects.meta_activity', data: 'meta_activity'},
                     { name: 'projects.samba_id', data: 'samba_id', searchable: true , visible: true},
-                    { name: 'projects.project_type', data: 'project_type'},
+                    { name: 'projects.project_type', data: 'project_type',
+                      render: function (data,type, rowData) {
+                        if (type === 'display') {
+                          @can('projectLoe-view')
+                          if (data == 'Pre-sales') {
+                            if (rowData.num_of_loe >=1) {
+                              return data + '<a href="{!! route('loeView','') !!}/'+rowData.id+'"><img src="{{ asset("/img/loe.png") }}" width="20" height="20" style="margin-left:10px;"></a>';
+                            }
+                          }
+                          @endcan
+                        }
+                        return data;
+                      }
+                    },
                     { name: 'projects.activity_type', data: 'activity_type'},
                     { name: 'projects.project_status', data: 'project_status'},
                     { name: 'projects.region', data: 'region'  , visible: false},
