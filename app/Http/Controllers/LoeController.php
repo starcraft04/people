@@ -598,7 +598,7 @@ class LoeController extends Controller
             $result->result = 'success';
             $result->msg = 'Default set successfuly';
 
-            LoeConsultant::join('project_loe','project_loe_consultant.project_loe_id','=','project_loe.id')->where('project_loe.project_id',$inputs['project_id'])->update(['price'=>$pricing->unit_price,'cost'=>$pricing->unit_cost]);
+            LoeConsultant::join('project_loe','project_loe_consultant.project_loe_id','=','project_loe.id')->where('project_loe.project_id',$inputs['project_id'])->where('project_loe_consultant.name',$inputs['name'])->update(['price'=>$pricing->unit_price,'cost'=>$pricing->unit_cost]);
         } else {
             $result->result = 'error';
             $result->msg = 'No default found';
