@@ -184,6 +184,7 @@ class ActivityRepository
 
         //dd($where['year'][0]);
 
+        //We receive $where['month'] and we will create $where['months'] as an arry with year and months for the next 12 months
         $where['months'] = [];
 
         for ($i=$where['month'][0]; $i <= 12 ; $i++) { 
@@ -308,7 +309,7 @@ class ActivityRepository
             $activityList->where('temp_a.user_id', '=', Auth::user()->id);
         }
 
-        $activityList->groupBy('p.id');
+        $activityList->groupBy('temp_a.project_id','temp_a.user_id');
 
         //$activityList->groupBy('manager_id','manager_name','user_id','user_name','project_id','project_name','year');
         if (isset($where['no_datatables']) && $where['no_datatables']) {
