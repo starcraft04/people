@@ -18,11 +18,12 @@ Route::get("login",'Auth\LoginController@loginApi');
 
 Route::group(['middleware' => ['auth:api','role:Skillbase API']], function () {
     //
-    Route::get("activeUsers","Apis\skillbaseApiController@listOfActiveUsers");
+ 
+ 	//  Route::get("activeUsers","Apis\skillbaseApiController@listOfActiveUsers");
 
-	Route::get("userSkills","Apis\skillbaseApiController@listOfUserSkillsAPI");
+	// Route::get("userSkills","Apis\skillbaseApiController@listOfUserSkillsAPI");
 
-	Route::get("userCertificates","Apis\skillbaseApiController@listOfUserCertificatesAPI");
+	// Route::get("userCertificates","Apis\skillbaseApiController@listOfUserCertificatesAPI");
 
 	//to avoid many hits on server
 	Route::get("activeusercert","Apis\skillbaseApiController@activeUserCertificatesAPI");
