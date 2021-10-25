@@ -208,6 +208,14 @@
                         </select>
                         <span id="modal_loe_template_form_project_error" class="help-block"></span>
                       </div>
+
+                      <div id="modal_loe_template_formgroup_project_domain" class="form-group">
+                        <label  class="control-label" for="modal_loe_template_form_project_domain">Domain</label>
+                        <select class="form-control select2" style="width: 100%;" id="modal_loe_template_form_project_domain" data-placeholder="Select a Domain">
+                        </select>
+                        <span id="modal_loe_template_form_project_domain_error" class="help-block"></span>
+                      </div>
+
                       <div class="form-group">
                           <div id="modal_loe_template_form_hidden"></div>
                       </div>
@@ -217,7 +225,7 @@
                   <!-- Modal Footer -->
                   <div class="modal-footer">
                       <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                      <button type="button" id="modal_loe_template_create_update_button" class="btn btn-success">Replace</button>
+                      <button type="button" id="modal_loe_template_create_update_button" class="btn btn-success">Add</button>
                   </div>
                 </div>
             </div>
@@ -531,7 +539,7 @@ $(document).ready(function() {
           td_recurrent.attr('contenteditable',false);
           if (tr.find('td[data-colname=recurrent]').data('value') == 1) {
             var recurrent = true;
-            total_loe = 200/12*quantity*fte*num_of_months;
+            total_loe = 204/12*quantity*fte*num_of_months;
             td_recurrent.html('<i class="fa fa-check"></i>');
             //If recurrent, we don't need to use loe per quantity
             td_loe_per_quantity = tr.find('td[data-colname=loe_per_quantity]');
@@ -540,9 +548,6 @@ $(document).ready(function() {
             td_fte = tr.find('td[data-colname=fte]');
             td_fte.html(fte);
             td_fte.attr('contenteditable',true);
-            td_num_of_months = tr.find('td[data-colname=num_of_months]');
-            td_num_of_months.html(num_of_months);
-            td_num_of_months.attr('contenteditable',true);
 
           } else {
             var recurrent = false;
@@ -556,8 +561,8 @@ $(document).ready(function() {
             td_fte.html('');
             td_fte.attr('contenteditable',false);
             td_num_of_months = tr.find('td[data-colname=num_of_months]');
-            td_num_of_months.html('');
-            td_num_of_months.attr('contenteditable',false);
+            td_num_of_months.html(num_of_months);
+            td_num_of_months.attr('contenteditable',true);
           }
         }
 
@@ -1160,9 +1165,11 @@ $(document).ready(function() {
               project_list = data;
               //console.log(project_list);
               var html = '';
+              var html_domain='';
               project_list.forEach(fill_project_select);
               function fill_project_select (project){
-                html += '<option value="'+project.id+'" >'+project.project_name+'</option>';
+              html += '<option value="'+project.id+'" >'+project.project_name+'</option>';
+              
               }
 
               $('#modal_loe_template_form_project').empty();
@@ -1170,6 +1177,7 @@ $(document).ready(function() {
               // Set selected 
               $('#modal_loe_template_form_project').val(project_list[0].id);
               $('#modal_loe_template_form_project').select2().trigger('change');
+
             },
             error: function (jqXhr, textStatus, errorMessage) { // error callback 
               console.log('Error: ' + errorMessage);
@@ -1177,18 +1185,66 @@ $(document).ready(function() {
       });
     }
 
+
+ function change_project_select_domain(project_id) {
+      $.ajax({
+            type: 'get',
+            url: "{!! route('loedashboardProjectsDomain','') !!}/"+project_id,
+            dataType: 'json',
+            success: function(data) {
+              project_list = data;
+              console.log("project list "+project_list);
+              var html_domain='';
+              project_list.forEach(fill_project_select);
+              function fill_project_select (project){
+             
+              
+               if(project.domain == null){
+                html_domain += '<option value="'+project.domain+'" >No results found </option>';
+               }
+               else{
+                html_domain += '<option value ="'+project.domain +'" >'+project.domain+'</option>';
+               }
+              }
+
+             
+
+              $('#modal_loe_template_form_project_domain').empty();
+              $('#modal_loe_template_form_project_domain').append(html_domain);
+              // Set selected 
+              $('#modal_loe_template_form_project_domain').val(project_list[0].domain);
+              $('#modal_loe_template_form_project_domain').select2().trigger('change');
+            },
+            error: function (jqXhr, textStatus, errorMessage) { // error callback 
+              console.log('Error: ' + errorMessage);
+            }
+      });
+    }
+
+    
+
     $(document).on('click', '.loe_template', function () {
       var customer_id = $('#modal_loe_template_form_customer').val();
+ 
 
       var hidden = '';
       hidden += '<input class="form-control" id="modal_loe_template_form_project_id" type="hidden" value="'+{{ $project->id }}+'">';
+
+      
       $('#modal_loe_template_form_hidden').append(hidden);
+
+
+
 
       // Init select2 boxes in the modal
       $("#modal_loe_template_form_customer").select2({
           allowClear: false
       });
       $("#modal_loe_template_form_project").select2({
+          allowClear: false
+      });
+
+      $("#modal_loe_template_form_project_domain").select2({
           allowClear: false
       });
 
@@ -1203,16 +1259,35 @@ $(document).ready(function() {
       $('select#modal_loe_template_form_project').val($(this).data(''));
       $('select#modal_loe_template_form_project').select2().trigger('change');
       customer_id = $('#modal_loe_template_form_customer').val();
+
+
       change_project_select(customer_id);
     });
 
+    $('#modal_loe_template_form_project').on('change', function() {
+      $('select#modal_loe_template_form_project_domain').val($(this).data(''));
+      $('select#modal_loe_template_form_project_domain').select2().trigger('change');
+      project_id = $('#modal_loe_template_form_project').val();
+
+      //console.log("project id changed "+project_id);
+
+      
+      change_project_select_domain(project_id);
+    });
+
+
+
     //This is to load the template and append it to the loe
     $(document).on('click', '#modal_loe_template_create_update_button', function () {
+      var countRow = $('#LoeTableTbody tr').length;
       var template_project_id = $('#modal_loe_template_form_project').val();
       var this_project_id = $('input#modal_loe_template_form_project_id').val();
+      var template_project_domain =$('select#modal_loe_template_form_project_domain').val();
+      
 
-      //console.log('Project id: '+this_project_id+' - Template project id: '+template_project_id);
-      var request = {'template_project_id':template_project_id,'this_project_id':this_project_id};
+      //console.log('Project id: '+this_project_id+' - Template project id: '+template_project_id+" domain "+ template_project_domain);
+
+      var request = {'template_project_id':template_project_id,'this_project_id':this_project_id,'template_project_domain':template_project_domain,'countRow':countRow};
 
       $.ajax({
         type: 'post',
@@ -1224,11 +1299,14 @@ $(document).ready(function() {
           $('#table_loader').show();
         },
         success: function(data) {
-          //console.log(data);
+          console.log(data);
+
           if (data.result == 'success'){
             //SUCCESS
+            location.reload();
             getLoeList(project_id);
             $('#modal_loe_template').modal("hide");
+
           } else {
             // ERROR
           }

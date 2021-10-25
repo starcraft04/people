@@ -258,10 +258,20 @@ Route::group(['middleware' => ['auth', 'general','last_login']], function () {
     Route::get('loe/masssignoff/{id}', ['uses' => 'LoeController@masssignoff', 'as' => 'loeMassSignoff', 'middleware' => ['permission:projectLoe-signoff']]);
     
     Route::get('loeCreateUpdate/{id}', ['uses' => 'LoeController@view', 'as' => 'loeView', 'middleware' => ['permission:projectLoe-view']]);
+    
     Route::get('loe/dashboard/projects/{id}', ['uses' => 'LoeController@dashboardProjects', 'as' => 'loeDashboardProjects', 'middleware' => ['permission:projectLoe-dashboard_view']]);
+
+    Route::get('loe/dashboard/projectsdomain/{id}', ['uses' => 'LoeController@dashboardProjectsDomain', 'as' => 'loedashboardProjectsDomain', 'middleware' => ['permission:projectLoe-dashboard_view']]);
+
     Route::get('loe/{id}', ['uses' => 'LoeController@listFromProjectID', 'as' => 'listFromProjectID', 'middleware' => ['permission:projectLoe-view|projectLoe-dashboard_view']]);
+
+
+
     //endregion
 });
+
+
+
 
 Route::get('/home', 'HomeController@index')->name('home');
 

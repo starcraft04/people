@@ -40,10 +40,10 @@ class LoeController extends Controller
             'loe_per_quantity' => 0,
             'first_line' => 1
         ];
-        $insert_result = Loe::create($inputs);
-        if ($insert_result != null) {
+        $get_different_cons_typeert_result = Loe::create($inputs);
+        if ($get_different_cons_typeert_result != null) {
             LoeHistory::create([
-                'project_loe_id' => $insert_result->id,
+                'project_loe_id' => $get_different_cons_typeert_result->id,
                 'user_id' => Auth::user()->id,
                 'description' => 'LoE table created'
             ]);
@@ -87,11 +87,11 @@ class LoeController extends Controller
                     ->get();
 
         if (count($loe_data) > 0) {
-            // Domains
-            $domains = [];
+            // Domaget_different_cons_type
+            $domaget_different_cons_type = [];
             foreach ($loe_data as $key => $domain) {
-                if (!in_array($domain->domain, $domains)){
-                    array_push($domains,$domain->domain);
+                if (!in_array($domain->domain, $domaget_different_cons_type)){
+                    array_push($domaget_different_cons_type,$domain->domain);
                 }
             }
 
@@ -173,7 +173,114 @@ class LoeController extends Controller
             $results['col'] = array();
             $results['col']['site'] = $data_col_sites;
             $results['col']['cons'] = $data_col_cons;
-            $results['col']['domains'] = $domains;
+            $results['col']['domaget_different_cons_type'] = $domaget_different_cons_type;
+            $results['data'] = array();
+            $results['data']['loe'] = $loe_data;
+            $results['data']['site'] = $data_sites_formatted;
+            $results['data']['cons'] = $data_consultants_formatted;
+        }
+        return $results;
+    }
+
+
+    public function listFromProjectIDRow($id,$row)
+    {
+        $results = array();
+        $loe_data = Loe::where(array(['project_id'=>$id],['row_order'=>$row]))
+                    ->orderBy('main_phase','asc')
+                    ->orderBy('secondary_phase','asc')
+                    ->orderBy('domain','asc')
+                    ->orderBy('description','asc')
+                    ->get();
+
+        if (count($loe_data) > 0) {
+            // Domaget_different_cons_type
+            $domaget_different_cons_type = [];
+            foreach ($loe_data as $key => $domain) {
+                if (!in_array($domain->domain, $domaget_different_cons_type)){
+                    array_push($domaget_different_cons_type,$domain->domain);
+                }
+            }
+
+            // Col Sites
+            $col_sites = DB::table('project_loe');
+            $col_sites->select('site.name');
+            $col_sites->join('project_loe_site AS site', 'project_loe.id', '=', 'site.project_loe_id');
+            $col_sites->where('project_id',$id);
+            $col_sites->groupBy('site.name');
+            $col_sites->orderBy('site.name','asc');
+            $data_col_sites = $col_sites->get();
+
+            // Col Consultants
+            $col_cons = DB::table('project_loe');
+            $col_cons->select('consultant.name','consultant.location','consultant.seniority');
+            $col_cons->join('project_loe_consultant AS consultant', 'project_loe.id', '=', 'consultant.project_loe_id');
+            $col_cons->where('project_id',$id);
+            $col_cons->groupBy('consultant.name');
+            $col_cons->orderBy('consultant.name','asc');
+            $data_col_cons = $col_cons->get();
+            foreach ($data_col_cons as $key => $cons) {
+                // If all validation test are good we execute the create
+                $cons_price = ConsultingPricing::where('country',$cons->location)->where('role',$cons->seniority)->first();
+                if (!empty($cons_price)) {
+                    $price = $cons_price->unit_price;
+                    $cost = $cons_price->unit_cost;
+                } else {
+                    $price = 0;
+                    $cost = 0;
+                }
+                $data_col_cons[$key]->price = $price;
+                $data_col_cons[$key]->cost = $cost;
+            }
+
+            // Sites
+            $sites = DB::table('project_loe');
+            $sites->select('site.id','site.project_loe_id','site.name','site.quantity','site.loe_per_quantity');
+            $sites->join('project_loe_site AS site', 'project_loe.id', '=', 'site.project_loe_id');
+            $sites->where('project_id',$id);
+            $data_sites = $sites->get();
+
+            
+                // Format for easy use
+            $data_sites_formatted = array();
+            foreach ($data_sites as $key => $row) {
+                
+                if (empty($data_sites_formatted[$row->project_loe_id])) {
+                    $data_sites_formatted[$row->project_loe_id] = array();
+                }
+                $data_sites_formatted[$row->project_loe_id][$row->name] = array();
+                $data_sites_formatted[$row->project_loe_id][$row->name]['id'] = $row->id;
+                $data_sites_formatted[$row->project_loe_id][$row->name]['quantity'] = $row->quantity;
+                $data_sites_formatted[$row->project_loe_id][$row->name]['loe_per_quantity'] = $row->loe_per_quantity;
+            }
+
+            //dd($data_sites_formatted);
+
+            // Consultants
+            $consultants = DB::table('project_loe');
+            $consultants->select('consultant.id','consultant.project_loe_id','consultant.name','consultant.percentage','consultant.price','consultant.cost');
+            $consultants->join('project_loe_consultant AS consultant', 'project_loe.id', '=', 'consultant.project_loe_id');
+            $consultants->where('project_id',$id);
+            $consultants->orderBy('consultant.name','asc');
+            $data_consultants = $consultants->get();
+
+                // Format for easy use
+            $data_consultants_formatted = array();
+            foreach ($data_consultants as $key => $row) {
+                if (empty($data_consultants_formatted[$row->project_loe_id])) {
+                    $data_consultants_formatted[$row->project_loe_id] = array();
+                }
+                $data_consultants_formatted[$row->project_loe_id][$row->name]['id'] = $row->id;
+                $data_consultants_formatted[$row->project_loe_id][$row->name]['percentage'] = $row->percentage;
+                $data_consultants_formatted[$row->project_loe_id][$row->name]['cost'] = $row->cost;
+                $data_consultants_formatted[$row->project_loe_id][$row->name]['price'] = $row->price;
+            }
+
+            
+            $results['col'] = array();
+            $results['col']['site'] = $data_col_sites;
+            $results['col']['cons'] = $data_col_cons;
+            $results['col']['domaget_different_cons_type'] = $domaget_different_cons_type;
             $results['data'] = array();
             $results['data']['loe'] = $loe_data;
             $results['data']['site'] = $data_sites_formatted;
@@ -234,13 +341,19 @@ class LoeController extends Controller
     public function dashboardProjects($id)
     {
         $project_list = Project::leftjoin('project_loe','project_loe.project_id','=','projects.id')
-                ->select('projects.id','projects.project_name')
+                ->select('projects.id','projects.project_name','project_loe.domain','project_loe.project_id')
                 ->where('projects.customer_id', $id)
                 ->whereNotNull('project_loe.id')
                 ->groupBy('projects.id')
                 ->get();
 
         return json_encode($project_list);
+    }
+     public function dashboardProjectsDomain($id)
+    {
+        $domain_list = LOE::select('id','row_order','domain','main_phase')->where('project_id','=',$id)->get()->toArray();
+
+        return json_encode($domain_list);
     }
     //endregion
 
@@ -810,7 +923,7 @@ class LoeController extends Controller
     public function reorder($id,$new_row_order)
     {
         // This function will take the id of the record, look this in the database and select all records on the same project_id
-        // It will then insert the record at the new_row_order and move the rest of the records
+        // It will then get_different_cons_typeert the record at the new_row_order and move the rest of the records
         $record = Loe::find($id);
         $rows = Loe::select('id','row_order')->where('project_id',$record->project_id)->where('id','!=',$id)->orderBy('row_order','asc')->get();
         $i = 1;
@@ -827,6 +940,121 @@ class LoeController extends Controller
         $record->update(['row_order' => $new_row_order]);
     }
 
+    // public function append_template(Request $request)
+    // {
+    //     $result = new \stdClass();
+    //     $result->result = 'success';
+
+    //     $inputs = $request->all();
+
+    //     $template_loe = Loe::where(array('project_id'=>$inputs['template_project_id'],'domain'=>$inputs['template_project_domain'],'row_order'=>$inputs['order']))->orderBy('row_order')->get();
+        
+    //     if ($template_loe->count() > 0) {
+
+    //         // $this_loes = Loe::where('project_id',$inputs['this_project_id'])->get();
+    //         //Now we need to delete all existing records for the project id
+    //         // foreach ($this_loes as $key => $this_loe) {
+    //         //     $this->delete($this_loe->id);
+    //         // }
+
+    //         //Now we can replicate all data from the template
+    //         foreach ($template_loe as $key => $loe) {
+    //             //Duplicate each loe from template
+    //             $newLoe = $loe->replicate();
+    //             $newLoe->project_id = $inputs['this_project_id']; // the new project_id
+    //             $newLoe->row_order = ($inputs['countRow'])+1;
+    //             $newLoe->user_id = Auth::user()->id;
+    //             $newLoe->signoff_user_id = null;
+    //             $newLoe->save();
+
+    //             if ($newLoe->first_line == 1) {
+    //                 LoeHistory::create([
+    //                     'project_loe_id' => $newLoe->id,
+    //                     'user_id' => Auth::user()->id,
+    //                     'description' => 'LoE table created from template'
+    //                 ]);
+    //             }
+
+    //             //Duplicate all sites for this loe
+    //             $template_loe_site = LoeSite::where('project_loe_id',$loe->id)->get();
+    //             foreach ($template_loe_site as $key => $loe_site) {
+    //                 $newLoeSite = $loe_site->replicate();
+    //                 $newLoeSite->project_loe_id = $newLoe->id;
+    //                 $newLoeSite->save();
+    //             }
+
+    //             //Duplicate all consultant for this loe
+    //             $template_loe_cons = LoeConsultant::where('project_loe_id',$loe->id)->get();
+
+
+
+    //             foreach ($template_loe_cons as $key => $loe_cons) {
+    //                 $newLoeCons = $loe_cons->replicate();
+    //                 $newLoeCons->project_loe_id = $newLoe->id;
+    //                 $newLoeCons->save();
+    //             }
+    //         }
+            
+            
+    //         $result->msg = 'LoE appended successfuly';
+    //     } else {
+    //         $result->result = 'error';
+    //         $result->msg = 'The LoE you selected doesn t have records that can be imported';
+    //     }
+
+    //     return json_encode($result);
+    // }
+
+    //get the same consultant types in the new project
+    public function get_the_same_cons_type($a,$b){
+        $get_different_cons_type = [];
+        foreach ($a as $key => $valueA) {
+            // code...
+            foreach ($b as $key => $valueB) {
+                // code...
+                if($valueA->name === $valueB->name){
+                    array_push($get_different_cons_type, $valueA);
+                }
+            }
+        }
+        return $get_different_cons_type;
+    }
+
+
+// get the different consultant types between two projects
+public  function get_different_cons_type($x,$y){
+     if(sizeof($x)>sizeof($y)){
+        $get_different_cons_type = $x;
+        for($i=0;$i<sizeof($get_different_cons_type);$i++){
+        for($j=0;$j<sizeof($y);$j++){
+            
+                if($get_different_cons_type[$i]['name'] === $y[$j]['name']){
+                array_splice($get_different_cons_type,$i,1);
+                }
+
+        }
+
+        }
+     }
+     else{
+
+        $get_different_cons_type = $y;
+        for($i=0;$i<sizeof($get_different_cons_type);$i++){
+        for($j=0;$j<sizeof($x);$j++){
+            
+                if($get_different_cons_type[$i]['name'] === $x[$j]['name']){
+                array_splice($get_different_cons_type,$i,1);
+                }
+
+        }
+
+        }
+
+     }
+    return $get_different_cons_type;
+}
+
+
     public function append_template(Request $request)
     {
         $result = new \stdClass();
@@ -834,21 +1062,36 @@ class LoeController extends Controller
 
         $inputs = $request->all();
 
-        $template_loe = Loe::where('project_id',$inputs['template_project_id'])->orderBy('row_order')->get();
+        $template_loe = Loe::where(array('project_id'=>$inputs['template_project_id'],'domain'=>$inputs['template_project_domain']))->orderBy('row_order')->get();
         
         if ($template_loe->count() > 0) {
 
-            $this_loes = Loe::where('project_id',$inputs['this_project_id'])->get();
+
+            // $this_loes = Loe::where('project_id',$inputs['this_project_id'])->get();
             //Now we need to delete all existing records for the project id
-            foreach ($this_loes as $key => $this_loe) {
-                $this->delete($this_loe->id);
-            }
+            // foreach ($this_loes as $key => $this_loe) {
+            //     $this->delete($this_loe->id);
+            // }
+
+
+            //old cons 
+            $old_cons = LOE::where('project_id',$inputs['this_project_id'])->get('id')->first();
+
+            $old_cons_temp = LoeConsultant::where('project_loe_id',$old_cons->id)->get();
+
+            $all_old_cons =LoeConsultant::where('project_loe_id',$old_cons->id)->get()->pluck('id','name');
+
+
+            $old_cons_new = LOE::where('project_id',$inputs['this_project_id'])->get('id');
+
+            $the_row_order = $inputs['countRow'];
 
             //Now we can replicate all data from the template
             foreach ($template_loe as $key => $loe) {
                 //Duplicate each loe from template
                 $newLoe = $loe->replicate();
                 $newLoe->project_id = $inputs['this_project_id']; // the new project_id
+                $newLoe->row_order = $the_row_order+1;
                 $newLoe->user_id = Auth::user()->id;
                 $newLoe->signoff_user_id = null;
                 $newLoe->save();
@@ -869,18 +1112,118 @@ class LoeController extends Controller
                     $newLoeSite->save();
                 }
 
-                //Duplicate all consultant for this loe
+                //new one 
                 $template_loe_cons = LoeConsultant::where('project_loe_id',$loe->id)->get();
+
+                $same_cons_types = LoeController::get_the_same_cons_type($template_loe_cons,$old_cons_temp);
+                $diff_cons_types = LoeController::get_different_cons_type($old_cons_temp->toArray(),$template_loe_cons->toArray());
+
+
+            if(sizeof($old_cons_temp) == sizeof($template_loe_cons)){
                 foreach ($template_loe_cons as $key => $loe_cons) {
                     $newLoeCons = $loe_cons->replicate();
                     $newLoeCons->project_loe_id = $newLoe->id;
                     $newLoeCons->save();
+
+                }  
+            }else{
+                if(empty($same_cons_types)){
+
+                    foreach($template_loe_cons as $key=> $val){
+                        $records = LoeConsultant::create(
+                            [
+                        'project_loe_id'=>$newLoe->id,
+                        'name'=>$val['name'],
+                        'location'=>$val['location'],
+                        'seniority'=>$val['seniority'],
+                        'percentage'=>$val['percentage'],
+                        'price'=>$val['price'],
+                        'cost'=>$val['cost']
+                         ]);
+                     }
+                foreach ($old_cons_temp as $key => $value) {
+                    // code...
+                    $records = LoeConsultant::create(
+                            [
+                        'project_loe_id'=>$newLoe->id,
+                        'name'=>$value['name'],
+                        'location'=>$value['location'],
+                        'seniority'=>$value['seniority'],
+                        'percentage'=>'0',
+                        'price'=>$value['price'],
+                        'cost'=>$value['cost']
+                         ]);
+
+                     }
+                }else{
+                
+                foreach ($same_cons_types as $key => $value) {
+                    // code...
+                         $records = LoeConsultant::create(
+                            [
+                        'project_loe_id'=>$newLoe->id,
+                        'name'=>$value['name'],
+                        'location'=>$value['location'],
+                        'seniority'=>$value['seniority'],
+                        'percentage'=>'0',
+                        'price'=>$value['price'],
+                        'cost'=>$value['cost']
+                         ]);
+
+                     }
+
+                foreach($diff_cons_types  as $key => $val){
+                        $records = LoeConsultant::create(
+                            [
+                        'project_loe_id'=>$newLoe->id,
+                        'name'=>$val['name'],
+                        'location'=>$val['location'],
+                        'seniority'=>$val['seniority'],
+                        'percentage'=>$val['percentage'],
+                        'price'=>$val['price'],
+                        'cost'=>$val['cost']
+                         ]);
+                }   
+
+
                 }
+
+
             }
+            $the_row_order++;
+
+        }
+
+
+
+        
+
+        if(sizeof($old_cons_temp) != sizeof($template_loe_cons)){
+
             
+            foreach ($old_cons_new as $key => $value) {
+
+
+                foreach ($diff_cons_types as $key => $newLoe) {
+
+                            $records = LoeConsultant::create(
+                            [
+                        'project_loe_id'=>$value->id,
+                        'name'=>$val['name'],
+                        'location'=>$val['location'],
+                        'seniority'=>$val['seniority'],
+                        'percentage'=>'0',
+                        'price'=>$val['price'],
+                        'cost'=>$val['cost']
+                         ]);                   
+                 }
+            // code...
+            
+          }
+        }        
             
             $result->msg = 'LoE appended successfuly';
-        } else {
+    } else {
             $result->result = 'error';
             $result->msg = 'The LoE you selected doesn t have records that can be imported';
         }
@@ -888,6 +1231,7 @@ class LoeController extends Controller
         return json_encode($result);
     }
 
+    
     //Various Edit
     public function edit_general(Request $request)
     {
