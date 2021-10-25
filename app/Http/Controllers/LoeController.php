@@ -1127,8 +1127,8 @@ public  function get_different_cons_type($x,$y){
 
                 }  
             }else{
+                
                 if(empty($same_cons_types)){
-
                     foreach($template_loe_cons as $key=> $val){
                         $records = LoeConsultant::create(
                             [
@@ -1156,7 +1156,7 @@ public  function get_different_cons_type($x,$y){
 
                      }
                 }else{
-                
+
                 foreach ($same_cons_types as $key => $value) {
                     // code...
                          $records = LoeConsultant::create(
@@ -1165,13 +1165,12 @@ public  function get_different_cons_type($x,$y){
                         'name'=>$value['name'],
                         'location'=>$value['location'],
                         'seniority'=>$value['seniority'],
-                        'percentage'=>'0',
+                        'percentage'=>$value['percentage'],
                         'price'=>$value['price'],
                         'cost'=>$value['cost']
                          ]);
 
                      }
-
                 foreach($diff_cons_types  as $key => $val){
                         $records = LoeConsultant::create(
                             [
@@ -1179,7 +1178,7 @@ public  function get_different_cons_type($x,$y){
                         'name'=>$val['name'],
                         'location'=>$val['location'],
                         'seniority'=>$val['seniority'],
-                        'percentage'=>$val['percentage'],
+                        'percentage'=>'0',
                         'price'=>$val['price'],
                         'cost'=>$val['cost']
                          ]);
@@ -1190,37 +1189,46 @@ public  function get_different_cons_type($x,$y){
 
 
             }
+
+
             $the_row_order++;
 
         }
 
 
 
-        
-
         if(sizeof($old_cons_temp) != sizeof($template_loe_cons)){
 
             
-            foreach ($old_cons_new as $key => $value) {
-
-
-                foreach ($diff_cons_types as $key => $newLoe) {
+            if(empty($same_cons_types)){
+                        foreach ($old_cons_new as $key => $value) {
+            
+                foreach ($template_loe_cons as $key => $newLoe) {
 
                             $records = LoeConsultant::create(
                             [
                         'project_loe_id'=>$value->id,
-                        'name'=>$val['name'],
-                        'location'=>$val['location'],
-                        'seniority'=>$val['seniority'],
+                        'name'=>$newLoe->name,
+                        'location'=>$newLoe->location,
+                        'seniority'=>$newLoe->seniority,
                         'percentage'=>'0',
-                        'price'=>$val['price'],
-                        'cost'=>$val['cost']
-                         ]);                   
+                        'price'=>$newLoe->price,
+                        'cost'=>$newLoe->cost
+                         ]);
+                        
+                    
+
+
+                                   
+
                  }
             // code...
             
           }
-        }        
+            }
+        }   
+        
+     
             
             $result->msg = 'LoE appended successfuly';
     } else {
