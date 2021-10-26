@@ -351,7 +351,7 @@ class LoeController extends Controller
     }
      public function dashboardProjectsDomain($id)
     {
-        $domain_list = LOE::select('id','row_order','domain','main_phase')->where('project_id','=',$id)->get()->toArray();
+        $domain_list = LOE::select('id','row_order','domain','main_phase')->where('project_id','=',$id)->groupBy('domain')->get()->toArray();
 
         return json_encode($domain_list);
     }
