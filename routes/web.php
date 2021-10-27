@@ -174,6 +174,10 @@ Route::group(['middleware' => ['auth', 'general','last_login']], function () {
     Route::post('ActionAddAjax', ['uses' => 'ActionController@store', 'as' => 'ActionAddAjax', 'middleware' => ['permission:action-create']]);
     Route::patch('ActionUpdateAjax/{id}', ['uses' => 'ActionController@update', 'as' => 'ActionUpdateAjax', 'middleware' => ['permission:action-edit']]);
 
+    Route::get('getProjectByCustomerId/{customer_id}', ['uses' => 'ToolsController@getProjectByCustomerId', 'as' => 'getProjectByCustomerId', 'middleware' => ['permission:action-view']]);
+
+Route::get('getUserOnProjectForAssign', ['uses' => 'ToolsController@getUserOnProjectForAssign', 'as' => 'getUserOnProjectForAssign', 'middleware' => ['permission:action-view']]);
+
     //  Create new activity
     Route::get('toolsFormCreate/{y}/{tab?}', ['uses' => 'ToolsController@getFormCreate', 'as' => 'toolsFormCreate', 'middleware' => ['permission:tools-activity-new']]);
     Route::post('toolsFormCreate', ['uses' => 'ToolsController@postFormCreate', 'middleware' => ['permission:tools-activity-new']]);
