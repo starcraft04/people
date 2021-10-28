@@ -1047,7 +1047,7 @@ function assign_user_project(user_id,project_id) {
             url: "{!! route('addUserToProject','') !!}/"+user_id+'/'+project_id,
             dataType: 'json',
             success: function(data) {
-              console.log(data);
+              // console.log(data);
               if (data.result == 'success'){
                   box_type = 'success';
                   message_type = 'success';
