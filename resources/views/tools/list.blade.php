@@ -127,7 +127,7 @@
         <!-- Create new button -->
 
         <!-- Create Model for assigning user for project -->
-        @can('tools-activity-new')
+        @can('tools-activity-edit')
         <div class="row button_in_row">
           <div class="col-md-12">
             <button id="assign_user_to_project" class="btn btn-info btn-xs"  align="right"data-toggle="modal" data-target="#assign_user_modal"><span class="glyphicon glyphicon-plus">Assign Consultant</span></button>
@@ -945,7 +945,7 @@ $("#modal_assign_user_form_project_user").select2({
             dataType: 'json',
             success: function(data) {
               project_list = data;
-              console.log(project_list);
+              // console.log(project_list);
               var html = '';
               var html_domain='';
               project_list.forEach(fill_project_select);
@@ -975,7 +975,7 @@ function getUserOnProject() {
             dataType: 'json',
             success: function(data) {
               users_list = data;
-              console.log(users_list);
+              // console.log(users_list);
               var html = '';
               var html_domain='';
               users_list.forEach(fill_user_select);
@@ -1014,14 +1014,14 @@ function getUserOnProject() {
       $('select#modal_assign_user_form_project').select2().trigger('change');
       customer_id = $('#modal_assign_user_form_customer').val();
 
-      console.log(customer_id);
+      // console.log(customer_id);
       change_project_select(customer_id);
     });
 
     $('#modal_assign_user_form_project').on('change', function() {
       var project_id = $('#modal_assign_user_form_project').val();
 
-      console.log(project_id);
+      // console.log(project_id);
 
     });
 
