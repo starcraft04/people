@@ -118,24 +118,25 @@
 
         <!-- Create new button -->
         @can('tools-activity-new')
-        <div class="row button_in_row">
-          <div class="col-md-12">
+        <div class="row button_in_row" style="padding: 10px 0px;">
+          <div class="col-md-2">
             <button id="new_project" class="btn btn-info btn-xs" align="right"><span class="glyphicon glyphicon-plus"> New Project</span></button>
           </div>
+
+
+        <!-- Create Model for assigning user for project -->
+        @can('tools-activity-edit')
+          <div class=".col-md-2">
+            <button id="assign_user_to_project" class="btn btn-info btn-xs"  align="right"data-toggle="modal" data-target="#assign_user_modal"><span class="glyphicon glyphicon-plus">Assign Consultant</span></button>
+          </div>
+        
+        @endcan
+
+        <!-- Create Model for assigning user for project -->
         </div>
         @endcan
         <!-- Create new button -->
 
-        <!-- Create Model for assigning user for project -->
-        @can('tools-activity-edit')
-        <div class="row button_in_row">
-          <div class="col-md-12">
-            <button id="assign_user_to_project" class="btn btn-info btn-xs"  align="right"data-toggle="modal" data-target="#assign_user_modal"><span class="glyphicon glyphicon-plus">Assign Consultant</span></button>
-          </div>
-        </div>
-        @endcan
-
-        <!-- Create Model for assigning user for project -->
 
 
         <!-- Modal Example Start-->
@@ -1029,7 +1030,7 @@ function getUserOnProject() {
     $('#modal_assign_user_form_project_user').on('change', function() {
       var selected_user_id = $('select#modal_assign_user_form_project_user').val();
 
-      console.log(selected_user_id);
+      // console.log(selected_user_id);
 
     });
 
@@ -1038,8 +1039,8 @@ function getUserOnProject() {
 $(document).on('click', '#modal_action_update_button', function () {
   project_id = $('select#modal_assign_user_form_project').val();
   selected_user_id = $('select#modal_assign_user_form_project_user').val();
-  console.log(project_id);
-  console.log(selected_user_id);
+  // console.log(project_id);
+  // console.log(selected_user_id);
 
 function assign_user_project(user_id,project_id) {
       $.ajax({
