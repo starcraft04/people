@@ -126,6 +126,76 @@
         @endcan
         <!-- Create new button -->
 
+        <!-- Create Model for assigning user for project -->
+        @can('tools-activity-new')
+        <div class="row button_in_row">
+          <div class="col-md-12">
+            <button id="assign_user_to_project" class="btn btn-info btn-xs"  align="right"data-toggle="modal" data-target="#assign_user_modal"><span class="glyphicon glyphicon-plus">Assign Consultant</span></button>
+          </div>
+        </div>
+        @endcan
+
+        <!-- Create Model for assigning user for project -->
+
+
+        <!-- Modal Example Start-->
+      <div class="modal fade" id="assign_user_modal" tabindex="-1" role="dialog" aria- 
+            labelledby="assign_user_modalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="demoModalLabel">Assgin Consultant to Project</h5>
+                <button type="button" class="close" data-dismiss="modal" aria- 
+                                label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                    <form id="modal_assign_user_form" role="form" method="POST" action="">
+                      <div id="modal_assign_user_formgroup_customer" class="form-group">
+                        <label  class="control-label" for="modal_assign_user_form_customer">Customer</label>
+                        <select class="form-control select2" style="width: 100%;" id="modal_assign_user_form_customer" data-placeholder="Select a customer">
+                          @foreach($customers_list as $key => $value)
+                          <option value="{{ $key }}">
+                            {{ $value }}
+                          </option>
+                          @endforeach  
+                        </select>
+                        <span id="modal_assign_user_form_customer_error" class="help-block"></span>
+                      </div>
+                      <div id="modal_assign_user_formgroup_project" class="form-group">
+                        <label  class="control-label" for="modal_assign_user_form_project">Project</label>
+                        <select class="form-control select2" style="width: 100%;" id="modal_assign_user_form_project" data-placeholder="Select a project">
+                        </select>
+                        <span id="modal_assign_user_form_project_error" class="help-block"></span>
+                      </div>
+
+                      <div id="modal_assign_user_formgroup_project_domain" class="form-group">
+                        <label  class="control-label" for="modal_assign_user_form_project_user">Consultant</label>
+                        <select class="form-control select2" style="width: 100%;" id="modal_assign_user_form_project_user" data-placeholder="Select Consultant">  
+                        </select>
+                        <span id="modal_assign_user_form_project_user_error" class="help-block"></span>
+                      </div>
+
+                      <div class="form-group">
+                          <div id="modal_assign_user_form_hidden"></div>
+                      </div>
+                    </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" id="modal_action_update_button" class="btn btn-success">Update</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+<div id="table_loader" class="row">
+            <div class="col-sm">
+              <img src="{{ asset("/img/loading.gif") }}" width="100" height="100">
+            </div>
+      </div>
         <!-- Main table -->
         <table id="activitiesTable" class="table table-striped table-hover table-bordered mytable" width="100%">
           <thead>
@@ -513,7 +583,13 @@
         url: "{!! route('listOfActivitiesPerUserAjax') !!}",
         type: "POST",
         data: function ( d ) {
+          $('#table_loader').show();
           $.extend(d,ajaxData());
+
+        },
+
+        complete: function () { // Set our complete callback, adding the .hidden class and hiding the spinner.
+          $('#table_loader').hide();
         },
         dataType: "JSON"
       },
@@ -843,5 +919,165 @@
   });
 
   } );
+
+
+
+// Assign user modal 
+
+$("#modal_assign_user_form_customer").select2({
+          allowClear: false
+      });
+ $("#modal_assign_user_form_project").select2({
+          allowClear: false
+      });
+
+$("#modal_assign_user_form_project_user").select2({
+          allowClear: false
+      });
+
+
+
+
+ function change_project_select(customer_id) {
+      $.ajax({
+            type: 'get',
+            url: "{!! route('getProjectByCustomerId','') !!}/"+customer_id,
+            dataType: 'json',
+            success: function(data) {
+              project_list = data;
+              console.log(project_list);
+              var html = '';
+              var html_domain='';
+              project_list.forEach(fill_project_select);
+              function fill_project_select (project){
+              html += '<option value="'+project.id+'" >'+project.project_name+'</option>';
+              console.log(project.id);
+
+              }
+
+              $('#modal_assign_user_form_project').empty();
+              $('#modal_assign_user_form_project').append(html);
+              // Set selected 
+              $('#modal_assign_user_form_project').val(project_list[0].id);
+              $('#modal_assign_user_form_project').select2().trigger('change');
+            },
+            error: function (jqXhr, textStatus, errorMessage) { // error callback 
+              console.log('Error: ' + errorMessage);
+            }
+      });
+    }
+
+
+function getUserOnProject() {
+      $.ajax({
+            type: 'get',
+            url: "{!! route('getUserOnProjectForAssign','') !!}",
+            dataType: 'json',
+            success: function(data) {
+              users_list = data;
+              console.log(users_list);
+              var html = '';
+              var html_domain='';
+              users_list.forEach(fill_user_select);
+              function fill_user_select (user){
+                if('user_id' in user){
+                    html += '<option value="'+user.user_id+'" >'+user.name+'</option>';
+
+              $('#modal_assign_user_form_project_user').empty();
+              $('#modal_assign_user_form_project_user').append(html);
+              // Set selected 
+              $('#modal_assign_user_form_project_user').val(users_list[0].user_id);
+              $('#modal_assign_user_form_project_user').select2().trigger('change');
+
+                }else{
+                      html += '<option value="'+user.id+'" >'+user.name+'</option>';
+
+              $('#modal_assign_user_form_project_user').empty();
+              $('#modal_assign_user_form_project_user').append(html);
+              // Set selected 
+              $('#modal_assign_user_form_project_user').val(users_list[0].id);
+              $('#modal_assign_user_form_project_user').select2().trigger('change');
+
+                }
+              }
+            },
+            error: function (jqXhr, textStatus, errorMessage) { // error callback 
+              console.log('Error: ' + errorMessage);
+            }
+      });
+    }
+      getUserOnProject();
+
+
+    $('#modal_assign_user_form_customer').on('change', function() {
+      $('select#modal_assign_user_form_project').val($(this).data(''));
+      $('select#modal_assign_user_form_project').select2().trigger('change');
+      customer_id = $('#modal_assign_user_form_customer').val();
+
+      console.log(customer_id);
+      change_project_select(customer_id);
+    });
+
+    $('#modal_assign_user_form_project').on('change', function() {
+      var project_id = $('#modal_assign_user_form_project').val();
+
+      console.log(project_id);
+
+    });
+
+
+    $('#modal_assign_user_form_project_user').on('change', function() {
+      var selected_user_id = $('select#modal_assign_user_form_project_user').val();
+
+      console.log(selected_user_id);
+
+    });
+
+
+  
+$(document).on('click', '#modal_action_update_button', function () {
+  project_id = $('select#modal_assign_user_form_project').val();
+  selected_user_id = $('select#modal_assign_user_form_project_user').val();
+  console.log(project_id);
+  console.log(selected_user_id);
+
+function assign_user_project(user_id,project_id) {
+      $.ajax({
+            type: 'get',
+            url: "{!! route('addUserToProject','') !!}/"+user_id+'/'+project_id,
+            dataType: 'json',
+            success: function(data) {
+              console.log(data);
+              if (data.result == 'success'){
+                  box_type = 'success';
+                  message_type = 'success';
+              }
+              else {
+                  box_type = 'danger';
+                  message_type = 'error';
+              }
+
+              $('#flash-message').empty();
+              var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+              $('#flash-message').append(box);
+              $('#delete-message').delay(2000).queue(function () {
+                  $(this).addClass('animated flipOutX')
+              });
+              $('#assign_user_modal').hide();
+              location.reload();
+
+              
+            },
+            error: function (jqXhr, textStatus, errorMessage) { // error callback 
+              console.log('Error: ' + errorMessage);
+            }
+      });
+    }
+
+    assign_user_project(selected_user_id,project_id);
+})
+    
+
+
   </script>
   @stop

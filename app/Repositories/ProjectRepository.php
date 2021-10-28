@@ -33,6 +33,14 @@ class ProjectRepository
         return $data;
     }
 
+
+    public function getProjectCustomerAll($id)
+    {
+        $data = $this->project->where('customer_id',$id)->get(['project_name','id']);
+
+        return $data;
+    }
+
     public function getByOTL($otl_project_code, $meta_activity)
     {
         return $this->project->where('otl_project_code', $otl_project_code)->where('meta_activity', $meta_activity)->first();

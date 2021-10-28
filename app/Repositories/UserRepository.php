@@ -195,6 +195,10 @@ class UserRepository
     {
         return $this->user->pluck('name', 'id');
     }
+    public function getAllUsersListForAssign()
+    {
+        return $this->user->get(['name', 'id']);
+    }
 
     public function getAllUsersFromManager($id)
     {
