@@ -939,7 +939,9 @@ $("#modal_assign_user_form_project_user").select2({
 
 
 
+      
  function change_project_select(customer_id) {
+
       $.ajax({
             type: 'get',
             url: "{!! route('getProjectByCustomerId','') !!}/"+customer_id,
@@ -1030,7 +1032,7 @@ function getUserOnProject() {
     $('#modal_assign_user_form_project_user').on('change', function() {
       var selected_user_id = $('select#modal_assign_user_form_project_user').val();
 
-      // console.log(selected_user_id);
+
 
     });
 
@@ -1043,8 +1045,13 @@ $(document).on('click', '#modal_action_update_button', function () {
   // console.log(selected_user_id);
 
 function assign_user_project(user_id,project_id) {
+
+      var month = $('select#month').val();
+      var year  = $('select#year').val();
+       
       $.ajax({
             type: 'get',
+            data:{month:month,year:year},
             url: "{!! route('addUserToProject','') !!}/"+user_id+'/'+project_id,
             dataType: 'json',
             success: function(data) {

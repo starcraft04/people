@@ -279,7 +279,7 @@ class ToolsController extends Controller
 
             if ($user_id == '0') {
                 foreach ($user_list_temp as $key => $value) {
-                                            
+
 
                     if ($this->activityRepository->user_assigned_on_project($year, $key, $project_id) == 0) {
                         $user_list[$key] = $value;
@@ -334,13 +334,15 @@ class ToolsController extends Controller
     }
 
 
-    public function assignUserToProject($user_id,$project_id){
+    public function assignUserToProject(Request $request,$user_id,$project_id){
         
         $result = new \stdClass();
-            $result->result = 'success';
+        $result->result = 'success';
+        $inputs = $request->all();
 
-        $year = date("Y");
-        $month = date('m');
+
+        $year = $inputs['year'];
+        $month = $inputs['month'];
 
 if ($this->activityRepository->user_assigned_on_project($year, $user_id, $project_id) == 0) {
  $recods = Activity::create([
