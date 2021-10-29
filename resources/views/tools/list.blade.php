@@ -140,7 +140,7 @@
 
 
         <!-- Modal Example Start-->
-      <div class="modal fade" id="assign_user_modal" tabindex="-1" role="dialog" aria- 
+      <div class="modal fade" id="assign_user_modal" role="dialog" aria- 
             labelledby="assign_user_modalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
