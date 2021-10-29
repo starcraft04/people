@@ -119,20 +119,18 @@
         <!-- Create new button -->
         @can('tools-activity-new')
         <div class="row button_in_row" style="padding: 10px 0px;">
-          <div class="col-md-2">
-            <button id="new_project" class="btn btn-info btn-xs" align="right"><span class="glyphicon glyphicon-plus"> New Project</span></button>
-          </div>
-
+          <div class="col-md-4" style="display: flex;">
+            <button id="new_project" style="display: inline-block;width: 85%;" class="btn btn-info btn-xs" align="right"><span class="glyphicon glyphicon-plus"> New Project</span></button>
 
         <!-- Create Model for assigning user for project -->
-        @can('tools-activity-edit')
-          <div class=".col-md-2">
-            <button id="assign_user_to_project" class="btn btn-info btn-xs"  align="right"data-toggle="modal" data-target="#assign_user_modal"><span class="glyphicon glyphicon-plus">Assign Consultant</span></button>
-          </div>
         
-        @endcan
+            <button id="assign_user_to_project" style="display: inline-block;width: 85%;" class="btn btn-info btn-xs"  align="right"data-toggle="modal" data-target="#assign_user_modal"><span class="glyphicon glyphicon-plus">Assign Consultant</span></button>
 
-        <!-- Create Model for assigning user for project -->
+          </div>
+
+
+
+        
         </div>
         @endcan
         <!-- Create new button -->
