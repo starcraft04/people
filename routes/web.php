@@ -186,6 +186,8 @@ Route::group(['middleware' => ['auth', 'general','last_login']], function () {
 
     Route::get('addUserToProject/{u}/{p?}', ['uses' => 'ToolsController@assignUserToProject', 'as' => 'addUserToProject', 'middleware' => ['permission:tools-activity-view']]);
   
+    Route::get('getCustomerAndProjectBySambaID/{samba_id}', ['uses' => 'ToolsController@getCustomerAndProjectBySambaID', 'as' => 'getCustomerAndProjectBySambaID', 'middleware' => ['permission:tools-activity-view']]);
+
 
     //  Create new activity
     Route::get('toolsFormCreate/{y}/{tab?}', ['uses' => 'ToolsController@getFormCreate', 'as' => 'toolsFormCreate', 'middleware' => ['permission:tools-activity-new']]);
