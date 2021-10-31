@@ -43,9 +43,11 @@ class ToolsController extends Controller
         $table_height = Auth::user()->table_height;
 
         $customers_list = Customer::orderBy('name')->pluck('name', 'id');
+        $customerlink_id = $this->projectRepository->getAllSambaIDs();
+
         $customers_list->prepend('', '');
 
-        return view('tools/list', compact('authUsersForDataView', 'table_height','customers_list'));
+        return view('tools/list', compact('authUsersForDataView', 'table_height','customers_list','customerlink_id'));
     }
 
 
@@ -263,7 +265,15 @@ class ToolsController extends Controller
         return redirect($redirect)->with('success', 'New project created successfully');
     }
 
+    public function getCustomerAndProjectBySambaID($samba_id){
+        $customer_project_form_samba_id = DB::table('projects')
+                                        ->Join('customers','projects.customer_id','=','customers.id')
+                                        ->where('samba_id',$samba_id)
+                                        ->get(['customers.name','customers.id','projects.project_name','projects.id as project_id']);
 
+        return json_encode($customer_project_form_samba_id);
+
+    }
      public function getProjectByCustomerId($customers_id)
     {
         // code...

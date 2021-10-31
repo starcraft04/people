@@ -66,6 +66,15 @@ class ProjectRepository
         return $this->project->where('samba_id', $samba_id)->where('project_type', 'Pre-sales')->get();
     }
 
+
+    public function getAllSambaIDs()
+    {
+        return $this->project->whereNotNull('samba_id')->get('samba_id');
+    }
+
+    
+
+
     public function create(array $inputs)
     {
         $project = new $this->project;

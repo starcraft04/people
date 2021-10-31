@@ -41,6 +41,7 @@
     <script src="{{ asset('/plugins/bootbox/bootbox.min.js') }}"></script>script>
     <!-- Switchery -->
     <script src="{{ asset('/plugins/gentelella/vendors/switchery/dist/switchery.min.js') }}" type="text/javascript"></script>
+    <script type="text/javascript"></script>
 @stop
 
 @section('content')
@@ -152,6 +153,18 @@
             <div class="modal-body">
 
                     <form id="modal_assign_user_form" role="form" method="POST" action="">
+                      <div id="modal_assign_user_formgroup_customer_link" class="form-group">
+                        <label  class="control-label" for="modal_assign_user_form_customer_link">Customer Link ID</label>
+                        <select class="form-control select2" style="width: 100%;" id="modal_assign_user_form_customer_link" data-placeholder="Select a customer Link ID">
+                          <option value=""></option>
+                          @foreach($customerlink_id as $key => $value)
+                          <option value="{{ $value->samba_id }}">
+                            {{ $value->samba_id }}
+                          </option>
+                          @endforeach  
+                        </select>
+                        <span id="modal_assign_user_form_customer_link_error" class="help-block"></span>
+                      </div>
                       <div id="modal_assign_user_formgroup_customer" class="form-group">
                         <label  class="control-label" for="modal_assign_user_form_customer">Customer</label>
                         <select class="form-control select2" style="width: 100%;" id="modal_assign_user_form_customer" data-placeholder="Select a customer">
@@ -923,6 +936,11 @@
 
 // Assign user modal 
 
+
+$("#modal_assign_user_form_customer_link").select2({
+          allowClear: false
+      });
+
 $("#modal_assign_user_form_customer").select2({
           allowClear: false
       });
@@ -936,6 +954,46 @@ $("#modal_assign_user_form_project_user").select2({
 
 
 
+$('#modal_assign_user_form_customer_link').on('change', function() {    
+    var customer_link_id = $('select#modal_assign_user_form_customer_link').val();
+
+  $.ajax({
+            type: 'get',
+            url: "{!! route('getCustomerAndProjectBySambaID','') !!}/"+customer_link_id,
+            dataType: 'json',
+            success: function(data) {
+              request_data = data;
+              var html = '';
+              var htmlProject='';
+              console.log(data);
+               request_data.forEach(fill_project_select);
+              function fill_project_select (project){
+              html += '<option value="'+project.id+'" >'+project.name+'</option>';
+              htmlProject += '<option value="'+project.project_id+'" >'+project.project_name+'</option>';
+              console.log(project.id);
+              }
+             $('#modal_assign_user_form_customer').empty();
+              $('#modal_assign_user_form_customer').append(html);
+              // Set selected 
+              $('#modal_assign_user_form_customer').val(request_data[0].id);
+              $('#modal_assign_user_form_customer').select2().trigger('change');
+
+
+              $('#modal_assign_user_form_project').empty();
+              $('#modal_assign_user_form_project').append(htmlProject);
+              // Set selected 
+              $('#modal_assign_user_form_project').val(request_data[0].project_id);
+              $('#modal_assign_user_form_project').select2().trigger('change');
+
+
+
+            },
+            error: function (jqXhr, textStatus, errorMessage) { // error callback 
+              console.log('Error: ' + errorMessage);
+            }
+      });
+
+})
 
       
  function change_project_select(customer_id) {
@@ -953,7 +1011,6 @@ $("#modal_assign_user_form_project_user").select2({
               function fill_project_select (project){
               html += '<option value="'+project.id+'" >'+project.project_name+'</option>';
               console.log(project.id);
-
               }
 
               $('#modal_assign_user_form_project').empty();
@@ -1014,9 +1071,12 @@ function getUserOnProject() {
       $('select#modal_assign_user_form_project').val($(this).data(''));
       $('select#modal_assign_user_form_project').select2().trigger('change');
       customer_id = $('#modal_assign_user_form_customer').val();
+      var customer_link_id = $('select#modal_assign_user_form_customer_link').val();
 
       // console.log(customer_id);
-      change_project_select(customer_id);
+
+          change_project_select(customer_id);
+
     });
 
     $('#modal_assign_user_form_project').on('change', function() {
@@ -1082,8 +1142,5 @@ function assign_user_project(user_id,project_id) {
 
     assign_user_project(selected_user_id,project_id);
 })
-    
-
-
   </script>
   @stop
