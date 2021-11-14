@@ -274,6 +274,17 @@ Route::get('getUserOnProjectForAssign', ['uses' => 'ToolsController@getUserOnPro
     //endregion
 });
 
+//resources allocation routes
+
+    Route::get('show', ['uses' => 'ResourcesController@show', 'as' => 'show', 'middleware' => ['permission:tools-activity-view']]);
+
+
+    Route::post('getResources/{year}', ['uses' => 'ResourcesController@getResources', 'as' => 'getResources', 'middleware' => ['permission:tools-activity-view']]);
+
+
+    Route::post('lists', ['uses' => 'ResourcesController@lists', 'as' => 'lists', 'middleware' => ['permission:tools-activity-view']]);
+
+
 
 
 
