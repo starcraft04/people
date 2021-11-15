@@ -180,6 +180,8 @@ Route::group(['middleware' => ['auth', 'general','last_login']], function () {
     Route::get('getProjectByCustomerId/{customer_id}', ['uses' => 'ToolsController@getProjectByCustomerId', 'as' => 'getProjectByCustomerId', 'middleware' => ['permission:tools-activity-view']]);
 
 
+
+
     Route::get('getUserOnProjectForAssign', ['uses' => 'ToolsController@getUserOnProjectForAssign', 'as' => 'getUserOnProjectForAssign', 'middleware' => ['permission:tools-activity-view']]);
 
 
