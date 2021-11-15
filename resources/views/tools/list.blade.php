@@ -409,6 +409,7 @@
 
   $(document).ready(function() {
 
+   
     $.ajaxSetup({
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -1082,7 +1083,6 @@ function getUserOnProject() {
     $('#modal_assign_user_form_project').on('change', function() {
       var project_id = $('#modal_assign_user_form_project').val();
 
-      // console.log(project_id);
 
     });
 
