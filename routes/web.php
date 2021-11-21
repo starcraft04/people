@@ -270,13 +270,13 @@ Route::get('getUserOnProjectForAssign', ['uses' => 'ToolsController@getUserOnPro
     Route::get('loe/{id}', ['uses' => 'LoeController@listFromProjectID', 'as' => 'listFromProjectID', 'middleware' => ['permission:projectLoe-view|projectLoe-dashboard_view']]);
 
 
+    Route::get('show', ['uses' => 'ResourcesController@show', 'as' => 'show', 'middleware' => ['permission:tools-activity-view']]);
 
     //endregion
 });
 
 //resources allocation routes
 
-    Route::get('show', ['uses' => 'ResourcesController@show', 'as' => 'show', 'middleware' => ['permission:tools-activity-view']]);
 
 
     Route::post('getResources/{year}', ['uses' => 'ResourcesController@getResources', 'as' => 'getResources', 'middleware' => ['permission:tools-activity-view']]);

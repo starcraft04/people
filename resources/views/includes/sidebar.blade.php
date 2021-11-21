@@ -46,6 +46,9 @@
           @canany(['activity-view','activity-edit','activity-create','activity-delete'])
           <li><a href="{!!route('activityList')!!}">Activity list</a></li>
           @endcan
+           @canany(['activity-view','activity-edit','activity-create','activity-delete'])
+          <li><a href="{!!route('show')!!}">Resource</a></li>
+          @endcan
           @canany(['project-view','project-edit','project-create','project-delete'])
           <li><a href="{!!route('customerList')!!}">Customers list</a></li>
           @endcan
