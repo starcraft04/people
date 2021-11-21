@@ -43,7 +43,7 @@ class ResourcesController extends Controller
         Session::put('url', 'toolsActivities');
         $table_height = Auth::user()->table_height;
 
-        return view('resources\resources', compact('authUsersForDataView', 'table_height'));
+        return view('resourcesGap\resources', compact('authUsersForDataView', 'table_height'));
     }
 
     public function Lists(Request $request)
