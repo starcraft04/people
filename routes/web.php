@@ -173,6 +173,14 @@ Route::group(['middleware' => ['auth', 'general','last_login']], function () {
     Route::get('projectActionDelete/{action_id}', ['uses' => 'ActionController@projectActionDelete', 'as' => 'projectActionDelete', 'middleware' => ['permission:action-delete']]);
     Route::post('ActionAddAjax', ['uses' => 'ActionController@store', 'as' => 'ActionAddAjax', 'middleware' => ['permission:action-create']]);
     Route::patch('ActionUpdateAjax/{id}', ['uses' => 'ActionController@update', 'as' => 'ActionUpdateAjax', 'middleware' => ['permission:action-edit']]);
+    Route::get('getProjectByCustomerId/{customer_id}', ['uses' => 'ToolsController@getProjectByCustomerId', 'as' => 'getProjectByCustomerId', 'middleware' => ['permission:tools-activity-view']]);
+
+    Route::get('getUserOnProjectForAssign', ['uses' => 'ToolsController@getUserOnProjectForAssign', 'as' => 'getUserOnProjectForAssign', 'middleware' => ['permission:tools-activity-view']]);
+
+    Route::get('addUserToProject/{u}/{p?}', ['uses' => 'ToolsController@assignUserToProject', 'as' => 'addUserToProject', 'middleware' => ['permission:tools-activity-view']]);
+  
+    Route::get('getCustomerAndProjectBySambaID/{samba_id}', ['uses' => 'ToolsController@getCustomerAndProjectBySambaID', 'as' => 'getCustomerAndProjectBySambaID', 'middleware' => ['permission:tools-activity-view']]);
+
 
     Route::get('getProjectByCustomerId/{customer_id}', ['uses' => 'ToolsController@getProjectByCustomerId', 'as' => 'getProjectByCustomerId', 'middleware' => ['permission:action-view']]);
 

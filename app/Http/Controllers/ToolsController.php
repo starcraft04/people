@@ -42,8 +42,15 @@ class ToolsController extends Controller
         Session::put('url', 'toolsActivities');
         $table_height = Auth::user()->table_height;
 
-        return view('tools/list', compact('authUsersForDataView', 'table_height'));
+        $customers_list = Customer::orderBy('name')->pluck('name', 'id');
+        $customerlink_id = $this->projectRepository->getAllSambaIDs();
+
+        $customers_list->prepend('', '');
+
+        return view('tools/list', compact('authUsersForDataView', 'table_height','customers_list','customerlink_id'));
     }
+
+
 
     public function projectsAssignedAndNot()
     {
@@ -258,6 +265,115 @@ class ToolsController extends Controller
         return redirect($redirect)->with('success', 'New project created successfully');
     }
 
+    public function getCustomerAndProjectBySambaID($samba_id){
+        $customer_project_form_samba_id = DB::table('projects')
+                                        ->Join('customers','projects.customer_id','=','customers.id')
+                                        ->where('samba_id',$samba_id)
+                                        ->get(['customers.name','customers.id','projects.project_name','projects.id as project_id']);
+
+        return json_encode($customer_project_form_samba_id);
+
+    }
+     public function getProjectByCustomerId($customers_id)
+    {
+        // code...
+        $projects = $this->projectRepository->getProjectCustomerAll($customers_id);
+        return $projects;
+    }
+
+ public function getUserOnProjectForAssign(){
+        $user_id = Auth::user()->id;
+        $user_list;
+        if (Auth::user()->can('tools-activity-all-edit')) {
+            $user_list_temp = $this->userRepository->getAllUsersListForAssign();
+
+            if ($user_id == '0') {
+                foreach ($user_list_temp as $key => $value) {
+
+
+                    if ($this->activityRepository->user_assigned_on_project($year, $key, $project_id) == 0) {
+                        $user_list[$key] = $value;
+                    }
+                }
+                $user_select_disabled = 'false';
+                $user_selected = '';
+            } else {
+                $user_list = $user_list_temp;
+                $user_select_disabled = 'true';
+                $user_selected = $user_id;
+            }
+        } elseif (Auth::user()->is_manager == 1) {
+
+            $user_list_temp = Auth::user()->employees()->get(['name', 'user_id']);
+            // $user_list_temp->prepend(Auth::user()->name, Auth::user()->id);
+
+            if ($user_id == '0') {
+                foreach ($user_list_temp as $key => $value) {
+                    if ($this->activityRepository->user_assigned_on_project($year, $key, $project_id) == 0) {
+                        $user_list[$key] = $value;
+                    }
+                }
+                $user_select_disabled = 'false';
+                $user_selected = '';
+            } else {
+                $user_list = $user_list_temp;
+                $user_select_disabled = 'true';
+                $user_selected = $user_id;
+            }
+        } else {
+            $user_list = [Auth::user()->id => Auth::user()->name];
+            if ($user_id == '0') {
+                $user_select_disabled = 'true';
+                $user_selected = '';
+            } else {
+                $user_select_disabled = 'true';
+                $user_selected = $user_id;
+            }
+        }
+
+    //      $users_on_project = DB::table('projects')
+    // ->leftjoin('activities', 'projects.id', '=', 'activities.project_id')
+    // ->leftjoin('users', 'users.id', '=', 'activities.user_id')
+    // ->where('project_id', $project_id)
+    // ->groupBy('users.name')
+    // ->get(['users.name', 'users.id']);
+
+
+    return json_encode($user_list);
+
+    }
+
+
+    public function assignUserToProject(Request $request,$user_id,$project_id){
+        
+        $result = new \stdClass();
+        $result->result = 'success';
+        $inputs = $request->all();
+
+
+        $year = $inputs['year'];
+        $month = $inputs['month'];
+
+if ($this->activityRepository->user_assigned_on_project($year, $user_id, $project_id) == 0) {
+ $recods = Activity::create([
+            'year' => $year,
+            'month'=> $month,
+            'project_id' => $project_id,
+            'user_id' => $user_id,
+            'task_hour' => 0,
+            'from_otl' => 0
+        ]);
+            $result->msg = 'User Assigned successfully';
+        }
+        else{
+            $result->msg = 'User Already Assigned to this project';
+
+        }
+        
+       
+            return json_encode($result);
+    }
+
     public function getFormUpdate($user_id, $project_id, $year, $tab = 'tab_main')
     {
         // Here we setup all the disabled fields to be disabled
@@ -459,6 +575,9 @@ class ToolsController extends Controller
     'num_of_comments', 'comments', 'user_list', 'user_selected', 'user_select_disabled', 'created_by_user_name', 'tab'))
       ->with('action', 'update');
     }
+
+
+    
 
     public function postFormUpdate(ProjectUpdateRequest $request)
     {
@@ -714,4 +833,6 @@ class ToolsController extends Controller
 
         return $activities;
     }
+
+    
 }

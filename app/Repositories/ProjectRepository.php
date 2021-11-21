@@ -33,6 +33,14 @@ class ProjectRepository
         return $data;
     }
 
+
+    public function getProjectCustomerAll($id)
+    {
+        $data = $this->project->where('customer_id',$id)->get(['project_name','id']);
+
+        return $data;
+    }
+
     public function getByOTL($otl_project_code, $meta_activity)
     {
         return $this->project->where('otl_project_code', $otl_project_code)->where('meta_activity', $meta_activity)->first();
@@ -57,6 +65,15 @@ class ProjectRepository
     {
         return $this->project->where('samba_id', $samba_id)->where('project_type', 'Pre-sales')->get();
     }
+
+
+    public function getAllSambaIDs()
+    {
+        return $this->project->whereNotNull('samba_id')->get('samba_id');
+    }
+
+    
+
 
     public function create(array $inputs)
     {
