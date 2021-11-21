@@ -202,12 +202,12 @@
           </div>
         </div>
       </div>
-
-<div id="table_loader" class="row">
+<!-- 
+      <div id="table_loader" class="row">
             <div class="col-sm">
               <img src="{{ asset("/img/loading.gif") }}" width="100" height="100">
             </div>
-      </div>
+      </div> -->
         <!-- Main table -->
         <table id="activitiesTable" class="table table-striped table-hover table-bordered mytable" width="100%">
           <thead>
@@ -596,13 +596,11 @@
         url: "{!! route('listOfActivitiesPerUserAjax') !!}",
         type: "POST",
         data: function ( d ) {
-          $('#table_loader').show();
           $.extend(d,ajaxData());
 
         },
 
         complete: function () { // Set our complete callback, adding the .hidden class and hiding the spinner.
-          $('#table_loader').hide();
         },
         dataType: "JSON"
       },
