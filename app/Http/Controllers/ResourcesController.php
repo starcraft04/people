@@ -48,6 +48,7 @@ class ResourcesController extends Controller
 
     public function Lists(Request $request)
     {
+        $domains = [];
         $input = $request->all();
 
          $unassigned = $this->activityRepository->getListOfActivitiesPerUserOnUnassigned($input);
@@ -55,9 +56,10 @@ class ResourcesController extends Controller
          foreach ($unassigned as $key => $value) {
             // code...
             foreach ($zzzUsers as $key => $Zvalue) {
+                $new_practice = str_replace(' ','_',$value->practice);
                 // code...
                 if($value->practice !== null){
-                    if(str_contains($Zvalue->name,strtoupper($value->practice)) !== false){
+                    if(str_contains($Zvalue->name,$new_practice) !== false){
                     $value->m1_com_sum = $Zvalue->m1_com_sum - $value->m1_com_sum;
                     $value->m2_com_sum = $Zvalue->m2_com_sum - $value->m2_com_sum;
                     $value->m3_com_sum = $Zvalue->m3_com_sum - $value->m3_com_sum;
