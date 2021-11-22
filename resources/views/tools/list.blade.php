@@ -185,7 +185,7 @@
 
                       <div id="modal_assign_user_formgroup_project_domain" class="form-group">
                         <label  class="control-label" for="modal_assign_user_form_project_user">Consultant</label>
-                          <select class="form-control select2" id="modal_assign_user_form_project_user" name="user" data-placeholder="Select Consultant" multiple="multiple">
+                          <select class="form-control select2" id="modal_assign_user_form_project_user" name="user" data-placeholder=" Consultants" multiple="multiple">
                           @foreach($authUsersForDataView->user_list as $key => $value)
                           <option value="{{ $key }}"
                             @if(isset($authUsersForDataView->user_selected) && $key == $authUsersForDataView->user_selected) selected
