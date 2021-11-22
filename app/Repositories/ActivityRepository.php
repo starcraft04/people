@@ -174,6 +174,304 @@ class ActivityRepository
         return $data;
     }
 
+
+    //this function for resources gap to get the unassigned projects
+    public function getListOfActivitiesPerUserOnUnassigned($where = null)
+    {
+        /** We create here a SQL statement and the Datatables function will add the information it got from the AJAX request to have things like search or limit or show.
+         *   So we need to have a proper SQL search that the ajax can use via get with parameters given to it.
+         *   In the ajax datatables (view), there will be a parameter name that is going to be used here for the extra parameters so if we use a join,
+         *   Then we will need to use in the view page the name of the table.column. This is so that it knows how to do proper sorting or search.
+         **/
+
+        //dd($where['year'][0]);
+
+        //We receive $where['month'] and we will create $where['months'] as an arry with year and months for the next 12 months
+        $where['months'] = [];
+
+        for ($i=$where['month'][0]; $i <= 12 ; $i++) { 
+            array_push($where['months'],['year' => $where['year'][0],'month'=>$i]);
+        }
+
+        if ($where['month'][0] > 1) {
+            for ($i=1; $i <= $where['month'][0]-1 ; $i++) { 
+                array_push($where['months'],['year' => $where['year'][0]+1,'month'=>$i]);
+            }
+        } 
+
+        //dd($where['months']);
+
+        $temp_table = new ProjectTableRepositoryV2('temp_a',$where);
+
+        $activityList = DB::table('temp_a');
+        
+
+        $activityList->select('u.domain AS practice',
+                             DB::raw('SUM(m1_com) as m1_com_sum'),
+                             DB::raw('SUM(m2_com) as m2_com_sum'),
+                             DB::raw('SUM(m3_com) as m3_com_sum'),
+                             DB::raw('SUM(m4_com) as m4_com_sum'),
+                             DB::raw('SUM(m5_com) as m5_com_sum'),
+                             DB::raw('SUM(m6_com) as m6_com_sum'),
+                             DB::raw('SUM(m7_com) as m7_com_sum'),
+                             DB::raw('SUM(m8_com) as m8_com_sum'),
+                             DB::raw('SUM(m9_com) as m9_com_sum'),
+                             DB::raw('SUM(m10_com) as m10_com_sum'),
+                             DB::raw('SUM(m11_com) as m11_com_sum'),
+                             DB::raw('SUM(m12_com) as m12_com_sum')
+                         );
+        $activityList->where('p.project_name','LIKE','Unassigned');
+        $activityList->leftjoin('projects AS p', 'p.id', '=', 'temp_a.project_id');
+        $activityList->leftjoin('project_loe AS loe', 'temp_a.project_id', '=', 'loe.project_id');
+        $activityList->leftjoin('users AS u', 'temp_a.user_id', '=', 'u.id');
+
+
+
+        // Removing customers
+        if (! empty($where['except_customers'])) {
+            $activityList->where(function ($query) use ($where) {
+                foreach ($where['except_customers'] as $w) {
+                    $query->where('c.name', '!=', $w);
+                }
+            });
+        }
+        // Only customers
+        if (! empty($where['only_customers'])) {
+            $activityList->where(function ($query) use ($where) {
+                foreach ($where['only_customers'] as $w) {
+                    $query->orWhere('c.name', $w);
+                }
+            });
+        }
+
+        // Project type
+        if (! empty($where['project_type'])) {
+            $activityList->where(function ($query) use ($where) {
+                foreach ($where['project_type'] as $w) {
+                    $query->orWhere('p.project_type', $w);
+                }
+            });
+        }
+
+        // Except project status
+        if (! empty($where['except_project_status'])) {
+            $activityList->where(function ($query) use ($where) {
+                foreach ($where['except_project_status'] as $w) {
+                    $query->where('p.project_status', '!=', $w);
+                }
+            });
+        }
+
+        // Check if we need to show closed
+        if (! empty($where['checkbox_closed']) && $where['checkbox_closed'] == 1) {
+            $activityList->where(function ($query) {
+                return $query->where('project_status', '!=', 'Closed')
+                    ->orWhereNull('project_status');
+            }
+        );
+        }
+
+        // Checking the roles to see if allowed to see all users
+        if (Auth::user()->can('tools-activity-all-view')) {
+            // Format of $manager_list is [ 1=> 'manager1', 2=>'manager2',...]
+            // Checking which users to show from the manager list
+            if (! empty($where['user'])) {
+                $activityList->where(function ($query) use ($where) {
+                    foreach ($where['user'] as $w) {
+                        $query->orWhere('temp_a.user_id', $w);
+                    }
+                });
+            } elseif (! empty($where['manager'])) {
+                $activityList->where(function ($query) use ($where) {
+                    foreach ($where['manager'] as $w) {
+                        $query->orWhere('manager_id', $w);
+                    }
+                });
+            }
+        }
+        // If the authenticated user is a manager, he can see his employees by default
+        elseif (Auth::user()->is_manager == 1) {
+            if (! isset($where['user'])) {
+                $activityList->where('manager_id', '=', Auth::user()->id);
+            }
+
+            if (! empty($where['user'])) {
+                $activityList->where(function ($query) use ($where) {
+                    foreach ($where['user'] as $w) {
+                        $query->orWhere('temp_a.user_id', $w);
+                    }
+                });
+            }
+        }
+        // In the end, the user is not a manager and doesn't have a special role so he can only see himself
+        else {
+            $activityList->where('temp_a.user_id', '=', Auth::user()->id);
+        }
+
+        $activityList->groupBy('u.domain');
+
+        //$activityList->groupBy('manager_id','manager_name','user_id','user_name','project_id','project_name','year');
+        // if (isset($where['no_datatables']) && $where['no_datatables']) {
+        // } else {
+        //     $data = Datatables::of($activityList)->make(true);
+        // }
+
+        $data = $activityList->get();
+
+        // Destroying the object so it will remove the 2 temp tables created
+        unset($temp_table);
+
+        return $data;
+    }
+
+    // this function created to get the ZZZ users for resources gap
+    public function getListOfActivitiesPerZZZUser($where = null)
+    {
+        /** We create here a SQL statement and the Datatables function will add the information it got from the AJAX request to have things like search or limit or show.
+         *   So we need to have a proper SQL search that the ajax can use via get with parameters given to it.
+         *   In the ajax datatables (view), there will be a parameter name that is going to be used here for the extra parameters so if we use a join,
+         *   Then we will need to use in the view page the name of the table.column. This is so that it knows how to do proper sorting or search.
+         **/
+
+        //dd($where['year'][0]);
+
+        //We receive $where['month'] and we will create $where['months'] as an arry with year and months for the next 12 months
+        $where['months'] = [];
+
+        for ($i=$where['month'][0]; $i <= 12 ; $i++) { 
+            array_push($where['months'],['year' => $where['year'][0],'month'=>$i]);
+        }
+
+        if ($where['month'][0] > 1) {
+            for ($i=1; $i <= $where['month'][0]-1 ; $i++) { 
+                array_push($where['months'],['year' => $where['year'][0]+1,'month'=>$i]);
+            }
+        } 
+
+        //dd($where['months']);
+
+        $temp_table = new ProjectTableRepositoryV2('temp_a',$where);
+
+        $activityList = DB::table('temp_a');
+        
+
+         $activityList->select('u.domain as practice','u.name AS name',
+                             DB::raw('SUM(m1_com) as m1_com_sum'),
+                             DB::raw('SUM(m2_com) as m2_com_sum'),
+                             DB::raw('SUM(m3_com) as m3_com_sum'),
+                             DB::raw('SUM(m4_com) as m4_com_sum'),
+                             DB::raw('SUM(m5_com) as m5_com_sum'),
+                             DB::raw('SUM(m6_com) as m6_com_sum'),
+                             DB::raw('SUM(m7_com) as m7_com_sum'),
+                             DB::raw('SUM(m8_com) as m8_com_sum'),
+                             DB::raw('SUM(m9_com) as m9_com_sum'),
+                             DB::raw('SUM(m10_com) as m10_com_sum'),
+                             DB::raw('SUM(m11_com) as m11_com_sum'),
+                             DB::raw('SUM(m12_com) as m12_com_sum')
+                         );
+        $activityList->where('u.name','Like','%ZZZ%');
+        $activityList->leftjoin('projects AS p', 'p.id', '=', 'temp_a.project_id');
+        $activityList->leftjoin('project_loe AS loe', 'temp_a.project_id', '=', 'loe.project_id');
+        $activityList->leftjoin('users AS u', 'temp_a.user_id', '=', 'u.id');
+
+
+        // Removing customers
+        if (! empty($where['except_customers'])) {
+            $activityList->where(function ($query) use ($where) {
+                foreach ($where['except_customers'] as $w) {
+                    $query->where('c.name', '!=', $w);
+                }
+            });
+        }
+        // Only customers
+        if (! empty($where['only_customers'])) {
+            $activityList->where(function ($query) use ($where) {
+                foreach ($where['only_customers'] as $w) {
+                    $query->orWhere('c.name', $w);
+                }
+            });
+        }
+
+        // Project type
+        if (! empty($where['project_type'])) {
+            $activityList->where(function ($query) use ($where) {
+                foreach ($where['project_type'] as $w) {
+                    $query->orWhere('p.project_type', $w);
+                }
+            });
+        }
+
+        // Except project status
+        if (! empty($where['except_project_status'])) {
+            $activityList->where(function ($query) use ($where) {
+                foreach ($where['except_project_status'] as $w) {
+                    $query->where('p.project_status', '!=', $w);
+                }
+            });
+        }
+
+        // Check if we need to show closed
+        if (! empty($where['checkbox_closed']) && $where['checkbox_closed'] == 1) {
+            $activityList->where(function ($query) {
+                return $query->where('project_status', '!=', 'Closed')
+                    ->orWhereNull('project_status');
+            }
+        );
+        }
+
+        // Checking the roles to see if allowed to see all users
+        if (Auth::user()->can('tools-activity-all-view')) {
+            // Format of $manager_list is [ 1=> 'manager1', 2=>'manager2',...]
+            // Checking which users to show from the manager list
+            if (! empty($where['user'])) {
+                $activityList->where(function ($query) use ($where) {
+                    foreach ($where['user'] as $w) {
+                        $query->orWhere('temp_a.user_id', $w);
+                    }
+                });
+            } elseif (! empty($where['manager'])) {
+                $activityList->where(function ($query) use ($where) {
+                    foreach ($where['manager'] as $w) {
+                        $query->orWhere('manager_id', $w);
+                    }
+                });
+            }
+        }
+        // If the authenticated user is a manager, he can see his employees by default
+        elseif (Auth::user()->is_manager == 1) {
+            if (! isset($where['user'])) {
+                $activityList->where('manager_id', '=', Auth::user()->id);
+            }
+
+            if (! empty($where['user'])) {
+                $activityList->where(function ($query) use ($where) {
+                    foreach ($where['user'] as $w) {
+                        $query->orWhere('temp_a.user_id', $w);
+                    }
+                });
+            }
+        }
+        // In the end, the user is not a manager and doesn't have a special role so he can only see himself
+        else {
+            $activityList->where('temp_a.user_id', '=', Auth::user()->id);
+        }
+
+        $activityList->groupBy('u.domain');
+
+        //$activityList->groupBy('manager_id','manager_name','user_id','user_name','project_id','project_name','year');
+        // if (isset($where['no_datatables']) && $where['no_datatables']) {
+        // } else {
+        //     $data = Datatables::of($activityList)->make(true);
+        // }
+
+        $data = $activityList->get();
+
+        // Destroying the object so it will remove the 2 temp tables created
+        unset($temp_table);
+
+        return $data;
+    }
+
     public function getListOfActivitiesPerUser($where = null)
     {
         /** We create here a SQL statement and the Datatables function will add the information it got from the AJAX request to have things like search or limit or show.
@@ -219,7 +517,7 @@ class ActivityRepository
                             'm4_id','m4_com', 'm4_from_otl','m5_id','m5_com', 'm5_from_otl','m6_id','m6_com', 'm6_from_otl',
                             'm7_id','m7_com', 'm7_from_otl','m8_id','m8_com', 'm8_from_otl','m9_id','m9_com', 'm9_from_otl',
                             'm10_id','m10_com', 'm10_from_otl','m11_id','m11_com', 'm11_from_otl','m12_id','m12_com', 'm12_from_otl',
-                            DB::raw('COUNT(loe.id) as num_of_loe')
+                            DB::raw('COUNT(loe.id) as num_of_loe'),
         );
         $activityList->leftjoin('projects AS p', 'p.id', '=', 'temp_a.project_id');
         $activityList->leftjoin('project_loe AS loe', 'temp_a.project_id', '=', 'loe.project_id');
@@ -227,6 +525,7 @@ class ActivityRepository
         $activityList->leftjoin('users_users AS uu', 'u.id', '=', 'uu.user_id');
         $activityList->leftjoin('users AS m', 'm.id', '=', 'uu.manager_id');
         $activityList->leftjoin('customers AS c', 'c.id', '=', 'p.customer_id');
+
 
         // Removing customers
         if (! empty($where['except_customers'])) {
@@ -317,7 +616,6 @@ class ActivityRepository
         } else {
             $data = Datatables::of($activityList)->make(true);
         }
-
         // Destroying the object so it will remove the 2 temp tables created
         unset($temp_table);
 
