@@ -185,7 +185,14 @@
 
                       <div id="modal_assign_user_formgroup_project_domain" class="form-group">
                         <label  class="control-label" for="modal_assign_user_form_project_user">Consultant</label>
-                        <select class="form-control select2" style="width: 100%;" id="modal_assign_user_form_project_user" data-placeholder="Select Consultant">  
+                          <select class="form-control select2" id="modal_assign_user_form_project_user" name="user" data-placeholder="Select Consultant" multiple="multiple">
+                          @foreach($authUsersForDataView->user_list as $key => $value)
+                          <option value="{{ $key }}"
+                            @if(isset($authUsersForDataView->user_selected) && $key == $authUsersForDataView->user_selected) selected
+                            @endif>
+                            {{ $value }}
+                          </option>
+                          @endforeach
                         </select>
                         <span id="modal_assign_user_form_project_user_error" class="help-block"></span>
                       </div>
@@ -1025,45 +1032,7 @@ $('#modal_assign_user_form_customer_link').on('change', function() {
     }
 
 
-function getUserOnProject() {
-      $.ajax({
-            type: 'get',
-            url: "{!! route('getUserOnProjectForAssign','') !!}",
-            dataType: 'json',
-            success: function(data) {
-              users_list = data;
-              // console.log(users_list);
-              var html = '';
-              var html_domain='';
-              users_list.forEach(fill_user_select);
-              function fill_user_select (user){
-                if('user_id' in user){
-                    html += '<option value="'+user.user_id+'" >'+user.name+'</option>';
 
-              $('#modal_assign_user_form_project_user').empty();
-              $('#modal_assign_user_form_project_user').append(html);
-              // Set selected 
-              $('#modal_assign_user_form_project_user').val(users_list[0].user_id);
-              $('#modal_assign_user_form_project_user').select2().trigger('change');
-
-                }else{
-                      html += '<option value="'+user.id+'" >'+user.name+'</option>';
-
-              $('#modal_assign_user_form_project_user').empty();
-              $('#modal_assign_user_form_project_user').append(html);
-              // Set selected 
-              $('#modal_assign_user_form_project_user').val(users_list[0].id);
-              $('#modal_assign_user_form_project_user').select2().trigger('change');
-
-                }
-              }
-            },
-            error: function (jqXhr, textStatus, errorMessage) { // error callback 
-              console.log('Error: ' + errorMessage);
-            }
-      });
-    }
-      getUserOnProject();
 
 
     $('#modal_assign_user_form_customer').on('change', function() {

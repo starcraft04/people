@@ -566,7 +566,7 @@ $(document).ready(function() {
           }
         }
 
-        tr.find('td[data-colname=total_loe]').html(total_loe.toFixed(2));
+        tr.find('td[data-colname=total_loe]').html(Math.round(total_loe));
 
         grand_total_loe += total_loe;
         //endregion
@@ -601,9 +601,9 @@ $(document).ready(function() {
             tr.find('td[data-colsubname=percentage]').removeClass('update_warning');
           }
 
-          tr.find('td[data-colname=total_cost]').html(total_cost.toFixed(2));
-          tr.find('td[data-colname=total_price]').html(total_price.toFixed(2));
-          tr.find('td[data-colname=margin]').html(margin.toFixed(2));
+          tr.find('td[data-colname=total_cost]').html(Math.round(total_cost));
+          tr.find('td[data-colname=total_price]').html(Math.round(total_price));
+          tr.find('td[data-colname=margin]').html(Math.round(margin));
 
           grand_total_cost += total_cost;
           grand_total_price += total_price;
@@ -611,15 +611,15 @@ $(document).ready(function() {
         //endregion
       });
 
-      $('#LoeTable tfoot tr td[data-colname=total_loe]').html(grand_total_loe.toFixed(2));
-      $('#LoeTable tfoot tr td[data-colname=total_cost]').html(grand_total_cost.toFixed(2));
-      $('#LoeTable tfoot tr td[data-colname=total_price]').html(grand_total_price.toFixed(2));
+      $('#LoeTable tfoot tr td[data-colname=total_loe]').html(Math.round(grand_total_loe));
+      $('#LoeTable tfoot tr td[data-colname=total_cost]').html(Math.round(grand_total_cost));
+      $('#LoeTable tfoot tr td[data-colname=total_price]').html(Math.round(grand_total_price));
       if (grand_total_cost == 0) {
         grand_margin = 0;
       } else {
         grand_margin = 100*(grand_total_price-grand_total_cost)/grand_total_cost;
       }
-      $('#LoeTable tfoot tr td[data-colname=margin]').html(grand_margin.toFixed(2));
+      $('#LoeTable tfoot tr td[data-colname=margin]').html(Math.round(grand_margin));
 
       //Now we activate the sortable on the table
       activate_change_row_order();
