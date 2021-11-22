@@ -55,7 +55,8 @@ class ResourcesController extends Controller
          $zzzUsers = $this->activityRepository->getListOfActivitiesPerZZZUser($input);
          foreach ($unassigned as $key => $value) {
             // code...
-            foreach ($zzzUsers as $key => $Zvalue) {
+            if(sizeof($zzzUsers)>0){
+                foreach ($zzzUsers as $key => $Zvalue) {
                 $new_practice = str_replace(' ','_',$value->practice);
                 // code...
                 if($value->practice !== null){
@@ -80,6 +81,27 @@ class ResourcesController extends Controller
                 }
                 
 
+            }
+            }
+            else{
+                
+                // code...
+                if($value->practice !== null){
+                    $value->m1_com_sum = 0 - $value->m1_com_sum;
+                    $value->m2_com_sum = 0 - $value->m2_com_sum;
+                    $value->m3_com_sum = 0 - $value->m3_com_sum;
+                    $value->m4_com_sum = 0 - $value->m4_com_sum;
+                    $value->m5_com_sum = 0 - $value->m5_com_sum;
+                    $value->m6_com_sum = 0 - $value->m6_com_sum;
+                    $value->m7_com_sum = 0 - $value->m7_com_sum;
+                    $value->m8_com_sum = 0 - $value->m8_com_sum;
+                    $value->m9_com_sum = 0 - $value->m9_com_sum;
+                    $value->m10_com_sum = 0 - $value->m10_com_sum;
+                    $value->m11_com_sum = 0 - $value->m11_com_sum;
+                    $value->m12_com_sum = 0 - $value->m12_com_sum;
+                    $value->sum = round(($value->m1_com_sum+$value->m2_com_sum+$value->m3_com_sum+$value->m4_com_sum+$value->m5_com_sum+$value->m6_com_sum+$value->m7_com_sum+$value->m8_com_sum+$value->m9_com_sum+$value->m10_com_sum+$value->m11_com_sum+$value->m12_com_sum)/12,1);
+                       
+                }
             }
         }
 
