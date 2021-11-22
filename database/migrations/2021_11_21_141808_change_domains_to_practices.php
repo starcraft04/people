@@ -19,7 +19,7 @@ class ChangeDomainsToPractices extends Migration
         DB::statement("UPDATE users SET domain = 'Business Cybersecurity' WHERE domain = 'Security';");
         DB::statement("UPDATE users SET domain = 'Service Assurance and Performance' WHERE domain = 'APM';");
         DB::statement("UPDATE users SET domain = 'Cloud Networking' WHERE domain = 'Network';");
-        DB::statement("UPDATE users SET domain = 'Employee Experience' WHERE domain = 'UCC';");
+        DB::statement("UPDATE users SET domain = 'Employee Experience' WHERE domain = 'UC';");
     }
 
     /**
