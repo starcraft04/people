@@ -46,9 +46,6 @@
           @canany(['activity-view','activity-edit','activity-create','activity-delete'])
           <li><a href="{!!route('activityList')!!}">Activity list</a></li>
           @endcan
-           @canany(['activity-view','activity-edit','activity-create','activity-delete'])
-          <li><a href="{!!route('show')!!}">Resource</a></li>
-          @endcan
           @canany(['project-view','project-edit','project-create','project-delete'])
           <li><a href="{!!route('customerList')!!}">Customers list</a></li>
           @endcan
@@ -78,6 +75,9 @@
             @can('dashboardRevenue-view')
             <li><a href="{!!route('revenuedashboard')!!}/{{date('Y')}}/0">Revenue Dashboard</a></li>
             @endcan
+           @canany(['dashboardRevenue-view','activity-view','activity-edit','activity-create','activity-delete'])
+          <li><a href="{!!route('show')!!}">Resources Gap</a></li>
+          @endcan
             @can('dashboardOrder-view')
             <li><a href="{!!route('orderdashboard')!!}/{{date('Y')}}/0">Order Dashboard</a></li>
             @endcan
