@@ -138,21 +138,21 @@
 
 
 
-        <!-- Modal Example Start-->
+        <!-- Modal Assign User to project Start-->
       <div class="modal fade" id="assign_user_modal" role="dialog" aria- 
             labelledby="assign_user_modalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="demoModalLabel">Assgin Consultant to Project</h5>
-                <button type="button" class="close" data-dismiss="modal" aria- 
+                <button type="button" id=close-btn class="close" data-dismiss="modal" aria- 
                                 label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
 
-                    <form id="modal_assign_user_form" role="form" method="POST" action="">
+                    <form method="POST" id="modal_assign_user_form" action="">
                       <div id="modal_assign_user_formgroup_customer_link" class="form-group">
                         <label  class="control-label" for="modal_assign_user_form_customer_link">Customer Link ID</label>
                         <select class="form-control select2" style="width: 100%;" id="modal_assign_user_form_customer_link" data-placeholder="Select a customer Link ID">
@@ -422,6 +422,21 @@
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       }
     });
+
+//     $('#assign_user_modal').on('hidden.bs.modal', function () {
+//   // Load up a new modal...
+//     $('#modal_assign_user_form_customer_link').val('');
+    
+//     $('#modal_assign_user_form_customer').val('');
+//     $('#modal_assign_user_form_customer').select2().trigger('change');
+    
+//     $('#modal_assign_user_form_project').val('');
+//     $('#modal_assign_user_form_project').select2().trigger('change');
+
+//     $('#modal_assign_user_form_project_user').val('');    
+//     $('#modal_assign_user_form_project_user').select2().trigger('change');
+// })
+    
 
     //region Selection
     // SELECTIONS START
@@ -959,11 +974,22 @@ $("#modal_assign_user_form_project_user").select2({
       });
 
 
+$('#assign_user_modal').on('hidden.bs.modal', function (e) {
+    // do something when this modal window is closed...
+  
+    location.reload();
+});
 
 $('#modal_assign_user_form_customer_link').on('change', function() {    
     var customer_link_id = $('select#modal_assign_user_form_customer_link').val();
 
-  $.ajax({
+  if(customer_link_id == " ")
+  {
+      $("#modal_assign_user_form_customer").select2().trigger('change');
+
+  }
+  else{
+    $.ajax({
             type: 'get',
             url: "{!! route('getCustomerAndProjectBySambaID','') !!}/"+customer_link_id,
             dataType: 'json',
@@ -999,6 +1025,7 @@ $('#modal_assign_user_form_customer_link').on('change', function() {
             }
       });
 
+  }
 })
 
       
