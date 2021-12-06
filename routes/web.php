@@ -281,6 +281,19 @@ Route::get('getUserOnProjectForAssign', ['uses' => 'ToolsController@getUserOnPro
     Route::get('show', ['uses' => 'ResourcesController@show', 'as' => 'show', 'middleware' => ['permission:tools-activity-view']]);
 
     //endregion
+
+    // resource requests
+    Route::get('viewRequests', ['uses' => 'ResourceRequestController@viewRequests', 'as' => 'viewRequests', 'middleware' => ['permission:tools-activity-view']]);
+
+    Route::post('create_request', ['uses' => 'ResourceRequestController@create_request', 'as' => 'create_request', 'middleware' => ['permission:tools-activity-view']]);
+    Route::get('resource_request_view', ['uses' => 'ResourceRequestController@resource_request_view', 'as' => 'resource_request_view', 'middleware' => ['permission:tools-activity-view']]);
+
+    Route::get('requestDelete/{n}', ['uses' => 'ResourceRequestController@requestDelete', 'as' => 'requestDelete', 'middleware' => ['permission:tools-activity-view']]);
+
+    Route::get('getRequest/{id}', ['uses' => 'ResourceRequestController@getRequest', 'as' => 'getRequest', 'middleware' => ['permission:tools-activity-view']]);
+
+    Route::post('updateRequest/{id}', ['uses' => 'ResourceRequestController@updateRequest', 'as' => 'updateRequest', 'middleware' => ['permission:tools-activity-view']]);
+
 });
 
 //resources allocation routes
