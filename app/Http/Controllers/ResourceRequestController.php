@@ -100,7 +100,7 @@ class ResourceRequestController extends Controller
 
     public function resource_request_view()
     {
-        $requests = DB::table('reources_request');
+        $requests = DB::table('resources_request');
 
         $requests->select(
             'reources_request.id',
