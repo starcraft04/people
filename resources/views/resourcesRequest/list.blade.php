@@ -1411,8 +1411,8 @@ console.log(ewr_status);
               { name: 'm.name', data: 'manager_name', searchable: true, visible: true},
               { name: 'u.name', data: 'user_name'},
               { name: 'p.project_name', data: 'project_name' , searchable: true, visible: true},
-              { name: 'reources_request.created_at', data: 'created_at' , searchable: true, visible: true},
-              { name: 'reources_request.Budgeted', data: 'Budgeted' , searchable: true, visible: true,
+              { name: 'resources_request.created_at', data: 'created_at' , searchable: true, visible: true},
+              { name: 'resources_request.Budgeted', data: 'Budgeted' , searchable: true, visible: true,
 
                 render: function (data) {
                     if(data === 0){
@@ -1424,12 +1424,12 @@ console.log(ewr_status);
                     return data;
                 },
                 width: '100px'},
-              { name: 'reources_request.consulting_request', data: 'consulting_request' , searchable: true, visible: true},
-              { name: 'reources_request.PR', data: 'PR' , searchable: true, visible: true},
-              { name: 'reources_request.PO', data: 'PO' , searchable: true, visible: true},
-              { name: 'reources_request.practice', data: 'practice' , searchable: true, visible: true},
-              { name: 'reources_request.duration', data: 'duration' , searchable: true, visible: true},
-              { name: 'reources_request.case_status', 
+              { name: 'resources_request.consulting_request', data: 'consulting_request' , searchable: true, visible: true},
+              { name: 'resources_request.PR', data: 'PR' , searchable: true, visible: true},
+              { name: 'resources_request.PO', data: 'PO' , searchable: true, visible: true},
+              { name: 'resources_request.practice', data: 'practice' , searchable: true, visible: true},
+              { name: 'resources_request.duration', data: 'duration' , searchable: true, visible: true},
+              { name: 'resources_request.case_status', 
                 data: 'case_status' , searchable: true, visible: true,
 
                 render: function (data) {
@@ -1443,7 +1443,7 @@ console.log(ewr_status);
                 },
                 width: '100px'
               },
-              { name: 'reources_request.ewr_status', data: 'ewr_status' , searchable: true, visible: true,
+              { name: 'resources_request.ewr_status', data: 'ewr_status' , searchable: true, visible: true,
 
                 render: function (data) {
                     if(data === 1){
@@ -1455,10 +1455,10 @@ console.log(ewr_status);
                     return data;
                 },
                 width: '100px'},
-              { name: 'reources_request.supplier', data: 'supplier' , searchable: true, visible: true},
+              { name: 'resources_request.supplier', data: 'supplier' , searchable: true, visible: true},
               { name: 'reources_request.revenue', data: 'revenue' , searchable: true, visible: true},
-              { name: 'reources_request.cost', data: 'cost' , searchable: true, visible: true},
-              { name: 'reources_request.currency', data: 'currency' , searchable: true, visible: true,
+              { name: 'resources_request.cost', data: 'cost' , searchable: true, visible: true},
+              { name: 'resources_request.currency', data: 'currency' , searchable: true, visible: true,
 
                 render: function (data) {
                     if(data === 'USD'){
@@ -1470,8 +1470,8 @@ console.log(ewr_status);
                     return data;
                 },
                 width: '100px'},
-              { name: 'reources_request.margin', data: 'margin' , searchable: true, visible: true},
-              { name: 'reources_request.internal_check', data: 'internal_check' , searchable: true, visible: true,
+              { name: 'resources_request.margin', data: 'margin' , searchable: true, visible: true},
+              { name: 'resources_request.internal_check', data: 'internal_check' , searchable: true, visible: true,
 
                 render: function (data) {
                     if(data === 0){
@@ -1483,12 +1483,12 @@ console.log(ewr_status);
                     return data;
                 },
                 width: '100px'},
-              { name: 'reources_request.reason_for_request', data: 'reason_for_request' , searchable: true, visible: false},
-              { name: 'reources_request.description', data: 'description' , searchable: true, visible: false},
-              { name: 'reources_request.comments', data: 'comments' , searchable: false, visible: false},
-              { name: 'reources_request.updated_at', data: 'updated_at' , searchable: false, visible: false},
-              { name: 'reources_request.date_of_complete', data: 'date_of_complete' , searchable: true, visible: false},
-              { name: 'reources_request.contractor_name', data: 'contractor_name' , searchable: true, visible: false},
+              { name: 'resources_request.reason_for_request', data: 'reason_for_request' , searchable: true, visible: false},
+              { name: 'resources_request.description', data: 'description' , searchable: true, visible: false},
+              { name: 'resources_request.comments', data: 'comments' , searchable: false, visible: false},
+              { name: 'resources_request.updated_at', data: 'updated_at' , searchable: false, visible: false},
+              { name: 'resources_request.date_of_complete', data: 'date_of_complete' , searchable: true, visible: false},
+              { name: 'resources_request.contractor_name', data: 'contractor_name' , searchable: true, visible: false},
               {
                 name: 'actions',
                 data: null,
