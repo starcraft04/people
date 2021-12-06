@@ -103,7 +103,7 @@ class ResourceRequestController extends Controller
         $requests = DB::table('resources_request');
 
         $requests->select(
-            'reources_request.id',
+            'resources_request.id',
             'm.name AS manager_name',
             'u.name AS user_name',
             'p.project_name',
