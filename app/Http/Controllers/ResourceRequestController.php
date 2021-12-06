@@ -107,30 +107,30 @@ class ResourceRequestController extends Controller
             'm.name AS manager_name',
             'u.name AS user_name',
             'p.project_name',
-            'reources_request.created_at',
-            'reources_request.Budgeted',
-            'reources_request.consulting_request',
-            'reources_request.PR',
-            'reources_request.PO',
-            'reources_request.practice',
-            'reources_request.duration',
-            'reources_request.case_status',
-            'reources_request.ewr_status',
-            'reources_request.supplier',
-            'reources_request.revenue',
-            'reources_request.cost',
-            'reources_request.currency',
-            'reources_request.margin',
-            'reources_request.internal_check',
-            'reources_request.reason_for_request',
-            'reources_request.description',
-            'reources_request.comments',
-            'reources_request.updated_at',
-            'reources_request.contractor_name',
-            'reources_request.date_of_complete');
-        $requests->leftjoin('projects AS p', 'p.id', '=', 'reources_request.project_id');
-        $requests->leftjoin('project_loe AS loe', 'reources_request.project_id', '=', 'loe.project_id');
-        $requests->leftjoin('users AS u', 'reources_request.user_id', '=', 'u.id');
+            'resources_request.created_at',
+            'resources_request.Budgeted',
+            'resources_request.consulting_request',
+            'resources_request.PR',
+            'resources_request.PO',
+            'resources_request.practice',
+            'resources_request.duration',
+            'resources_request.case_status',
+            'resources_request.ewr_status',
+            'resources_request.supplier',
+            'resources_request.revenue',
+            'resources_request.cost',
+            'resources_request.currency',
+            'resources_request.margin',
+            'resources_request.internal_check',
+            'resources_request.reason_for_request',
+            'resources_request.description',
+            'resources_request.comments',
+            'resources_request.updated_at',
+            'resources_request.contractor_name',
+            'resources_request.date_of_complete');
+        $requests->leftjoin('projects AS p', 'p.id', '=', 'resources_request.project_id');
+        $requests->leftjoin('project_loe AS loe', 'resources_request.project_id', '=', 'loe.project_id');
+        $requests->leftjoin('users AS u', 'resources_request.user_id', '=', 'u.id');
         $requests->leftjoin('users_users AS uu', 'u.id', '=', 'uu.user_id');
         $requests->leftjoin('users AS m', 'm.id', '=', 'uu.manager_id');
         $requests->leftjoin('customers AS c', 'c.id', '=', 'p.customer_id');

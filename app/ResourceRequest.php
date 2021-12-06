@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ResourceRequest extends Model
 {
     //
-    protected $table = 'reources_request';
+    protected $table = 'resources_request';
     public $timestamps = true;
     protected $guarded = ['id'];
 
