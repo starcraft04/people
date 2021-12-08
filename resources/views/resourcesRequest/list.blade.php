@@ -120,7 +120,7 @@
       <!-- Window title -->
       <div class="x_title">
         <h2>List</small></h2>
-
+        
         <ul class="nav navbar-right panel_toolbox">
           <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
         </ul>
@@ -698,10 +698,32 @@
       <!-- End of modal update -->
       
 
+<<div>
 
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Home</a></li>
+    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Profile</a></li>
+    <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Messages</a></li>
+    <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Settings</a></li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="home">Home Tabs are a set of layered sections of content, known as tab panels, that display one panel of content at a time. Each tab panel has an associated tab element, that when activated, displays the panel. The list of tab elements is arranged along one edge of the currently displayed panel, most commonly the top edge.
+
+Terms used to describe this design pattern include:</div>
+    <div role="tabpanel" class="tab-pane" id="profile">Profile Tabs are a set of layered sections of content, known as tab panels, that display one panel of content at a time. Each tab panel has an associated tab element, that when activated, displays the panel. The list of tab elements is arranged along one edge of the currently displayed panel, most commonly the top edge.
+
+Terms used to describe this design pattern include:</div>
+    <div role="tabpanel" class="tab-pane" id="messages">...</div>
+    <div role="tabpanel" class="tab-pane" id="settings">...</div>
+  </div>
+
+</div>
 
         <!-- Main table -->
-        <table id="requestsTable" class="table table-striped table-hover table-bordered mytable" width="100%">
+      <!--   <table id="requestsTable" class="table table-striped table-hover table-bordered mytable" width="100%">
           <thead>
             <tr>
               <th>Manager name</th>
@@ -759,7 +781,7 @@
               <th></th>
             </tr>
           </tfoot> -->
-        </table>
+        </table> -->
         <!-- Main table -->
 
       <!-- Window content -->
@@ -773,6 +795,11 @@
 
   @section('script')
 <script type="text/javascript">
+
+  $('#myTabs a').click(function (e) {
+  e.preventDefault()
+  $(this).tab('show')
+})
   $(document).ready(function() {
 
 
