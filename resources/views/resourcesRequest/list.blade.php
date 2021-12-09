@@ -191,10 +191,10 @@
                         <label  class="control-label" for="modal_request_resource_form_budgted">Budgted</label>
                         <select class="form-control select2" style="width: 100%;" id="modal_request_resource_form_budgted" data-placeholder="Select a customer">
                           <option value=""></option>
-                         <option value="1">
+                         <option value="Yes">
                             Yes
                           </option>
-                          <option value="0">
+                          <option value="No">
                             No
                           </option>
                         </select>
@@ -266,10 +266,10 @@
                         <select class="form-control select2" style="width: 100%;" id="modal_request_resource_form_case_status" data-placeholder="Select a customer">
                         <option value=""></option>
 
-                         <option value="1">
-                            completed
+                         <option value="Completed">
+                            Completed
                           </option>
-                          <option value="0">
+                          <option value="Init">
                             Init
                           </option>
                         </select>
@@ -283,10 +283,10 @@
                         <label  class="control-label" for="modal_request_resource_form_ewr_status">EWR status</label>
                         <select class="form-control select2" style="width: 100%;" id="modal_request_resource_form_ewr_status" data-placeholder="Select a customer">
                         <option value=""></option>
-                         <option value="1">
-                            accepted
+                         <option value="Accepted">
+                            Accepted
                           </option>
-                          <option value="0">
+                          <option value="Waiting">
                             Waiting
                           </option>
                         </select>
@@ -355,10 +355,10 @@
                         <label  class="control-label" for="modal_request_resource_form_internal_check">Internal Check</label>
                         <select class="form-control select2" style="width: 100%;" id="modal_request_resource_form_internal_check" data-placeholder="Select a customer" required>
                           <option value=""></option>
-                         <option value="1">
+                         <option value="Yes">
                             Yes
                           </option>
-                          <option value="0">
+                          <option value="No">
                             No
                           </option>
                         </select>
@@ -550,10 +550,10 @@
                         <select class="form-control select2" style="width: 100%;" id="modal_resource_update_case_status" data-placeholder="Select a customer">
                         <option value=""></option>
 
-                         <option value="1">
-                            completed
+                         <option value="Completed">
+                            Completed
                           </option>
-                          <option value="0">
+                          <option value="Init">
                             Init
                           </option>
                         </select>
@@ -567,10 +567,10 @@
                         <label  class="control-label" for="modal_resource_update_form_ewr_status">EWR status</label>
                         <select class="form-control select2" style="width: 100%;" id="modal_resource_update_ewr_status" data-placeholder="Select a customer">
                         <option value=""></option>
-                         <option value="1">
-                            accepted
+                         <option value="Accepted">
+                            Accepted
                           </option>
-                          <option value="0">
+                          <option value="Waiting">
                             Waiting
                           </option>
                         </select>
@@ -639,10 +639,10 @@
                         <label  class="control-label" for="modal_resource_update_form_internal_check">Internal Check</label>
                         <select class="form-control select2" style="width: 100%;" id="modal_resource_update_internal_check" data-placeholder="Select a customer" required>
                           <option value=""></option>
-                         <option value="1">
+                         <option value="Yes">
                             Yes
                           </option>
-                          <option value="0">
+                          <option value="No">
                             No
                           </option>
                         </select>
@@ -698,32 +698,11 @@
       <!-- End of modal update -->
       
 
-<<div>
+<div>
 
-  <!-- Nav tabs -->
-  <ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Home</a></li>
-    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Profile</a></li>
-    <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Messages</a></li>
-    <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Settings</a></li>
-  </ul>
-
-  <!-- Tab panes -->
-  <div class="tab-content">
-    <div role="tabpanel" class="tab-pane active" id="home">Home Tabs are a set of layered sections of content, known as tab panels, that display one panel of content at a time. Each tab panel has an associated tab element, that when activated, displays the panel. The list of tab elements is arranged along one edge of the currently displayed panel, most commonly the top edge.
-
-Terms used to describe this design pattern include:</div>
-    <div role="tabpanel" class="tab-pane" id="profile">Profile Tabs are a set of layered sections of content, known as tab panels, that display one panel of content at a time. Each tab panel has an associated tab element, that when activated, displays the panel. The list of tab elements is arranged along one edge of the currently displayed panel, most commonly the top edge.
-
-Terms used to describe this design pattern include:</div>
-    <div role="tabpanel" class="tab-pane" id="messages">...</div>
-    <div role="tabpanel" class="tab-pane" id="settings">...</div>
-  </div>
-
-</div>
 
         <!-- Main table -->
-      <!--   <table id="requestsTable" class="table table-striped table-hover table-bordered mytable" width="100%">
+        <table id="requestsTable" class="table table-striped table-hover table-bordered mytable" width="100%">
           <thead>
             <tr>
               <th>Manager name</th>
@@ -753,7 +732,7 @@ Terms used to describe this design pattern include:</div>
               <th>Action</th>
             </tr>
           </thead>
-          <!-- <tfoot>
+           <tfoot>
             <tr>
               <th></th>
               <th></th>
@@ -780,8 +759,8 @@ Terms used to describe this design pattern include:</div>
               <th></th>
               <th></th>
             </tr>
-          </tfoot> -->
-        </table> -->
+          </tfoot>
+        </table>
         <!-- Main table -->
 
       <!-- Window content -->
@@ -1442,7 +1421,7 @@ console.log(ewr_status);
               { name: 'resources_request.Budgeted', data: 'Budgeted' , searchable: true, visible: true,
 
                 render: function (data) {
-                    if(data === 0){
+                    if(data === 'No'){
                       data = '<span style="padding: 5px;color: #FF7900;">No</span>';
                     }
                     else{
@@ -1460,7 +1439,7 @@ console.log(ewr_status);
                 data: 'case_status' , searchable: true, visible: true,
 
                 render: function (data) {
-                    if(data === 1){
+                    if(data === 'Completed'){
                       data = '<span style="padding: 5px;color: #1f9d1f;">Completed</span>';
                     }
                     else{
@@ -1473,7 +1452,7 @@ console.log(ewr_status);
               { name: 'resources_request.ewr_status', data: 'ewr_status' , searchable: true, visible: true,
 
                 render: function (data) {
-                    if(data === 1){
+                    if(data === 'Accepted'){
                       data = '<span style="padding: 5px;color: #1f9d1f;">Accepted</span>';
                     }
                     else{
@@ -1483,7 +1462,7 @@ console.log(ewr_status);
                 },
                 width: '100px'},
               { name: 'resources_request.supplier', data: 'supplier' , searchable: true, visible: true},
-              { name: 'reources_request.revenue', data: 'revenue' , searchable: true, visible: true},
+              { name: 'resources_request.revenue', data: 'revenue' , searchable: true, visible: true},
               { name: 'resources_request.cost', data: 'cost' , searchable: true, visible: true},
               { name: 'resources_request.currency', data: 'currency' , searchable: true, visible: true,
 
@@ -1501,7 +1480,7 @@ console.log(ewr_status);
               { name: 'resources_request.internal_check', data: 'internal_check' , searchable: true, visible: true,
 
                 render: function (data) {
-                    if(data === 0){
+                    if(data === 'No'){
                       data = '<span style="padding: 5px;color: #FF7900;">No</span>';
                     }
                     else{
