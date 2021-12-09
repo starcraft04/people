@@ -475,10 +475,10 @@
                         <label  class="control-label" for="modal_resource_update_form_budgted">Budgted</label>
                         <select class="form-control select2" style="width: 100%;" id="modal_resource_update_budgted" data-placeholder="Select a customer">
                           <option value=""></option>
-                         <option value="1">
+                         <option value="Yes">
                             Yes
                           </option>
-                          <option value="0">
+                          <option value="No">
                             No
                           </option>
                         </select>
@@ -1202,7 +1202,7 @@ console.log(currecny);
                         else
                         {
                             $('#assign_user_modal').modal('hide');
-                            requestsTable.ajax.reload();
+                            location.reload();
                         }
                     },
         dataType: "JSON",
