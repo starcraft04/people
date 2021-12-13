@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use App\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
@@ -36,5 +39,29 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    //API login
+
+    public function loginApi(Request $request)
+    {
+        $request->validate([
+            'email'=>['required','email'],
+            'password'=>['required']
+        ]);
+
+        $user = User::where('email',$request->email)->first();
+
+        if(!$user || !Hash::check($request->password,$user->password)){
+            throw ValidationException::withMessages([
+                'email' => ['this is worng']
+            ]);
+        }
+
+        $userToken = array(
+            'token'=>$user->createToken('Auth Token')->accessToken
+        );
+
+        return json_encode($userToken);
     }
 }
