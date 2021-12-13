@@ -121,7 +121,7 @@
           <li> Figures below are in Mandays</li>
           <li> Negative figures mean that we have unassigned consultants in that practice that can be used (ZZZ < Unassigned)</li>
           <li> Positive figures mean that we have a shortage in consultants (ZZZ > Unassigned) 
-</li>
+          </li>
         </ul>
         <ul class="nav navbar-right panel_toolbox">
           <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>

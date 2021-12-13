@@ -607,6 +607,7 @@
 
     activitiesTable = $('#activitiesTable').DataTable({
       scrollX: true,
+      orderCellsTop: true,
       @if(isset($table_height))
       scrollY: '{!! $table_height !!}vh',
       scrollCollapse: true,

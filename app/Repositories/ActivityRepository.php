@@ -617,7 +617,7 @@ class ActivityRepository
             $data = Datatables::of($activityList)->make(true);
         }
         // Destroying the object so it will remove the 2 temp tables created
-        unset($temp_table);
+        // unset($temp_table);
 
         return $data;
     }
