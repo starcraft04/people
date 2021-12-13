@@ -331,14 +331,7 @@ class ToolsController extends Controller
             }
         }
 
-    //      $users_on_project = DB::table('projects')
-    // ->leftjoin('activities', 'projects.id', '=', 'activities.project_id')
-    // ->leftjoin('users', 'users.id', '=', 'activities.user_id')
-    // ->where('project_id', $project_id)
-    // ->groupBy('users.name')
-    // ->get(['users.name', 'users.id']);
-
-
+   
     return json_encode($user_list);
 
     }
@@ -542,7 +535,7 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
     ->leftjoin('activities', 'projects.id', '=', 'activities.project_id')
     ->leftjoin('users', 'users.id', '=', 'activities.user_id')
     ->select('users.id', 'users.name')
-    ->where('project_id', $project_id)
+    ->where('activities.project_id', $project_id)
     ->groupBy('users.name')
     ->pluck('users.name', 'users.id');
 
