@@ -129,51 +129,48 @@
       <!-- Window title -->
 
 
-            <button id="RequestResource" style="display: inline-block;width: 15%;" class="btn btn-info btn-xs"  align="right" data-toggle="modal" data-target="#assign_user_modal"><span class="glyphicon glyphicon-plus">Request Resource</span></button>
+            <button id="RequestResource" style="display: inline-block;width: 15%;" class="btn btn-info btn-xs"  align="right" data-toggle="modal" data-target="#resource_request_create"><span class="glyphicon glyphicon-plus">Request Resource</span></button>
 
-         <div class="modal fade" id="assign_user_modal" role="dialog" aria- 
-            labelledby="assign_user_modalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="demoModalLabel">Request Resource</h5>
-                <button type="button" id=close-btn class="close" data-dismiss="modal" aria- 
-                                label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" >
-
-                    <form method="POST" id="modal_Request_Resource" action="">
-                      <div id="modal__request_resource_formgroup" class="form-group">
-                        <span id="modal_assign_user_form_customer_link_error" class="help-block"></span>
-                      </div>
-
-                       <!-- Cutomers list -->
-                      <div id="modal_assign_user_formgroup_customer" class="form-group">
-                        <label  class="control-label" for="modal_assign_user_form_customer">Customer</label>
-                        <select class="form-control select2" style="width: 100%;" id="modal_assign_user_form_customer" data-placeholder="Select a customer">
+            <!-- Modal -->
+              <div class="modal fade" id="resource_request_create" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" style="display:table;">
+                      <div class="modal-content" style="width: 900px;">
+                        <!-- Modal Header -->
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title" id="modal_action_title"></h4>
+                        </div>
+                        <!-- Modal Header -->
+                      
+                        <!-- Modal Body -->
+                        <div class="modal-body">
+                          <form id="resource_request_create_form" role="form" method="POST" action="">
+                            <div class="col-md-6 left_form">
+                               <!-- Cutomers list -->
+                      <div id="resource_request_create_formgroup_customer" class="form-group">
+                        <label  class="control-label" for="resource_request_create_form_customer">Customer</label>
+                        <select class="form-control select2" style="width: 100%;" id="resource_request_create_form_customer" data-placeholder="Select a customer">
                           @foreach($customers_list as $key => $value)
                           <option value="{{ $key }}">
                             {{ $value }}
                           </option>
                           @endforeach  
                         </select>
-                        <span id="modal_assign_user_form_customer_error" class="help-block"></span>
+                        <span id="resource_request_create_form_customer_error" class="help-block"></span>
                       </div>
                       <!-- End -->
                       <!-- Project list -->
-                      <div id="modal_assign_user_formgroup_project" class="form-group">
-                        <label  class="control-label" for="modal_assign_user_form_project">Project</label>
-                        <select class="form-control select2" style="width: 100%;" id="modal_assign_user_form_project" data-placeholder="Select a project">
+                      <div id="resource_request_create_formgroup_project" class="form-group">
+                        <label  class="control-label" for="resource_request_create_form_project">Project</label>
+                        <select class="form-control select2" style="width: 100%;" id="resource_request_create_form_project" data-placeholder="Select a project">
                         </select>
-                        <span id="modal_assign_user_form_project_error" class="help-block"></span>
+                        <span id="resource_request_create_form_project_error" class="help-block"></span>
                       </div>
                       <!-- End -->
                       <!-- users list -->
-                      <div id="modal_request_resource_formgroup_budgted" class="form-group">
-                        <label  class="control-label" for="modal_assign_user_form_project_user">Creator</label>
-                          <select class="form-control select2" id="modal_assign_user_form_project_user" name="user" data-placeholder=" Consultants" multiple="multiple">
+                      <div id="resource_request_create_formgroup_budgted" class="form-group">
+                        <label  class="control-label" for="resource_request_create_form_project_user">Creator</label>
+                          <select class="form-control select2" id="resource_request_create_form_project_user" name="user" data-placeholder=" Consultants" multiple="multiple">
                           @foreach($authUsersForDataView->user_list as $key => $value)
                           <option value="{{ $key }}"
                             @if(isset($authUsersForDataView->user_selected) && $key == $authUsersForDataView->user_selected) selected
@@ -182,14 +179,14 @@
                           </option>
                           @endforeach
                         </select>
-                        <span id="modal_assign_user_form_project_user_error" class="help-block"></span>
+                        <span id="resource_request_create_form_project_user_error" class="help-block"></span>
                       </div>
                       <!-- End -->
 
                       <!-- Budgeted -->
-                      <div id="modal_assign_user_formgroup_customer" class="form-group">
-                        <label  class="control-label" for="modal_request_resource_form_budgted">Budgted</label>
-                        <select class="form-control select2" style="width: 100%;" id="modal_request_resource_form_budgted" data-placeholder="Select a customer">
+                      <div id="resource_request_create_formgroup_customer" class="form-group">
+                        <label  class="control-label" for="resource_request_create_form_budgted">Budgted</label>
+                        <select class="form-control select2" style="width: 100%;" id="resource_request_create_budgted" data-placeholder="Select a customer">
                           <option value=""></option>
                          <option value="Yes">
                             Yes
@@ -198,40 +195,40 @@
                             No
                           </option>
                         </select>
-                        <span id="modal_request_resource_form_budgted_error" class="help-block"></span>
+                        <span id="resource_request_create_form_budgted_error" class="help-block"></span>
                       </div>
                       <!-- End -->
 
 
                       <!-- Consulting Request -->
-                      <div id="modal_request_resource_formgroup_consulting_request" class="form-group">
-                        <label  class="control-label" for="modal_request_resource_form_consulting_request">Consulting Request</label>
-                        <input type="text" class="form-control" id="modal_request_resource_form_consulting_request">
-                        <span id="modal_request_resource_form_consulting_request_error" class="help-block"></span>
+                      <div id="resource_request_create_formgroup_consulting_request" class="form-group">
+                        <label  class="control-label" for="resource_request_create_form_consulting_request">Consulting Request</label>
+                        <input type="text" class="form-control" id="resource_request_create_form_consulting_request">
+                        <span id="resource_request_create_form_consulting_request_error" class="help-block"></span>
                       </div>
                       <!-- End -->
 
 
                       <!-- PR -->
-                      <div id="modal_request_resource_formgroup_pr" class="form-group">
-                        <label  class="control-label" for="modal_request_resource_form_pr">PR</label>
-                        <input type="text" class="form-control" id="pr">
-                        <span id="modal_request_resource_form_pr_error" class="help-block"></span>
+                      <div id="resource_request_create_formgroup_pr" class="form-group">
+                        <label  class="control-label" for="resource_request_create_pr">PR</label>
+                        <input type="text" class="form-control" id="resource_request_create_pr">
+                        <span id="resource_request_create_pr_error" class="help-block"></span>
                       </div>
                       <!-- End -->
 
                       <!-- PO -->
-                      <div id="modal_request_resource_formgroup_po" class="form-group">
-                        <label  class="control-label" for="modal_request_resource_form_po">PO</label>
-                        <input type="text" class="form-control" id="po">
-                        <span id="modal_request_resource_form_po_error" class="help-block"></span>
+                      <div id="resource_request_create_formgroup_po" class="form-group">
+                        <label  class="control-label" for="resource_request_create_po">PO</label>
+                        <input type="text" class="form-control" id="resource_request_create_po">
+                        <span id="resource_request_create_po_error" class="help-block"></span>
                       </div>
                       <!-- End -->
 
                       <!-- Users domain list -->
-                      <div id="modal_assign_user_formgroup_customer" class="form-group">
-                        <label  class="control-label" for="modal_assign_user_form_domain_user">User Practices</label>
-                        <select class="form-control select2" style="width: 100%;" id="modal_assign_user_form_domain_user" data-placeholder="Select a Practice">y
+                      <div id="resource_request_create_formgroup_customer" class="form-group">
+                        <label  class="control-label" for="resource_request_create_form_domain_user">User Practices</label>
+                        <select class="form-control select2" style="width: 100%;" id="resource_request_create_form_domain_user" data-placeholder="Select a Practice">y
                           <option value=""></option>
 
                           @foreach(config('domains.domain-users') as $domain)
@@ -241,29 +238,40 @@
                             </option>
                             @endforeach
                         </select>
-                        <span id="modal_assign_user_form_domain_user_error" class="help-block"></span>
+                        <span id="resource_request_create_form_domain_user_error" class="help-block"></span>
                       </div>
                       <!-- End -->
                       <!-- Contractor name -->
-                      <div id="modal_request_resource_formgroup_contractor_name" class="form-group">
-                        <label  class="control-label" for="modal_request_resource_form_contractor_name">Contractor name</label>
-                        <input type="text" class="form-control" id="contractor_name">
-                        <span id="modal_request_resource_form_contractor_name_error" class="help-block"></span>
+                      <div id="resource_request_create_formgroup_contractor_name" class="form-group">
+                        <label  class="control-label" for="resource_request_create_contractor_name">Contractor name</label>
+                        <input type="text" class="form-control" id="resource_request_create_contractor_name">
+                        <span id="resource_request_create_contractor_name_error" class="help-block"></span>
                       </div>
                       <!-- End -->
                       <!-- Duration -->
-                      <div id="modal_request_resource_formgroup_duration" class="form-group">
-                        <label  class="control-label" for="modal_request_resource_duration">Duration</label>
-                        <input type="text" class="form-control" id="modal_request_resource_durarion" required>
+                      <div id="resource_request_create_formgroup_duration" class="form-group">
+                        <label  class="control-label" for="resource_request_create_duration">Duration</label>
+                        <input type="text" class="form-control" id="resource_request_create_duration" required>
 
-                        <span id="modal_request_resource_form_duration_error" class="help-block"></span>
+                        <span id="resource_request_create_form_duration_error" class="help-block"></span>
                       </div>
                       <!-- End -->
 
-                      <!-- Case status -->
-                      <div id="modal_assign_user_formgroup_customer" class="form-group">
-                        <label  class="control-label" for="modal_request_resource_form_case_status">Case status</label>
-                        <select class="form-control select2" style="width: 100%;" id="modal_request_resource_form_case_status" data-placeholder="Select a customer">
+                      <!-- Reason for request -->
+                      <div id="resource_request_create_formgroup_reason_for_request" class="form-group">
+                        <label  class="control-label" for="resource_request_create_reason_for_request">Reason for request</label>
+                        <textarea name="reason_for_request" class="form-control" id="resource_request_create_reason_request" placeholder="Reasons of request" required></textarea> 
+                        <span id="resource_request_create_form_reason_for_request_error" class="help-block"></span>
+                      </div>
+                      <!-- End -->
+
+                            </div>
+                            <div class="col-md-6 right_form">
+                              
+                                <!-- Case status -->
+                      <div id="resource_request_create_formgroup_customer" class="form-group">
+                        <label  class="control-label" for="resource_request_create_form_case_status">Case status</label>
+                        <select class="form-control select2" style="width: 100%;" id="resource_request_create_case_status" data-placeholder="Select a customer">
                         <option value=""></option>
 
                          <option value="Completed">
@@ -273,15 +281,13 @@
                             Init
                           </option>
                         </select>
-                        <span id="modal_request_resource_form_case_status_error" class="help-block"></span>
+                        <span id="resource_request_create_form_case_status_error" class="help-block"></span>
                       </div>
                       <!-- End -->
-
-
                       <!-- EWR status -->
-                      <div id="modal_assign_user_formgroup_customer" class="form-group">
-                        <label  class="control-label" for="modal_request_resource_form_ewr_status">EWR status</label>
-                        <select class="form-control select2" style="width: 100%;" id="modal_request_resource_form_ewr_status" data-placeholder="Select a customer">
+                      <div id="resource_request_create_formgroup_customer" class="form-group">
+                        <label  class="control-label" for="resource_request_create_form_ewr_status">EWR status</label>
+                        <select class="form-control select2" style="width: 100%;" id="resource_request_create_ewr_status" data-placeholder="Select a customer">
                         <option value=""></option>
                          <option value="Accepted">
                             Accepted
@@ -290,44 +296,35 @@
                             Waiting
                           </option>
                         </select>
-                        <span id="modal_request_resource_form_ewr_status_error" class="help-block"></span>
+                        <span id="resource_request_create_form_ewr_status_error" class="help-block"></span>
                       </div>
                       <!-- End -->
-
-
                       <!-- supplier -->
-                      <div id="modal_request_resource_formgroup_supplier" class="form-group">
-                        <label  class="control-label" for="modal_request_resource_form_spplier">Supplier</label>
-                        <input type="text" class="form-control" id="supplier">
-                        <span id="modal_request_resource_form_supplier_error" class="help-block"></span>
+                      <div id="resource_request_create_formgroup_supplier" class="form-group">
+                        <label  class="control-label" for="resource_request_create_supplier">Supplier</label>
+                        <input type="text" class="form-control" id="resource_request_create_supplier">
+                        <span id="resource_request_create_form_supplier_error" class="help-block"></span>
                       </div>
                       <!-- End -->
-
-
-
                       <!-- revenue -->
-                     <div id="modal_request_resource_formgroup_revenue" class="form-group">
-                        <label  class="control-label" for="modal_request_resource_revenue">Revenue</label>
-                        <input type="text" class="form-control" id="modal_request_resource_revenue" required>
+                     <div id="resource_request_create_formgroup_revenue" class="form-group">
+                        <label  class="control-label" for="resource_request_create_revenue">Revenue</label>
+                        <input type="text" class="form-control" id="resource_request_create_revenue" required>
 
-                        <span id="modal_request_resource_form_revenue_error" class="help-block"></span>
+                        <span id="resource_request_create_form_revenue_error" class="help-block"></span>
                       </div>
                       <!-- End -->
-
-
                       <!-- Cost -->
-                      <div id="modal_request_resource_formgroup_cost" class="form-group">
-                        <label  class="control-label" for="modal_request_resource_form_cost">Cost</label>
-                        <input type="text" class="form-control" id="modal_request_resource_form_cost" required>
-                        <span id="modal_request_resource_form_cost_error" class="help-block"></span>
+                      <div id="resource_request_create_formgroup_cost" class="form-group">
+                        <label  class="control-label" for="resource_request_create_form_cost">Cost</label>
+                        <input type="text" class="form-control" id="resource_request_create_form_cost" required>
+                        <span id="resource_request_create_form_cost_error" class="help-block"></span>
                       </div>
                       <!-- End -->
-
-
                       <!-- Currency -->
-                      <div id="modal_assign_user_formgroup_currency" class="form-group">
-                        <label  class="control-label" for="modal_request_resource_form_currency">Currency</label>
-                        <select class="form-control select2" style="width: 100%;" id="modal_request_resource_form_currency" data-placeholder="Select Currency" required>
+                      <div id="resource_request_create_formgroup_currency" class="form-group">
+                        <label  class="control-label" for="resource_request_create_form_currency">Currency</label>
+                        <select class="form-control select2" style="width: 100%;" id="resource_request_create_currency" data-placeholder="Select Currency" required>
                         <option value=""></option>
                          <option value="EUR">
                             EUR
@@ -336,24 +333,20 @@
                             USD
                           </option>
                         </select>
-                        <span id="modal_request_resource_form_currency_error" class="help-block"></span>
+                        <span id="resource_request_create_form_currency_error" class="help-block"></span>
                       </div>
                       <!-- End -->
-
-
                       <!-- Margin -->
-                      <div id="modal_request_resource_formgroup_margin" class="form-group">
-                        <label  class="control-label" for="modal_request_resource_form_contractor_name">Margin</label>
-                        <input type="number" class="form-control" id="margin" required>
-                        <span id="modal_request_resource_form_margin_error" class="help-block"></span>
+                      <div id="resource_request_create_formgroup_margin" class="form-group">
+                        <label  class="control-label" for="resource_request_create_margin">Margin</label>
+                        <input type="number" class="form-control" id="resource_request_create_margin" required>
+                        <span id="resource_request_create_form_margin_error" class="help-block"></span>
                       </div>
                       <!-- End -->
-
-
                       <!-- Internal Check -->
-                      <div id="modal_assign_user_formgroup_customer" class="form-group">
-                        <label  class="control-label" for="modal_request_resource_form_internal_check">Internal Check</label>
-                        <select class="form-control select2" style="width: 100%;" id="modal_request_resource_form_internal_check" data-placeholder="Select a customer" required>
+                      <div id="resource_request_create_formgroup_customer" class="form-group">
+                        <label  class="control-label" for="resource_request_create_form_internal_check">Internal Check</label>
+                        <select class="form-control select2" style="width: 100%;" id="resource_request_create_internal_check" data-placeholder="Select a customer" required>
                           <option value=""></option>
                          <option value="Yes">
                             Yes
@@ -362,343 +355,41 @@
                             No
                           </option>
                         </select>
-                        <span id="modal_request_resource_form_internal_check_error" class="help-block"></span>
+                        <span id="resource_request_create_form_internal_check_error" class="help-block"></span>
                       </div>
-                      <!-- End -->
-
-
-
-                      <!-- Reason for request -->
-                      <div id="modal_request_resource_formgroup_reason_for_request" class="form-group">
-                        <label  class="control-label" for="modal_request_resource_reason_for_request">Reason for request</label>
-                        <textarea name="reason_for_request" class="form-control" id="reason_for_request" placeholder="Reasons of request" required></textarea> 
-                        <span id="modal_request_resource_form_reason_for_request_error" class="help-block"></span>
-                      </div>
-                      <!-- End -->
-                      
+                      <!-- End -->                      
                       <!-- Description -->
-                      <div id="modal_request_resource_formgroup_description" class="form-group">
-                        <label  class="control-label" for="modal_request_resource_description">Description</label>
-                        <textarea name="description" class="form-control" id="description" placeholder="Description"></textarea> 
-                        <span id="modal_request_resource_form_description_error" class="help-block"></span>
+                      <div id="resource_request_create_formgroup_description" class="form-group">
+                        <label  class="control-label" for="resource_request_create_for_description">Description</label>
+                        <textarea name="description" class="form-control" id="resource_request_create_description" placeholder="Description"></textarea> 
+                        <span id="resource_request_create_form_description_error" class="help-block"></span>
                       </div>
                       <!-- End -->
 
                       <!-- Comment -->
-                      <div id="modal_request_resource_formgroup_comment" class="form-group">
-                        <label  class="control-label" for="modal_request_resource_comment">Comment</label>
-                        <textarea name="comment" class="form-control" id="comment" placeholder="Comments"></textarea> 
-                        <span id="modal_request_resource_form_comment_error" class="help-block"></span>
+                      <div id="resource_request_create_formgroup_comment" class="form-group">
+                        <label  class="control-label" for="resource_request_create_for_comment">Comment</label>
+                        <textarea name="comment" class="form-control" id="resource_request_create_comment" placeholder="Comments"></textarea> 
+                        <span id="resource_request_create_form_comment_error" class="help-block"></span>
                       </div>
                       <!-- End -->
-
-                      <div id="modal_error"></div>
-
+                            </div>
+                                
+                                <div class="form-group">
+                                <div id="modal_action_form_hidden"></div>
+                            </div>
+                          </form>
+                        </div>
+                          
+                        <!-- Modal Footer -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" id="modal_action_create_update_button" class="btn btn-success">Update</button>
+                        </div>
                       </div>
-
-                      <div class="form-group">
-                          <div id="modal_assign_user_form_hidden"></div>
-                      </div>
-
-            <div class="modal-footer">
-                <button type="button" id="modal_action_update_button" class="btn btn-success" >Submit Request</button>
-            </div>
-                    </form>
-
-
-
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Window content -->
-
-      <!-- Modal update -->
-       <div class="modal fade" id="modal_resource_update" role="dialog" aria- 
-            labelledby="assign_user_modalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="demoModalLabel">Request Resource</h5>
-                <button type="button" id=close-btn class="close" data-dismiss="modal" aria- 
-                                label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" >
-
-                    <form method="POST" id="modal_form_resource_update" action="">
-                      <div id="modal__request_resource_formgroup" class="form-group">
-                        <span id="modal_assign_user_form_customer_link_error" class="help-block"></span>
-                      </div>
-
-                       <!-- Cutomers list -->
-                      <div id="modal_resource_update_formgroup_customer" class="form-group">
-                        <label  class="control-label" for="modal_assign_user_form_customer">Customer</label>
-                        <select class="form-control select2" style="width: 100%;" id="modal_resource_update_form_customer" data-placeholder="Select a customer">
-                          @foreach($customers_list as $key => $value)
-                          <option value="{{ $key }}">
-                            {{ $value }}
-                          </option>
-                          @endforeach  
-                        </select>
-                        <span id="modal_resource_update_form_customer_error" class="help-block"></span>
-                      </div>
-                      <!-- End -->
-                      <!-- Project list -->
-                      <div id="modal_resource_update_formgroup_project" class="form-group">
-                        <label  class="control-label" for="modal_resource_update_form_project">Project</label>
-                        <select class="form-control select2" style="width: 100%;" id="modal_resource_update_form_project" data-placeholder="Select a project">
-                        </select>
-                        <span id="modal_resource_update_form_project_error" class="help-block"></span>
-                      </div>
-                      <!-- End -->
-                      <!-- users list -->
-                      <div id="modal_resource_update_formgroup_budgted" class="form-group">
-                        <label  class="control-label" for="modal_resource_update_form_project_user">Creator</label>
-                          <select class="form-control select2" id="modal_resource_update_form_project_user" name="user" data-placeholder=" Consultants" multiple="multiple">
-                          @foreach($authUsersForDataView->user_list as $key => $value)
-                          <option value="{{ $key }}"
-                            @if(isset($authUsersForDataView->user_selected) && $key == $authUsersForDataView->user_selected) selected
-                            @endif>
-                            {{ $value }}
-                          </option>
-                          @endforeach
-                        </select>
-                        <span id="modal_resource_update_form_project_user_error" class="help-block"></span>
-                      </div>
-                      <!-- End -->
-
-                      <!-- Budgeted -->
-                      <div id="modal_assign_user_formgroup_customer" class="form-group">
-                        <label  class="control-label" for="modal_resource_update_form_budgted">Budgted</label>
-                        <select class="form-control select2" style="width: 100%;" id="modal_resource_update_budgted" data-placeholder="Select a customer">
-                          <option value=""></option>
-                         <option value="Yes">
-                            Yes
-                          </option>
-                          <option value="No">
-                            No
-                          </option>
-                        </select>
-                        <span id="modal_resource_update_form_budgted_error" class="help-block"></span>
-                      </div>
-                      <!-- End -->
-
-
-                      <!-- Consulting Request -->
-                      <div id="modal_resource_update_formgroup_consulting_request" class="form-group">
-                        <label  class="control-label" for="modal_resource_update_form_consulting_request">Consulting Request</label>
-                        <input type="text" class="form-control" id="modal_resource_update_form_consulting_request">
-                        <span id="modal_resource_update_form_consulting_request_error" class="help-block"></span>
-                      </div>
-                      <!-- End -->
-
-
-                      <!-- PR -->
-                      <div id="modal_resource_update_formgroup_pr" class="form-group">
-                        <label  class="control-label" for="modal_resource_update_pr">PR</label>
-                        <input type="text" class="form-control" id="modal_resource_update_pr">
-                        <span id="modal_resource_update_pr_error" class="help-block"></span>
-                      </div>
-                      <!-- End -->
-
-                      <!-- PO -->
-                      <div id="modal_resource_update_formgroup_po" class="form-group">
-                        <label  class="control-label" for="modal_resource_update_po">PO</label>
-                        <input type="text" class="form-control" id="modal_resource_update_po">
-                        <span id="modal_resource_update_po_error" class="help-block"></span>
-                      </div>
-                      <!-- End -->
-
-                      <!-- Users domain list -->
-                      <div id="modal_resource_update_formgroup_customer" class="form-group">
-                        <label  class="control-label" for="modal_resource_update_form_domain_user">User Practices</label>
-                        <select class="form-control select2" style="width: 100%;" id="modal_resource_update_form_domain_user" data-placeholder="Select a Practice">y
-                          <option value=""></option>
-
-                          @foreach(config('domains.domain-users') as $domain)
-                            <option value="{{ $domain }}"
-                             >
-                              {{$domain}}
-                            </option>
-                            @endforeach
-                        </select>
-                        <span id="modal_resource_update_form_domain_user_error" class="help-block"></span>
-                      </div>
-                      <!-- End -->
-                      <!-- Contractor name -->
-                      <div id="modal_resource_update_formgroup_contractor_name" class="form-group">
-                        <label  class="control-label" for="modal_resource_update_contractor_name">Contractor name</label>
-                        <input type="text" class="form-control" id="modal_resource_update_contractor_name">
-                        <span id="modal_resource_update_contractor_name_error" class="help-block"></span>
-                      </div>
-                      <!-- End -->
-                      <!-- Duration -->
-                      <div id="modal_resource_update_formgroup_duration" class="form-group">
-                        <label  class="control-label" for="modal_resource_update_duration">Duration</label>
-                        <input type="text" class="form-control" id="modal_resource_update_duration" required>
-
-                        <span id="modal_resource_update_form_duration_error" class="help-block"></span>
-                      </div>
-                      <!-- End -->
-
-                      <!-- Case status -->
-                      <div id="modal_resource_update_formgroup_customer" class="form-group">
-                        <label  class="control-label" for="modal_resource_update_form_case_status">Case status</label>
-                        <select class="form-control select2" style="width: 100%;" id="modal_resource_update_case_status" data-placeholder="Select a customer">
-                        <option value=""></option>
-
-                         <option value="Completed">
-                            Completed
-                          </option>
-                          <option value="Init">
-                            Init
-                          </option>
-                        </select>
-                        <span id="modal_resource_update_form_case_status_error" class="help-block"></span>
-                      </div>
-                      <!-- End -->
-
-
-                      <!-- EWR status -->
-                      <div id="modal_resource_update_formgroup_customer" class="form-group">
-                        <label  class="control-label" for="modal_resource_update_form_ewr_status">EWR status</label>
-                        <select class="form-control select2" style="width: 100%;" id="modal_resource_update_ewr_status" data-placeholder="Select a customer">
-                        <option value=""></option>
-                         <option value="Accepted">
-                            Accepted
-                          </option>
-                          <option value="Waiting">
-                            Waiting
-                          </option>
-                        </select>
-                        <span id="modal_resource_update_form_ewr_status_error" class="help-block"></span>
-                      </div>
-                      <!-- End -->
-
-
-                      <!-- supplier -->
-                      <div id="modal_resource_update_formgroup_supplier" class="form-group">
-                        <label  class="control-label" for="modal_resource_update_supplier">Supplier</label>
-                        <input type="text" class="form-control" id="modal_resource_update_supplier">
-                        <span id="modal_resource_update_form_supplier_error" class="help-block"></span>
-                      </div>
-                      <!-- End -->
-
-
-
-                      <!-- revenue -->
-                     <div id="modal_resource_update_formgroup_revenue" class="form-group">
-                        <label  class="control-label" for="modal_resource_update_revenue">Revenue</label>
-                        <input type="text" class="form-control" id="modal_resource_update_revenue" required>
-
-                        <span id="modal_resource_update_form_revenue_error" class="help-block"></span>
-                      </div>
-                      <!-- End -->
-
-
-                      <!-- Cost -->
-                      <div id="modal_resource_update_formgroup_cost" class="form-group">
-                        <label  class="control-label" for="modal_resource_update_form_cost">Cost</label>
-                        <input type="text" class="form-control" id="modal_resource_update_form_cost" required>
-                        <span id="modal_resource_update_form_cost_error" class="help-block"></span>
-                      </div>
-                      <!-- End -->
-
-
-                      <!-- Currency -->
-                      <div id="modal_resource_update_formgroup_currency" class="form-group">
-                        <label  class="control-label" for="modal_resource_update_form_currency">Currency</label>
-                        <select class="form-control select2" style="width: 100%;" id="modal_resource_update_currency" data-placeholder="Select Currency" required>
-                        <option value=""></option>
-                         <option value="EUR">
-                            EUR
-                          </option>
-                          <option value="USD">
-                            USD
-                          </option>
-                        </select>
-                        <span id="modal_resource_update_form_currency_error" class="help-block"></span>
-                      </div>
-                      <!-- End -->
-
-
-                      <!-- Margin -->
-                      <div id="modal_resource_update_formgroup_margin" class="form-group">
-                        <label  class="control-label" for="modal_resource_update_margin">Margin</label>
-                        <input type="number" class="form-control" id="modal_resource_update_margin" required>
-                        <span id="modal_resource_update_form_margin_error" class="help-block"></span>
-                      </div>
-                      <!-- End -->
-
-
-                      <!-- Internal Check -->
-                      <div id="modal_resource_update_formgroup_customer" class="form-group">
-                        <label  class="control-label" for="modal_resource_update_form_internal_check">Internal Check</label>
-                        <select class="form-control select2" style="width: 100%;" id="modal_resource_update_internal_check" data-placeholder="Select a customer" required>
-                          <option value=""></option>
-                         <option value="Yes">
-                            Yes
-                          </option>
-                          <option value="No">
-                            No
-                          </option>
-                        </select>
-                        <span id="modal_resource_update_form_internal_check_error" class="help-block"></span>
-                      </div>
-                      <!-- End -->
-
-
-
-                      <!-- Reason for request -->
-                      <div id="modal_resource_update_formgroup_reason_for_request" class="form-group">
-                        <label  class="control-label" for="modal_resource_update_reason_for_request">Reason for request</label>
-                        <textarea name="reason_for_request" class="form-control" id="modal_resource_update_reason_request" placeholder="Reasons of request" required></textarea> 
-                        <span id="modal_resource_update_form_reason_for_request_error" class="help-block"></span>
-                      </div>
-                      <!-- End -->
-                      
-                      <!-- Description -->
-                      <div id="modal_resource_update_formgroup_description" class="form-group">
-                        <label  class="control-label" for="modal_resource_update_for_description">Description</label>
-                        <textarea name="description" class="form-control" id="modal_resource_update_description" placeholder="Description"></textarea> 
-                        <span id="modal_resource_update_form_description_error" class="help-block"></span>
-                      </div>
-                      <!-- End -->
-
-                      <!-- Comment -->
-                      <div id="modal_resource_update_formgroup_comment" class="form-group">
-                        <label  class="control-label" for="modal_resource_update_for_comment">Comment</label>
-                        <textarea name="comment" class="form-control" id="modal_resource_update_comment" placeholder="Comments"></textarea> 
-                        <span id="modal_resource_update_form_comment_error" class="help-block"></span>
-                      </div>
-                      <!-- End -->
-
-                      <div id="modal_error"></div>
-
-                      </div>
-
-                      <div class="form-group">
-                          <div id="modal_resource_update_form_hidden"></div>
-                      </div>
-
-            <div class="modal-footer">
-                <button type="button" id="modal_action_update_request_button" class="btn btn-success" >Update Request</button>
-            </div>
-                    </form>
-
-
-
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- End of modal update -->
-      
-
-<div>
+                  </div>
+              </div>
+              <!-- Modal -->
 
 
         <!-- Main table -->
@@ -875,11 +566,11 @@
               console.log(project.id);
               }
 
-              $('#modal_assign_user_form_project').empty();
-              $('#modal_assign_user_form_project').append(html);
+              $('#resource_request_create_form_project').empty();
+              $('#resource_request_create_form_project').append(html);
               // Set selected 
-              $('#modal_assign_user_form_project').val(project_list[0].id);
-              $('#modal_assign_user_form_project').select2().trigger('change');
+              $('#resource_request_create_form_project').val(project_list[0].id);
+              $('#resource_request_create_form_project').select2().trigger('change');
             },
             error: function (jqXhr, textStatus, errorMessage) { // error callback 
               console.log('Error: ' + errorMessage);
@@ -889,11 +580,11 @@
 
 
 
-    $('#modal_assign_user_form_customer').on('change', function() {
-      $('select#modal_assign_user_form_project').val($(this).data(''));
-      $('select#modal_assign_user_form_project').select2().trigger('change');
-      customer_id = $('#modal_assign_user_form_customer').val();
-      var customer_link_id = $('select#modal_assign_user_form_customer_link').val();
+    $('#resource_request_create_form_customer').on('change', function() {
+      $('select#resource_request_create_form_project').val($(this).data(''));
+      $('select#resource_request_create_form_project').select2().trigger('change');
+      customer_id = $('#resource_request_create_form_customer').val();
+      var customer_link_id = $('select#resource_request_create_form_customer_link').val();
 
       // console.log(customer_id);
 
@@ -901,8 +592,8 @@
 
     });
 
-    $('#modal_assign_user_form_project').on('change', function() {
-      var project_id = $('#modal_assign_user_form_project').val();
+    $('#resource_request_create_form_project').on('change', function() {
+      var project_id = $('#resource_request_create_form_project').val();
 
 
     });
@@ -1050,117 +741,118 @@ function color_for_month_value(value,td) {
 
 
 // select 2 init
-$("#modal_assign_user_form_customer").select2({
+$("#resource_request_create_form_customer").select2({
           allowClear: false
       });
- $("#modal_assign_user_form_project").select2({
-          allowClear: false
-      });
-
-$("#modal_assign_user_form_project_user").select2({
+ $("#resource_request_create_form_project").select2({
           allowClear: false
       });
 
-
-$("#modal_request_resource_form_budgted").select2({
+$("#resource_request_create_form_project_user").select2({
           allowClear: false
       });
 
 
-$("#modal_assign_user_form_domain_user").select2({
+$("#resource_request_create_budgted").select2({
           allowClear: false
       });
 
 
-$("#modal_request_resource_form_case_status").select2({
+$("#resource_request_create_form_domain_user").select2({
           allowClear: false
       });
 
 
-$("#modal_request_resource_form_ewr_status").select2({
+$("#resource_request_create_case_status").select2({
           allowClear: false
       });
 
 
-$("#modal_request_resource_form_currency").select2({
+$("#resource_request_create_ewr_status").select2({
           allowClear: false
       });
 
 
-$("#modal_request_resource_form_internal_check").select2({
-          allowClear: false
-      });
-
-// modal_resource_update
-$("#modal_resource_update_form_customer").select2({
-          allowClear: false
-      });
- $("#modal_resource_update_form_project").select2({
-          allowClear: false
-      });
-
-$("#modal_resource_update_form_project_user").select2({
+$("#resource_request_create_currency").select2({
           allowClear: false
       });
 
 
-$("#modal_resource_update_form_budgted").select2({
+$("#resource_request_create_internal_check").select2({
+          allowClear: false
+      });
+
+// resource_request_create
+$("#resource_request_create_form_customer").select2({
+          allowClear: false
+      });
+ $("#resource_request_create_form_project").select2({
+          allowClear: false
+      });
+
+$("#resource_request_create_form_project_user").select2({
           allowClear: false
       });
 
 
-$("#modal_resource_update_form_domain_user").select2({
+$("#resource_request_create_form_budgted").select2({
           allowClear: false
       });
 
 
-$("#modal_resource_update_form_case_status").select2({
+$("#resource_request_create_form_domain_user").select2({
           allowClear: false
       });
 
 
-$("#modal_resource_update_ewr_status").select2({
+$("#resource_request_create_form_case_status").select2({
           allowClear: false
       });
 
 
-$("#modal_resource_update_form_currency").select2({
+$("#resource_request_create_ewr_status").select2({
           allowClear: false
       });
 
 
-$("#modal_resource_update_form_internal_check").select2({
+$("#resource_request_create_currency").select2({
+          allowClear: false
+      });
+
+
+$("#resource_request_create_form_internal_check").select2({
           allowClear: false
       });
 // send data to controller
 
 // $(document).on('click','#modal_action_update_button',function(){
-$(document).on('click', '#modal_action_update_button', function () {
+$(document).on('click', '#modal_action_create_update_button', function () {
 
-  let user = $('select#modal_assign_user_form_project_user').val();
-  let project = $('select#modal_assign_user_form_project').val();
-  let budget = $('select#modal_request_resource_form_budgted').val();
-  let consulting_request = $('#modal_request_resource_form_consulting_request').val();
-  let currecny = $('select#modal_request_resource_form_currency').val();
-  let po = $('#po').val();
-  let pr = $('#pr').val();
-  let practices = $('select#modal_assign_user_form_domain_user').val();
-  let contractor_name = $('#contractor_name').val();
-  let supplier = $('#supplier').val();
-  let case_status = $('select#modal_request_resource_form_case_status').val();
-  let duration = $('#modal_request_resource_durarion').val();
-  let ewr_status = $('select#modal_request_resource_form_ewr_status').val();
-  let revenue = $('#modal_request_resource_revenue').val();
-  let cost = $('#modal_request_resource_form_cost').val();
-  let margin = $('#margin').val();
-  let internal_check = $('select#modal_request_resource_form_internal_check').val();
-  let reason_for_request = $('#reason_for_request').val();
-  let description = $('#description').val();
-  let comment = $('#comment').val();
+  let user = $('select#resource_request_create_form_project_user').val();
+  let project = $('select#resource_request_create_form_project').val();
+  let budget = $('select#resource_request_create_budgted').val();
+  let consulting_request = $('#resource_request_create_form_consulting_request').val();
+  let currecny = $('select#resource_request_create_currency').val();
+  let po = $('#resource_request_create_po').val();
+  let pr = $('#resource_request_create_pr').val();
+  let practices = $('select#resource_request_create_form_domain_user').val();
+  let contractor_name = $('#resource_request_create_contractor_name').val();
+  let supplier = $('#resource_request_create_supplier').val();
+  let case_status = $('select#resource_request_create_case_status').val();
+  let duration = $('#resource_request_create_duration').val();
+  let ewr_status = $('select#resource_request_create_ewr_status').val();
+  let revenue = $('#resource_request_create_revenue').val();
+  let cost = $('#resource_request_create_form_cost').val();
+  let margin = $('#resource_request_create_margin').val();
+  let internal_check = $('select#resource_request_create_internal_check').val();
+  let reason_for_request = $('#resource_request_create_reason_request').val();
+  let description = $('#resource_request_create_description').val();
+  let comment = $('#resource_request_create_comment').val();
 
 
 
-console.log(currecny);
+console.log(ewr_status);
+
 
   let data = {"project":project,
               "practices":practices,
@@ -1246,7 +938,9 @@ console.log(currecny);
             }
         });
     });
-    $(document).on('click', '.buttonUpdateRequest', function () {
+    $(document).on('click', '.buttonActionEdit', function () {
+      modal_action_form_clean('Update');
+
         record_id = this.id;
                 $.ajax({
                     type: 'get',
@@ -1259,46 +953,45 @@ console.log(currecny);
                         console.log(data[0]['Budgeted']);
                         console.log("---------ewr---------");
                         console.log(data[0]['EWR_status']);
-                        $('#modal_resource_update_budgted').val(data[0]['Budgeted']);
-                        $('select#modal_resource_update_form_project_user').val();
-                        $('select#modal_resource_update_form_project').val();
-                        // $('select#modal_resource_update_form_budgted').val();
-                        $('#modal_resource_update_form_consulting_request').val(data[0]['consulting_request']);
-                        $('select#modal_resource_update_currency').val(data[0]['currency']);
-                        $('#modal_resource_update_po').val(data[0]['PO']);
-                        $('#modal_resource_update_pr').val(data[0]['PR']);
-                        $('select#modal_resource_update_form_domain_user').val(data[0]['practice']);
-                        $('#modal_resource_update_contractor_name').val(data[0]['contractor_name']);
-                        $('#modal_resource_update_supplier').val(data[0]['supplier']);
-                        $('#modal_resource_update_case_status').val(data[0]['case_status']);
-                        $('#modal_resource_update_duration').val(data[0]['duration']);
+                        $('#resource_request_create_budgted').val(data[0]['Budgeted']);
+                        $('select#resource_request_create_form_project_user').val();
+                        $('select#resource_request_create_form_project').val();
+                        // $('select#resource_request_create_form_budgted').val();
+                        $('#resource_request_create_form_consulting_request').val(data[0]['consulting_request']);
+                        $('select#resource_request_create_currency').val(data[0]['currency']);
+                        $('#resource_request_create_po').val(data[0]['PO']);
+                        $('#resource_request_create_pr').val(data[0]['PR']);
+                        $('select#resource_request_create_form_domain_user').val(data[0]['practice']);
+                        $('#resource_request_create_contractor_name').val(data[0]['contractor_name']);
+                        $('#resource_request_create_supplier').val(data[0]['supplier']);
+                        $('#resource_request_create_case_status').val(data[0]['case_status']);
+                        $('#resource_request_create_duration').val(data[0]['duration']);
 
-                        $('#modal_resource_update_ewr_status').val(data[0]['EWR_status']);
+                        $('#resource_request_create_ewr_status').val(data[0]['EWR_status']);
+                        $('#resource_request_create_revenue').val(data[0]['revenue']);
+                        $('#resource_request_create_form_cost').val(data[0]['cost']);
+                        $('#resource_request_create_margin').val(data[0]['margin']);
+                        $('select#resource_request_create_internal_check').val(data[0]['internal_check']);
+                        $('#resource_request_create_reason_request').val(data[0]['reason_for_request']);
+                        $('#resource_request_create_description').val(data[0]['description']);
+                        $('#resource_request_create_comment').val(data[0]['comments']);
 
-                        $('#modal_resource_update_revenue').val(data[0]['revenue']);
-                        $('#modal_resource_update_form_cost').val(data[0]['cost']);
-                        $('#modal_resource_update_margin').val(data[0]['margin']);
-                        $('select#modal_resource_update_internal_check').val(data[0]['internal_check']);
-                        $('#modal_resource_update_reason_request').val(data[0]['reason_for_request']);
-                        $('#modal_resource_update_description').val(data[0]['description']);
-                        $('#modal_resource_update_comment').val(data[0]['comments']);
-
-                        $("#modal_resource_update_budgted").select2({
+                        $("#resource_request_create_budgted").select2({
                                 allowClear: true
                             });
-                        $("#modal_resource_update_case_status").select2({
+                        $("#resource_request_create_case_status").select2({
                                 allowClear: true
                             });
-                        $("#modal_resource_update_currency").select2({
+                        $("#resource_request_create_currency").select2({
                                 allowClear: true
                             });
-                        $("#modal_resource_update_internal_check").select2({
+                        $("#resource_request_create_internal_check").select2({
                                 allowClear: true
                             });
-                        $("#modal_resource_update_form_domain_user").select2({
+                        $("#resource_request_create_form_domain_user").select2({
                                 allowClear: true
                             });
-                        $("#modal_resource_update_ewr_status").select2({
+                        $("#resource_request_create_ewr_status").select2({
                                 allowClear: true
                             });
 
@@ -1312,26 +1005,26 @@ console.log(currecny);
     $(document).on('click', '#modal_action_update_request_button', function () {
 
 // update modal field 
-  let user = $('select#modal_resource_update_form_project_user').val();
-  let project = $('select#modal_resource_update_form_project').val();
-  let budget = $('select#modal_resource_update_budgted').val();
-  let consulting_request = $('#modal_resource_update_form_consulting_request').val();
-  let currecny = $('select#modal_resource_update_currency').val();
-  let po = $('#modal_resource_update_po').val();
-  let pr = $('#modal_resource_update_pr').val();
-  let practices = $('select#modal_resource_update_form_domain_user').val();
-  let contractor_name = $('#modal_resource_update_contractor_name').val();
-  let supplier = $('#modal_resource_update_supplier').val();
-  let case_status = $('select#modal_resource_update_case_status').val();
-  let duration = $('#modal_resource_update_duration').val();
-  let ewr_status = $('select#modal_resource_update_ewr_status').val();
-  let revenue = $('#modal_resource_update_revenue').val();
-  let cost = $('#modal_resource_update_form_cost').val();
-  let margin = $('#modal_resource_update_margin').val();
-  let internal_check = $('select#modal_resource_update_internal_check').val();
-  let reason_for_request = $('#modal_resource_update_reason_request').val();
-  let description = $('#modal_resource_update_description').val();
-  let comment = $('#modal_resource_update_comment').val();
+  let user = $('select#resource_request_create_form_project_user').val();
+  let project = $('select#resource_request_create_form_project').val();
+  let budget = $('select#resource_request_create_budgted').val();
+  let consulting_request = $('#resource_request_create_form_consulting_request').val();
+  let currecny = $('select#resource_request_create_currency').val();
+  let po = $('#resource_request_create_po').val();
+  let pr = $('#resource_request_create_pr').val();
+  let practices = $('select#resource_request_create_form_domain_user').val();
+  let contractor_name = $('#resource_request_create_contractor_name').val();
+  let supplier = $('#resource_request_create_supplier').val();
+  let case_status = $('select#resource_request_create_case_status').val();
+  let duration = $('#resource_request_create_duration').val();
+  let ewr_status = $('select#resource_request_create_ewr_status').val();
+  let revenue = $('#resource_request_create_revenue').val();
+  let cost = $('#resource_request_create_form_cost').val();
+  let margin = $('#resource_request_create_margin').val();
+  let internal_check = $('select#resource_request_create_internal_check').val();
+  let reason_for_request = $('#resource_request_create_reason_request').val();
+  let description = $('#resource_request_create_description').val();
+  let comment = $('#resource_request_create_comment').val();
 
 
 
@@ -1382,7 +1075,7 @@ console.log(ewr_status);
                         $('#delete-message').delay(2000).queue(function () {
                             $(this).addClass('animated flipOutX')
                         });
-                        $('#modal_resource_update').modal('hide');
+                        $('#resource_request_create').modal('hide');
                         requestsTable.ajax.reload();
                     }
                 });
@@ -1412,7 +1105,7 @@ console.log(ewr_status);
          url: "{!! route('resource_request_view') !!}",
         type: "GET",
         dataType: "JSON"
-      },  
+      },
       columns: [      
               { name: 'm.name', data: 'manager_name', searchable: true, visible: true},
               { name: 'u.name', data: 'user_name'},
@@ -1505,7 +1198,7 @@ console.log(ewr_status);
                     actions += '<div class="btn-group btn-group-xs">';
                     if ({{ Auth::user()->can('user-delete') ? 'true' : 'false' }}){
                       actions += '<button id="'+data.id+'" class="buttonDeleteRequest btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
-                      actions +='<button id="'+data.id+'" class="buttonUpdateRequest btn btn-primary" data-toggle="modal" data-target="#modal_resource_update"><span class="glyphicon glyphicon-pencil"></span></button>';
+                      actions +='<button id="'+data.id+'" class="buttonActionEdit btn btn-primary" data-toggle="modal" data-target="#resource_request_create"><span class="glyphicon glyphicon-pencil"></span></button>';
                     };
                     actions += '</div>';
                     return actions;
@@ -1547,6 +1240,50 @@ console.log(ewr_status);
 
     })
 
+  function modal_action_form_clean(title) {
+      $('#modal_action_title').text(title+' Resource Request');
+      $('#modal_action_create_update_button').text(title);
+      $('#modal_action_form_hidden').empty();
 
+      // Clean all input
+      $("form#resource_request_create_form input").each(function(){ 
+        $(this).val('');
+      });
+      // Clean all textarea
+      $("form#resource_request_create_form textarea").each(function(){
+        $(this).val('');
+      });
+      // Clean all select
+      $("form#resource_request_create_form select").each(function(){
+        $(this).val('');
+        $(this).select2().trigger('change');
+      });
+
+    
+
+      modal_action_form_error_clean();
+    }
+
+
+
+    function modal_action_form_error_clean() {
+      // Clean all error class
+      $("form#resource_request_create_form  div.form-group").each(function(){
+        $(this).removeClass('has-error');
+      });
+      // Clean all error message
+      $("form#resource_request_create_form span.help-block").each(function(){
+        $(this).empty();
+      });
+    }
+
+
+        $(document).on('click', '#RequestResource', function () {
+        modal_action_form_clean('Create');
+        var hidden = '';
+        hidden += '<input class="form-control" id="resource_request_create" type="hidden" value="create">';
+        $('#modal_action_form_hidden').append(hidden);
+        $('#modal_action').modal("show");
+    });
 </script>
 @stop

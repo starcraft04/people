@@ -68,7 +68,6 @@ class ResourceRequestController extends Controller
 
         $input = $request->all();
 
-
         $record = ResourceRequest::create([
             'Budgeted'=>$input['budget'],
             'consulting_request'=>$input['consulting_request'],
