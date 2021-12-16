@@ -107,7 +107,7 @@
             </select>
           </div>
           <div class="col-xs-2">
-            <label for="closed_type" id="closed_name" class="control-label"></label>
+            <label for="closed_type" id="closed_name" class="control-label">MD</label>
             <input name="closed_type" type="checkbox" id="closed_type" class="form-group js-switch-small" checked /> 
           </div>
         </div>
@@ -179,6 +179,8 @@
   var checkbox_closed = 0;
   var urlList ="{!! route('lists') !!}";
 
+
+
   // switchery
   var small = document.querySelector('.js-switch-small');
   var switchery = new Switchery(small, { size: 'small' });
@@ -195,6 +197,8 @@
   }
 
   // This is the function that will set the values in the select2 boxes with info from Cookies
+
+
   function fill_select(select_id){
     array_to_use = [];
     
@@ -252,18 +256,7 @@
 
     month_col = [1,2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
 
-    if (Cookies.get('checkbox_closed') != null) {
-      if (Cookies.get('checkbox_closed') == 0) {
-        checkbox_closed = 0;
-        $('#closed_name').html('MD');
-
-        $('#closed_type').click();
-      } else {
-        checkbox_closed = 1;
-        $('#closed_name').html('FTE');
-
-      }
-    }
+    
 
 
 function color_for_month_value(value,td) {
@@ -366,18 +359,20 @@ function color_for_month_value(value,td) {
 
     $('#closed_type').on('change', function() {
       if ($(this).is(':checked')) {
-        Cookies.set('checkbox_closed', 1);
         checkbox_closed = 1;
         urlList = "{!! route('lists') !!}";
         $('#closed_name').html('FTE');
         console.log($('#closed_name').html());
+        console.log(urlList);
 
       } else {
-        Cookies.set('checkbox_closed', 0);
         checkbox_closed = 0;
+        
         urlList = "{!! route('listsFTE') !!}";
         $('#closed_name').html('MD');
         console.log($('#closed_name').html());
+        console.log(urlList);
+        
 
       }
       activitiesTable.ajax.reload();
