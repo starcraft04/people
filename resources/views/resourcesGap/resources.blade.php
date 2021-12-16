@@ -106,8 +106,8 @@
               @endforeach
             </select>
           </div>
-          <div class="col-xs-2" style="display:none;">
-            <label for="closed" class="control-label">Hide closed</label>
+          <div class="col-xs-2">
+            <label for="closed" id="closed_name" class="control-label">MD</label>
             <input name="closed" type="checkbox" id="closed" class="form-group js-switch-small" checked /> 
           </div>
         </div>
@@ -177,6 +177,7 @@
   var month_col = [];
   var header_months = [];
   var checkbox_closed = 0;
+  var urlList ="{!! route('lists') !!}";
 
   // switchery
   var small = document.querySelector('.js-switch-small');
@@ -363,11 +364,19 @@ function color_for_month_value(value,td) {
       if ($(this).is(':checked')) {
         Cookies.set('checkbox_closed', 1);
         checkbox_closed = 1;
+        urlList = "{!! route('lists') !!}";
+        $('#closed_name').html('FTE');
+        console.log($('#closed_name').html());
+
       } else {
         Cookies.set('checkbox_closed', 0);
         checkbox_closed = 0;
+        urlList = "{!! route('listsFTE') !!}";
+        $('#closed_name').html('MD');
+        console.log($('#closed_name').html());
+
       }
-      //console.log(checkbox_closed);
+      activitiesTable.ajax.reload();
     });
 
     // SELECTIONS END
@@ -383,14 +392,16 @@ function color_for_month_value(value,td) {
         dataType: "JSON",
     });
 
+   
 
     activitiesTable = $('#activitiesTable').DataTable({
       scrollX: true,
       serverSide: true,
       processing: true,
       stateSave: true,
+
       ajax: {
-         url: "{!! route('lists') !!}",
+        url: urlList,
         type: "POST",
         data: function ( d ) {
           $.extend(d,ajaxData());
