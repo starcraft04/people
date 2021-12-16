@@ -107,8 +107,8 @@
             </select>
           </div>
           <div class="col-xs-2">
-            <label for="closed" id="closed_name" class="control-label">MD</label>
-            <input name="closed" type="checkbox" id="closed" class="form-group js-switch-small" checked /> 
+            <label for="closed_type" id="closed_name" class="control-label"></label>
+            <input name="closed_type" type="checkbox" id="closed_type" class="form-group js-switch-small" checked /> 
           </div>
         </div>
 
@@ -255,9 +255,13 @@
     if (Cookies.get('checkbox_closed') != null) {
       if (Cookies.get('checkbox_closed') == 0) {
         checkbox_closed = 0;
+        $('#closed_name').html('MD');
+
         $('#closed').click();
       } else {
         checkbox_closed = 1;
+        $('#closed_name').html('FTE');
+
       }
     }
 
@@ -360,7 +364,7 @@ function color_for_month_value(value,td) {
 
     });
 
-    $('#closed').on('change', function() {
+    $('#closed_type').on('change', function() {
       if ($(this).is(':checked')) {
         Cookies.set('checkbox_closed', 1);
         checkbox_closed = 1;
