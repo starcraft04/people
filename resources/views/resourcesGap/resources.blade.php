@@ -107,7 +107,7 @@
             </select>
           </div>
           <div class="col-xs-2">
-            <label for="closed_type" id="closed_name" class="control-label">MD</label>
+            <label for="closed_type" id="closed_name" class="control-label">FTE</label>
             <input name="closed_type" type="checkbox" id="closed_type" class="form-group js-switch-small" checked /> 
           </div>
         </div>
@@ -177,7 +177,7 @@
   var month_col = [];
   var header_months = [];
   var checkbox_closed = 0;
-  var urlList ="{!! route('lists') !!}";
+  var urlList ="{!! route('listsFTE') !!}";
 
 
 
@@ -360,7 +360,7 @@ function color_for_month_value(value,td) {
     $('#closed_type').on('change', function() {
       if ($(this).is(':checked')) {
         checkbox_closed = 1;
-        urlList = "{!! route('lists') !!}";
+        urlList = "{!! route('listsFTE') !!}";
         $('#closed_name').html('FTE');
         console.log($('#closed_name').html());
         console.log(urlList);
@@ -368,7 +368,7 @@ function color_for_month_value(value,td) {
       } else {
         checkbox_closed = 0;
         
-        urlList = "{!! route('listsFTE') !!}";
+        urlList = "{!! route('lists') !!}";
         $('#closed_name').html('MD');
         console.log($('#closed_name').html());
         console.log(urlList);
@@ -400,7 +400,7 @@ function color_for_month_value(value,td) {
       stateSave: true,
 
       ajax: {
-        url: "{!! route('listsFTE') !!}",
+        url: urlList,
         type: "POST",
         data: function ( d ) {
           $.extend(d,ajaxData());
