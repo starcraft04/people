@@ -168,20 +168,13 @@
                       </div>
                       <!-- End -->
                       <!-- users list -->
-                      <div id="resource_request_create_formgroup_budgted" class="form-group">
-                        <label  class="control-label" for="resource_request_create_form_project_user">Creator</label>
-                          <select class="form-control select2" id="resource_request_create_form_project_user" name="user" data-placeholder=" Consultants" multiple="multiple">
-                          @foreach($authUsersForDataView->user_list as $key => $value)
-                          <option value="{{ $key }}"
-                            @if(isset($authUsersForDataView->user_selected) && $key == $authUsersForDataView->user_selected) selected
-                            @endif>
-                            {{ $value }}
-                          </option>
-                          @endforeach
+                      <div id="resource_request_create_formgroup_creator" class="form-group">
+                        <label  class="control-label" for="resource_request_create_form_creator">Creator</label>
+                        <select class="form-control select2" style="width: 100%;" id="resource_request_create_form_creator" data-placeholder="Creator"><option value="{{auth()->user()->id}}">{{auth()->user()->name}}</option>
+                         
                         </select>
-                        <span id="resource_request_create_form_project_user_error" class="help-block"></span>
+                        <span id="resource_request_create_form_creator_error" class="help-block"></span>
                       </div>
-                      <!-- End -->
 
                       <!-- Budgeted -->
                       <div id="resource_request_create_formgroup_customer" class="form-group">
@@ -826,85 +819,6 @@ $("#resource_request_create_form_internal_check").select2({
 // send data to controller
 
 // $(document).on('click','#modal_action_update_button',function(){
-$(document).on('click', '#modal_action_create_update_button', function () {
-
-  let user = $('select#resource_request_create_form_project_user').val();
-  let project = $('select#resource_request_create_form_project').val();
-  let budget = $('select#resource_request_create_budgted').val();
-  let consulting_request = $('#resource_request_create_form_consulting_request').val();
-  let currecny = $('select#resource_request_create_currency').val();
-  let po = $('#resource_request_create_po').val();
-  let pr = $('#resource_request_create_pr').val();
-  let practices = $('select#resource_request_create_form_domain_user').val();
-  let contractor_name = $('#resource_request_create_contractor_name').val();
-  let supplier = $('#resource_request_create_supplier').val();
-  let case_status = $('select#resource_request_create_case_status').val();
-  let duration = $('#resource_request_create_duration').val();
-  let ewr_status = $('select#resource_request_create_ewr_status').val();
-  let revenue = $('#resource_request_create_revenue').val();
-  let cost = $('#resource_request_create_form_cost').val();
-  let margin = $('#resource_request_create_margin').val();
-  let internal_check = $('select#resource_request_create_internal_check').val();
-  let reason_for_request = $('#resource_request_create_reason_request').val();
-  let description = $('#resource_request_create_description').val();
-  let comment = $('#resource_request_create_comment').val();
-
-
-
-console.log(ewr_status);
-
-
-  let data = {"project":project,
-              "practices":practices,
-              "contractor_name":contractor_name,
-              "supplier":supplier,
-              'case_status':case_status,
-              'duration':duration,
-              'ewr_status':ewr_status,
-              'revenue':revenue,
-              'cost':cost,
-              'margin':margin,
-              'internal_check':internal_check,
-              'reason_for_request':reason_for_request,
-              'description':description,
-              'comment':comment,
-              "po":po,
-              'pr':pr,
-              "budget":budget,
-              "consulting_request":consulting_request,
-              'currecny':currecny,
-              'user':user[0]
-            };
-
-    $.ajax({
-       url: "{!! route('create_request') !!}",
-        type: "POST",
-        data: data,
-        success: function(result){
-          console.log(result);
-                        if(result.errors)
-                        {
-                            $('#modal_error').html('');
-
-                            $.each(result.errors, function(key, value){
-                                $('#modal_error').show();
-                                $('#modal_error').append('<li>'+value+'</li>');
-                            });
-                        }
-                        else
-                        {
-                            $('#assign_user_modal').modal('hide');
-                            location.reload();
-                        }
-                    },
-        dataType: "JSON",
-    });
-
-
-
-  
-
-})
 
 
     $(document).on('click', '.buttonDeleteRequest', function () {
@@ -938,6 +852,91 @@ console.log(ewr_status);
             }
         });
     });
+
+
+    //create request action :
+    $(document).on('click', '#modal_action_create_update_button', function () {
+
+
+      let user = $('select#resource_request_create_form_creator').val();
+      
+      let project = $('select#resource_request_create_form_project').val();
+      let budget = $('select#resource_request_create_budgted').val();
+      let consulting_request = $('#resource_request_create_form_consulting_request').val();
+      let currecny = $('select#resource_request_create_currency').val();
+      let po = $('#resource_request_create_po').val();
+      let pr = $('#resource_request_create_pr').val();
+      let practices = $('select#resource_request_create_form_domain_user').val();
+      let contractor_name = $('#resource_request_create_contractor_name').val();
+      let supplier = $('#resource_request_create_supplier').val();
+      let case_status = $('select#resource_request_create_case_status').val();
+      let duration = $('#resource_request_create_duration').val();
+      let ewr_status = $('select#resource_request_create_ewr_status').val();
+      let revenue = $('#resource_request_create_revenue').val();
+      let cost = $('#resource_request_create_form_cost').val();
+      let margin = $('#resource_request_create_margin').val();
+      let internal_check = $('select#resource_request_create_internal_check').val();
+      let reason_for_request = $('#resource_request_create_reason_request').val();
+      let description = $('#resource_request_create_description').val();
+      let comment = $('#resource_request_create_comment').val();
+
+
+
+
+
+      let data = {"project":project,
+                  "practices":practices,
+                  "contractor_name":contractor_name,
+                  "supplier":supplier,
+                  'case_status':case_status,
+                  'duration':duration,
+                  'ewr_status':ewr_status,
+                  'revenue':revenue,
+                  'cost':cost,
+                  'margin':margin,
+                  'internal_check':internal_check,
+                  'reason_for_request':reason_for_request,
+                  'description':description,
+                  'comment':comment,
+                  "po":po,
+                  'pr':pr,
+                  "budget":budget,
+                  "consulting_request":consulting_request,
+                  'currecny':currecny,
+                  'user':user[0]
+                };
+
+        $.ajax({
+           url: "{!! route('create_request') !!}",
+            type: "POST",
+            data: data,
+            success: function(result){
+              console.log(result);
+                            if(result.errors)
+                            {
+                                $('#modal_error').html('');
+
+                                $.each(result.errors, function(key, value){
+                                    $('#modal_error').show();
+                                    $('#modal_error').append('<li>'+value+'</li>');
+                                });
+                            }
+                            else
+                            {
+                        $('#resource_request_create').modal('hide');
+                                requestsTable.ajax.reload();
+                            }
+                        },
+            dataType: "JSON",
+        });
+
+
+
+  
+
+})
+    //update request action:
+
     $(document).on('click', '.buttonActionEdit', function () {
       modal_action_form_clean('Update');
 
