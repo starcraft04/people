@@ -257,7 +257,7 @@
         checkbox_closed = 0;
         $('#closed_name').html('MD');
 
-        $('#closed').click();
+        $('#closed_type').click();
       } else {
         checkbox_closed = 1;
         $('#closed_name').html('FTE');
