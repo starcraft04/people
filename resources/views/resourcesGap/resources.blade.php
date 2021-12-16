@@ -382,7 +382,7 @@ function color_for_month_value(value,td) {
     //endregion
 
     $.ajax({
-       url: "{!! route('lists') !!}",
+       url: "{!! route('listsFTE') !!}",
         type: "POST",
         data: ajaxData(),
         success:function(data){
@@ -400,7 +400,7 @@ function color_for_month_value(value,td) {
       stateSave: true,
 
       ajax: {
-        url: urlList,
+        url: "{!! route('listsFTE') !!}",
         type: "POST",
         data: function ( d ) {
           $.extend(d,ajaxData());
