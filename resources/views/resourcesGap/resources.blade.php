@@ -382,7 +382,7 @@ function color_for_month_value(value,td) {
     //endregion
 
     $.ajax({
-       url: "{!! route('listsFTE') !!}",
+       url: urlList,
         type: "POST",
         data: ajaxData(),
         success:function(data){
