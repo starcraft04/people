@@ -89,7 +89,7 @@ class ResourcesController extends Controller
          return $data;
     }
 
-
+    //ListFTE
      public function ListsFTE(Request $request)
     {
         $domains = [];
