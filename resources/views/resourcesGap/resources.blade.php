@@ -401,7 +401,7 @@ function color_for_month_value(value,td) {
       stateSave: true,
 
       ajax: {
-        url: "{!! route('lists') !!}",
+        url: "{!! route('listsFTE') !!}",
         type: "POST",
         data: function ( d ) {
           $.extend(d,ajaxData());
@@ -420,10 +420,6 @@ function color_for_month_value(value,td) {
         @endforeach
 
         ,{ name: 'sum', data: 'sum' ,createdCell: function (td, cellData, rowData, row, col) {
-          console.log("----------");
-
-          console.log(rowData.sum);
-          console.log("----------");
               color_for_month_value(rowData.sum,td);
             },width:'50px',searchable: false , visible: true}
         
