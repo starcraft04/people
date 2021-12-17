@@ -226,13 +226,13 @@ Route::get('getUserOnProjectForAssign', ['uses' => 'ToolsController@getUserOnPro
     //  skill information
     Route::get('skill/{n}', ['uses' => 'SkillController@show', 'as' => 'skill', 'middleware' => ['permission:user-view']]);
     //  Create new skill
-    Route::get('skillFormCreate', ['uses' => 'SkillController@getFormCreate', 'as' => 'skillFormCreate', 'middleware' => ['permission:user-create']]);
+    Route::get('skillFormCreate', ['uses' => 'SkillController@getFormCreate', 'as' => 'skillFormCreate', 'middleware' => ['permission:user-view']]);
     Route::post('skillFormCreate', ['uses' => 'SkillController@postFormCreate', 'middleware' => ['permission:user-create']]);
     //  Update skill
-    Route::get('skillFormUpdate/{n}', ['uses' => 'SkillController@getFormUpdate', 'as' => 'skillFormUpdate', 'middleware' => ['permission:user-edit']]);
+    Route::get('skillFormUpdate/{n}', ['uses' => 'SkillController@getFormUpdate', 'as' => 'skillFormUpdate', 'middleware' => ['permission:user-view']]);
     Route::post('skillFormUpdate/{n}', ['uses' => 'SkillController@postFormUpdate', 'middleware' => ['permission:user-edit']]);
     //  Delete skill
-    Route::get('skillDelete/{n}', ['uses' => 'SkillController@delete', 'as' => 'skillDelete', 'middleware' => ['permission:user-delete']]);
+    Route::get('skillDelete/{n}', ['uses' => 'SkillController@delete', 'as' => 'skillDelete', 'middleware' => ['permission:user-view']]);
     //  AJAX
     Route::post('listOfSkillsAjax', ['uses' => 'SkillController@listOfSkills', 'as' => 'listOfSkillsAjax', 'middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
     Route::get('test', ['uses' => 'ActivityController@test', 'middleware' => ['permission:user-view']]);
