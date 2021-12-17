@@ -177,7 +177,7 @@
   var month_col = [];
   var header_months = [];
   var checkbox_closed = 0;
-  var urlList ="{!! route('listsFTE') !!}";
+  var urlList ="{!! route('lists') !!}";
 
 
 
@@ -386,6 +386,7 @@ function color_for_month_value(value,td) {
         type: "POST",
         data: ajaxData(),
         success:function(data){
+
           console.log(data);
         },
         dataType: "JSON",
@@ -400,7 +401,7 @@ function color_for_month_value(value,td) {
       stateSave: true,
 
       ajax: {
-        url: urlList,
+        url: "{!! route('lists') !!}",
         type: "POST",
         data: function ( d ) {
           $.extend(d,ajaxData());
@@ -419,6 +420,10 @@ function color_for_month_value(value,td) {
         @endforeach
 
         ,{ name: 'sum', data: 'sum' ,createdCell: function (td, cellData, rowData, row, col) {
+          console.log("----------");
+
+          console.log(rowData.sum);
+          console.log("----------");
               color_for_month_value(rowData.sum,td);
             },width:'50px',searchable: false , visible: true}
         
@@ -452,7 +457,7 @@ function color_for_month_value(value,td) {
         });
       },
       initComplete: function () {
-        update_headers();
+            update_headers();
         
             activitiesTable.draw();
         
