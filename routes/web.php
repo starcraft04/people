@@ -222,7 +222,7 @@ Route::get('getUserOnProjectForAssign', ['uses' => 'ToolsController@getUserOnPro
     Route::post('listOfLoadPerUserChartAjax', ['uses' => 'ActivityController@listOfLoadPerUserChartAjax', 'as' => 'listOfLoadPerUserChartAjax', 'middleware' => ['permission:dashboard-view']]);
     // Skills
     //  Main skill list
-    Route::get('skillList', ['uses' => 'SkillController@getList', 'as' => 'skillList', 'middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
+    Route::get('skillList', ['uses' => 'SkillController@getList', 'as' => 'skillList', 'middleware' => ['permission:user-view']]);
     //  skill information
     Route::get('skill/{n}', ['uses' => 'SkillController@show', 'as' => 'skill', 'middleware' => ['permission:user-view']]);
     //  Create new skill
