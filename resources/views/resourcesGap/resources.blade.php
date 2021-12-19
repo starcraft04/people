@@ -106,9 +106,9 @@
               @endforeach
             </select>
           </div>
-          <div class="col-xs-2">
-            <label for="closed_type" id="closed_name" class="control-label">FTE</label>
-            <input name="closed_type" type="checkbox" id="closed_type" class="form-group js-switch-small" checked /> 
+          <div class="col-xs-2" style="display:block;">
+            <label id="closed_name" for="closed_name" class="control-label"></label>
+            <input name="closed" type="checkbox" id="closed" class="form-group js-switch-small" checked /> 
           </div>
         </div>
 
@@ -116,14 +116,27 @@
        
       <!-- Window title -->
       <div class="x_title">
-        <h2>List</small></h2>
-        <ul class="nav navbar-right panel_toolbox">
-          <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+        <div id="mdView">
+          <h3>Mandays view</h3>
+        <ul>
+          <li>Figures below are in Mandays</li>
+          <li>Negative figures mean that we have unassigned consultants in that practice that can be used (ZZZ < Unassigned)</li>
+          <li>Positive figures mean that we have a shortage in consultants (ZZZ > Unassigned) </li>
         </ul>
+      </div>
+
+      <div id="fteview">
+          <h3>FTE view</h3>
+        <ul>
+          <li>Figures below are in FTE</li>
+          <li>Negative figures mean that we have unassigned consultants in that practice that can be used (ZZZ < Unassigned)</li>
+          <li>Positive figures mean that we have a shortage in consultants (ZZZ > Unassigned) </li>
+        </ul>
+      </div>
         <div class="clearfix"></div>
       </div>
       <!-- Window title -->
-
+      
 
       <!-- Window content -->
       
@@ -177,9 +190,6 @@
   var month_col = [];
   var header_months = [];
   var checkbox_closed = 0;
-  var urlList ="{!! route('lists') !!}";
-
-
 
   // switchery
   var small = document.querySelector('.js-switch-small');
@@ -197,8 +207,6 @@
   }
 
   // This is the function that will set the values in the select2 boxes with info from Cookies
-
-
   function fill_select(select_id){
     array_to_use = [];
     
@@ -256,7 +264,26 @@
 
     month_col = [1,2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
 
-    
+    if (Cookies.get('checkbox_closed') != null) {
+      if (Cookies.get('checkbox_closed') == 0) {
+        checkbox_closed = 0;
+        urlList = "{!! route('lists') !!}"
+        $('#closed_name').html("MD");
+
+        document.getElementById('fteview').style.display = "none";
+        document.getElementById('mdView').style.display = "block";
+
+        $('#closed').click();
+      } else {
+        checkbox_closed = 1;
+        urlList = "{!! route('listsFTE') !!}"
+        $('#closed_name').html("FTE");
+
+        document.getElementById('fteview').style.display = "block";
+        document.getElementById('mdView').style.display = "none";
+
+      }
+    }
 
 
 function color_for_month_value(value,td) {
@@ -357,54 +384,44 @@ function color_for_month_value(value,td) {
 
     });
 
-    $('#closed_type').on('change', function() {
+    $('#closed').on('change', function() {
       if ($(this).is(':checked')) {
+        Cookies.set('checkbox_closed', 1);
         checkbox_closed = 1;
-        urlList = "{!! route('listsFTE') !!}";
-        $('#closed_name').html('FTE');
-        console.log($('#closed_name').html());
-        console.log(urlList);
+        urlList = "{!! route('listsFTE') !!}"
+        $('closed_name').html("FTE");
 
       } else {
+        Cookies.set('checkbox_closed', 0);
         checkbox_closed = 0;
-        
-        urlList = "{!! route('lists') !!}";
-        $('#closed_name').html('MD');
-        console.log($('#closed_name').html());
-        console.log(urlList);
-        
+        urlList="{!! route('lists') !!}";
+        $('#closed_name').html("MD");
+              
+
 
       }
-      activitiesTable.ajax.reload();
+      console.log(checkbox_closed);
+      console.log(urlList);
+      location.reload();
     });
 
     // SELECTIONS END
     //endregion
 
-    $.ajax({
-       url: urlList,
-        type: "POST",
-        data: ajaxData(),
-        success:function(data){
 
-          console.log(data);
-        },
-        dataType: "JSON",
-    });
-
-   
 
     activitiesTable = $('#activitiesTable').DataTable({
       scrollX: true,
       serverSide: true,
       processing: true,
       stateSave: true,
-
       ajax: {
-        url: "{!! route('listsFTE') !!}",
+         url:urlList,
         type: "POST",
         data: function ( d ) {
           $.extend(d,ajaxData());
+          console.log('------------');
+          console.log(urlList);
         },
         dataType: "JSON"
       },
@@ -453,7 +470,8 @@ function color_for_month_value(value,td) {
         });
       },
       initComplete: function () {
-            update_headers();
+              update_headers();
+
         
             activitiesTable.draw();
         
