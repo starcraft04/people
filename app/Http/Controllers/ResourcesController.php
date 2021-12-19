@@ -165,20 +165,20 @@ class ResourcesController extends Controller
                     $value->sum = round(($value->m1_com_sum+$value->m2_com_sum+$value->m3_com_sum+$value->m4_com_sum+$value->m5_com_sum+$value->m6_com_sum+$value->m7_com_sum+$value->m8_com_sum+$value->m9_com_sum+$value->m10_com_sum+$value->m11_com_sum+$value->m12_com_sum)/12,1);
                     }
                     else{
-
-                    $value->m1_com_sum = 0 - (($value->m1_com_sum)/17);
-                    $value->m2_com_sum = 0 - (($value->m2_com_sum)/17);
-                    $value->m3_com_sum = 0 - (($value->m3_com_sum)/17);
-                    $value->m4_com_sum = 0 - (($value->m4_com_sum)/17);
-                    $value->m5_com_sum = 0 - (($value->m5_com_sum)/17);
-                    $value->m6_com_sum = 0 - (($value->m6_com_sum)/17);
-                    $value->m7_com_sum = 0 - (($value->m7_com_sum)/17);
-                    $value->m8_com_sum = 0 - (($value->m8_com_sum)/17);
-                    $value->m9_com_sum = 0 - (($value->m9_com_sum)/17);
-                    $value->m10_com_sum = 0 - (($value->m10_com_sum)/17);
-                    $value->m11_com_sum = 0 - (($value->m11_com_sum)/17);
-                    $value->m12_com_sum = 0 - (($value->m12_com_sum)/17);
-                        $value->sum = round(($value->m1_com_sum+$value->m2_com_sum+$value->m3_com_sum+$value->m4_com_sum+$value->m5_com_sum+$value->m6_com_sum+$value->m7_com_sum+$value->m8_com_sum+$value->m9_com_sum+$value->m10_com_sum+$value->m11_com_sum+$value->m12_com_sum)/12,1);                    }
+                    $value->m1_com_sum = round(0 - (($value->m1_com_sum)/17),1);
+                    $value->m2_com_sum = round(0 - (($value->m2_com_sum)/17),1);
+                    $value->m3_com_sum = round(0 - (($value->m3_com_sum)/17),1);
+                    $value->m4_com_sum = round(0 - (($value->m4_com_sum)/17),1);
+                    $value->m5_com_sum = round(0 - (($value->m5_com_sum)/17),1);
+                    $value->m6_com_sum = round(0 - (($value->m6_com_sum)/17),1);
+                    $value->m7_com_sum = round(0 - (($value->m7_com_sum)/17),1);
+                    $value->m8_com_sum = round(0 - (($value->m8_com_sum)/17),1);
+                    $value->m9_com_sum = round(0 - (($value->m9_com_sum)/17),1);
+                    $value->m10_com_sum = round0(0 - (($value->m10_com_sum)/17),1);
+                    $value->m11_com_sum = round0(0 - (($value->m11_com_sum)/17),1);
+                    $value->m12_com_sum = round0(0 - (($value->m12_com_sum)/17),1);
+                    $value->sum = round(($value->m1_com_sum+$value->m2_com_sum+$value->m3_com_sum+$value->m4_com_sum+$value->m5_com_sum+$value->m6_com_sum+$value->m7_com_sum+$value->m8_com_sum+$value->m9_com_sum+$value->m10_com_sum+$value->m11_com_sum+$value->m12_com_sum)/12,1);
+                                        }
                     
                 }
                 else{
