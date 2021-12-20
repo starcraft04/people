@@ -389,13 +389,19 @@ function color_for_month_value(value,td) {
         Cookies.set('checkbox_closed', 1);
         checkbox_closed = 1;
         urlList = "{!! route('listsFTE') !!}"
-        $('closed_name').html("FTE");
+                $('#closed_name').html("FTE");
+
+        document.getElementById('fteview').style.display = "block";
+        document.getElementById('mdView').style.display = "none";
 
       } else {
         Cookies.set('checkbox_closed', 0);
         checkbox_closed = 0;
         urlList="{!! route('lists') !!}";
         $('#closed_name').html("MD");
+
+        document.getElementById('fteview').style.display = "none";
+        document.getElementById('mdView').style.display = "block";
               
 
 
