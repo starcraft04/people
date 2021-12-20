@@ -284,7 +284,6 @@ Route::get('getUserOnProjectForAssign', ['uses' => 'ToolsController@getUserOnPro
 
     Route::post('lists', ['uses' => 'ResourcesController@lists', 'as' => 'lists', 'middleware' => ['permission:tools-activity-view']]);
 
-    Route::post('listsFTE', ['uses' => 'ResourcesController@listsFTE', 'as' => 'listsFTE', 'middleware' => ['permission:tools-activity-view']]);
 
 
 
