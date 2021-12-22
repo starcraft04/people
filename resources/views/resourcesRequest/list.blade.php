@@ -1141,7 +1141,7 @@ console.log(ewr_status);
                 },
                 width: '100px'
               },
-              { name: 'resources_request.ewr_status', data: 'ewr_status' , searchable: true, visible: true,
+              { name: 'resources_request.ewr_status', data: 'EWR_status' , searchable: true, visible: true,
 
                 render: function (data) {
                     if(data === 'Accepted'){
