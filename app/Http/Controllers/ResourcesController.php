@@ -63,18 +63,18 @@ class ResourcesController extends Controller
                 // code...
                 if($value->practice !== null){
                     if(str_contains($Zvalue->name,$new_practice) !== false){
-                    $value->m1_com_sum = round((($Zvalue->m1_com_sum )/17)- $value->m1_com_sum,1);
-                    $value->m2_com_sum = round((($Zvalue->m2_com_sum )/17)- $value->m2_com_sum,1);
-                    $value->m3_com_sum = round((($Zvalue->m3_com_sum )/17)- $value->m3_com_sum,1);
-                    $value->m4_com_sum = round((($Zvalue->m4_com_sum )/17)- $value->m4_com_sum,1);
-                    $value->m5_com_sum = round((($Zvalue->m5_com_sum )/17)- $value->m5_com_sum,1);
-                    $value->m6_com_sum = round((($Zvalue->m6_com_sum )/17)- $value->m6_com_sum,1);
-                    $value->m7_com_sum = round((($Zvalue->m7_com_sum )/17)- $value->m7_com_sum,1);
-                    $value->m8_com_sum = round((($Zvalue->m8_com_sum )/17)- $value->m8_com_sum,1);
-                    $value->m9_com_sum = round((($Zvalue->m9_com_sum )/17)- $value->m9_com_sum,1);
-                    $value->m10_com_sum = round((($Zvalue->m10_com_sum)/17) - $value->m10_com_sum,1);
-                    $value->m11_com_sum = round((($Zvalue->m11_com_sum)/17) - $value->m11_com_sum,1);
-                    $value->m12_com_sum = round((($Zvalue->m12_com_sum)/17) - $value->m12_com_sum,1);
+                    $value->m1_com_sum =$Zvalue->m1_com_sum - round(($value->m1_com_sum)/17,2);
+                    $value->m2_com_sum =$Zvalue->m2_com_sum - round(($value->m2_com_sum)/17,2);
+                    $value->m3_com_sum =$Zvalue->m3_com_sum - round(($value->m3_com_sum)/17,2);
+                    $value->m4_com_sum =$Zvalue->m4_com_sum - round(($value->m4_com_sum)/17,2);
+                    $value->m5_com_sum =$Zvalue->m5_com_sum - round(($value->m5_com_sum)/17,2);
+                    $value->m6_com_sum =$Zvalue->m6_com_sum - round(($value->m6_com_sum)/17,2);
+                    $value->m7_com_sum =$Zvalue->m7_com_sum - round(($value->m7_com_sum)/17,2);
+                    $value->m8_com_sum =$Zvalue->m8_com_sum - round(($value->m8_com_sum)/17,2);
+                    $value->m9_com_sum =$Zvalue->m9_com_sum - round(($value->m9_com_sum)/17,2);
+                    $value->m10_com_sum = $Zvalue->m10_com_sum - round(($value->m10_com_sum)/17,2);
+                    $value->m11_com_sum = $Zvalue->m11_com_sum - round(($value->m11_com_sum)/17,2);
+                    $value->m12_com_sum = $Zvalue->m12_com_sum - round(($value->m12_com_sum)/17,2);
                     $value->sum = round(($value->m1_com_sum+$value->m2_com_sum+$value->m3_com_sum+$value->m4_com_sum+$value->m5_com_sum+$value->m6_com_sum+$value->m7_com_sum+$value->m8_com_sum+$value->m9_com_sum+$value->m10_com_sum+$value->m11_com_sum+$value->m12_com_sum)/12,1);
                     }
                     else{

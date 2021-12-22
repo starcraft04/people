@@ -267,7 +267,7 @@
     if (Cookies.get('checkbox_closed') != null) {
       if (Cookies.get('checkbox_closed') == 0) {
         checkbox_closed = 0;
-        urlList = "{!! route('lists') !!}";
+        
         $('#closed_name').html("MD");
 
         document.getElementById('fteview').style.display = "none";
@@ -276,7 +276,7 @@
         $('#closed').click();
       } else {
         checkbox_closed = 1;
-        urlList = "{!! route('listsFTE') !!}";
+        var urlList = "{!! route('lists') !!}";
         $('#closed_name').html("FTE");
 
         document.getElementById('fteview').style.display = "block";
@@ -388,8 +388,8 @@ function color_for_month_value(value,td) {
       if ($(this).is(':checked')) {
         Cookies.set('checkbox_closed', 1);
         checkbox_closed = 1;
-        urlList = "{!! route('listsFTE') !!}"
                 $('#closed_name').html("FTE");
+        urlList="{!! route('lists') !!}";
 
         document.getElementById('fteview').style.display = "block";
         document.getElementById('mdView').style.display = "none";
@@ -397,7 +397,6 @@ function color_for_month_value(value,td) {
       } else {
         Cookies.set('checkbox_closed', 0);
         checkbox_closed = 0;
-        urlList="{!! route('lists') !!}";
         $('#closed_name').html("MD");
 
         document.getElementById('fteview').style.display = "none";
@@ -423,7 +422,7 @@ function color_for_month_value(value,td) {
       processing: true,
       stateSave: true,
       ajax: {
-         url:"{!! route('lists') !!}",
+         url:urlList,
         type: "POST",
         data: function ( d ) {
           $.extend(d,ajaxData());
