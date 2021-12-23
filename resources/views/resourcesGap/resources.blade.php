@@ -267,7 +267,6 @@
     if (Cookies.get('checkbox_closed') != null) {
       if (Cookies.get('checkbox_closed') == 1) {
          checkbox_closed = 1;
-        var urlList = "{!! route('lists') !!}";
         $('#closed_name').html("FTE");
 
         document.getElementById('fteview').style.display = "block";
@@ -423,12 +422,12 @@ function color_for_month_value(value,td) {
       processing: true,
       stateSave: true,
       ajax: {
-         url:urlList,
+         url:"{!! route('lists') !!}",
         type: "POST",
         data: function ( d ) {
           $.extend(d,ajaxData());
           console.log('------------');
-          console.log(urlList);
+          
         },
         dataType: "JSON"
       },
