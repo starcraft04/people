@@ -388,8 +388,7 @@ function color_for_month_value(value,td) {
       if ($(this).is(':checked')) {
         Cookies.set('checkbox_closed', 1);
         checkbox_closed = 1;
-                $('#closed_name').html("FTE");
-        urlList="{!! route('lists') !!}";
+        $('#closed_name').html("FTE");
 
         document.getElementById('fteview').style.display = "block";
         document.getElementById('mdView').style.display = "none";
@@ -406,7 +405,6 @@ function color_for_month_value(value,td) {
 
       }
       console.log(checkbox_closed);
-      console.log(urlList);
      activitiesTable.ajax.reload(update_headers());
 
     });
