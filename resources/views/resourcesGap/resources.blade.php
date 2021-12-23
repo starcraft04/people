@@ -264,15 +264,9 @@
 
     month_col = [1,2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
 
-    if (Cookies.get('checkbox_closed') != null) {
+    if (Cookies.get('checkbox_closed') == null) {
       if (Cookies.get('checkbox_closed') == 1) {
-         checkbox_closed = 1;
-        $('#closed_name').html("FTE");
-
-        document.getElementById('fteview').style.display = "block";
-        document.getElementById('mdView').style.display = "none";
         
-      } else {
        checkbox_closed = 0;
         
         $('#closed_name').html("MD");
@@ -281,6 +275,14 @@
         document.getElementById('mdView').style.display = "block";
 
         $('#closed').click();
+        
+        
+      } else {
+         checkbox_closed = 1;
+        $('#closed_name').html("FTE");
+
+        document.getElementById('fteview').style.display = "block";
+        document.getElementById('mdView').style.display = "none";
 
       }
     }
