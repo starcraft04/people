@@ -106,8 +106,8 @@
               @endforeach
             </select>
           </div>
-          <div class="col-xs-2" style="display:none;">
-            <label for="closed" class="control-label">Hide closed</label>
+          <div class="col-xs-2" style="display:block;">
+            <label id="closed_name" for="closed_name" class="control-label"></label>
             <input name="closed" type="checkbox" id="closed" class="form-group js-switch-small" checked /> 
           </div>
         </div>
@@ -116,14 +116,27 @@
        
       <!-- Window title -->
       <div class="x_title">
-        <h2>List</small></h2>
-        <ul class="nav navbar-right panel_toolbox">
-          <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+        <div id="mdView">
+          <h3>Mandays view</h3>
+        <ul>
+          <li>Figures below are in Mandays</li>
+          <li>Negative figures mean that we have unassigned consultants in that practice that can be used (ZZZ < Unassigned)</li>
+          <li>Positive figures mean that we have a shortage in consultants (ZZZ > Unassigned) </li>
         </ul>
+      </div>
+
+      <div id="fteview">
+          <h3>FTE view</h3>
+        <ul>
+          <li>Figures below are in FTE</li>
+          <li>Negative figures mean that we have unassigned consultants in that practice that can be used (ZZZ < Unassigned)</li>
+          <li>Positive figures mean that we have a shortage in consultants (ZZZ > Unassigned) </li>
+        </ul>
+      </div>
         <div class="clearfix"></div>
       </div>
       <!-- Window title -->
-
+      
 
       <!-- Window content -->
       
@@ -252,11 +265,24 @@
     month_col = [1,2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
 
     if (Cookies.get('checkbox_closed') != null) {
-      if (Cookies.get('checkbox_closed') == 0) {
-        checkbox_closed = 0;
-        $('#closed').click();
+      if (Cookies.get('checkbox_closed') == 1) {
+         checkbox_closed = 1;
+        var urlList = "{!! route('lists') !!}";
+        $('#closed_name').html("FTE");
+
+        document.getElementById('fteview').style.display = "block";
+        document.getElementById('mdView').style.display = "none";
+        
       } else {
-        checkbox_closed = 1;
+       checkbox_closed = 0;
+        
+        $('#closed_name').html("MD");
+
+        document.getElementById('fteview').style.display = "none";
+        document.getElementById('mdView').style.display = "block";
+
+        $('#closed').click();
+
       }
     }
 
@@ -363,25 +389,32 @@ function color_for_month_value(value,td) {
       if ($(this).is(':checked')) {
         Cookies.set('checkbox_closed', 1);
         checkbox_closed = 1;
+                $('#closed_name').html("FTE");
+        urlList="{!! route('lists') !!}";
+
+        document.getElementById('fteview').style.display = "block";
+        document.getElementById('mdView').style.display = "none";
+
       } else {
         Cookies.set('checkbox_closed', 0);
         checkbox_closed = 0;
+        $('#closed_name').html("MD");
+
+        document.getElementById('fteview').style.display = "none";
+        document.getElementById('mdView').style.display = "block";
+              
+
+
       }
-      //console.log(checkbox_closed);
+      console.log(checkbox_closed);
+      console.log(urlList);
+     activitiesTable.ajax.reload(update_headers());
+
     });
 
     // SELECTIONS END
     //endregion
 
-    $.ajax({
-       url: "{!! route('lists') !!}",
-        type: "POST",
-        data: ajaxData(),
-        success:function(data){
-          console.log(data);
-        },
-        dataType: "JSON",
-    });
 
 
     activitiesTable = $('#activitiesTable').DataTable({
@@ -390,10 +423,12 @@ function color_for_month_value(value,td) {
       processing: true,
       stateSave: true,
       ajax: {
-         url: "{!! route('lists') !!}",
+         url:urlList,
         type: "POST",
         data: function ( d ) {
           $.extend(d,ajaxData());
+          console.log('------------');
+          console.log(urlList);
         },
         dataType: "JSON"
       },
@@ -442,7 +477,8 @@ function color_for_month_value(value,td) {
         });
       },
       initComplete: function () {
-        update_headers();
+              update_headers();
+
         
             activitiesTable.draw();
         
