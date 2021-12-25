@@ -177,7 +177,7 @@ class ResourceRequestController extends Controller
 
         $input = $request->all();
 
-        if($input['case_status'] == 1){
+        if($input['case_status'] == 'Completed'){
             $Curr_date = date('Y-m-d H:i:s');
         $updated = [
             'Budgeted'=>$input['budget'],

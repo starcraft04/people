@@ -906,7 +906,36 @@ $("#resource_request_create_form_internal_check").select2({
                   'user':user[0]
                 };
 
-        $.ajax({
+                if(typeof record_id !== 'undefined'){
+                  $.ajax({
+                    type: 'post',
+                    url: "{!! route('updateRequest','') !!}/"+record_id,
+                    data:data,
+                    dataType: 'json',
+                    success: function(data) {
+                        console.log(data);
+                        if (data.result == 'success'){
+                            box_type = 'success';
+                            message_type = 'success';
+                        }
+                        else {
+                            box_type = 'danger';
+                            message_type = 'error';
+                        }
+
+                        $('#flash-message').empty();
+                        var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
+                        $('#flash-message').append(box);
+                        $('#delete-message').delay(2000).queue(function () {
+                            $(this).addClass('animated flipOutX')
+                        });
+                        $('#resource_request_create').modal('hide');
+                        requestsTable.ajax.reload();
+                    }
+            });
+                }
+                else{
+                  $.ajax({
            url: "{!! route('create_request') !!}",
             type: "POST",
             data: data,
@@ -929,6 +958,9 @@ $("#resource_request_create_form_internal_check").select2({
                         },
             dataType: "JSON",
         });
+                }
+        
+        
 
 
 
@@ -938,8 +970,7 @@ $("#resource_request_create_form_internal_check").select2({
     //update request action:
 
     $(document).on('click', '.buttonActionEdit', function () {
-      modal_action_form_clean('Update');
-
+        modal_action_form_clean('Update');
         record_id = this.id;
                 $.ajax({
                     type: 'get',
@@ -1001,8 +1032,7 @@ $("#resource_request_create_form_internal_check").select2({
         
     });
 
-    $(document).on('click', '#modal_action_update_request_button', function () {
-
+$(document).on('click', '#modal_action_update_request_button', function () {
 // update modal field 
   let user = $('select#resource_request_create_form_project_user').val();
   let project = $('select#resource_request_create_form_project').val();
@@ -1027,7 +1057,6 @@ $("#resource_request_create_form_internal_check").select2({
 
 
 
-console.log(ewr_status);
 
   let data = {
               "practices":practices,
@@ -1052,32 +1081,7 @@ console.log(ewr_status);
 
         console.log("clicked");
         
-                $.ajax({
-                    type: 'post',
-                    url: "{!! route('updateRequest','') !!}/"+record_id,
-                    data:data,
-                    dataType: 'json',
-                    success: function(data) {
-                        console.log(data);
-                        if (data.result == 'success'){
-                            box_type = 'success';
-                            message_type = 'success';
-                        }
-                        else {
-                            box_type = 'danger';
-                            message_type = 'error';
-                        }
-
-                        $('#flash-message').empty();
-                        var box = $('<div id="delete-message" class="alert alert-'+box_type+' alert-dismissible flash-'+message_type+'" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>'+data.msg+'</div>');
-                        $('#flash-message').append(box);
-                        $('#delete-message').delay(2000).queue(function () {
-                            $(this).addClass('animated flipOutX')
-                        });
-                        $('#resource_request_create').modal('hide');
-                        requestsTable.ajax.reload();
-                    }
-                });
+                
             
         
     });
@@ -1141,7 +1145,7 @@ console.log(ewr_status);
                 },
                 width: '100px'
               },
-              { name: 'resources_request.ewr_status', data: 'EWR_status' , searchable: true, visible: true,
+              { name: 'resources_request.EWR_status', data: 'EWR_status' , searchable: true, visible: true,
 
                 render: function (data) {
                     if(data === 'Accepted'){
