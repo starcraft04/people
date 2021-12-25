@@ -50,7 +50,11 @@ class ResourceRequestController extends Controller
     public function create_request(Request $request)
     {
         // code...
-         $validator = \Validator::make($request->all(), [
+         
+
+        $data = $request->validate([
+            'project'=>'required',
+            'user' =>'required',
             'budget' => 'required',
             'currecny' => 'required',
             'duration' =>'required',
@@ -59,13 +63,9 @@ class ResourceRequestController extends Controller
             'margin'=>'required',
             'internal_check'=>'required',
             'reason_for_request'=>'required',
-
         ]);
-          if ($validator->fails())
-        {
-            return response()->json(['errors'=>$validator->errors()->all()]);
-        }
 
+        $result = new \stdClass();
         $input = $request->all();
 
         $record = ResourceRequest::create([
@@ -90,8 +90,9 @@ class ResourceRequestController extends Controller
             'user_id'=>$input['user'],
             'project_id'=>$input['project'],
         ]);
-        
-        return response()->json(['success'=>'Data is successfully added']);
+        $result->result = 'success';
+        $result->msg = 'Record added successfully';
+        return json_encode($result);
 
 
     }

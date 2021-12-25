@@ -188,7 +188,7 @@
                             No
                           </option>
                         </select>
-                        <span id="resource_request_create_form_budgted_error" class="help-block"></span>
+                        <span id="resource_request_create_form_budget_error" class="help-block"></span>
                       </div>
                       <!-- End -->
 
@@ -562,7 +562,7 @@
               $('#resource_request_create_form_project').empty();
               $('#resource_request_create_form_project').append(html);
               // Set selected 
-              $('#resource_request_create_form_project').val(project_list[0].id);
+              
               $('#resource_request_create_form_project').select2().trigger('change');
             },
             error: function (jqXhr, textStatus, errorMessage) { // error callback 
@@ -939,24 +939,28 @@ $("#resource_request_create_form_internal_check").select2({
            url: "{!! route('create_request') !!}",
             type: "POST",
             data: data,
-            success: function(result){
-              console.log(result);
-                            if(result.errors)
-                            {
-                                $('#modal_error').html('');
-
-                                $.each(result.errors, function(key, value){
-                                    $('#modal_error').show();
-                                    $('#modal_error').append('<li>'+value+'</li>');
-                                });
-                            }
-                            else
-                            {
-                        $('#resource_request_create').modal('hide');
-                                requestsTable.ajax.reload();
-                            }
-                        },
             dataType: "JSON",
+            success: function(data){
+              console.log(data);
+            $('#resource_request_create').modal('hide');
+            requestsTable.ajax.reload();
+            },
+            error: function (data, ajaxOptions, thrownError) {
+              var errors = data.responseJSON.errors;
+              var status = data.status;
+              console.log(errors);
+              console.log(status);
+
+              if (status === 422) {
+                $.each(errors, function (key, value) {
+                  $('#resource_request_create_form_'+key).addClass('has-error');
+                  $('#resource_request_create_form_'+key+'_error').text(value);
+                });
+              } else if (status === 403 || status === 500) {
+                $('#modal_action_formgroup_'+key).addClass('has-error');
+                $('#modal_action_form_'+key+'_error').text('No Authorization!');
+              }
+            }
         });
                 }
         
