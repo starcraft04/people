@@ -3,7 +3,7 @@
 return [
     'domain-users' => [
         '' => '',
-        'Service Assurance and Performance' => 'Service Assurance and Performance',
+        'IT Assurance and Performance' => 'IT Assurance and Performance',
         'Business Cybersecurity' => 'Business Cybersecurity',
         'Cloud Networking' => 'Cloud Networking',
         'Employee Experience' => 'Employee Experience',
