@@ -14,7 +14,7 @@ class ChangePracitceService extends Migration
     public function up()
     {
         //
-     DB::statement("UPDATE users SET domain = 'Service Assurance and Performance' WHERE domain = 'IT Assurance and Performance';");
+        DB::statement("UPDATE users SET domain = 'IT Assurance and Performance' WHERE domain = 'Service Assurance and Performance';");
 
     }
 
@@ -26,6 +26,6 @@ class ChangePracitceService extends Migration
     public function down()
     {
         //
-        DB::statement("UPDATE users SET domain = 'IT Assurance and Performance' WHERE domain = 'Service Assurance and Performance';");
+     DB::statement("UPDATE users SET domain = 'Service Assurance and Performance' WHERE domain = 'IT Assurance and Performance';");
     }
 }
