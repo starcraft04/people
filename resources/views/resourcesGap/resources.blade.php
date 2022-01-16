@@ -265,6 +265,7 @@
     month_col = [1,2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
 
     if (Cookies.get('checkbox_closed') == null) {
+      console.log("now is null");
       if (Cookies.get('checkbox_closed') == 1) {
         
        checkbox_closed = 0;
@@ -278,6 +279,7 @@
         
         
       } else {
+        console.log("not null now");
          checkbox_closed = 1;
         $('#closed_name').html("FTE");
 
@@ -285,6 +287,18 @@
         document.getElementById('mdView').style.display = "none";
 
       }
+    }
+    else{
+      console.log("not null now");
+         checkbox_closed = 1;
+        $('#closed_name').html("FTE");
+
+        document.getElementById('fteview').style.display = "block";
+        document.getElementById('mdView').style.display = "none";
+
+      console.log("status");
+        console.log(Cookies.get('checkbox_closed'));
+        console.log("----------------");
     }
 
 
@@ -388,6 +402,7 @@ function color_for_month_value(value,td) {
 
     $('#closed').on('change', function() {
       if ($(this).is(':checked')) {
+
         Cookies.set('checkbox_closed', 1);
         checkbox_closed = 1;
         $('#closed_name').html("FTE");
