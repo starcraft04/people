@@ -226,7 +226,7 @@ Route::get('getUserOnProjectForAssign', ['uses' => 'ToolsController@getUserOnPro
     
     Route::get('actiondashboard/{user_name?}', ['uses' => 'DashboardController@action', 'as' => 'actiondashboard', 'middleware' => ['permission:action-view']]);
     //  AJAX
-    Route::post('listOfLoadPerUserAjax', ['uses' => 'ActivityController@listOfLoadPerUserAjax', 'as' => 'listOfLoadPerUserAjax', 'middleware' => ['permission:dashboard-view']]);
+    Route::get('listOfLoadPerUserAjax', ['uses' => 'ActivityController@listOfLoadPerUserAjax', 'as' => 'listOfLoadPerUserAjax', 'middleware' => ['permission:dashboard-view']]);
     Route::post('listOfLoadPerUserChartAjax', ['uses' => 'ActivityController@listOfLoadPerUserChartAjax', 'as' => 'listOfLoadPerUserChartAjax', 'middleware' => ['permission:dashboard-view']]);
     // Skills
     //  Main skill list
@@ -246,6 +246,14 @@ Route::get('getUserOnProjectForAssign', ['uses' => 'ToolsController@getUserOnPro
     Route::get('test', ['uses' => 'ActivityController@test', 'middleware' => ['permission:user-view']]);
 
     //region LOE
+
+    //ALL LOEs/
+        Route::get('LOE/', ['uses' => 'LoeController@list', 'as' => 'list', 'middleware' => ['permission:projectLoe-view']]);
+
+    Route::get('listAllLoe/', ['uses' => 'LoeController@listAllLoe', 'as' => 'listAllLoe', 'middleware' => ['permission:projectLoe-view']]);
+
+    
+
     Route::get('loeHistory/{id}', ['uses' => 'LoeController@loeHistory', 'as' => 'loeHistory', 'middleware' => ['permission:projectLoe-view']]);
     Route::get('loe/init/{id}', ['uses' => 'LoeController@init', 'as' => 'loeInit', 'middleware' => ['permission:projectLoe-create']]);
     Route::get('loe/delete/{id}', ['uses' => 'LoeController@delete', 'as' => 'loeDelete', 'middleware' => ['permission:projectLoe-delete']]);
@@ -279,6 +287,12 @@ Route::get('getUserOnProjectForAssign', ['uses' => 'ToolsController@getUserOnPro
 
 
     Route::get('show', ['uses' => 'ResourcesController@show', 'as' => 'show', 'middleware' => ['permission:tools-activity-view']]);
+
+    // CALL CUTOMER LINKS:
+
+    Route::get('cl',['uses' => 'Apis\ClController@callCL', 'as' => 'callCL', 'middleware' => ['permission:tools-activity-view']]);
+
+
 
     //endregion
 });
