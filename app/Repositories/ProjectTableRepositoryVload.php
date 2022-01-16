@@ -6,7 +6,7 @@ use Auth;
 use Datatables;
 use DB;
 
-class   ProjectTableRepositoryVload
+class ProjectTableRepositoryVload
 {
     // This version gives only the value from OTL if it exists or the value from the user if no OTL value has been found
     // We are going to create 1 temporary table and we need to protect them
@@ -70,41 +70,41 @@ ALTER TABLE '.$table_name_cols.' ADD UNIQUE( `year`,`project_id`, `user_id`);
 
 INSERT INTO '.$table_name_cols.' (`year`,`project_id`,`user_id`) (SELECT `year`,`project_id`,`user_id` FROM `activities` group by `year`,`project_id`,`user_id`);
 
-UPDATE '.$table_name_cols.' t, activities a SET t.jan_com=a.task_hour,t.jan_from_otl=a.from_otl WHERE AND t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=0 AND a.month = 1;
-UPDATE '.$table_name_cols.' t, activities a SET t.jan_com=a.task_hour,t.jan_from_otl=a.from_otl WHERE AND t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=1 AND a.month = 1;
+UPDATE '.$table_name_cols.' t, activities a SET t.jan_com=a.task_hour,t.jan_from_otl=a.from_otl WHERE t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=0 AND a.month = 1;
+UPDATE '.$table_name_cols.' t, activities a SET t.jan_com=a.task_hour,t.jan_from_otl=a.from_otl WHERE t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=1 AND a.month = 1;
 
-UPDATE '.$table_name_cols.' t, activities a SET t.feb_com=a.task_hour,t.feb_from_otl=a.from_otl WHERE AND t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=0 AND a.month = 2;
-UPDATE '.$table_name_cols.' t, activities a SET t.feb_com=a.task_hour,t.feb_from_otl=a.from_otl WHERE AND t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=1 AND a.month = 2;
+UPDATE '.$table_name_cols.' t, activities a SET t.feb_com=a.task_hour,t.feb_from_otl=a.from_otl WHERE t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=0 AND a.month = 2;
+UPDATE '.$table_name_cols.' t, activities a SET t.feb_com=a.task_hour,t.feb_from_otl=a.from_otl WHERE t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=1 AND a.month = 2;
 
-UPDATE '.$table_name_cols.' t, activities a SET t.mar_com=a.task_hour,t.mar_from_otl=a.from_otl WHERE AND t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=0 AND a.month = 3;
-UPDATE '.$table_name_cols.' t, activities a SET t.mar_com=a.task_hour,t.mar_from_otl=a.from_otl WHERE AND t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=1 AND a.month = 3;
+UPDATE '.$table_name_cols.' t, activities a SET t.mar_com=a.task_hour,t.mar_from_otl=a.from_otl WHERE t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=0 AND a.month = 3;
+UPDATE '.$table_name_cols.' t, activities a SET t.mar_com=a.task_hour,t.mar_from_otl=a.from_otl WHERE t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=1 AND a.month = 3;
 
-UPDATE '.$table_name_cols.' t, activities a SET t.apr_com=a.task_hour,t.apr_from_otl=a.from_otl WHERE AND t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=0 AND a.month = 4;
-UPDATE '.$table_name_cols.' t, activities a SET t.apr_com=a.task_hour,t.apr_from_otl=a.from_otl WHERE AND t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=1 AND a.month = 4;
+UPDATE '.$table_name_cols.' t, activities a SET t.apr_com=a.task_hour,t.apr_from_otl=a.from_otl WHERE t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=0 AND a.month = 4;
+UPDATE '.$table_name_cols.' t, activities a SET t.apr_com=a.task_hour,t.apr_from_otl=a.from_otl WHERE t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=1 AND a.month = 4;
 
-UPDATE '.$table_name_cols.' t, activities a SET t.may_com=a.task_hour,t.may_from_otl=a.from_otl WHERE AND t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=0 AND a.month = 5;
-UPDATE '.$table_name_cols.' t, activities a SET t.may_com=a.task_hour,t.may_from_otl=a.from_otl WHERE AND t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=1 AND a.month = 5;
+UPDATE '.$table_name_cols.' t, activities a SET t.may_com=a.task_hour,t.may_from_otl=a.from_otl WHERE t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=0 AND a.month = 5;
+UPDATE '.$table_name_cols.' t, activities a SET t.may_com=a.task_hour,t.may_from_otl=a.from_otl WHERE t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=1 AND a.month = 5;
 
-UPDATE '.$table_name_cols.' t, activities a SET t.jun_com=a.task_hour,t.jun_from_otl=a.from_otl WHERE AND t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=0 AND a.month = 6;
-UPDATE '.$table_name_cols.' t, activities a SET t.jun_com=a.task_hour,t.jun_from_otl=a.from_otl WHERE AND t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=1 AND a.month = 6;
+UPDATE '.$table_name_cols.' t, activities a SET t.jun_com=a.task_hour,t.jun_from_otl=a.from_otl WHERE t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=0 AND a.month = 6;
+UPDATE '.$table_name_cols.' t, activities a SET t.jun_com=a.task_hour,t.jun_from_otl=a.from_otl WHERE t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=1 AND a.month = 6;
 
-UPDATE '.$table_name_cols.' t, activities a SET t.jul_com=a.task_hour,t.jul_from_otl=a.from_otl WHERE AND t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=0 AND a.month = 7;
-UPDATE '.$table_name_cols.' t, activities a SET t.jul_com=a.task_hour,t.jul_from_otl=a.from_otl WHERE AND t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=1 AND a.month = 7;
+UPDATE '.$table_name_cols.' t, activities a SET t.jul_com=a.task_hour,t.jul_from_otl=a.from_otl WHERE t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=0 AND a.month = 7;
+UPDATE '.$table_name_cols.' t, activities a SET t.jul_com=a.task_hour,t.jul_from_otl=a.from_otl WHERE t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=1 AND a.month = 7;
 
-UPDATE '.$table_name_cols.' t, activities a SET t.aug_com=a.task_hour,t.aug_from_otl=a.from_otl WHERE AND t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=0 AND a.month = 8;
-UPDATE '.$table_name_cols.' t, activities a SET t.aug_com=a.task_hour,t.aug_from_otl=a.from_otl WHERE AND t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=1 AND a.month = 8;
+UPDATE '.$table_name_cols.' t, activities a SET t.aug_com=a.task_hour,t.aug_from_otl=a.from_otl WHERE t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=0 AND a.month = 8;
+UPDATE '.$table_name_cols.' t, activities a SET t.aug_com=a.task_hour,t.aug_from_otl=a.from_otl WHERE t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=1 AND a.month = 8;
 
-UPDATE '.$table_name_cols.' t, activities a SET t.sep_com=a.task_hour,t.sep_from_otl=a.from_otl WHERE AND t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=0 AND a.month = 9;
-UPDATE '.$table_name_cols.' t, activities a SET t.sep_com=a.task_hour,t.sep_from_otl=a.from_otl WHERE AND t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=1 AND a.month = 9;
+UPDATE '.$table_name_cols.' t, activities a SET t.sep_com=a.task_hour,t.sep_from_otl=a.from_otl WHERE t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=0 AND a.month = 9;
+UPDATE '.$table_name_cols.' t, activities a SET t.sep_com=a.task_hour,t.sep_from_otl=a.from_otl WHERE t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=1 AND a.month = 9;
 
-UPDATE '.$table_name_cols.' t, activities a SET t.oct_com=a.task_hour,t.oct_from_otl=a.from_otl WHERE AND t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=0 AND a.month = 10;
-UPDATE '.$table_name_cols.' t, activities a SET t.oct_com=a.task_hour,t.oct_from_otl=a.from_otl WHERE AND t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=1 AND a.month = 10;
+UPDATE '.$table_name_cols.' t, activities a SET t.oct_com=a.task_hour,t.oct_from_otl=a.from_otl WHERE t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=0 AND a.month = 10;
+UPDATE '.$table_name_cols.' t, activities a SET t.oct_com=a.task_hour,t.oct_from_otl=a.from_otl WHERE t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=1 AND a.month = 10;
 
-UPDATE '.$table_name_cols.' t, activities a SET t.nov_com=a.task_hour,t.nov_from_otl=a.from_otl WHERE AND t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=0 AND a.month = 11;
-UPDATE '.$table_name_cols.' t, activities a SET t.nov_com=a.task_hour,t.nov_from_otl=a.from_otl WHERE AND t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=1 AND a.month = 11;
+UPDATE '.$table_name_cols.' t, activities a SET t.nov_com=a.task_hour,t.nov_from_otl=a.from_otl WHERE t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=0 AND a.month = 11;
+UPDATE '.$table_name_cols.' t, activities a SET t.nov_com=a.task_hour,t.nov_from_otl=a.from_otl WHERE t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=1 AND a.month = 11;
 
-UPDATE '.$table_name_cols.' t, activities a SET t.dec_com=a.task_hour,t.dec_from_otl=a.from_otl WHERE AND t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=0 AND a.month = 12;
-UPDATE '.$table_name_cols.' t, activities a SET t.dec_com=a.task_hour,t.dec_from_otl=a.from_otl WHERE AND t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=1 AND a.month = 12;
+UPDATE '.$table_name_cols.' t, activities a SET t.dec_com=a.task_hour,t.dec_from_otl=a.from_otl WHERE t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=0 AND a.month = 12;
+UPDATE '.$table_name_cols.' t, activities a SET t.dec_com=a.task_hour,t.dec_from_otl=a.from_otl WHERE t.year=a.year AND t.project_id=a.project_id AND t.user_id=a.user_id AND a.from_otl=1 AND a.month = 12;
 
       '));
 
