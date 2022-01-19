@@ -853,10 +853,29 @@ $("#resource_request_create_form_internal_check").select2({
         });
     });
 
+    let modalType=0;
+
+      $(document).on('click', '#RequestResource', function () {
+        modal_action_form_clean('Create');
+        var hidden = '';
+        hidden += '<input class="form-control" id="resource_request_action" type="hidden" value="create">';
+        $('#modal_action_form_hidden').append(hidden);
+        $('#modal_action').modal("show");
+
+        let action_type = $('input#resource_request_action').val();
+
+        console.log(action_type);
+
+    $("#resource_request_create_form_customer").prop('disabled', false);
+    $("#resource_request_create_form_project").prop('disabled', false);
+    $("#resource_request_create_form_creator").prop('disabled', false);
+    });
+
 
     //create request action :
-    $(document).on('click', '#modal_action_create_update_button', function () {
+    $(document).on('click','#modal_action_create_update_button', function () {
 
+      let action_type = $('input#resource_request_action').val();
 
       let user = $('select#resource_request_create_form_creator').val();
       
@@ -884,7 +903,10 @@ $("#resource_request_create_form_internal_check").select2({
 
 
 
-      let data = {"project":project,
+      
+
+                if(action_type === 'update'){
+                  let data = {
                   "practices":practices,
                   "contractor_name":contractor_name,
                   "supplier":supplier,
@@ -903,12 +925,9 @@ $("#resource_request_create_form_internal_check").select2({
                   "budget":budget,
                   "consulting_request":consulting_request,
                   'currecny':currecny,
-                  'user':user[0]
                 };
-
-                if(typeof record_id !== 'undefined'){
                   $.ajax({
-                    type: 'post',
+                    type: 'POST',
                     url: "{!! route('updateRequest','') !!}/"+record_id,
                     data:data,
                     dataType: 'json',
@@ -934,8 +953,29 @@ $("#resource_request_create_form_internal_check").select2({
                     }
             });
                 }
-                else{
-                  $.ajax({
+        else{
+          let data = {"project":project,
+                  "practices":practices,
+                  "contractor_name":contractor_name,
+                  "supplier":supplier,
+                  'case_status':case_status,
+                  'duration':duration,
+                  'ewr_status':ewr_status,
+                  'revenue':revenue,
+                  'cost':cost,
+                  'margin':margin,
+                  'internal_check':internal_check,
+                  'reason_for_request':reason_for_request,
+                  'description':description,
+                  'comment':comment,
+                  "po":po,
+                  'pr':pr,
+                  "budget":budget,
+                  "consulting_request":consulting_request,
+                  'currecny':currecny,
+                  'user':user[0]
+                };
+          $.ajax({
            url: "{!! route('create_request') !!}",
             type: "POST",
             data: data,
@@ -963,30 +1003,31 @@ $("#resource_request_create_form_internal_check").select2({
             }
         });
                 }
-        
-        
-
-
-
-  
 
 })
     //update request action:
 
     $(document).on('click', '.buttonActionEdit', function () {
         modal_action_form_clean('Update');
+        
+    $("#resource_request_create_form_customer").attr('disabled','disabled');
+    $("#resource_request_create_form_project").attr('disabled','disabled');
+    $("#resource_request_create_form_creator").attr('disabled','disabled');
+        var hidden = '';
+        hidden += '<input class="form-control" id="resource_request_action" type="hidden" value="update">';
+        $('#modal_action_form_hidden').append(hidden);
+
+        let action_type = $('input#resource_request_action').val();
+
+
+        console.log(action_type);
+        modalType = 2;
         record_id = this.id;
                 $.ajax({
                     type: 'get',
                     url: "{!! route('getRequest','') !!}/"+record_id,
                     dataType: 'json',
                     success: function(data) {
-                      console.log("---------modal data---------");
-                        console.log(data);
-                        console.log("---------Budgeted---------");
-                        console.log(data[0]['Budgeted']);
-                        console.log("---------ewr---------");
-                        console.log(data[0]['EWR_status']);
                         $('#resource_request_create_budgted').val(data[0]['Budgeted']);
                         $('select#resource_request_create_form_project_user').val();
                         $('select#resource_request_create_form_project').val();
@@ -1032,12 +1073,10 @@ $("#resource_request_create_form_internal_check").select2({
                         
                     }
                 });
-            
-        
-    });
-
-$(document).on('click', '#modal_action_update_request_button', function () {
+                
+$(document).on('click','#modal_action_update_request_button', function () {
 // update modal field 
+
   let user = $('select#resource_request_create_form_project_user').val();
   let project = $('select#resource_request_create_form_project').val();
   let budget = $('select#resource_request_create_budgted').val();
@@ -1089,6 +1128,10 @@ $(document).on('click', '#modal_action_update_request_button', function () {
             
         
     });
+            
+        
+    });
+
 // })
 // $.ajax({
 //   url: "",
@@ -1285,12 +1328,6 @@ $(document).on('click', '#modal_action_update_request_button', function () {
     }
 
 
-        $(document).on('click', '#RequestResource', function () {
-        modal_action_form_clean('Create');
-        var hidden = '';
-        hidden += '<input class="form-control" id="resource_request_create" type="hidden" value="create">';
-        $('#modal_action_form_hidden').append(hidden);
-        $('#modal_action').modal("show");
-    });
+      
 </script>
 @stop
