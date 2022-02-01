@@ -74,7 +74,7 @@ class ClController extends Controller
 
 
 
-        $client = new \GuzzleHttp\Client([
+        $client = new \GuzzleHttp\Client(['verify' => false],[
         'headers' => [
           'Content-Type' => 'application/json',
           'Connection'=>'keep-alive',
@@ -102,54 +102,55 @@ class ClController extends Controller
         
         $access_token = $response->access_token;
 
-        return $access_token;
+
         //70169070
-//         $headers = [
-//             'Authorization' => 'Bearer ' . $access_token,        
-//             'Accept'        => 'application/json',
-//         ];
+        $headers = [
+            'Authorization' => 'Bearer ' . $access_token,        
+            'Accept'        => 'application/json',
+        ];
 
-// $uri = "https://samba--uat.my.salesforce.com/services/data/v52.0/query?q=SELECT+SMB_OwnerSalesCluster__c,Account_Name__c,SMB_OPP_Domains__c,Name,SMB_OPP_Public_Opportunity_ID__c,Opportunity_18_ID__c,Owner.Name,CreatedDate,CloseDate,StageName,Probability,Amount,(SELECT+Product2.Name,TotalPrice+FROM+OpportunityLineItems)+FROM+Opportunity+WHERE+SMB_OPP_Public_Opportunity_ID__c+IN+('".implode("','",$has_samba_id)."')";
-//         // $str=str_replace("\n","",$uri);
+$uri = "https://samba--uat.my.salesforce.com/services/data/v52.0/query?q=SELECT+SMB_OwnerSalesCluster__c,Account_Name__c,SMB_OPP_Domains__c,Name,SMB_OPP_Public_Opportunity_ID__c,Opportunity_18_ID__c,Owner.Name,CreatedDate,CloseDate,StageName,Probability,Amount,(SELECT+Product2.Name,TotalPrice+FROM+OpportunityLineItems)+FROM+Opportunity+WHERE+SMB_OPP_Public_Opportunity_ID__c+IN+('".implode("','",$has_samba_id)."')";
+        // $str=str_replace("\n","",$uri);
 
 
 
-//          $getRequest = $client->request('GET',$uri,
-//         [ 
-//             'headers' => $headers,
+         $getRequest = $client->request('GET',$uri,
+        [ 
+            'headers' => $headers,
             
 
-//         ]);
+        ]);
 
-//         $opp = json_decode($getRequest->getBody());
+        $opp = json_decode($getRequest->getBody());
 
-//         $projects_by_year = DB::table('projects as p')
-//         ->join('activities as a','p.id','=','a.project_id')
-//         ->select('p.project_name','a.project_id','p.samba_id','p.samba_18_id')
-//         ->where('a.year','=',$year)
-//         ->whereNotNull('samba_id')
-//         ->groupBy('p.id')
-//         ->get();
+        $projects_by_year = DB::table('projects as p')
+        ->join('activities as a','p.id','=','a.project_id')
+        ->select('p.project_name','a.project_id','p.samba_id','p.samba_18_id')
+        ->where('a.year','=',$year)
+        ->whereNotNull('samba_id')
+        ->groupBy('p.id')
+        ->get();
 
-//         $opp_with_id = [];
+        $opp_with_id = [];
         
         
 
-//            foreach($opp->records as $opp_key){
-//                 // code...
+           foreach($opp->records as $opp_key){
+                // code...  
+            array_push($opp_with_id,$opp->records);
 
-//                 $update = Project::where('samba_id',$opp_key->SMB_OPP_Public_Opportunity_ID__c)->Update([
-//                     'samba_18_id' => $opp_key->Opportunity_18_ID__c,
-//                     'samba_opportunit_owner'=>$opp_key->Owner->Name,
-//                     'samba_lead_domain'=>$opp_key->SMB_OPP_Domains__c,
-//                     'samba_stage'=>$opp_key->StageName,
-//                     'estimated_start_date'=>$opp_key->CreatedDate,
-//                     'estimated_end_date'=>$opp_key->CloseDate,
-//                     'win_ratio'=>$opp_key->Probability
-//                     ]);
+                $update = Project::where('samba_id',$opp_key->SMB_OPP_Public_Opportunity_ID__c)->Update([
+                    'samba_18_id' => $opp_key->Opportunity_18_ID__c,
+                    'samba_opportunit_owner'=>$opp_key->Owner->Name,
+                    'samba_lead_domain'=>$opp_key->SMB_OPP_Domains__c,
+                    'samba_stage'=>$opp_key->StageName,
+                    'estimated_start_date'=>$opp_key->CreatedDate,
+                    'estimated_end_date'=>$opp_key->CloseDate,
+                    'win_ratio'=>$opp_key->Probability
+                    ]);
 
-//             }
-//         return $update;
+            }
+        return $opp_with_id;
 
          
 
