@@ -74,36 +74,36 @@ class ClController extends Controller
 
 
 
-        $client = new \GuzzleHttp\Client([
-        'headers' => [
-          'Content-Type' => 'application/json',
-          'Connection'=>'keep-alive',
-          "X-XSS-Protection"=> 0,
+    //     $client = new \GuzzleHttp\Client([
+    //     'headers' => [
+    //       'Content-Type' => 'application/json',
+    //       'Connection'=>'keep-alive',
+    //       "X-XSS-Protection"=> 0,
 
-        ]
-    ]);
+    //     ]
+    // ]);
 
-        $request = $client->post('https://test.salesforce.com/services/oauth2/token',
-        [ 
-            'form_params'=>[
-                'grant_type' => 'password',
-                'client_id' => '3MVG9GXbtnGKjXe4G0a3YKZse5kKU1D0x_WTlBPIR0XO2mmFxMv3CVF44NqI6LbNL0J0Le5HWUdA8b6uUCSL_',
-                'client_secret' => '1EBA1B7C71E505303076D6064D54F7A8B99CFE8FEFE9F9C44DCC74C9948AB5C3',
-                'username' => 'itf-dolphin@orange.com.uat',
-                'password' => 'God_help2End',
-                'security_token'=>'0IG1G8L1cZOrrosGAXzZlgVi',
-            ],
+    //     $request = $client->post('https://test.salesforce.com/services/oauth2/token',
+    //     [ 
+    //         'form_params'=>[
+    //             'grant_type' => 'password',
+    //             'client_id' => '3MVG9GXbtnGKjXe4G0a3YKZse5kKU1D0x_WTlBPIR0XO2mmFxMv3CVF44NqI6LbNL0J0Le5HWUdA8b6uUCSL_',
+    //             'client_secret' => '1EBA1B7C71E505303076D6064D54F7A8B99CFE8FEFE9F9C44DCC74C9948AB5C3',
+    //             'username' => 'itf-dolphin@orange.com.uat',
+    //             'password' => 'God_help2End',
+    //             'security_token'=>'0IG1G8L1cZOrrosGAXzZlgVi',
+    //         ],
 
-        ]);
+    //     ]);
 
-        $response = json_decode($request->getBody());    
+    //     $response = json_decode($request->getBody());    
 
 
         
-        $access_token = $response->access_token;
+    //     $access_token = $response->access_token;
         //70169070
         $headers = [
-            'Authorization' => 'Bearer ' . $access_token,        
+            'Authorization' => 'Bearer 00D1q0000004aco!AR0AQNkjH_TUIXSDeinqeY3LsFpN_LsBgxAB3sY80zCDOwN6GADKT.RwOUc5qjumcJ_lee5hhDbGO48VW4YNNc8Oxr.BiiBX' ,        
             'Accept'        => 'application/json',
         ];
 
