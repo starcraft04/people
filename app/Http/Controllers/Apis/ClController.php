@@ -83,71 +83,73 @@ class ClController extends Controller
         ]
     ]);
 
-    //     $request = $client->post('https://test.salesforce.com/services/oauth2/token',
-    //     [ 
-    //         'form_params'=>[
-    //             'grant_type' => 'password',
-    //             'client_id' => '3MVG9GXbtnGKjXe4G0a3YKZse5kKU1D0x_WTlBPIR0XO2mmFxMv3CVF44NqI6LbNL0J0Le5HWUdA8b6uUCSL_',
-    //             'client_secret' => '1EBA1B7C71E505303076D6064D54F7A8B99CFE8FEFE9F9C44DCC74C9948AB5C3',
-    //             'username' => 'itf-dolphin@orange.com.uat',
-    //             'password' => 'God_help2End',
-    //             'security_token'=>'0IG1G8L1cZOrrosGAXzZlgVi',
-    //         ],
-
-    //     ]);
-
-    //     $response = json_decode($request->getBody());    
-
-
-        
-    //     $access_token = $response->access_token;
-        //70169070
-        $headers = [
-            'Authorization' => 'Bearer 00D1q0000004aco!AR0AQNkjH_TUIXSDeinqeY3LsFpN_LsBgxAB3sY80zCDOwN6GADKT.RwOUc5qjumcJ_lee5hhDbGO48VW4YNNc8Oxr.BiiBX' ,        
-            'Accept'        => 'application/json',
-        ];
-
-$uri = "https://samba--uat.my.salesforce.com/services/data/v52.0/query?q=SELECT+SMB_OwnerSalesCluster__c,Account_Name__c,SMB_OPP_Domains__c,Name,SMB_OPP_Public_Opportunity_ID__c,Opportunity_18_ID__c,Owner.Name,CreatedDate,CloseDate,StageName,Probability,Amount,(SELECT+Product2.Name,TotalPrice+FROM+OpportunityLineItems)+FROM+Opportunity+WHERE+SMB_OPP_Public_Opportunity_ID__c+IN+('".implode("','",$has_samba_id)."')";
-        // $str=str_replace("\n","",$uri);
-
-
-
-         $getRequest = $client->request('GET',$uri,
+        $request = $client->post('https://test.salesforce.com/services/oauth2/token',
         [ 
-            'headers' => $headers,
-            
+            'form_params'=>[
+                'grant_type' => 'password',
+                'client_id' => '3MVG9GXbtnGKjXe4G0a3YKZse5kKU1D0x_WTlBPIR0XO2mmFxMv3CVF44NqI6LbNL0J0Le5HWUdA8b6uUCSL_',
+                'client_secret' => '1EBA1B7C71E505303076D6064D54F7A8B99CFE8FEFE9F9C44DCC74C9948AB5C3',
+                'username' => 'itf-dolphin@orange.com.uat',
+                'password' => 'God_help2End',
+                'security_token'=>'0IG1G8L1cZOrrosGAXzZlgVi',
+            ],
 
         ]);
 
-        $opp = json_decode($getRequest->getBody());
+        $response = json_decode($request->getBody());    
 
-        $projects_by_year = DB::table('projects as p')
-        ->join('activities as a','p.id','=','a.project_id')
-        ->select('p.project_name','a.project_id','p.samba_id','p.samba_18_id')
-        ->where('a.year','=',$year)
-        ->whereNotNull('samba_id')
-        ->groupBy('p.id')
-        ->get();
 
-        $opp_with_id = [];
+        
+        $access_token = $response->access_token;
+
+        return $access_token;
+        //70169070
+//         $headers = [
+//             'Authorization' => 'Bearer ' . $access_token,        
+//             'Accept'        => 'application/json',
+//         ];
+
+// $uri = "https://samba--uat.my.salesforce.com/services/data/v52.0/query?q=SELECT+SMB_OwnerSalesCluster__c,Account_Name__c,SMB_OPP_Domains__c,Name,SMB_OPP_Public_Opportunity_ID__c,Opportunity_18_ID__c,Owner.Name,CreatedDate,CloseDate,StageName,Probability,Amount,(SELECT+Product2.Name,TotalPrice+FROM+OpportunityLineItems)+FROM+Opportunity+WHERE+SMB_OPP_Public_Opportunity_ID__c+IN+('".implode("','",$has_samba_id)."')";
+//         // $str=str_replace("\n","",$uri);
+
+
+
+//          $getRequest = $client->request('GET',$uri,
+//         [ 
+//             'headers' => $headers,
+            
+
+//         ]);
+
+//         $opp = json_decode($getRequest->getBody());
+
+//         $projects_by_year = DB::table('projects as p')
+//         ->join('activities as a','p.id','=','a.project_id')
+//         ->select('p.project_name','a.project_id','p.samba_id','p.samba_18_id')
+//         ->where('a.year','=',$year)
+//         ->whereNotNull('samba_id')
+//         ->groupBy('p.id')
+//         ->get();
+
+//         $opp_with_id = [];
         
         
 
-           foreach($opp->records as $opp_key){
-                // code...
+//            foreach($opp->records as $opp_key){
+//                 // code...
 
-                $update = Project::where('samba_id',$opp_key->SMB_OPP_Public_Opportunity_ID__c)->Update([
-                    'samba_18_id' => $opp_key->Opportunity_18_ID__c,
-                    'samba_opportunit_owner'=>$opp_key->Owner->Name,
-                    'samba_lead_domain'=>$opp_key->SMB_OPP_Domains__c,
-                    'samba_stage'=>$opp_key->StageName,
-                    'estimated_start_date'=>$opp_key->CreatedDate,
-                    'estimated_end_date'=>$opp_key->CloseDate,
-                    'win_ratio'=>$opp_key->Probability
-                    ]);
+//                 $update = Project::where('samba_id',$opp_key->SMB_OPP_Public_Opportunity_ID__c)->Update([
+//                     'samba_18_id' => $opp_key->Opportunity_18_ID__c,
+//                     'samba_opportunit_owner'=>$opp_key->Owner->Name,
+//                     'samba_lead_domain'=>$opp_key->SMB_OPP_Domains__c,
+//                     'samba_stage'=>$opp_key->StageName,
+//                     'estimated_start_date'=>$opp_key->CreatedDate,
+//                     'estimated_end_date'=>$opp_key->CloseDate,
+//                     'win_ratio'=>$opp_key->Probability
+//                     ]);
 
-            }
-        return $update;
+//             }
+//         return $update;
 
          
 
