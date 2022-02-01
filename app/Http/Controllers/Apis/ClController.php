@@ -78,6 +78,7 @@ class ClController extends Controller
         'headers' => [
           'Content-Type' => 'application/json',
           'Connection'=>'keep-alive',
+          "X-XSS-Protection"=> 0,
 
         ]
     ]);
@@ -96,6 +97,8 @@ class ClController extends Controller
         ]);
 
         $response = json_decode($request->getBody());    
+
+
         
         $access_token = $response->access_token;
         //70169070
