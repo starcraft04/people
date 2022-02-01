@@ -74,7 +74,7 @@ class ClController extends Controller
 
 
 
-        $client = new \GuzzleHttp\Client(['verify' => false],[
+        $client = new \GuzzleHttp\Client([
         'headers' => [
           'Content-Type' => 'application/json',
           'Connection'=>'keep-alive',
