@@ -246,6 +246,15 @@ Route::get('getUserOnProjectForAssign', ['uses' => 'ToolsController@getUserOnPro
     Route::get('test', ['uses' => 'ActivityController@test', 'middleware' => ['permission:user-view']]);
 
     //region LOE
+
+
+    Route::get('AllLOE', ['uses' => 'LoeController@list', 'as' => 'AllLOE', 'middleware' => ['permission:projectLoe-view']]);
+
+    
+    Route::get('listAllLoe', ['uses' => 'LoeController@listAllLoe', 'as' => 'listAllLoe', 'middleware' => ['permission:projectLoe-view']]);
+
+
+
     Route::get('loeHistory/{id}', ['uses' => 'LoeController@loeHistory', 'as' => 'loeHistory', 'middleware' => ['permission:projectLoe-view']]);
     Route::get('loe/init/{id}', ['uses' => 'LoeController@init', 'as' => 'loeInit', 'middleware' => ['permission:projectLoe-create']]);
     Route::get('loe/delete/{id}', ['uses' => 'LoeController@delete', 'as' => 'loeDelete', 'middleware' => ['permission:projectLoe-delete']]);
@@ -294,9 +303,17 @@ Route::get('getUserOnProjectForAssign', ['uses' => 'ToolsController@getUserOnPro
 
 
 
+// Customer Links
 
 
 
+    Route::get('customerLinks', ['uses' => 'Apis\ClController@CustomerLink', 'as' => 'CustomerLink', 'middleware' => ['permission:tools-activity-view']]);
+
+
+    Route::get('projectsWithoutCLID', ['uses' => 'Apis\ClController@projectsWithoutCLID', 'as' => 'projectsWithoutCLID', 'middleware' => ['permission:tools-activity-view']]);
+
+
+    Route::post('callCL', ['uses' => 'Apis\ClController@callCL', 'as' => 'callCL', 'middleware' => ['permission:tools-activity-view']]);
 
 
 Route::get('/home', 'HomeController@index')->name('home');
@@ -305,5 +322,6 @@ Route::get('/home', 'HomeController@index')->name('home');
 // Route::get('updator',['uses'=>'UpdateTableController@updator', 'as'=>'updator']);
 
 Route::post('import', ['uses' => 'UserController@UploadExcelToCreateOrUpdateUsers', 'as' => 'UploadExcelToCreateOrUpdateUsers', 'middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
+Route::post('CLimport', ['uses' => 'Apis\ClController@UploadExcelToAddCLID', 'as' => 'UploadExcelToAddCLID', 'middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
 // Route::get('export', 'UpdateTableController@export');
 // Route::get('import',['uses'=>'UpdateTableController@show', 'as' =>'show']);
