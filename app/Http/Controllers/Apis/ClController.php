@@ -74,14 +74,14 @@ class ClController extends Controller
 
 
 
-    //     $client = new \GuzzleHttp\Client([
-    //     'headers' => [
-    //       'Content-Type' => 'application/json',
-    //       'Connection'=>'keep-alive',
-    //       "X-XSS-Protection"=> 0,
+        $client = new \GuzzleHttp\Client([
+        'headers' => [
+          'Content-Type' => 'application/json',
+          'Connection'=>'keep-alive',
+          "X-XSS-Protection"=> 0,
 
-    //     ]
-    // ]);
+        ]
+    ]);
 
     //     $request = $client->post('https://test.salesforce.com/services/oauth2/token',
     //     [ 
