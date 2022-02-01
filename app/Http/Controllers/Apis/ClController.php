@@ -100,8 +100,13 @@ class ClController extends Controller
 
 
         
-        $access_token = $response->access_token;
+        $opp_with_id = [];
+        
+        
+        
+        array_push($opp_with_id,$response->access_token);
 
+        $access_token = $response->access_token;
 
         //70169070
         $headers = [
@@ -131,13 +136,10 @@ $uri = "https://samba--uat.my.salesforce.com/services/data/v52.0/query?q=SELECT+
         ->groupBy('p.id')
         ->get();
 
-        $opp_with_id = [];
-        
-        
 
            foreach($opp->records as $opp_key){
                 // code...  
-            array_push($opp_with_id,$opp->records);
+            
 
                 $update = Project::where('samba_id',$opp_key->SMB_OPP_Public_Opportunity_ID__c)->Update([
                     'samba_18_id' => $opp_key->Opportunity_18_ID__c,
@@ -150,9 +152,9 @@ $uri = "https://samba--uat.my.salesforce.com/services/data/v52.0/query?q=SELECT+
                     ]);
 
             }
-        return $opp_with_id;
 
          
+        return $opp_with_id;
 
 
     }
