@@ -191,7 +191,7 @@ $uri = "https://samba--uat.my.salesforce.com/services/data/v52.0/query?q=SELECT+
             $project_id_exists_in = $project_id_exists->id;
 
           
-            if($project_id_exists->samba_id != Null)
+            if($project_id_exists->samba_id == Null)
             {
                 
                 Project::where('id',$project_id_exists_in)->update($customer_link_update);
