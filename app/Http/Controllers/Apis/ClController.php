@@ -205,7 +205,7 @@ $uri = "https://samba--uat.my.salesforce.com/services/data/v52.0/query?q=SELECT+
 
 
         }
-        return redirect('customerLinks')->with('success', 'Record Updated successfully')->compact('existing_samba_id');
+        return redirect('customerLinks')->with('success', 'Record Updated successfully');
     }
 
 }
