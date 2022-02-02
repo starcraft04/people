@@ -83,6 +83,7 @@ class ClController extends Controller
         ]
     ]);
 
+        $password = config('services.form_params.password');
         $request = $client->post('https://test.salesforce.com/services/oauth2/token',
         [ 
             'form_params'=>[
@@ -101,10 +102,11 @@ class ClController extends Controller
 
         
         $opp_with_id = [];
+
         
         
         
-        array_push($opp_with_id,$response->access_token);
+        array_push($opp_with_id,$password);
 
         $access_token = $response->access_token;
 
