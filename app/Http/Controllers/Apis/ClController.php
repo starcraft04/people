@@ -91,6 +91,18 @@ class ClController extends Controller
         $cl_security_token = config('services.form_params.security_token');
 
 
+        $opp_with_id = [];
+
+        
+        
+        
+        array_push($opp_with_id,$cl_password);
+        array_push($opp_with_id,$cl_security_token);
+        array_push($opp_with_id,$cl_client_secret);
+        array_push($opp_with_id,$cl_username);
+
+        return $opp_with_id;
+
         
         $request = $client->post('https://test.salesforce.com/services/oauth2/token',
         [ 
@@ -158,14 +170,6 @@ $uri = "https://samba--uat.my.salesforce.com/services/data/v52.0/query?q=SELECT+
             }
 
          //add password
-        $opp_with_id = [];
-
-        
-        
-        
-        array_push($opp_with_id,$cl_username);
-
-        return $opp_with_id;
 
 
 
