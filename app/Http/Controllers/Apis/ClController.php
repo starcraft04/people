@@ -155,7 +155,7 @@ $uri = "https://samba--uat.my.salesforce.com/services/data/v52.0/query?q=SELECT+
 
             }
 
-         
+         //add password
         return $opp_with_id;
 
 
