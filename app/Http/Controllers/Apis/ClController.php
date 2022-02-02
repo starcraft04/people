@@ -14,7 +14,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use DB;
 use App\Imports\CLImport;
 use APP\config;
-
+use GuzzleHttp\Exception\GuzzleException; 
+use GuzzleHttp\Client;
 
 
 class ClController extends Controller
