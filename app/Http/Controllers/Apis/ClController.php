@@ -13,6 +13,7 @@ use App\Project;
 use Maatwebsite\Excel\Facades\Excel;
 use DB;
 use App\Imports\CLImport;
+use APP\config;
 
 
 
@@ -83,16 +84,23 @@ class ClController extends Controller
         ]
     ]);
 
-        $password = config('services.form_params.password');
+        $cl_grant_type = config('services.form_params.grant_type');
+        $cl_client_secret = config('services.form_params.client_secret');
+        $cl_username = config('services.form_params.username');
+        $cl_password = config('services.form_params.password');
+        $cl_security_token = config('services.form_params.security_token');
+
+
+        
         $request = $client->post('https://test.salesforce.com/services/oauth2/token',
         [ 
             'form_params'=>[
-                'grant_type' => 'password',
+                'grant_type' => $cl_grant_type,
                 'client_id' => '3MVG9GXbtnGKjXe4G0a3YKZse5kKU1D0x_WTlBPIR0XO2mmFxMv3CVF44NqI6LbNL0J0Le5HWUdA8b6uUCSL_',
-                'client_secret' => '1EBA1B7C71E505303076D6064D54F7A8B99CFE8FEFE9F9C44DCC74C9948AB5C3',
-                'username' => 'itf-dolphin@orange.com.uat',
-                'password' => 'God_help2End',
-                'security_token'=>'0IG1G8L1cZOrrosGAXzZlgVi',
+                'client_secret' => $cl_client_secret,
+                'username' => $cl_username,
+                'password' => $cl_password,
+                'security_token'=> $cl_security_token,
             ],
 
         ]);
@@ -101,12 +109,6 @@ class ClController extends Controller
 
 
         
-        $opp_with_id = [];
-
-        
-        
-        
-        array_push($opp_with_id,$password);
 
         $access_token = $response->access_token;
 
@@ -156,7 +158,15 @@ $uri = "https://samba--uat.my.salesforce.com/services/data/v52.0/query?q=SELECT+
             }
 
          //add password
+        $opp_with_id = [];
+
+        
+        
+        
+        array_push($opp_with_id,$cl_username);
+
         return $opp_with_id;
+
 
 
     }
