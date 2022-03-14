@@ -13,6 +13,7 @@ use App\LoeConsultant;
 use NXP\MathExecutor;
 use App\Http\Controllers\Auth\AuthUsersForDataView;
 use App\Customer;
+use Datatables;
 use App\Project;
 use App\ConsultingPricing;
 
@@ -29,6 +30,101 @@ class LoeController extends Controller
         ->pluck('customers.name', 'customers.id');
         return view('loe/create_update', compact('project','customer','customers_list'));
     }
+
+    public function list()
+    {
+        $on_shore=[];
+        $off_shore=[];
+        $near_shore=[];
+
+        
+        
+
+        $all = DB::table('project_loe as pl')
+        ->join('project_loe_consultant as plc','pl.id','=','plc.project_loe_id')
+        ->join('projects as p','pl.project_id','=','p.id')
+        ->join('customers as c','p.customer_id','c.id')
+        ->select(
+DB::raw('SUM(case when location in ("Netherlands","Germany","Switzerland","United Kingdom") then percentage ELSE 0 END) as on_percent'),
+DB::raw('SUM(case when location in ("Netherlands","Germany","Switzerland","United Kingdom") then cost ELSE 0 END) as on_cost'),
+DB::raw('SUM(case when location in ("Netherlands","Germany","Switzerland","United Kingdom") then price ELSE 0 END) as on_price'),
+DB::raw('SUM(case when location in ("Egypt","India") then percentage ELSE 0 END) as off_percentage'),
+DB::raw('SUM(case when location in ("Egypt","India") then price ELSE 0 END) as off_price'),
+DB::raw('SUM(case when location in ("Egypt","India") then cost ELSE 0 END) as off_cost'),
+
+DB::raw('SUM(case when location in ("Poland") then percentage ELSE 0 END) as near_percentage'),
+DB::raw('SUM(case when location in ("Poland") then price ELSE 0 END) as near_price'),
+DB::raw('SUM(case when location in ("poland") then cost ELSE 0 END) as near_cost'),
+'c.name','p.id', 'p.project_name','pl.main_phase','pl.quantity','plc.percentage', 'plc.location','plc.price','plc.cost','plc.seniority','pl.loe_per_quantity')
+        ->groupBy('plc.project_loe_id')
+        ->get();
+   
+
+        return view('loe/list', compact('all'));
+    }
+    public function listAllLoe()
+    {
+        // $data = DB::table('project_loe as pl')
+        // ->Join('projects as p','pl.project_id','=','p.id')
+        // ->Join('customers as c','p.customer_id','=','c.id')
+        // ->Join('users as u','pl.user_id','=','u.id' )
+        // ->join('project_loe_consultant as plc','pl.id','=','plc.project_loe_id')
+        // ->select('u.name as user_name','c.name as customer_name','p.project_name as project_name','pl.main_phase as main_phase','pl.secondary_phase as secondary_phase','pl.domain as domain','pl.description as description','pl.quantity as quantity','pl.loe_per_quantity as LOE_PER_Qunatity','plc.location as c_location','plc.seniority as c_seniority','plc.cost as c_cost','plc.price as c_price','plc.percentage as c_percentage','plc.name as c_name')
+        // ->groupBy('pl.main_phase')
+        // ->get();
+
+
+
+
+
+        
+
+        // foreach($data as $key => $value){
+
+        // $quantity = $value->quantity;
+        // $loe_per_quantity = $value->LOE_PER_Qunatity;
+        // $total_loe = $quantity*$loe_per_quantity;
+        // $cost = $value->c_cost;
+        // $price = $value->c_price;
+
+        // $md = ($total_loe*$value->c_percentage)/100;
+
+        //     $value->total_loe = $total_loe;
+        //     $value->md = $md;
+
+        // $total_cost = $md*$cost;
+        // $total_price = $md*$price;
+        // if($total_cost == 0){
+        //     $margin = 0;
+        // }
+        // else{
+        //     $margin = 100*($total_price-$total_cost)/$total_cost;
+        // }
+        
+
+        // $value->total_cost = $total_cost;
+        // $value->total_price = $total_price;
+
+        // $value->margin = $margin;
+
+        // }
+
+        // $LOE = Datatables::of($data)->make(true);
+
+        // return $LOE;
+
+        $on_shore = DB::table('project_loe as pl')
+        ->join('project_loe_consultant as plc','pl.id','=','plc.project_loe_id')
+        ->join('projects as p','pl.project_id','=','p.id')
+        ->select('pl.user_id','p.id', 'p.project_name','pl.main_phase','pl.quantity','plc.percentage', 'plc.location','plc.price','plc.cost','plc.seniority')
+        ->whereIn('plc.location',['Egypt','India'])
+        ->get();
+
+        return $on_shore;
+        
+    }
+
+
 
     public function init($id)
     {

@@ -33,8 +33,9 @@ class ClController extends Controller
         $year = $inputs['year'];
 
         $projectsWithoutCLID = DB::table('projects as p')
+        ->join('customers as c','p.customer_id','c.id')
         ->join('activities as a','p.id','=','a.project_id')
-        ->select('p.project_name','a.project_id','p.samba_id')
+        ->select('p.project_name','c.name','a.project_id','p.samba_id')
         ->where('a.year','=',$year)
         ->whereNull('p.samba_id')
         ->groupBy('a.project_id')
@@ -133,6 +134,9 @@ $uri = "https://samba--uat.my.salesforce.com/services/data/v52.0/query?q=SELECT+
 
         $opp = json_decode($getRequest->getBody());
 
+        $opp_with_id = [];
+
+
         $projects_by_year = DB::table('projects as p')
         ->join('activities as a','p.id','=','a.project_id')
         ->select('p.project_name','a.project_id','p.samba_id','p.samba_18_id')
@@ -142,34 +146,55 @@ $uri = "https://samba--uat.my.salesforce.com/services/data/v52.0/query?q=SELECT+
         ->get();
 
 
-           foreach($opp->records as $opp_key){
-                // code...  
-            
+           foreach($opp->records as $opp_key){         
 
-                $update = Project::where('samba_id',$opp_key->SMB_OPP_Public_Opportunity_ID__c)->Update([
-                    'samba_18_id' => $opp_key->Opportunity_18_ID__c,
-                    'samba_opportunit_owner'=>$opp_key->Owner->Name,
-                    'samba_lead_domain'=>$opp_key->SMB_OPP_Domains__c,
-                    'samba_stage'=>$opp_key->StageName,
-                    'estimated_start_date'=>$opp_key->CreatedDate,
-                    'estimated_end_date'=>$opp_key->CloseDate,
-                    'win_ratio'=>$opp_key->Probability
-                    ]);
+                $project = Project::where('samba_id',$opp_key->SMB_OPP_Public_Opportunity_ID__c)->get();
+                
+                
+
+
+                if($project[0]->project_name != $opp_key->Name){
+
+                        $update = Project::where('samba_id',$opp_key->SMB_OPP_Public_Opportunity_ID__c)->Update([
+                        'project_name'=>$opp_key->Name,
+                        'samba_18_id' => $opp_key->Opportunity_18_ID__c,
+                        'samba_opportunit_owner'=>$opp_key->Owner->Name,
+                        'samba_lead_domain'=>$opp_key->SMB_OPP_Domains__c,
+                        'samba_stage'=>$opp_key->StageName,
+                        'estimated_start_date'=>$opp_key->CreatedDate,
+                        'estimated_end_date'=>$opp_key->CloseDate,
+                        'win_ratio'=>$opp_key->Probability
+                        ]);
+                    
+
+                    
+                    
+                }
+                else{
+                    $update = Project::where('samba_id',$opp_key->SMB_OPP_Public_Opportunity_ID__c)->Update([
+                        'samba_18_id' => $opp_key->Opportunity_18_ID__c,
+                        'samba_opportunit_owner'=>$opp_key->Owner->Name,
+                        'samba_lead_domain'=>$opp_key->SMB_OPP_Domains__c,
+                        'samba_stage'=>$opp_key->StageName,
+                        'estimated_start_date'=>$opp_key->CreatedDate,
+                        'estimated_end_date'=>$opp_key->CloseDate,
+                        'win_ratio'=>$opp_key->Probability
+                        ]);
+
+                }            
+
+
+
+                    array_push($opp_with_id,$project);
+                
 
             }
 
-         //add password
-            
-                $opp_with_id = [];
+
 
         
         
         
-        array_push($opp_with_id,$cl_password);
-        array_push($opp_with_id,$cl_security_token);
-        array_push($opp_with_id,$cl_client_secret);
-        array_push($opp_with_id,$cl_username);
-        array_push($opp_with_id,$cl_security_token);
 
         return $opp_with_id;
 
