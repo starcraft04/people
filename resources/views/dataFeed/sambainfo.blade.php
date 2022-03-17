@@ -158,12 +158,14 @@ h3:after {
           <thead>
             <tr>
               <th>Project ID</th>
+              <th>Customer Name</th>
               <th>Project Name</th>
               <th>Customer Link ID</th>
             </tr>
           </thead>
           <tfoot>
             <tr>
+              <th></th>
               <th></th>
               <th></th>
               <th></th>
@@ -232,6 +234,7 @@ $.ajaxSetup({
       },
       columns: [
         { name: 'a.project_id', data: 'project_id' , searchable: false , visible: true},
+        { name: 'c.name', data: 'name' , searchable: false , visible: true},
         { name: 'p.project_name', data: 'project_name' , className: "dt-nowrap", visible: true},
         { name: 'p.samba_id', data: 'samba_id' , searchable: false , visible: true},
        
@@ -288,8 +291,11 @@ $.ajaxSetup({
         data:{'year':year[0]},
         dataType: 'json',
         success:function(data){
+          console.log("------------");
           console.log(data); 
+          console.log("------------");
         }
+        
 
       });
     });
