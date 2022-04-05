@@ -75,12 +75,48 @@
       </div>
       <!-- Window title -->
       
+       <!-- Modal Assign User to project Start-->
+      <div class="modal fade" id="project_data" role="dialog" aria- 
+            labelledby="assign_user_modalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="demoModalLabel">Project Details</h5>
+                <button type="button" id=close-btn class="close" data-dismiss="modal" aria- 
+                                label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" >
+              <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th scope="col">Location</th>
+                      <th scope="col">Cost</th>
+                      <th scope="col">Price</th>
+                    </tr>
+                  </thead>
+                  <tbody id="modal-data">
+                  </tbody>
+                </table>
+
+                    
+            </div>
+
+            <div class="modal-footer">
+                
+            </div>
+          </div>
+        </div>
+      </div>
+
+
         <!-- Main table -->
         <div class="table-responsive">
           <table id="requestsTable" class="table table-striped table-hover table-bordered mytable" style="    overflow-x: auto;">
           <thead>
               <tr>
-                  <th colspan="6">Project Details</th>
+                  <th colspan="7">Project Details</th>
                   <th colspan="4">Off shore</th>
                   <th colspan="4">On shore</th>
                   <th colspan="4">Near shore</th>
@@ -89,6 +125,7 @@
               </tr>
               <tr>
                 <th data-field="project_id">Project ID</th>
+                <th>LOE ID</th>
 
                 <th data-field="project_name" style="width:10px;">Customer</th>
                 <th data-field="project_name" style="width:10px;">Project_name</th>
@@ -114,43 +151,145 @@
               </tr>
           </thead>
           <tbody>
+            @php
+            $sumCost = [];
+            $sumPrice = [];
+            $margin =  [];
+            @endphp
+            @foreach($check as $cKey)
+
+             @php 
+
+                if(isset($sumPrice[$cKey->id]) && isset($sumCost[$cKey->id]))
+                {
+                  
+                  $sumPrice[$cKey->id] += round(((($cKey->percentage*$cKey->loe_per_quantity)/100)*$cKey->price));
+                  
+                  $sumCost[$cKey->id] += round(((($cKey->percentage*$cKey->loe_per_quantity)/100)*$cKey->cost));
+
+                   if($sumCost[$cKey->id] == 0)
+                  {
+                    $margin[$cKey->id] = 0;
+                  }
+                  else{
+                    $margin[$cKey->id] = round((100*($sumPrice[$cKey->id] -$sumCost[$cKey->id])/$sumCost[$cKey->id]));
+                  }
+
+                }
+                else if(!isset($sumPrice[$cKey->id]) && !isset($sumCost[$cKey->id])){
+                  $sumPrice[$cKey->id]=0;
+                  $sumCost[$cKey->id]=0;
+                  $sumPrice[$cKey->id] += round(((($cKey->percentage*$cKey->loe_per_quantity)/100)*$cKey->price));
+                  
+                  $sumCost[$cKey->id] += round(((($cKey->percentage*$cKey->loe_per_quantity)/100)*$cKey->cost));
+                  
+                  if($sumCost[$cKey->id] == 0)
+                  {
+                    $margin[$cKey->id] = 0;
+                  }
+                  else{
+                    $margin[$cKey->id] = round((100*($sumPrice[$cKey->id] -$sumCost[$cKey->id])/$sumCost[$cKey->id]));
+                  }
+
+                }
+
+             @endphp
+            @endforeach
+
+
+            
             @foreach($all as $key)
             @php
-            $total_price = ((($key->off_percentage * $key->loe_per_quantity)/100)*$key->off_price)+((($key->on_percent* $key->loe_per_quantity)/100)*$key->on_price)+((($key->near_percentage * $key->loe_per_quantity)/100)*$key->near_price);
-
-            $total_cost = ((($key->off_percentage * $key->loe_per_quantity)/100)*$key->off_cost)+((($key->on_percent* $key->loe_per_quantity)/100)*$key->on_cost)+((($key->near_percentage * $key->loe_per_quantity)/100)*$key->near_cost);
-            if($total_cost == 0){
-              $margin = 0;
-            }else{
-             $margin = round(100*($total_price-$total_cost)/$total_cost); 
-            }
             
+
+            $total = $key->unit_cost;
+            //echo $total;
+            
+            //off shore total cost and price with MD
+            $off_shore_MD = (($key->off_percentage * $key->loe_per_quantity)/100);
+            $total_off_shore_cost = $off_shore_MD * $key->off_cost;
+            $total_off_shore_price = $off_shore_MD * $key->off_price;
+
+            //on shore total cost and price with MD
+            $on_shore_MD = (($key->on_percent * $key->loe_per_quantity)/100);
+            $total_on_shore_cost = $on_shore_MD * $key->on_cost;
+            $total_on_shore_price =$on_shore_MD * $key->on_price;
+
+
+            //near shore total cost and price with MD
+            $near_shore_MD = (($key->near_percentage * $key->loe_per_quantity)/100);
+            $total_near_shore_cost = $near_shore_MD * $key->near_cost;
+            $total_near_shore_price = $near_shore_MD * $key->near_price;
+
+
+            $total_price = $total_off_shore_price+$total_on_shore_price+$total_near_shore_price;
+
+            $total_cost = $total_off_shore_cost+$total_on_shore_cost+$total_near_shore_cost;
+
+          
+
             @endphp
 
-           <tr>
+            
+
+
+
+           <tr id ="{{$key->id}}">
              <td>{{$key->id}}</td>
+             <td>{{$key->plID}}</td>
              <td>{{$key->name}}</td>
              <td><a href="{!! route('loeView','') !!}/{{$key->id}}">{{$key->project_name}}</a></td>
              <td>{{$key->main_phase}}</td>
              <td>{{$key->quantity}}</td>
              <td>{{$key->loe_per_quantity}}</td>
              <td>{{$key->off_percentage}}</td>             
-             <td>{{($key->off_percentage * $key->loe_per_quantity)/100}}</td>
-             <td>{{$key->off_cost}}</td>
-             <td>{{$key->off_price}}</td>
+             <td>{{round($off_shore_MD,2)}}</td>
+             <td>{{round($total_off_shore_cost,1)}}</td>
+             <td>{{round($total_off_shore_price,1)}}</td>
              <td>{{$key->on_percent}}</td>
-             <td>{{($key->on_percent * $key->loe_per_quantity)/100}}</td>
-             <td>{{$key->on_cost}}</td>
-             <td>{{$key->on_price}}</td>             
+             <td>{{round($on_shore_MD,2)}}</td>
+             <td>{{round($total_on_shore_cost,1)}}</td>
+             <td>{{round($total_on_shore_price,1)}}</td>             
              <td>{{$key->near_percentage}}</td>                          
-             <td>{{($key->near_percentage * $key->loe_per_quantity)/100}}</td>
-             <td>{{$key->near_cost}}</td>
-             <td>{{$key->near_price}}</td>
+             <td>{{round($near_shore_MD,2)}}</td>
+             <td>{{round($total_near_shore_cost,1)}}</td>
+             <td>{{round($total_near_shore_price,1)}}</td>
+             @foreach($margin as $id => $val)
+              @php
+              if($id == $key->plID)
+              {
+              @endphp
+                <td>{{$val}}</td>
+              @php 
+              }
+              @endphp
+             @endforeach
+             @foreach($sumCost as $id => $val)
+              @php
+              if($id == $key->plID)
+              {
+              @endphp
+                <td>{{$val}}</td>
+              @php 
+              }
+              @endphp
+            
+              
+             @endforeach
+             @foreach($sumPrice as $id => $val)
+              @php
+              if($id == $key->plID)
+              {
+              @endphp
+                <td>{{$val}}</td>
+              @php 
+              }
+              @endphp
+            
+              
+             @endforeach
 
-             <td>{{$margin}}</td>
-
-             <td>{{((($key->off_percentage * $key->loe_per_quantity)/100)*$key->off_cost)+((($key->on_percent* $key->loe_per_quantity)/100)*$key->on_cost)+((($key->near_percentage * $key->loe_per_quantity)/100)*$key->near_cost)}}</td>
-             <td>{{((($key->off_percentage * $key->loe_per_quantity)/100)*$key->off_price)+((($key->on_percent* $key->loe_per_quantity)/100)*$key->on_price)+((($key->near_percentage * $key->loe_per_quantity)/100)*$key->near_price)}}</td>
+             
            </tr>
            @endforeach
           </tbody>
@@ -202,6 +341,30 @@ $.ajax({
    success:function(data){
     console.log(data);
    }
+});
+
+$(document).ready(function(){
+
+  $(document).on('click','#requestsTable td' , function(){
+    let project_id = $(this).closest('tr').attr('id');
+    console.log(project_id);
+
+        $.ajax({
+       url: "{!! route('loeDetails','') !!}/"+project_id,
+       type:"GET",
+       dataType:"JSON",
+       success:function(data){
+        console.log(data);
+        data.forEach(elem=>$('#modal-data').append('<tr>'+
+                      '<th scope="row">'+elem.location+'</th>'+
+                      '<td>'+elem.cost+'</td>'+
+                      '<td>'+elem.price+'</td>'+'</tr>'));
+     
+       }
+    });
+      $('#project_data').modal('show');
+        
+  });
 });
 
 

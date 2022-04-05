@@ -45,22 +45,88 @@ class LoeController extends Controller
         ->join('projects as p','pl.project_id','=','p.id')
         ->join('customers as c','p.customer_id','c.id')
         ->select(
-DB::raw('SUM(case when location in ("Netherlands","Germany","Switzerland","United Kingdom") then percentage ELSE 0 END) as on_percent'),
-DB::raw('SUM(case when location in ("Netherlands","Germany","Switzerland","United Kingdom") then cost ELSE 0 END) as on_cost'),
-DB::raw('SUM(case when location in ("Netherlands","Germany","Switzerland","United Kingdom") then price ELSE 0 END) as on_price'),
+DB::raw('SUM(case when location in ("Netherlands","Germany","Switzerland","United Kingdom","Russia","Belgium") then percentage ELSE 0 END) as on_percent'),
+DB::raw('SUM(case when location in ("Netherlands","Germany","Switzerland","United Kingdom","Russia","Belgium") then cost ELSE 0 END) as on_cost'),
+DB::raw('SUM(case when location in ("Netherlands","Germany","Switzerland","United Kingdom","Russia","Belgium") then price ELSE 0 END) as on_price'),
 DB::raw('SUM(case when location in ("Egypt","India") then percentage ELSE 0 END) as off_percentage'),
 DB::raw('SUM(case when location in ("Egypt","India") then price ELSE 0 END) as off_price'),
 DB::raw('SUM(case when location in ("Egypt","India") then cost ELSE 0 END) as off_cost'),
 
-DB::raw('SUM(case when location in ("Poland") then percentage ELSE 0 END) as near_percentage'),
-DB::raw('SUM(case when location in ("Poland") then price ELSE 0 END) as near_price'),
-DB::raw('SUM(case when location in ("poland") then cost ELSE 0 END) as near_cost'),
-'c.name','p.id', 'p.project_name','pl.main_phase','pl.quantity','plc.percentage', 'plc.location','plc.price','plc.cost','plc.seniority','pl.loe_per_quantity')
+DB::raw('SUM(case when location in ("Poland","Romania") then percentage ELSE 0 END) as near_percentage'),
+DB::raw('SUM(case when location in ("Poland","Romania") then price ELSE 0 END) as near_price'),
+DB::raw('SUM(case when location in ("poland","Romania") then cost ELSE 0 END) as near_cost'),
+'c.name','p.id','pl.id as plID', 'p.project_name','pl.main_phase','pl.quantity','plc.percentage as unit_percent', 'plc.location','plc.price as unit_price','plc.cost as unit_cost','plc.seniority','pl.loe_per_quantity')
         ->groupBy('plc.project_loe_id')
+        ->orderBy('p.id','DESC')
         ->get();
-   
 
-        return view('loe/list', compact('all'));
+
+//1574,1370
+        $check = DB::table('project_loe as pl')
+        ->join('project_loe_consultant as plc','pl.id','=','plc.project_loe_id')
+        ->join('projects as p','pl.project_id','=','p.id')
+        ->join('customers as c','p.customer_id','c.id')
+        ->select('pl.id','plc.id as plcID','pl.loe_per_quantity','plc.cost','plc.percentage','plc.price','plc.location','plc.name','plc.seniority')
+        
+        ->get();
+
+        $not_empty = [];
+
+        foreach($check as $key)
+        {
+            if(!empty($key->location) || !empty($key->seniority))
+            {
+                array_push($not_empty,$key);
+            }
+        }
+//         SELECT p.id,plc.id,plc.id, plc.location FROM project_loe as pl INNER JOIN project_loe_consultant as plc on pl.id = plc.project_loe_id INNER JOIN projects as p on p.id = pl.project_id 
+// where p.id = 1719
+        // $record =DB::table('project_loe as pl')
+        //                 ->join('project_loe_consultant as plc','pl.id','=','plc.project_loe_id')
+        //                 ->join('projects as p','pl.project_id','=','p.id')
+        //                 ->join('customers as c','p.customer_id','c.id')
+        //                 ->where('plc.name',$cKey->name)
+        //                 ->update(['plc.location'=>$nKey->location]);
+        
+
+       foreach($check as $cKey)
+        {
+             foreach($not_empty as $nKey)
+            {
+                if(empty($cKey->location) && $nKey->name == $cKey->name)
+                {
+                    $cKey->location = $nKey->location;
+                }
+                elseif (empty($cKey->seniority) && $nKey->name == $cKey->name) {
+                    // code...
+                    $cKey->seniority = $nKey->seniority;
+                }
+            }
+
+        }
+
+        foreach($check as $checkKey)
+        {
+            $records = DB::table('project_loe_consultant')
+            ->where('id',$checkKey->plcID)
+            ->update(['location'=>$checkKey->location,'seniority'=>$checkKey->seniority]);
+        }
+
+   
+        return view('loe/list', compact('all','check'));
+    }
+
+    public function getLoePerProject($project_id)
+    {
+        $data = DB::table('project_loe as pl')
+        ->join('project_loe_consultant as plc','pl.id','=','plc.project_loe_id')
+        ->join('projects as p','pl.project_id','=','p.id')
+        ->select('plc.location as location','plc.cost as cost','plc.price as price')
+        ->where('p.id',$project_id)
+        ->groupBy('plc.location')
+        ->get();
+
+        return $data;
     }
     public function listAllLoe()
     {
@@ -914,6 +980,8 @@ DB::raw('SUM(case when location in ("poland") then cost ELSE 0 END) as near_cost
 
         $result->result = 'success';
         $result->msg = 'Record created successfuly';
+
+
 
         return json_encode($result);
     }
