@@ -112,6 +112,7 @@
 
 
         <!-- Main table -->
+        <!-- Margin Added -->
         <div class="table-responsive">
           <table id="requestsTable" class="table table-striped table-hover table-bordered mytable" style="    overflow-x: auto;">
           <thead>
