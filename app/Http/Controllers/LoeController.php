@@ -286,7 +286,8 @@ DB::raw('SUM(case when plc.location IN ("poland","Romania") then ((pl.quantity*p
         ->get();
 
 
-//1574,1370
+//1574,1370,100
+        
         $check = DB::table('project_loe as pl')
         ->join('project_loe_consultant as plc','pl.id','=','plc.project_loe_id')
         ->join('projects as p','pl.project_id','=','p.id')
