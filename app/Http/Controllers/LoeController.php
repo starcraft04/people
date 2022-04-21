@@ -31,6 +31,224 @@ class LoeController extends Controller
         return view('loe/create_update', compact('project','customer','customers_list'));
     }
 
+
+ 
+
+
+
+
+public function buildList(Request $request)
+    {
+        $sumCost = [];
+        $sumPrice = [];
+        $margin =  [];
+        $output = "";
+        $all = DB::table('project_loe as pl')
+        ->join('project_loe_consultant as plc','pl.id','=','plc.project_loe_id')
+        ->join('projects as p','pl.project_id','=','p.id')
+        ->join('customers as c','p.customer_id','c.id')
+        ->select(
+        DB::raw('SUM(case when location in ("Netherlands","Germany","Switzerland","United Kingdom","Russia","Belgium") then percentage ELSE 0 END) as on_percent'),
+
+//on shore cost
+        DB::raw('SUM(case when plc.location IN ("Netherlands","Germany","Switzerland","United Kingdom","Russia","Belgium") then ((pl.quantity*plc.percentage*pl.loe_per_quantity*plc.cost)/100) ELSE 0 END)  as on_cost'),
+// on shore price
+        DB::raw('SUM(case when plc.location IN ("Netherlands","Germany","Switzerland","United Kingdom","Russia","Belgium") then ((pl.quantity*plc.percentage*pl.loe_per_quantity*plc.price)/100) ELSE 0 END)as on_price'),
+
+        DB::raw('SUM(case when location in ("Egypt","India") then percentage ELSE 0 END) as off_percentage'),
+//off shore cost
+        DB::raw('SUM(case when plc.location IN ("Egypt","India") then ((pl.quantity*plc.percentage*pl.loe_per_quantity*plc.price)/100) Else 0 END) as off_price'),
+//off shore price
+        DB::raw('SUM(case when plc.location IN ("Egypt","India") then ((pl.quantity*plc.percentage*pl.loe_per_quantity*plc.cost)/100) Else 0 END) as off_cost'),
+
+    DB::raw('SUM(case when location in ("Poland","Romania") then percentage ELSE 0 END) as near_percentage'),
+//near shore price
+    DB::raw('SUM(case when plc.location IN ("poland","Romania") then ((pl.quantity*plc.percentage*pl.loe_per_quantity*plc.price)/100) Else 0 END) as near_price'),
+//near shore cost
+    DB::raw('SUM(case when plc.location IN ("poland","Romania") then ((pl.quantity*plc.percentage*pl.loe_per_quantity*plc.cost)/100) Else 0 END) as near_cost'),
+        'c.name','p.id','pl.id as plID', 'p.project_name','pl.main_phase','pl.quantity','plc.percentage as unit_percent', 'plc.location','plc.price as unit_price','plc.cost as unit_cost','plc.seniority','pl.loe_per_quantity')
+        ->where('p.project_name','LIKE','%'.$request->search.'%')
+        ->where('pl.main_phase','LIKE','%'.$request->search_phase.'%')
+        ->groupBy('plc.project_loe_id')
+        ->orderBy('p.id','DESC')
+        ->get();
+
+
+        $check = DB::table('project_loe as pl')
+        ->join('project_loe_consultant as plc','pl.id','=','plc.project_loe_id')
+        ->join('projects as p','pl.project_id','=','p.id')
+        ->join('customers as c','p.customer_id','c.id')
+        ->select('pl.id','plc.id as plcID','pl.loe_per_quantity','pl.quantity as quantity','plc.cost','plc.percentage','plc.price','plc.location','plc.name','plc.seniority')
+        ->where('p.project_name','LIKE','%'.$request->search.'%')
+        ->where('pl.main_phase','LIKE','%'.$request->search_phase.'%')
+        ->get();
+
+        $not_empty = [];
+
+        foreach($check as $key)
+        {
+            if(!empty($key->location) || !empty($key->seniority))
+            {
+                array_push($not_empty,$key);
+            }
+        }
+
+        
+
+       foreach($check as $cKey)
+        {
+             foreach($not_empty as $nKey)
+            {
+                if(empty($cKey->location) && $nKey->name == $cKey->name)
+                {
+                    $cKey->location = $nKey->location;
+                }
+                elseif (empty($cKey->seniority) && $nKey->name == $cKey->name) {
+                    // code...
+                    $cKey->seniority = $nKey->seniority;
+                }
+            }
+
+        }
+
+
+        foreach($check as $sumVals)
+        {
+            if(isset($sumPrice[$sumVals->id]) && isset($sumCost[$sumVals->id]))
+                {
+                  
+                  $sumPrice[$sumVals->id] += round(((($sumVals->quantity*$sumVals->percentage*$sumVals->loe_per_quantity)/100)*$sumVals->price));
+                  
+                  $sumCost[$sumVals->id] += round(((($sumVals->quantity*$sumVals->percentage*$sumVals->loe_per_quantity)/100)*$sumVals->cost));
+
+                   if($sumCost[$sumVals->id] == 0)
+                  {
+                    $margin[$sumVals->id] = 0;
+                  }
+                  else{
+                    $margin[$sumVals->id] = round((100*($sumPrice[$sumVals->id] -$sumCost[$sumVals->id])/$sumCost[$sumVals->id]));
+                  }
+
+                }
+                else if(!isset($sumPrice[$sumVals->id]) && !isset($sumCost[$sumVals->id])){
+                  $sumPrice[$sumVals->id]=0;
+                  $sumCost[$sumVals->id]=0;
+                  $sumPrice[$sumVals->id] += round(((($sumVals->quantity*$sumVals->percentage*$sumVals->loe_per_quantity)/100)*$sumVals->price));
+                  
+                  $sumCost[$sumVals->id] += round(((($sumVals->quantity*$sumVals->percentage*$sumVals->loe_per_quantity)/100)*$sumVals->cost));
+                  
+                  if($sumCost[$sumVals->id] == 0)
+                  {
+                    $margin[$sumVals->id] = 0;
+                  }
+                  else{
+                    $margin[$sumVals->id] = round((100*($sumPrice[$sumVals->id] -$sumCost[$sumVals->id])/$sumCost[$sumVals->id]));
+                  }
+
+                }
+        }
+
+
+
+        foreach($check as $checkKey)
+        {
+            $records = DB::table('project_loe_consultant')
+            ->where('id',$checkKey->plcID)
+            ->update(['location'=>$checkKey->location,'seniority'=>$checkKey->seniority]);
+        }
+
+
+
+        foreach($all as $key)
+        {
+            $total = $key->unit_cost;
+            $total_off_shore_cost = 0;
+            $total_on_shore_cost = 0;
+            $total_near_shore_cost =0;
+            //echo $total;
+            
+            //off shore total cost and price with MD
+            $off_shore_MD = (($key->quantity * $key->off_percentage * $key->loe_per_quantity)/100);
+            $total_off_shore_cost += $off_shore_MD * $key->unit_cost;
+            $total_off_shore_price = $off_shore_MD * $key->off_price;
+
+            //on shore total cost and price with MD
+            $on_shore_MD = (($key->quantity * $key->on_percent * $key->loe_per_quantity)/100);
+            $total_on_shore_cost += $on_shore_MD * $key->unit_cost;
+            $total_on_shore_price =$on_shore_MD * $key->on_price;
+
+
+            //near shore total cost and price with MD
+            $near_shore_MD = (($key->quantity * $key->near_percentage * $key->loe_per_quantity)/100);
+            $total_near_shore_cost += $near_shore_MD * $key->unit_cost;
+            $total_near_shore_price = $near_shore_MD * $key->near_price;
+
+
+            $total_price = $total_off_shore_price+$total_on_shore_price+$total_near_shore_price;
+
+            $total_cost = $total_off_shore_cost+$total_on_shore_cost+$total_near_shore_cost;
+
+            $output.=
+            '<tr id ='.$key->id.'>
+             <td>'.$key->id.'</td>
+              <td>'.$key->plID.'</td>
+              <td>'.$key->name.'</td>
+             <td>'.$key->project_name.'</td>
+             <td>'.$key->main_phase.'</td>
+             <td>'.$key->quantity.'</td>
+             <td>'.$key->loe_per_quantity.'</td>
+             <td>'.round($key->off_percentage,1).'</td>
+             <td>'.round($off_shore_MD,2).'</td>
+             <td>'.round($key->off_cost,1).'</td>
+             <td>'.round($key->off_price,1).'</td>
+             <td>'.round($key->on_percent,1).'</td>
+             <td>'.round($on_shore_MD,2).'</td>
+             <td>'.round($key->on_cost,1).'</td>
+             <td>'.round($key->on_price,1).'</td>
+             <td>'.round($key->near_percentage,1).'</td>                          
+             <td>'.round($near_shore_MD,2).'</td>
+             <td>'.round($key->near_cost,1).'</td>
+             <td>'.round($key->near_price,1).'</td>
+             <td>'.round($key->quantity*$key->loe_per_quantity,1).'</td>';
+
+
+
+            foreach($margin as $id => $val)
+              {
+
+              if($id == $key->plID)
+              {
+              
+                $output.='<td>'.$val.'</td>';
+               
+              }
+              }
+              
+             foreach($sumCost as $id => $val)
+              {
+                if($id == $key->plID)
+              {
+                $output.='<td>'.$val.'</td>';
+              }
+             
+              }
+             foreach($sumPrice as $id => $val)
+              {
+                if($id == $key->plID)
+              {
+                $output.='<td>'.$val.'</td>';
+              }
+              }
+             
+              
+             
+             
+            $output.='<tr>';
+        }   
+
+        return $output;
+    }
+    
     public function list()
     {
         $on_shore=[];
@@ -38,23 +256,30 @@ class LoeController extends Controller
         $near_shore=[];
 
         
-        
 
-        $all = DB::table('project_loe as pl')
+$all = DB::table('project_loe as pl')
         ->join('project_loe_consultant as plc','pl.id','=','plc.project_loe_id')
         ->join('projects as p','pl.project_id','=','p.id')
         ->join('customers as c','p.customer_id','c.id')
         ->select(
 DB::raw('SUM(case when location in ("Netherlands","Germany","Switzerland","United Kingdom","Russia","Belgium") then percentage ELSE 0 END) as on_percent'),
-DB::raw('SUM(case when location in ("Netherlands","Germany","Switzerland","United Kingdom","Russia","Belgium") then cost ELSE 0 END) as on_cost'),
-DB::raw('SUM(case when location in ("Netherlands","Germany","Switzerland","United Kingdom","Russia","Belgium") then price ELSE 0 END) as on_price'),
+
+//on shore cost
+DB::raw('SUM(case when plc.location IN ("Netherlands","Germany","Switzerland","United Kingdom","Russia","Belgium") then ((pl.quantity*plc.percentage*pl.loe_per_quantity*plc.cost)/100) ELSE 0 END)  as on_cost'),
+// on shore price
+DB::raw('SUM(case when plc.location IN ("Netherlands","Germany","Switzerland","United Kingdom","Russia","Belgium") then ((pl.quantity*plc.percentage*pl.loe_per_quantity*plc.price)/100) ELSE 0 END)as on_price'),
+
 DB::raw('SUM(case when location in ("Egypt","India") then percentage ELSE 0 END) as off_percentage'),
-DB::raw('SUM(case when location in ("Egypt","India") then price ELSE 0 END) as off_price'),
-DB::raw('SUM(case when location in ("Egypt","India") then cost ELSE 0 END) as off_cost'),
+//off shore cost
+DB::raw('SUM(case when plc.location IN ("Egypt","India") then ((pl.quantity*plc.percentage*pl.loe_per_quantity*plc.price)/100) Else 0 END) as off_price'),
+//off shore price
+DB::raw('SUM(case when plc.location IN ("Egypt","India") then ((pl.quantity*plc.percentage*pl.loe_per_quantity*plc.cost)/100) Else 0 END) as off_cost'),
 
 DB::raw('SUM(case when location in ("Poland","Romania") then percentage ELSE 0 END) as near_percentage'),
-DB::raw('SUM(case when location in ("Poland","Romania") then price ELSE 0 END) as near_price'),
-DB::raw('SUM(case when location in ("poland","Romania") then cost ELSE 0 END) as near_cost'),
+//near shore price
+DB::raw('SUM(case when plc.location IN ("poland","Romania") then ((pl.quantity*plc.percentage*pl.loe_per_quantity*plc.price)/100) Else 0 END) as near_price'),
+//near shore cost
+DB::raw('SUM(case when plc.location IN ("poland","Romania") then ((pl.quantity*plc.percentage*pl.loe_per_quantity*plc.cost)/100) Else 0 END) as near_cost'),
 'c.name','p.id','pl.id as plID', 'p.project_name','pl.main_phase','pl.quantity','plc.percentage as unit_percent', 'plc.location','plc.price as unit_price','plc.cost as unit_cost','plc.seniority','pl.loe_per_quantity')
         ->groupBy('plc.project_loe_id')
         ->orderBy('p.id','DESC')
@@ -66,8 +291,7 @@ DB::raw('SUM(case when location in ("poland","Romania") then cost ELSE 0 END) as
         ->join('project_loe_consultant as plc','pl.id','=','plc.project_loe_id')
         ->join('projects as p','pl.project_id','=','p.id')
         ->join('customers as c','p.customer_id','c.id')
-        ->select('pl.id','plc.id as plcID','pl.loe_per_quantity','plc.cost','plc.percentage','plc.price','plc.location','plc.name','plc.seniority')
-        
+        ->select('pl.id','plc.id as plcID','pl.loe_per_quantity','pl.quantity','plc.cost','plc.percentage','plc.price','plc.location','plc.name','plc.seniority')
         ->get();
 
         $not_empty = [];
@@ -128,66 +352,92 @@ DB::raw('SUM(case when location in ("poland","Romania") then cost ELSE 0 END) as
 
         return $data;
     }
+
+
+
+
+
+
+// LOE by Totals
+
     public function listAllLoe()
     {
-        // $data = DB::table('project_loe as pl')
-        // ->Join('projects as p','pl.project_id','=','p.id')
-        // ->Join('customers as c','p.customer_id','=','c.id')
-        // ->Join('users as u','pl.user_id','=','u.id' )
-        // ->join('project_loe_consultant as plc','pl.id','=','plc.project_loe_id')
-        // ->select('u.name as user_name','c.name as customer_name','p.project_name as project_name','pl.main_phase as main_phase','pl.secondary_phase as secondary_phase','pl.domain as domain','pl.description as description','pl.quantity as quantity','pl.loe_per_quantity as LOE_PER_Qunatity','plc.location as c_location','plc.seniority as c_seniority','plc.cost as c_cost','plc.price as c_price','plc.percentage as c_percentage','plc.name as c_name')
-        // ->groupBy('pl.main_phase')
-        // ->get();
 
+// select p.id, p.project_name,
+// (select SUM(quantity) from project_loe where project_id = p.id group by project_id) as quantity,
+// (select SUM(loe_per_quantity) from project_loe where project_id = p.id group by project_id) as loe_per_quantity,
+// SUM(CASE when plc.location in ("Egypt","India") then ((pl.quantity*plc.percentage*pl.loe_per_quantity)/100) ELSE 0 END)  as off_MD,
+// SUM(CASE when plc.location in ("Egypt","India") then ((pl.quantity*plc.percentage*pl.loe_per_quantity*plc.cost)/100) ELSE 0 END)  as off_cost,
+// SUM(CASE when plc.location in ("Egypt","India") then ((pl.quantity*plc.percentage*pl.loe_per_quantity*plc.price)/100) ELSE 0 END)  as off_price,
+// SUM(CASE when plc.location in ("Netherlands","Germany","Switzerland","United Kingdom","Russia","Belgium") then ((pl.quantity*plc.percentage*pl.loe_per_quantity)/100) ELSE 0 END)  as on_MD,
+// SUM(CASE when plc.location in ("Netherlands","Germany","Switzerland","United Kingdom","Russia","Belgium") then ((pl.quantity*plc.percentage*pl.loe_per_quantity*plc.cost)/100) ELSE 0 END)  as on_cost,
+// SUM(CASE when plc.location in ("Netherlands","Germany","Switzerland","United Kingdom","Russia","Belgium") then ((pl.quantity*plc.percentage*pl.loe_per_quantity*plc.price)/100) ELSE 0 END)  as on_price,
+// SUM(CASE when plc.location in ("poland","Romania") then ((pl.quantity*plc.percentage*pl.loe_per_quantity)/100) ELSE 0 END)  as near_MD,
+// SUM(CASE when plc.location in ("poland","Romania") then ((pl.quantity*plc.percentage*pl.loe_per_quantity*plc.cost)/100) ELSE 0 END)  as near_cost,
+// SUM(CASE when plc.location in ("poland","Romania") then ((pl.quantity*plc.percentage*pl.loe_per_quantity*plc.price)/100) ELSE 0 END)  as near_price
+// from project_loe as pl INNER JOIN project_loe_consultant as plc on pl.id = plc.project_loe_id INNER JOIN projects as p on pl.project_id = p.id
+// WHERE p.id in (1,1808,1807,1760)
+// group by p.id
 
-
-
-
-        
-
-        // foreach($data as $key => $value){
-
-        // $quantity = $value->quantity;
-        // $loe_per_quantity = $value->LOE_PER_Qunatity;
-        // $total_loe = $quantity*$loe_per_quantity;
-        // $cost = $value->c_cost;
-        // $price = $value->c_price;
-
-        // $md = ($total_loe*$value->c_percentage)/100;
-
-        //     $value->total_loe = $total_loe;
-        //     $value->md = $md;
-
-        // $total_cost = $md*$cost;
-        // $total_price = $md*$price;
-        // if($total_cost == 0){
-        //     $margin = 0;
-        // }
-        // else{
-        //     $margin = 100*($total_price-$total_cost)/$total_cost;
-        // }
-        
-
-        // $value->total_cost = $total_cost;
-        // $value->total_price = $total_price;
-
-        // $value->margin = $margin;
-
-        // }
-
-        // $LOE = Datatables::of($data)->make(true);
-
-        // return $LOE;
-
-        $on_shore = DB::table('project_loe as pl')
+        $all = DB::table('project_loe as pl')
         ->join('project_loe_consultant as plc','pl.id','=','plc.project_loe_id')
         ->join('projects as p','pl.project_id','=','p.id')
-        ->select('pl.user_id','p.id', 'p.project_name','pl.main_phase','pl.quantity','plc.percentage', 'plc.location','plc.price','plc.cost','plc.seniority')
-        ->whereIn('plc.location',['Egypt','India'])
+        ->join('customers as c','p.customer_id','c.id')
+        ->select(
+            'p.id', 'p.project_name',
+            DB::raw('(select SUM(quantity) from project_loe where project_id = p.id group by project_id) as quantity'),
+            DB::raw('(select SUM(loe_per_quantity) from project_loe where project_id = p.id group by project_id) as loe_per_quantity'),
+            DB::raw('SUM(CASE when plc.location in ("Egypt","India") then ((pl.quantity*plc.percentage*pl.loe_per_quantity)/100) ELSE 0 END)  as off_MD'),
+            DB::raw('SUM(CASE when plc.location in ("Egypt","India") then ((pl.quantity*plc.percentage*pl.loe_per_quantity*plc.cost)/100) ELSE 0 END)  as off_cost'),
+            DB::raw('SUM(CASE when plc.location in ("Egypt","India") then ((pl.quantity*plc.percentage*pl.loe_per_quantity*plc.price)/100) ELSE 0 END)  as off_price'),
+            DB::raw('SUM(CASE when plc.location in ("Netherlands","Germany","Switzerland","United Kingdom","Russia","Belgium") then ((pl.quantity*plc.percentage*pl.loe_per_quantity)/100) ELSE 0 END)  as on_MD'),
+            DB::raw('SUM(CASE when plc.location in ("Netherlands","Germany","Switzerland","United Kingdom","Russia","Belgium") then ((pl.quantity*plc.percentage*pl.loe_per_quantity*plc.cost)/100) ELSE 0 END)  as on_cost'),
+            DB::raw('SUM(CASE when plc.location in ("Netherlands","Germany","Switzerland","United Kingdom","Russia","Belgium") then ((pl.quantity*plc.percentage*pl.loe_per_quantity*plc.price)/100) ELSE 0 END)  as on_price'),
+            DB::raw('SUM(CASE when plc.location in ("poland","Romania") then ((pl.quantity*plc.percentage*pl.loe_per_quantity)/100) ELSE 0 END)  as near_MD'),
+            DB::raw('SUM(CASE when plc.location in ("poland","Romania") then ((pl.quantity*plc.percentage*pl.loe_per_quantity*plc.cost)/100) ELSE 0 END)  as near_cost'),
+            DB::raw('SUM(CASE when plc.location in ("poland","Romania") then ((pl.quantity*plc.percentage*pl.loe_per_quantity*plc.price)/100) ELSE 0 END)  as near_price',)
+        )
+        ->groupBy('p.id')
+        ->orderBy('p.id','DESC')
         ->get();
+        $output='';
 
-        return $on_shore;
-        
+        foreach($all as $key)
+        {
+            $output.=
+            '<tr id ='.$key->id.'>
+             <td>'.$key->id.'</td>
+              <td>--</td>
+              <td>--</td>
+             <td>'.$key->project_name.'</td>
+             <td>--</td>
+             <td>'.$key->quantity.'</td>
+             <td>'.$key->loe_per_quantity.'</td>
+             <td>--</td>
+             <td>'.round($key->off_MD,1).'</td>
+             <td>'.round($key->off_cost,1).'</td>
+             <td>'.round($key->off_price,1).'</td>
+             <td>--</td>
+             <td>'.round($key->on_MD,1).'</td>
+             <td>'.round($key->on_cost,1).'</td>
+             <td>'.round($key->on_price,1).'</td>
+             <td>--</td>                          
+             <td>'.round($key->near_MD,1).'</td>
+             <td>'.round($key->near_cost,1).'</td>
+             <td>'.round($key->near_price,1).'</td>
+             <td>'.round($key->loe_per_quantity,1).'</td>
+             <td>--</td>
+             <td>'.round(($key->off_cost)+($key->on_cost)+($key->near_cost),1).'</td>
+             <td>'.round(($key->off_price)+($key->on_price)+($key->near_price),1).'</td>
+             <tr>';
+        }
+
+
+
+
+
+        return $output;
+ 
     }
 
 

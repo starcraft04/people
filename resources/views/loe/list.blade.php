@@ -66,50 +66,29 @@
        
       <!-- Window title -->
       <div class="x_title">
-        <h2>List</small></h2>
-        
-        <ul class="nav navbar-right panel_toolbox">
-          <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
-        </ul>
+        <div class="col-xs-3">
+            <label for="manager" class="control-label">Search by Project Name</label>
+              <input type="text" name="search" id = "search" class = "form-control">
+          </div>
+          <div class="col-xs-3">
+            <label for="manager" class="control-label">Search by Phase</label>
+              <input type="text" name="search" id = "search_phase" class = "form-control">
+          </div>
+          <div class="form-group row">
+            <div class="col-xs-2">
+            <label for="closed" class="control-label">Totals</label>
+            <input name="closed" type="checkbox" id="closed" class="form-group js-switch-small" checked /> 
+          </div>
+          </div>
         <div class="clearfix"></div>
+
       </div>
       <!-- Window title -->
       
-       <!-- Modal Assign User to project Start-->
-      <div class="modal fade" id="project_data" role="dialog" aria- 
-            labelledby="assign_user_modalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="demoModalLabel">Project Details</h5>
-                <button type="button" id=close-btn class="close" data-dismiss="modal" aria- 
-                                label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" >
-              <table class="table table-hover">
-                  <thead>
-                    <tr>
-                      <th scope="col">Location</th>
-                      <th scope="col">Cost</th>
-                      <th scope="col">Price</th>
-                    </tr>
-                  </thead>
-                  <tbody id="modal-data">
-                  </tbody>
-                </table>
-
-                    
-            </div>
-
-            <div class="modal-footer">
-                
-            </div>
-          </div>
-        </div>
-      </div>
-
+      
+  <!-- SEARCH FIELD -->
+          
+      <!-- END -->
 
         <!-- Main table -->
         <!-- Margin Added -->
@@ -121,7 +100,7 @@
                   <th colspan="4">Off shore</th>
                   <th colspan="4">On shore</th>
                   <th colspan="4">Near shore</th>
-                  <th colspan="3">Totals</th>
+                  <th colspan="4">Totals</th>
 
               </tr>
               <tr>
@@ -134,9 +113,9 @@
                 <th data-field="pahse" style="width:10px;">Quantity</th>
                 <th data-field="pahse" style="width:10px;">Loe per quantity</th>
                 <th data-field="percentage" style="width:10px;">%</th>
-                <th data-field="md" style="width:10px;">MD</th>
-                <th data-field="cost" >Cost</th>
-                <th data-field="price" >Price</th>
+                <th class="off_md" data-field="md" style="width:10px;">MD</th>
+                <th class="off_cost" data-field="cost" >Cost</th>
+                <th class="off_price" data-field="price" >Price</th>
                 <th data-field="percentage" style="width:10px;">%</th>
                 <th data-field="md" style="width:10px;">MD</th>
                 <th data-field="cost" >Cost</th>
@@ -145,13 +124,14 @@
                 <th data-field="md" style="width:10px;">MD</th>
                 <th data-field="cost" >Cost</th>
                 <th data-field="price" >Price</th>
-
+                <th data-field="total loe" style="width:10px;">Total LOE</th>
                 <th data-field="margin" style="width:10px;">Margin</th>
                 <th data-field="total cost" >Total Cost</th>
                 <th data-field="total price" >Total Price</th>
               </tr>
           </thead>
-          <tbody>
+          
+          <tbody class = "alldata">
             @php
             $sumCost = [];
             $sumPrice = [];
@@ -160,36 +140,42 @@
             @foreach($check as $cKey)
 
              @php 
-
                 if(isset($sumPrice[$cKey->id]) && isset($sumCost[$cKey->id]))
                 {
+                  $sum= ((($cKey->quantity*$cKey->percentage*$cKey->loe_per_quantity)/100)*$cKey->price);
+                  $sumPrice[$cKey->id] += round($sum);
+
                   
-                  $sumPrice[$cKey->id] += round(((($cKey->percentage*$cKey->loe_per_quantity)/100)*$cKey->price));
+                  $cost=((($cKey->quantity*$cKey->percentage*$cKey->loe_per_quantity)/100)*$cKey->cost);
                   
-                  $sumCost[$cKey->id] += round(((($cKey->percentage*$cKey->loe_per_quantity)/100)*$cKey->cost));
+                  $sumCost[$cKey->id] += round($cost);
 
                    if($sumCost[$cKey->id] == 0)
                   {
                     $margin[$cKey->id] = 0;
                   }
                   else{
-                    $margin[$cKey->id] = round((100*($sumPrice[$cKey->id] -$sumCost[$cKey->id])/$sumCost[$cKey->id]));
+                    $marginTotal = (100*($sumPrice[$cKey->id] -$sumCost[$cKey->id])/$sumCost[$cKey->id]);
+                    $margin[$cKey->id] = round($marginTotal);
                   }
 
                 }
                 else if(!isset($sumPrice[$cKey->id]) && !isset($sumCost[$cKey->id])){
                   $sumPrice[$cKey->id]=0;
                   $sumCost[$cKey->id]=0;
-                  $sumPrice[$cKey->id] += round(((($cKey->percentage*$cKey->loe_per_quantity)/100)*$cKey->price));
-                  
-                  $sumCost[$cKey->id] += round(((($cKey->percentage*$cKey->loe_per_quantity)/100)*$cKey->cost));
+                  $one_price =((($cKey->quantity*$cKey->percentage*$cKey->loe_per_quantity)/100)*$cKey->price);
+
+                  $sumPrice[$cKey->id] += round($one_price);
+                  $one_cost = ((($cKey->quantity*$cKey->percentage*$cKey->loe_per_quantity)/100)*$cKey->cost);
+                  $sumCost[$cKey->id] += round($one_cost);
                   
                   if($sumCost[$cKey->id] == 0)
                   {
                     $margin[$cKey->id] = 0;
                   }
                   else{
-                    $margin[$cKey->id] = round((100*($sumPrice[$cKey->id] -$sumCost[$cKey->id])/$sumCost[$cKey->id]));
+                    $margin_total = (100*($sumPrice[$cKey->id] -$sumCost[$cKey->id])/$sumCost[$cKey->id]);
+                    $margin[$cKey->id] = round($margin_total);
                   }
 
                 }
@@ -204,22 +190,25 @@
             
 
             $total = $key->unit_cost;
+            $total_off_shore_cost = 0;
+            $total_on_shore_cost = 0;
+            $total_near_shore_cost =0;
             //echo $total;
             
             //off shore total cost and price with MD
-            $off_shore_MD = (($key->off_percentage * $key->loe_per_quantity)/100);
-            $total_off_shore_cost = $off_shore_MD * $key->off_cost;
+            $off_shore_MD = (($key->quantity*$key->off_percentage * $key->loe_per_quantity)/100);
+            $total_off_shore_cost += $off_shore_MD * $key->unit_cost;
             $total_off_shore_price = $off_shore_MD * $key->off_price;
 
             //on shore total cost and price with MD
-            $on_shore_MD = (($key->on_percent * $key->loe_per_quantity)/100);
-            $total_on_shore_cost = $on_shore_MD * $key->on_cost;
+            $on_shore_MD = (($key->quantity*$key->on_percent * $key->loe_per_quantity)/100);
+            $total_on_shore_cost += $on_shore_MD * $key->unit_cost;
             $total_on_shore_price =$on_shore_MD * $key->on_price;
 
 
             //near shore total cost and price with MD
-            $near_shore_MD = (($key->near_percentage * $key->loe_per_quantity)/100);
-            $total_near_shore_cost = $near_shore_MD * $key->near_cost;
+            $near_shore_MD = (($key->quantity*$key->near_percentage * $key->loe_per_quantity)/100);
+            $total_near_shore_cost += $near_shore_MD * $key->unit_cost;
             $total_near_shore_price = $near_shore_MD * $key->near_price;
 
 
@@ -243,18 +232,26 @@
              <td>{{$key->main_phase}}</td>
              <td>{{$key->quantity}}</td>
              <td>{{$key->loe_per_quantity}}</td>
-             <td>{{$key->off_percentage}}</td>             
-             <td>{{round($off_shore_MD,2)}}</td>
-             <td>{{round($total_off_shore_cost,1)}}</td>
-             <td>{{round($total_off_shore_price,1)}}</td>
-             <td>{{$key->on_percent}}</td>
+             <td>{{round($key->off_percentage,1)}}</td>             
+             <td>{{round($off_shore_MD,1)}}</td>
+             <td>{{round($key->off_cost)}}</td>
+             <!-- <td>{{$key->off_cost}}</td> -->
+             <td>{{round($key->off_price)}}</td>
+<!--              <td>{{$key->off_price}}</td> -->
+             <td>{{round($key->on_percent,1)}}</td>
              <td>{{round($on_shore_MD,2)}}</td>
-             <td>{{round($total_on_shore_cost,1)}}</td>
-             <td>{{round($total_on_shore_price,1)}}</td>             
-             <td>{{$key->near_percentage}}</td>                          
-             <td>{{round($near_shore_MD,2)}}</td>
-             <td>{{round($total_near_shore_cost,1)}}</td>
-             <td>{{round($total_near_shore_price,1)}}</td>
+             <td>{{round($key->on_cost)}}</td>
+             <!-- <td>{{$key->on_cost}}</td> -->
+             <td>{{round($key->on_price)}}</td>
+             <!-- <td>{{$key->on_price}}</td>              -->
+             <td>{{round($key->near_percentage,1)}}</td>                          
+             <td>{{round($near_shore_MD,1)}}</td>
+             <td>{{round($key->near_cost)}}</td>
+             <!-- <td>{{$key->near_cost}}</td> -->
+             <td>{{round($key->near_price)}}</td>
+             <td>{{round($key->quantity*$key->loe_per_quantity,1)}}</td>
+             
+             <!-- <td>{{$key->near_price}}</td> -->
              @foreach($margin as $id => $val)
               @php
               if($id == $key->plID)
@@ -294,6 +291,31 @@
            </tr>
            @endforeach
           </tbody>
+          <tbody id="content"></tbody>
+         <!--  <tfoot>
+            <td>Total:</td>
+            <td class="result"></td>
+            <td class="result"></td>
+            <td class="result"></td>
+            <td class="result"></td>
+            <td class="result"></td>
+            <td class="result_quantity"></td>
+            <td class="result_loe_per_quantity"></td>
+            <td class="result"></td>
+            <td class="result_total_md"></td>
+            <td class="result_off_cost"></td>
+            <td class="result_off_price"></td>
+            <td class="result"></td>
+            <td class="result_total_md_on_shore"></td>
+            <td class="result_on_cost"></td>
+            <td class="result_on_price"></td>
+            <td class="result"></td>
+            <td class="result_total_md_near"></td>
+            <td class="result_near_cost"></td>
+            <td class="result_near_price"></td>
+            <td class="result"></td>
+            <td class="result"></td>
+          </tfoot> -->
         </table>
         </div>
         <!-- Main table -->
@@ -335,16 +357,121 @@
    // });
 
 
-$.ajax({
-   url: "{!! route('listAllLoe') !!}",
-   type:"GET",
-   dataType:"JSON",
-   success:function(data){
-    console.log(data);
-   }
-});
+
+
 
 $(document).ready(function(){
+
+  if (Cookies.get('checkbox_closed') != null) {
+      if (Cookies.get('checkbox_closed') == 0) {
+        checkbox_closed = 0;
+
+        $('#content').hide();
+        $('.alldata').show();
+
+        $('#closed').click();
+      } else {
+        checkbox_closed = 1;
+        $('.alldata').hide();
+      $('#content').show();
+      }
+    }
+$('#closed').on('change', function() {
+      if ($(this).is(':checked')) {
+        Cookies.set('checkbox_closed', 1);
+        checkbox_closed = 1;
+         $.ajax({
+      url: "{!! route('listAllLoe') !!}",
+     type:"GET",
+     error: function (request, error) {
+
+        console.log(arguments);
+    },
+     success:function(data){
+        console.log(data);
+        $('#content').html(data);
+        $('.alldata').hide();
+      $('#content').show();
+     }
+
+    }); 
+      } else {
+        Cookies.set('checkbox_closed', 0);
+        checkbox_closed = 0;
+        $('#content').hide();
+        $('.alldata').show();
+
+      }
+      console.log(checkbox_closed);
+      //activitiesTable.ajax.reload();
+    });
+
+  $('#search').on('keyup',function(){
+    var value = $(this).val(); //search
+    var phase = $('#search_phase').val(); //phase
+    console.log("phase");
+    console.log(phase);
+
+    if(value)
+    {
+      $('.alldata').hide();
+      $('#content').show();
+    }
+    else{
+
+      $('.alldata').show();
+      $('#content').hide();
+    }
+
+    $.ajax({
+      url: "{!! route('buildList') !!}",
+     type:"GET",
+     data:{'search':value,'search_phase':phase},
+     error: function (request, error) {
+
+        console.log(arguments);
+    },
+     success:function(data){
+      console.log("sss");
+        console.log(data);
+        $('#content').html(data);
+     }
+
+    });
+  })
+
+  $('#search_phase').on('keyup',function(){
+    var phase = $(this).val();
+    var value = $('#search').val();
+    console.log(value);
+
+    if(value)
+    {
+      $('.alldata').hide();
+      $('#content').show();
+    }
+    else{
+
+      $('.alldata').show();
+      $('#content').hide();
+    }
+
+    $.ajax({
+      url: "{!! route('buildList') !!}",
+     type:"GET",
+     data:{'search':value,'search_phase':phase},
+     error: function (request, error) {
+
+        console.log(arguments);
+    },
+     success:function(data){
+      console.log(value);
+        console.log(data);
+        $('#content').html(data);
+     }
+
+    });
+  })
 
   $(document).on('click','#requestsTable td' , function(){
     let project_id = $(this).closest('tr').attr('id');

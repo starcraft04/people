@@ -249,9 +249,14 @@ Route::get('getUserOnProjectForAssign', ['uses' => 'ToolsController@getUserOnPro
 
 
     Route::get('AllLOE', ['uses' => 'LoeController@list', 'as' => 'AllLOE', 'middleware' => ['permission:projectLoe-view']]);
+    
+    Route::get('buildList', ['uses' => 'LoeController@buildList', 'as' => 'buildList', 'middleware' => ['permission:projectLoe-view']]);
+
+    Route::get('loeDetails/{id}', ['uses' => 'LoeController@getLoePerProject', 'as' => 'loeDetails', 'middleware' => ['permission:projectLoe-view']]);
 
     
     Route::get('listAllLoe', ['uses' => 'LoeController@listAllLoe', 'as' => 'listAllLoe', 'middleware' => ['permission:projectLoe-view']]);
+
 
 
 
