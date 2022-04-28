@@ -296,7 +296,7 @@
            @endforeach
           </tbody>
           <tbody id="content"></tbody>
-          <tfoot>
+          <tfoot id="footer_content" style="display:none;">
             <tr>
               <th id="total" colspan="19">Grand Totals :</th>
               <td id="footer_total_loe"></td>
@@ -380,7 +380,11 @@ $(document).ready(function(){
         document.getElementById('footer_total_margin').innerHTML = sum_margin;
         document.getElementById('footer_total_price').innerHTML = sum_total_price;
         document.getElementById('footer_total_cost').innerHTML = sum_total_cost;
+
+        $('#footer_content').show();
   }
+
+
 
   if (Cookies.get('checkbox_closed') != null) {
       if (Cookies.get('checkbox_closed') == 0) {
@@ -441,6 +445,8 @@ $('#closed').on('change', function() {
 
       $('.alldata').show();
       $('#content').hide();
+      document.getElementById("footer_content").style.display="none";
+      
     }
 
     $.ajax({
@@ -477,6 +483,7 @@ $('#search_customer').on('keyup',function(){
 
       $('.alldata').show();
       $('#content').hide();
+      document.getElementById("footer_content").style.display="none";
     }
 
     $.ajax({
@@ -511,6 +518,7 @@ $('#search_customer').on('keyup',function(){
 
       $('.alldata').show();
       $('#content').hide();
+      document.getElementById("footer_content").style.display="none";
     }
 
     $.ajax({
