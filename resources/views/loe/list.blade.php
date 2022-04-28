@@ -296,7 +296,7 @@
            @endforeach
           </tbody>
           <tbody id="content"></tbody>
-          <tfoot id="footer_content" style="display:none;">
+          <tfoot id="footer_content">
             <tr>
               <th id="total" colspan="19">Grand Totals :</th>
               <td id="footer_total_loe"></td>
@@ -352,7 +352,7 @@
 $(document).ready(function(){
 
 
-
+  $('#footer_content').hide();
   function grand_total_calculations()
   {
     var sum_total_cost=0;
@@ -424,6 +424,7 @@ $('#closed').on('change', function() {
         $('#content').hide();
         $('.alldata').show();
 
+
       }
       console.log(checkbox_closed);
       //activitiesTable.ajax.reload();
@@ -440,14 +441,6 @@ $('#closed').on('change', function() {
     {
       $('.alldata').hide();
       $('#content').show();
-    }
-    else{
-
-      $('.alldata').show();
-      $('#content').hide();
-      document.getElementById("footer_content").style.display="none";
-      
-    }
 
     $.ajax({
       url: "{!! route('buildList') !!}",
@@ -464,6 +457,51 @@ $('#closed').on('change', function() {
      }
 
     });
+    }
+    else{
+      if(checkbox_closed == 1)
+      {
+        $.ajax({
+      url: "{!! route('listAllLoe') !!}",
+     type:"GET",
+     error: function (request, error) {
+
+        console.log(arguments);
+    },
+     success:function(data){
+        $('#content').html(data);
+        $('.alldata').hide();
+      $('#content').show();
+     }
+
+    });
+      }
+      else{
+
+      $('.alldata').show();
+      $('#content').hide();
+      $('tfoot').hide();
+
+    $.ajax({
+      url: "{!! route('buildList') !!}",
+     type:"GET",
+     data:{'search':value,'search_phase':phase},
+     error: function (request, error) {
+
+        console.log(arguments);
+    },
+     success:function(data){
+      console.log("sss");
+        $('#content').html(data);
+        grand_total_calculations();
+     }
+
+    });
+      }
+
+      
+    }
+
   })
 
   
@@ -478,15 +516,7 @@ $('#search_customer').on('keyup',function(){
     {
       $('.alldata').hide();
       $('#content').show();
-    }
-    else{
-
-      $('.alldata').show();
-      $('#content').hide();
-      document.getElementById("footer_content").style.display="none";
-    }
-
-    $.ajax({
+      $.ajax({
       url: "{!! route('buildList') !!}",
      type:"GET",
      data:{'search_customer':customer,'search':value,'search_phase':phase},
@@ -503,6 +533,37 @@ $('#search_customer').on('keyup',function(){
      }
 
     });
+    }
+    else{
+      if(checkbox_closed == 1)
+      {
+        $.ajax({
+      url: "{!! route('listAllLoe') !!}",
+     type:"GET",
+     error: function (request, error) {
+
+        console.log(arguments);
+    },
+     success:function(data){
+        $('#content').html(data);
+        $('.alldata').hide();
+      $('#content').show();
+     }
+
+    });
+      }
+      else{
+        
+      $('.alldata').show();
+      $('#content').hide();
+      $('tfoot').hide();
+
+      
+      }
+
+      
+    }
+    
   })
   $('#search_phase').on('keyup',function(){
     var phase = $(this).val();
@@ -513,15 +574,8 @@ $('#search_customer').on('keyup',function(){
     {
       $('.alldata').hide();
       $('#content').show();
-    }
-    else{
 
-      $('.alldata').show();
-      $('#content').hide();
-      document.getElementById("footer_content").style.display="none";
-    }
-
-    $.ajax({
+      $.ajax({
       url: "{!! route('buildList') !!}",
      type:"GET",
      data:{'search':value,'search_phase':phase},
@@ -536,6 +590,53 @@ $('#search_customer').on('keyup',function(){
      }
 
     });
+    }
+    else{
+      if(checkbox_closed == 1)
+      {
+        $.ajax({
+      url: "{!! route('listAllLoe') !!}",
+     type:"GET",
+     error: function (request, error) {
+
+        console.log(arguments);
+    },
+     success:function(data){
+        $('#content').html(data);
+        $('.alldata').hide();
+      $('#content').show();
+     }
+
+    });
+      }
+      else{
+        
+      $('.alldata').show();
+      $('#content').hide();
+      $('tfoot').hide();
+
+
+       $.ajax({
+      url: "{!! route('buildList') !!}",
+     type:"GET",
+     data:{'search':value,'search_phase':phase},
+     error: function (request, error) {
+
+        console.log(arguments);
+    },
+     success:function(data){
+      
+        $('#content').html(data);
+        grand_total_calculations();
+     }
+
+    });
+      }
+
+      
+    }
+
+   
   })
 
   $(document).on('click','#requestsTable td' , function(){
