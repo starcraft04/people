@@ -69,6 +69,7 @@ public function buildList(Request $request)
         'c.name','p.id','pl.id as plID', 'p.project_name','pl.main_phase','pl.quantity','plc.percentage as unit_percent', 'plc.location','plc.price as unit_price','plc.cost as unit_cost','plc.seniority','pl.loe_per_quantity')
         ->where('p.project_name','LIKE','%'.$request->search.'%')
         ->where('pl.main_phase','LIKE','%'.$request->search_phase.'%')
+        ->where('c.name','LIKE','%'.$request->search_customer.'%')
         ->groupBy('plc.project_loe_id')
         ->orderBy('p.id','DESC')
         ->get();
@@ -209,7 +210,7 @@ public function buildList(Request $request)
              <td>'.round($near_shore_MD,2).'</td>
              <td>'.round($key->near_cost,1).'</td>
              <td>'.round($key->near_price,1).'</td>
-             <td>'.round($key->quantity*$key->loe_per_quantity,1).'</td>';
+             <td id="total_loe">'.round($key->quantity*$key->loe_per_quantity,1).'</td>';
 
 
 
@@ -219,7 +220,7 @@ public function buildList(Request $request)
               if($id == $key->plID)
               {
               
-                $output.='<td>'.$val.'</td>';
+                $output.='<td id="margin">'.$val.'</td>';
                
               }
               }
@@ -228,7 +229,7 @@ public function buildList(Request $request)
               {
                 if($id == $key->plID)
               {
-                $output.='<td>'.$val.'</td>';
+                $output.='<td id="total_cost">'.$val.'</td>';
               }
              
               }
@@ -236,15 +237,21 @@ public function buildList(Request $request)
               {
                 if($id == $key->plID)
               {
-                $output.='<td>'.$val.'</td>';
+                $output.='<td id="total_price">'.$val.'</td>';
               }
               }
              
               
              
              
-            $output.='<tr>';
-        }   
+            $output.='</tr>';
+
+        } 
+
+        
+
+        
+        
 
         return $output;
     }

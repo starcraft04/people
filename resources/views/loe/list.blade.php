@@ -67,6 +67,10 @@
       <!-- Window title -->
       <div class="x_title">
         <div class="col-xs-3">
+            <label for="manager" class="control-label">Search by Customer Name</label>
+              <input type="text" name="search" id = "search_customer" class = "form-control">
+          </div>
+        <div class="col-xs-3">
             <label for="manager" class="control-label">Search by Project Name</label>
               <input type="text" name="search" id = "search" class = "form-control">
           </div>
@@ -124,10 +128,10 @@
                 <th data-field="md" style="width:10px;">MD</th>
                 <th data-field="cost" >Cost</th>
                 <th data-field="price" >Price</th>
-                <th data-field="total loe" style="width:10px;">Total LOE</th>
-                <th data-field="margin" style="width:10px;">Margin</th>
-                <th data-field="total cost" >Total Cost</th>
-                <th data-field="total price" >Total Price</th>
+                <th class="total loe" style="width:10px;">Total LOE</th>
+                <th class="margin" style="width:10px;">Margin</th>
+                <th class="total_cost" >Total Cost</th>
+                <th class="total_price" >Total Price</th>
               </tr>
           </thead>
           
@@ -292,30 +296,15 @@
            @endforeach
           </tbody>
           <tbody id="content"></tbody>
-         <!--  <tfoot>
-            <td>Total:</td>
-            <td class="result"></td>
-            <td class="result"></td>
-            <td class="result"></td>
-            <td class="result"></td>
-            <td class="result"></td>
-            <td class="result_quantity"></td>
-            <td class="result_loe_per_quantity"></td>
-            <td class="result"></td>
-            <td class="result_total_md"></td>
-            <td class="result_off_cost"></td>
-            <td class="result_off_price"></td>
-            <td class="result"></td>
-            <td class="result_total_md_on_shore"></td>
-            <td class="result_on_cost"></td>
-            <td class="result_on_price"></td>
-            <td class="result"></td>
-            <td class="result_total_md_near"></td>
-            <td class="result_near_cost"></td>
-            <td class="result_near_price"></td>
-            <td class="result"></td>
-            <td class="result"></td>
-          </tfoot> -->
+          <tfoot>
+            <tr>
+              <th id="total" colspan="19">Grand Totals :</th>
+              <td id="footer_total_loe"></td>
+              <td id="footer_total_margin"></td>
+              <td id="footer_total_cost"></td>
+              <td id="footer_total_price"></td>
+            </tr>
+          </tfoot>
         </table>
         </div>
         <!-- Main table -->
@@ -362,6 +351,37 @@
 
 $(document).ready(function(){
 
+
+
+  function grand_total_calculations()
+  {
+    var sum_total_cost=0;
+    var sum_total_price=0;
+    var sum_total_loe=0;
+
+    $("#content tr #total_cost").each(function(index,value){
+         getEachRow = parseFloat($(this).text());
+         sum_total_cost += getEachRow
+       });
+        $("#content tr #total_price").each(function(index,value){
+         getEachRow = parseFloat($(this).text());
+         sum_total_price += getEachRow
+       });
+
+        $("#content tr #total_loe").each(function(index,value){
+         getEachRow = parseFloat($(this).text());
+         sum_total_loe += getEachRow
+       });
+
+
+        var sum_margin = Math.round(((100*(sum_total_price-sum_total_cost))/sum_total_cost))
+        
+        document.getElementById('footer_total_loe').innerHTML = Math.round(sum_total_loe);
+        document.getElementById('footer_total_margin').innerHTML = sum_margin;
+        document.getElementById('footer_total_price').innerHTML = sum_total_price;
+        document.getElementById('footer_total_cost').innerHTML = sum_total_cost;
+  }
+
   if (Cookies.get('checkbox_closed') != null) {
       if (Cookies.get('checkbox_closed') == 0) {
         checkbox_closed = 0;
@@ -388,7 +408,6 @@ $('#closed').on('change', function() {
         console.log(arguments);
     },
      success:function(data){
-        console.log(data);
         $('#content').html(data);
         $('.alldata').hide();
       $('#content').show();
@@ -407,6 +426,7 @@ $('#closed').on('change', function() {
     });
 
   $('#search').on('keyup',function(){
+    
     var value = $(this).val(); //search
     var phase = $('#search_phase').val(); //phase
     console.log("phase");
@@ -433,13 +453,50 @@ $('#closed').on('change', function() {
     },
      success:function(data){
       console.log("sss");
-        console.log(data);
         $('#content').html(data);
+        grand_total_calculations();
      }
 
     });
   })
 
+  
+
+$('#search_customer').on('keyup',function(){
+    var customer = $(this).val();
+    var value = $('#search').val();
+    var phase = $('#search_phase').val();
+    console.log(value);
+
+    if(customer)
+    {
+      $('.alldata').hide();
+      $('#content').show();
+    }
+    else{
+
+      $('.alldata').show();
+      $('#content').hide();
+    }
+
+    $.ajax({
+      url: "{!! route('buildList') !!}",
+     type:"GET",
+     data:{'search_customer':customer,'search':value,'search_phase':phase},
+     error: function (request, error) {
+
+        console.log(arguments);
+    },
+     success:function(data){
+      
+        $('#content').html(data);
+        grand_total_calculations();
+
+
+     }
+
+    });
+  })
   $('#search_phase').on('keyup',function(){
     var phase = $(this).val();
     var value = $('#search').val();
@@ -465,9 +522,9 @@ $('#closed').on('change', function() {
         console.log(arguments);
     },
      success:function(data){
-      console.log(value);
-        console.log(data);
+      
         $('#content').html(data);
+        grand_total_calculations();
      }
 
     });
