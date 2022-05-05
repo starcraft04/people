@@ -127,7 +127,7 @@ public function buildList(Request $request)
                     $margin[$sumVals->id] = 0;
                   }
                   else{
-                    $margin[$sumVals->id] = round((100*($sumPrice[$sumVals->id] -$sumCost[$sumVals->id])/$sumCost[$sumVals->id]));
+                    $margin[$sumVals->id] = round((100*($sumPrice[$sumVals->id] -$sumPrice[$sumVals->id])/$sumCost[$sumVals->id]));
                   }
 
                 }
@@ -143,7 +143,7 @@ public function buildList(Request $request)
                     $margin[$sumVals->id] = 0;
                   }
                   else{
-                    $margin[$sumVals->id] = round((100*($sumPrice[$sumVals->id] -$sumCost[$sumVals->id])/$sumCost[$sumVals->id]));
+                    $margin[$sumVals->id] = round((100*($sumPrice[$sumVals->id] -$sumPrice[$sumVals->id])/$sumCost[$sumVals->id]));
                   }
 
                 }

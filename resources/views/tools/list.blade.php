@@ -125,7 +125,7 @@
 
         <!-- Create Model for assigning user for project -->
         
-            <button id="assign_user_to_project" style="display: inline-block;width: 85%;" class="btn btn-info btn-xs"  align="right"data-toggle="modal" data-target="#assign_user_modal"><span class="glyphicon glyphicon-plus">Assign Consultant</span></button>
+            <button id="assign_user_to_project" style="display: inline-block;width: 85%;" class="btn btn-info btn-xs"  align="right" data-toggle="modal" data-target="#assign_user_modal"><span class="glyphicon glyphicon-plus">Assign Consultant</span></button>
 
           </div>
 
@@ -610,10 +610,8 @@
     activitiesTable = $('#activitiesTable').DataTable({
       scrollX: true,
       orderCellsTop: true,
-      @if(isset($table_height))
-      scrollY: '{!! $table_height !!}vh',
+      scrollY: '70vh',
       scrollCollapse: true,
-      @endif
       serverSide: true,
       processing: true,
       stateSave: true,

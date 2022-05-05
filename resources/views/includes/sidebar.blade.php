@@ -94,7 +94,7 @@
         <li><a><i class="fa fa-wrench"></i>Tools<span class="fa fa-chevron-down"></span></a>
           <ul class="nav child_menu">
             @can('tools-activity-view')
-            <li><a href="{!!route('toolsActivities')!!}">Activity list per project</a></li>
+            <li><a href="{!!route('toolsActivities')!!}">Resource Assignment</a></li>
             @endcan
             @can('tools-all_projects-view')
             <li><a href="{!!route('projectsAll')!!}">Project list</a></li>

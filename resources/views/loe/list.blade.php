@@ -159,7 +159,7 @@
                     $margin[$cKey->id] = 0;
                   }
                   else{
-                    $marginTotal = (100*($sumPrice[$cKey->id] -$sumCost[$cKey->id])/$sumCost[$cKey->id]);
+                    $marginTotal = (100*($sumPrice[$cKey->id] -$sumCost[$cKey->id])/$sumPrice[$cKey->id]);
                     $margin[$cKey->id] = round($marginTotal);
                   }
 
@@ -178,7 +178,7 @@
                     $margin[$cKey->id] = 0;
                   }
                   else{
-                    $margin_total = (100*($sumPrice[$cKey->id] -$sumCost[$cKey->id])/$sumCost[$cKey->id]);
+                    $margin_total = (100*($sumPrice[$cKey->id] -$sumCost[$cKey->id])/$sumPrice[$cKey->id]);
                     $margin[$cKey->id] = round($margin_total);
                   }
 
@@ -374,7 +374,7 @@ $(document).ready(function(){
        });
 
 
-        var sum_margin = Math.round(((100*(sum_total_price-sum_total_cost))/sum_total_cost))
+        var sum_margin = Math.round(((100*(sum_total_price-sum_total_cost))/sum_total_price))
         
         document.getElementById('footer_total_loe').innerHTML = Math.round(sum_total_loe);
         document.getElementById('footer_total_margin').innerHTML = sum_margin;
