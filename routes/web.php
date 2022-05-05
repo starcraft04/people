@@ -308,9 +308,17 @@ Route::get('getUserOnProjectForAssign', ['uses' => 'ToolsController@getUserOnPro
 
 
 
+// Customer Links
 
 
 
+    Route::get('customerLinks', ['uses' => 'Apis\ClController@CustomerLink', 'as' => 'CustomerLink', 'middleware' => ['permission:tools-activity-view']]);
+
+
+    Route::get('projectsWithoutCLID', ['uses' => 'Apis\ClController@projectsWithoutCLID', 'as' => 'projectsWithoutCLID', 'middleware' => ['permission:tools-activity-view']]);
+
+
+    Route::post('callCL', ['uses' => 'Apis\ClController@callCL', 'as' => 'callCL', 'middleware' => ['permission:tools-activity-view']]);
 
 
 Route::get('/home', 'HomeController@index')->name('home');
@@ -318,6 +326,18 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 // Route::get('updator',['uses'=>'UpdateTableController@updator', 'as'=>'updator']);
 
-Route::post('import', ['uses' => 'UserController@UploadExcelToCreateOrUpdateUsers', 'as' => 'UploadExcelToCreateOrUpdateUsers', 'middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
+Route::post('import', ['uses' => 'UserController@updateCreateUsersFromExcel', 'as' => 'updateCreateUsersFromExcel', 'middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
+Route::post('CLimport', ['uses' => 'Apis\ClController@UploadExcelToAddCLID', 'as' => 'UploadExcelToAddCLID', 'middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
 // Route::get('export', 'UpdateTableController@export');
 // Route::get('import',['uses'=>'UpdateTableController@show', 'as' =>'show']);
+
+// ALL LOE dashboard
+
+Route::get('AllLOE', ['uses' => 'LoeController@list', 'as' => 'AllLOE', 'middleware' => ['permission:projectLoe-view']]);
+    
+    Route::get('buildList', ['uses' => 'LoeController@buildList', 'as' => 'buildList', 'middleware' => ['permission:projectLoe-view']]);
+
+    Route::get('loeDetails/{id}', ['uses' => 'LoeController@getLoePerProject', 'as' => 'loeDetails', 'middleware' => ['permission:projectLoe-view']]);
+
+    
+    Route::get('listAllLoe', ['uses' => 'LoeController@listAllLoe', 'as' => 'listAllLoe', 'middleware' => ['permission:projectLoe-view']]);

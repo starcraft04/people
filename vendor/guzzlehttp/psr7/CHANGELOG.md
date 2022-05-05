@@ -91,9 +91,57 @@ Identical to the RC release.
 
 ### Fixed
 
+<<<<<<< HEAD
 - Issue when creating stream from `php://input` and curl-ext is not installed
 - Broken `Utils::tryFopen()` on PHP 8
 
+=======
+## Unreleased
+
+## 1.8.5 - 2022-03-20
+
+### Fixed
+
+- Correct header value validation
+
+## 1.8.4 - 2022-03-20
+
+### Fixed
+
+- Validate header values properly
+
+## 1.8.3 - 2021-10-05
+
+### Fixed
+
+- Return `null` in caching stream size if remote size is `null`
+
+## 1.8.2 - 2021-04-26
+
+### Fixed
+
+- Handle possibly unset `url` in `stream_get_meta_data`
+
+## 1.8.1 - 2021-03-21
+
+### Fixed
+
+- Issue parsing IPv6 URLs
+- Issue modifying ServerRequest lost all its attributes
+
+## 1.8.0 - 2021-03-21
+
+### Added
+
+- Locale independent URL parsing
+- Most classes got a `@final` annotation to prepare for 2.0
+
+### Fixed
+
+- Issue when creating stream from `php://input` and curl-ext is not installed
+- Broken `Utils::tryFopen()` on PHP 8
+
+>>>>>>> skillbase_New
 ## 1.7.0 - 2020-09-30
 
 ### Added

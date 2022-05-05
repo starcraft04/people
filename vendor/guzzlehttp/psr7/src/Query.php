@@ -67,6 +67,11 @@ final class Query
      * @param int|false $encoding Set to false to not encode, PHP_QUERY_RFC3986
      *                            to encode using RFC3986, or PHP_QUERY_RFC1738
      *                            to encode using RFC1738.
+<<<<<<< HEAD
+=======
+     *
+     * @return string
+>>>>>>> skillbase_New
      */
     public static function build(array $params, $encoding = PHP_QUERY_RFC3986): string
     {
@@ -75,7 +80,11 @@ final class Query
         }
 
         if ($encoding === false) {
+<<<<<<< HEAD
             $encoder = function (string $str): string {
+=======
+            $encoder = function ($str) {
+>>>>>>> skillbase_New
                 return $str;
             };
         } elseif ($encoding === PHP_QUERY_RFC3986) {

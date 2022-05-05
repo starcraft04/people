@@ -75,6 +75,11 @@ final class Utils
      * @param StreamInterface $stream Stream to read
      * @param int             $maxLen Maximum number of bytes to read. Pass -1
      *                                to read the entire stream.
+<<<<<<< HEAD
+=======
+     *
+     * @return string
+>>>>>>> skillbase_New
      *
      * @throws \RuntimeException on error.
      */
@@ -196,7 +201,11 @@ final class Utils
 
         if ($request instanceof ServerRequestInterface) {
             $new = (new ServerRequest(
+<<<<<<< HEAD
                 $changes['method'] ?? $request->getMethod(),
+=======
+                isset($changes['method']) ? $changes['method'] : $request->getMethod(),
+>>>>>>> skillbase_New
                 $uri,
                 $headers,
                 $changes['body'] ?? $request->getBody(),
@@ -279,7 +288,13 @@ final class Utils
      *   buffered and used in subsequent reads.
      *
      * @param resource|string|int|float|bool|StreamInterface|callable|\Iterator|null $resource Entity body data
+<<<<<<< HEAD
      * @param array{size?: int, metadata?: array}                                    $options  Additional options
+=======
+     * @param array                                                                  $options  Additional options
+     *
+     * @return StreamInterface
+>>>>>>> skillbase_New
      *
      * @throws \InvalidArgumentException if the $resource arg is not valid.
      */
@@ -300,11 +315,18 @@ final class Utils
                  * The 'php://input' is a special stream with quirks and inconsistencies.
                  * We avoid using that stream by reading it into php://temp
                  */
+<<<<<<< HEAD
 
                 /** @var resource $resource */
                 if ((\stream_get_meta_data($resource)['uri'] ?? '') === 'php://input') {
                     $stream = self::tryFopen('php://temp', 'w+');
                     stream_copy_to_stream($resource, $stream);
+=======
+                $metaData = \stream_get_meta_data($resource);
+                if (isset($metaData['uri']) && $metaData['uri'] === 'php://input') {
+                    $stream = self::tryFopen('php://temp', 'w+');
+                    fwrite($stream, stream_get_contents($resource));
+>>>>>>> skillbase_New
                     fseek($stream, 0);
                     $resource = $stream;
                 }
@@ -365,7 +387,10 @@ final class Utils
         });
 
         try {
+<<<<<<< HEAD
             /** @var resource $handle */
+=======
+>>>>>>> skillbase_New
             $handle = fopen($filename, $mode);
         } catch (\Throwable $e) {
             $ex = new \RuntimeException(sprintf(

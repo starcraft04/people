@@ -119,6 +119,11 @@ final class UriNormalizer
      * @param UriInterface $uri   The URI to normalize
      * @param int          $flags A bitmask of normalizations to apply, see constants
      *
+<<<<<<< HEAD
+=======
+     * @return UriInterface The normalized URI
+     *
+>>>>>>> skillbase_New
      * @link https://tools.ietf.org/html/rfc3986#section-6.2
      */
     public static function normalize(UriInterface $uri, int $flags = self::PRESERVING_NORMALIZATIONS): UriInterface
@@ -174,6 +179,11 @@ final class UriNormalizer
      * @param UriInterface $uri2           An URI to compare
      * @param int          $normalizations A bitmask of normalizations to apply, see constants
      *
+<<<<<<< HEAD
+=======
+     * @return bool
+     *
+>>>>>>> skillbase_New
      * @link https://tools.ietf.org/html/rfc3986#section-6.1
      */
     public static function isEquivalent(UriInterface $uri1, UriInterface $uri2, int $normalizations = self::PRESERVING_NORMALIZATIONS): bool

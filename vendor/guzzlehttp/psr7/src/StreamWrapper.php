@@ -9,7 +9,11 @@ use Psr\Http\Message\StreamInterface;
 /**
  * Converts Guzzle streams into PHP stream resources.
  *
+<<<<<<< HEAD
  * @see https://www.php.net/streamwrapper
+=======
+ * @final
+>>>>>>> skillbase_New
  */
 final class StreamWrapper
 {

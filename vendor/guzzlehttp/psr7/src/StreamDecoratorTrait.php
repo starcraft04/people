@@ -9,7 +9,11 @@ use Psr\Http\Message\StreamInterface;
 /**
  * Stream decorator trait
  *
+<<<<<<< HEAD
  * @property StreamInterface $stream
+=======
+ * @property StreamInterface stream
+>>>>>>> skillbase_New
  */
 trait StreamDecoratorTrait
 {

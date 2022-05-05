@@ -194,7 +194,49 @@
       <!-- Window content -->
     @endif
 
+
+      <!-- Table -->
+
+      <div class="container">
+        <table class="table table-bordered">
+  <thead>
+    <tr>
+      <th scope="col">Level</th>
+      <th scope="col">Achievement</th>
+      <th scope="col">Description – Technical skills</th>
+      <th scope="col">Description – Business skills</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">1</th>
+      <td>Basic </td>
+      <td>Not a required skill though should be able to define and manage skill if required </td>
+      <td>Able to proceed in common and simple situations, while being supervised.</td>
+    </tr>
+    <tr>
+      <th scope="row">2</th>
+      <td>Proficient</td>
+      <td>Understands the background, issues, and implications sufficiently to be able to understand how to proceed further and advise client accordingly</td>
+      <td>Understands the background, issues, and implications sufficiently to be able to proceed further and advise client accordingly.</td>
+    </tr>
+    <tr>
+      <th scope="row">3</th>
+      <td>Advanced </td>
+      <td> Detailed knowledge of subject area and capable of providing professional advice and guidance.</td>
+      <td>Ability to integrate capability into architecture design  Capable of providing professional advice and guidance in complex situation and/or customer context, while being autonomous. Able to train / share knowledge and embrace change.</td>
+    </tr>
+    <tr>
+      <th scope="row">4</th>
+      <td>Expert</td>
+      <td>Extensive and substantial practical experience and applied knowledge on the subject Extensive and substantial practical experience. </td>
+      <td>Able to impulse things and act as a reference at a company level.</td>
+    </tr>
+  </tbody>
+</table>
+      </div>
     </div>
+
   </div>
 </div>
 <!-- Window -->

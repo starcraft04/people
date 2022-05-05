@@ -86,7 +86,11 @@ class Response implements ResponseInterface
 
     /**
      * @param int                                  $status  Status code
+<<<<<<< HEAD
      * @param array<string, string|string[]>       $headers Response headers
+=======
+     * @param array                                $headers Response headers
+>>>>>>> skillbase_New
      * @param string|resource|StreamInterface|null $body    Response body
      * @param string                               $version Protocol version
      * @param string|null                          $reason  Reason phrase (when empty a default will be used based on the status code)

@@ -19,6 +19,10 @@ return array(
     'App\\Gestion\\PhotoGestion' => $baseDir . '/app/Gestion/PhotoGestion.php',
     'App\\Http\\Controllers\\ActionController' => $baseDir . '/app/Http/Controllers/ActionController.php',
     'App\\Http\\Controllers\\ActivityController' => $baseDir . '/app/Http/Controllers/ActivityController.php',
+<<<<<<< HEAD
+=======
+    'App\\Http\\Controllers\\Apis\\ClController' => $baseDir . '/app/Http/Controllers/Apis/ClController.php',
+>>>>>>> skillbase_New
     'App\\Http\\Controllers\\Apis\\skillbaseApiController' => $baseDir . '/app/Http/Controllers/Apis/skillbaseApiController.php',
     'App\\Http\\Controllers\\Auth\\AuthUsersForDataView' => $baseDir . '/app/Http/Controllers/Auth/AuthUsersForDataView.php',
     'App\\Http\\Controllers\\Auth\\ConfirmPasswordController' => $baseDir . '/app/Http/Controllers/Auth/ConfirmPasswordController.php',
@@ -42,7 +46,10 @@ return array(
     'App\\Http\\Controllers\\OtlUploadController' => $baseDir . '/app/Http/Controllers/OtlUploadController.php',
     'App\\Http\\Controllers\\ProfileToolsController' => $baseDir . '/app/Http/Controllers/ProfileToolsController.php',
     'App\\Http\\Controllers\\ProjectController' => $baseDir . '/app/Http/Controllers/ProjectController.php',
+<<<<<<< HEAD
     'App\\Http\\Controllers\\ResourceRequestController' => $baseDir . '/app/Http/Controllers/ResourceRequestController.php',
+=======
+>>>>>>> skillbase_New
     'App\\Http\\Controllers\\ResourcesController' => $baseDir . '/app/Http/Controllers/ResourcesController.php',
     'App\\Http\\Controllers\\RevenueUploadController' => $baseDir . '/app/Http/Controllers/RevenueUploadController.php',
     'App\\Http\\Controllers\\RoleController' => $baseDir . '/app/Http/Controllers/RoleController.php',
@@ -83,6 +90,7 @@ return array(
     'App\\Http\\Requests\\SkillUpdateRequest' => $baseDir . '/app/Http/Requests/SkillUpdateRequest.php',
     'App\\Http\\Requests\\UserCreateRequest' => $baseDir . '/app/Http/Requests/UserCreateRequest.php',
     'App\\Http\\Requests\\UserUpdateRequest' => $baseDir . '/app/Http/Requests/UserUpdateRequest.php',
+    'App\\Imports\\CLImport' => $baseDir . '/app/Imports/CLImport.php',
     'App\\Imports\\ImportExcelToArray' => $baseDir . '/app/Imports/ImportExcelToArray.php',
     'App\\Imports\\UserFullImport' => $baseDir . '/app/Imports/UserFullImport.php',
     'App\\Imports\\UsersImport' => $baseDir . '/app/Imports/UsersImport.php',

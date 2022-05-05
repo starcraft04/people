@@ -8,6 +8,11 @@ use Psr\Http\Message\StreamInterface;
 
 /**
  * Stream decorator that prevents a stream from being seeked.
+<<<<<<< HEAD
+=======
+ *
+ * @final
+>>>>>>> skillbase_New
  */
 final class NoSeekStream implements StreamInterface
 {

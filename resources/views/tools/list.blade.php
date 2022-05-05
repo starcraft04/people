@@ -125,7 +125,7 @@
 
         <!-- Create Model for assigning user for project -->
         
-            <button id="assign_user_to_project" style="display: inline-block;width: 85%;" class="btn btn-info btn-xs"  align="right"data-toggle="modal" data-target="#assign_user_modal"><span class="glyphicon glyphicon-plus">Assign Consultant</span></button>
+            <button id="assign_user_to_project" style="display: inline-block;width: 85%;" class="btn btn-info btn-xs"  align="right" data-toggle="modal" data-target="#assign_user_modal"><span class="glyphicon glyphicon-plus">Assign Consultant</span></button>
 
           </div>
 
@@ -239,6 +239,7 @@
               <th>Project subtype</th>
               <th>Technology</th>
               <th>CL ID</th>
+              <th>CL 18 ID</th>
               <th>Pullthru CL ID</th>
               <th>Order intake inc. CS</th>
               <th>Consulting TCV</th>
@@ -259,6 +260,7 @@
           </thead>
           <tfoot>
             <tr>
+              <th></th>
               <th></th>
               <th></th>
               <th></th>
@@ -608,10 +610,8 @@
     activitiesTable = $('#activitiesTable').DataTable({
       scrollX: true,
       orderCellsTop: true,
-      @if(isset($table_height))
-      scrollY: '{!! $table_height !!}vh',
+      scrollY: '70vh',
       scrollCollapse: true,
-      @endif
       serverSide: true,
       processing: true,
       stateSave: true,
@@ -665,7 +665,16 @@
         { name: 'p.meta_activity', data: 'meta_activity' , searchable: true , visible: false, className: "dt-nowrap"},
         { name: 'p.project_subtype', data: 'project_subtype' , searchable: true , visible: false, className: "dt-nowrap"},
         { name: 'p.technology', data: 'technology' , searchable: true , visible: false, className: "dt-nowrap"},
-        { name: 'p.samba_id', data: 'samba_id' , searchable: true , visible: false, className: "dt-nowrap"},
+        { name: 'p.samba_id', data: 'samba_id',
+         render:function(data,type,rowData){
+          if(data != null){
+           data ='<a href="https://samba.lightning.force.com/lightning/r/Account/'+rowData.samba_18_id+'/view">'+data+'</a>';
+          }else{
+            data = data;
+          }
+          return data;
+         }, searchable: true , visible: false, className: "dt-nowrap"},
+        { name: 'p.samba_18_1d', data: 'samba_18_id' , searchable: true , visible: false, className: "dt-nowrap"}, 
         { name: 'p.pullthru_samba_id', data: 'pullthru_samba_id' , searchable: true , visible: false, className: "dt-nowrap"},
         { name: 'p.revenue', data: 'project_revenue' , searchable: true , visible: false, className: "dt-nowrap"},
         { name: 'p.samba_consulting_product_tcv', data: 'samba_consulting_product_tcv' , searchable: true , visible: false, className: "dt-nowrap"},

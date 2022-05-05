@@ -29,5 +29,13 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
+    'form_params'=>[
+                'grant_type' => env('cl_grant_type'),
+                'client_id' => env('cl_client_id '),
+                'client_secret' => env('cl_client_secret'),
+                'username' => env('cl_username'),
+                'password' => env('cl_password'),
+                'security_token'=>env('cl_security_token'),
+            ],
 
 ];

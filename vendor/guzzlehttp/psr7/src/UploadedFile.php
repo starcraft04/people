@@ -59,6 +59,13 @@ class UploadedFile implements UploadedFileInterface
 
     /**
      * @param StreamInterface|string|resource $streamOrFile
+<<<<<<< HEAD
+=======
+     * @param int                             $size
+     * @param int                             $errorStatus
+     * @param string|null                     $clientFilename
+     * @param string|null                     $clientMediaType
+>>>>>>> skillbase_New
      */
     public function __construct(
         $streamOrFile,
@@ -113,20 +120,67 @@ class UploadedFile implements UploadedFileInterface
         $this->error = $error;
     }
 
+<<<<<<< HEAD
     private function isStringNotEmpty($param): bool
+=======
+    /**
+     * @param int $size
+     *
+     * @throws InvalidArgumentException
+     */
+    private function setSize($size)
+    {
+        if (false === is_int($size)) {
+            throw new InvalidArgumentException(
+                'Upload file size must be an integer'
+            );
+        }
+
+        $this->size = $size;
+    }
+
+    /**
+     * @param mixed $param
+     *
+     * @return bool
+     */
+    private function isStringOrNull($param)
+    {
+        return in_array(gettype($param), ['string', 'NULL']);
+    }
+
+    /**
+     * @param mixed $param
+     *
+     * @return bool
+     */
+    private function isStringNotEmpty($param)
+>>>>>>> skillbase_New
     {
         return is_string($param) && false === empty($param);
     }
 
     /**
      * Return true if there is no upload error
+<<<<<<< HEAD
+=======
+     *
+     * @return bool
+>>>>>>> skillbase_New
      */
     private function isOk(): bool
     {
         return $this->error === UPLOAD_ERR_OK;
     }
 
+<<<<<<< HEAD
     public function isMoved(): bool
+=======
+    /**
+     * @return bool
+     */
+    public function isMoved()
+>>>>>>> skillbase_New
     {
         return $this->moved;
     }
@@ -159,7 +213,24 @@ class UploadedFile implements UploadedFileInterface
         return new LazyOpenStream($file, 'r+');
     }
 
+<<<<<<< HEAD
     public function moveTo($targetPath): void
+=======
+    /**
+     * {@inheritdoc}
+     *
+     * @see http://php.net/is_uploaded_file
+     * @see http://php.net/move_uploaded_file
+     *
+     * @param string $targetPath Path to which to move the uploaded file.
+     *
+     * @throws RuntimeException         if the upload was not successful.
+     * @throws InvalidArgumentException if the $path specified is invalid.
+     * @throws RuntimeException         on any error during the move operation, or on
+     *                                  the second or subsequent call to the method.
+     */
+    public function moveTo($targetPath)
+>>>>>>> skillbase_New
     {
         $this->validateActive();
 
@@ -194,12 +265,33 @@ class UploadedFile implements UploadedFileInterface
         return $this->size;
     }
 
+<<<<<<< HEAD
     public function getError(): int
+=======
+    /**
+     * {@inheritdoc}
+     *
+     * @see http://php.net/manual/en/features.file-upload.errors.php
+     *
+     * @return int One of PHP's UPLOAD_ERR_XXX constants.
+     */
+    public function getError()
+>>>>>>> skillbase_New
     {
         return $this->error;
     }
 
+<<<<<<< HEAD
     public function getClientFilename(): ?string
+=======
+    /**
+     * {@inheritdoc}
+     *
+     * @return string|null The filename sent by the client or null if none
+     *                     was provided.
+     */
+    public function getClientFilename()
+>>>>>>> skillbase_New
     {
         return $this->clientFilename;
     }

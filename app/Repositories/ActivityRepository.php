@@ -506,7 +506,7 @@ class ActivityRepository
                             'temp_a.project_id AS project_id',
                             'p.project_name AS project_name',
                             'p.otl_project_code AS otl_project_code', 'p.meta_activity AS meta_activity', 'p.project_subtype AS project_subtype',
-                            'p.technology AS technology', 'p.samba_id AS samba_id', 'p.pullthru_samba_id AS pullthru_samba_id',
+                            'p.technology AS technology', 'p.samba_id AS samba_id','p.samba_18_id AS samba_18_id','p.pullthru_samba_id AS pullthru_samba_id',
                             'p.revenue AS project_revenue', 'p.samba_consulting_product_tcv AS samba_consulting_product_tcv', 'p.samba_pullthru_tcv AS samba_pullthru_tcv',
                             'p.samba_opportunit_owner AS samba_opportunit_owner', 'p.samba_lead_domain AS samba_lead_domain', 'p.samba_stage AS samba_stage',
                             'p.estimated_start_date AS estimated_start_date', 'p.estimated_end_date AS estimated_end_date',

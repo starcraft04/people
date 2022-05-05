@@ -10,6 +10,8 @@ use Psr\Http\Message\StreamInterface;
  * Reads from multiple streams, one after the other.
  *
  * This is a read-only stream decorator.
+ *
+ * @final
  */
 final class AppendStream implements StreamInterface
 {

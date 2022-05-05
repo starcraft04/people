@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit8cf2e06fa6368d6ed1386ebcf599b51c
+class ComposerStaticInit442507dbf1db653b2883e90b07fea9db
 {
     public static $files = array (
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
@@ -21,6 +21,7 @@ class ComposerStaticInit8cf2e06fa6368d6ed1386ebcf599b51c
         '2c102faa651ef8ea5874edb585946bce' => __DIR__ . '/..' . '/swiftmailer/swiftmailer/lib/swift_required.php',
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
+        'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
         '801c31d8ed748cfa537fa45402288c95' => __DIR__ . '/..' . '/psy/psysh/src/functions.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         '23c18046f52bef3eea034657bafda50f' => __DIR__ . '/..' . '/symfony/polyfill-php81/bootstrap.php',
@@ -711,6 +712,7 @@ class ComposerStaticInit8cf2e06fa6368d6ed1386ebcf599b51c
         'App\\Gestion\\PhotoGestion' => __DIR__ . '/../..' . '/app/Gestion/PhotoGestion.php',
         'App\\Http\\Controllers\\ActionController' => __DIR__ . '/../..' . '/app/Http/Controllers/ActionController.php',
         'App\\Http\\Controllers\\ActivityController' => __DIR__ . '/../..' . '/app/Http/Controllers/ActivityController.php',
+        'App\\Http\\Controllers\\Apis\\ClController' => __DIR__ . '/../..' . '/app/Http/Controllers/Apis/ClController.php',
         'App\\Http\\Controllers\\Apis\\skillbaseApiController' => __DIR__ . '/../..' . '/app/Http/Controllers/Apis/skillbaseApiController.php',
         'App\\Http\\Controllers\\Auth\\AuthUsersForDataView' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/AuthUsersForDataView.php',
         'App\\Http\\Controllers\\Auth\\ConfirmPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ConfirmPasswordController.php',
@@ -734,7 +736,6 @@ class ComposerStaticInit8cf2e06fa6368d6ed1386ebcf599b51c
         'App\\Http\\Controllers\\OtlUploadController' => __DIR__ . '/../..' . '/app/Http/Controllers/OtlUploadController.php',
         'App\\Http\\Controllers\\ProfileToolsController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProfileToolsController.php',
         'App\\Http\\Controllers\\ProjectController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProjectController.php',
-        'App\\Http\\Controllers\\ResourceRequestController' => __DIR__ . '/../..' . '/app/Http/Controllers/ResourceRequestController.php',
         'App\\Http\\Controllers\\ResourcesController' => __DIR__ . '/../..' . '/app/Http/Controllers/ResourcesController.php',
         'App\\Http\\Controllers\\RevenueUploadController' => __DIR__ . '/../..' . '/app/Http/Controllers/RevenueUploadController.php',
         'App\\Http\\Controllers\\RoleController' => __DIR__ . '/../..' . '/app/Http/Controllers/RoleController.php',
@@ -775,6 +776,7 @@ class ComposerStaticInit8cf2e06fa6368d6ed1386ebcf599b51c
         'App\\Http\\Requests\\SkillUpdateRequest' => __DIR__ . '/../..' . '/app/Http/Requests/SkillUpdateRequest.php',
         'App\\Http\\Requests\\UserCreateRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UserCreateRequest.php',
         'App\\Http\\Requests\\UserUpdateRequest' => __DIR__ . '/../..' . '/app/Http/Requests/UserUpdateRequest.php',
+        'App\\Imports\\CLImport' => __DIR__ . '/../..' . '/app/Imports/CLImport.php',
         'App\\Imports\\ImportExcelToArray' => __DIR__ . '/../..' . '/app/Imports/ImportExcelToArray.php',
         'App\\Imports\\UserFullImport' => __DIR__ . '/../..' . '/app/Imports/UserFullImport.php',
         'App\\Imports\\UsersImport' => __DIR__ . '/../..' . '/app/Imports/UsersImport.php',
@@ -7298,10 +7300,10 @@ class ComposerStaticInit8cf2e06fa6368d6ed1386ebcf599b51c
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit8cf2e06fa6368d6ed1386ebcf599b51c::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit8cf2e06fa6368d6ed1386ebcf599b51c::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit8cf2e06fa6368d6ed1386ebcf599b51c::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit8cf2e06fa6368d6ed1386ebcf599b51c::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit442507dbf1db653b2883e90b07fea9db::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit442507dbf1db653b2883e90b07fea9db::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit442507dbf1db653b2883e90b07fea9db::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit442507dbf1db653b2883e90b07fea9db::$classMap;
 
         }, null, ClassLoader::class);
     }

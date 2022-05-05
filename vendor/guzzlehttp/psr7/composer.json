@@ -91,5 +91,12 @@
         "allow-plugins": {
             "bamarni/composer-bin-plugin": true
         }
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "bamarni/composer-bin-plugin": true
+        }
     }
 }

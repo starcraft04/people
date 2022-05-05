@@ -168,7 +168,11 @@ trait MessageTrait
      *
      * @return string[]
      */
+<<<<<<< HEAD
     private function normalizeHeaderValue($value): array
+=======
+    private function normalizeHeaderValue($value)
+>>>>>>> skillbase_New
     {
         if (!is_array($value)) {
             return $this->trimAndValidateHeaderValues([$value]);
@@ -195,7 +199,11 @@ trait MessageTrait
      *
      * @see https://tools.ietf.org/html/rfc7230#section-3.2.4
      */
+<<<<<<< HEAD
     private function trimAndValidateHeaderValues(array $values): array
+=======
+    private function trimAndValidateHeaderValues(array $values)
+>>>>>>> skillbase_New
     {
         return array_map(function ($value) {
             if (!is_scalar($value) && null !== $value) {
@@ -216,8 +224,15 @@ trait MessageTrait
      * @see https://tools.ietf.org/html/rfc7230#section-3.2
      *
      * @param mixed $header
+<<<<<<< HEAD
      */
     private function assertHeader($header): void
+=======
+     *
+     * @return void
+     */
+    private function assertHeader($header)
+>>>>>>> skillbase_New
     {
         if (!is_string($header)) {
             throw new \InvalidArgumentException(sprintf(
@@ -247,6 +262,47 @@ trait MessageTrait
      * obs-fold       = CRLF 1*( SP / HTAB )
      */
     private function assertValue(string $value): void
+    {
+        // The regular expression intentionally does not support the obs-fold production, because as
+        // per RFC 7230#3.2.4:
+        //
+        // A sender MUST NOT generate a message that includes
+        // line folding (i.e., that has any field-value that contains a match to
+        // the obs-fold rule) unless the message is intended for packaging
+        // within the message/http media type.
+        //
+        // Clients must not send a request with line folding and a server sending folded headers is
+        // likely very rare. Line folding is a fairly obscure feature of HTTP/1.1 and thus not accepting
+        // folding is not likely to break any legitimate use case.
+        if (! preg_match('/^[\x20\x09\x21-\x7E\x80-\xFF]*$/', $value)) {
+            throw new \InvalidArgumentException(sprintf('"%s" is not valid header value', $value));
+        }
+
+        if (! preg_match('/^[a-zA-Z0-9\'`#$%&*+.^_|~!-]+$/', $header)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    '"%s" is not valid header name',
+                    $header
+                )
+            );
+        }
+    }
+
+    /**
+     * @param string $value
+     *
+     * @return void
+     *
+     * @see https://tools.ietf.org/html/rfc7230#section-3.2
+     *
+     * field-value    = *( field-content / obs-fold )
+     * field-content  = field-vchar [ 1*( SP / HTAB ) field-vchar ]
+     * field-vchar    = VCHAR / obs-text
+     * VCHAR          = %x21-7E
+     * obs-text       = %x80-FF
+     * obs-fold       = CRLF 1*( SP / HTAB )
+     */
+    private function assertValue($value)
     {
         // The regular expression intentionally does not support the obs-fold production, because as
         // per RFC 7230#3.2.4:
