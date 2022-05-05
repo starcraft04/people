@@ -239,7 +239,6 @@
               <th>Project subtype</th>
               <th>Technology</th>
               <th>CL ID</th>
-              <th>CL 18 ID</th>
               <th>Pullthru CL ID</th>
               <th>Order intake inc. CS</th>
               <th>Consulting TCV</th>
@@ -260,7 +259,6 @@
           </thead>
           <tfoot>
             <tr>
-              <th></th>
               <th></th>
               <th></th>
               <th></th>
@@ -674,7 +672,6 @@
           }
           return data;
          }, searchable: true , visible: false, className: "dt-nowrap"},
-        { name: 'p.samba_18_1d', data: 'samba_18_id' , searchable: true , visible: false, className: "dt-nowrap"}, 
         { name: 'p.pullthru_samba_id', data: 'pullthru_samba_id' , searchable: true , visible: false, className: "dt-nowrap"},
         { name: 'p.revenue', data: 'project_revenue' , searchable: true , visible: false, className: "dt-nowrap"},
         { name: 'p.samba_consulting_product_tcv', data: 'samba_consulting_product_tcv' , searchable: true , visible: false, className: "dt-nowrap"},
