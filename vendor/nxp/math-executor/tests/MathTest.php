@@ -58,17 +58,17 @@ class MathTest extends TestCase
             ['(4*2) - 5'],
             ['4*-5'],
             ['4 * -5'],
-			['+5'],
-			['+(3+2)'],
-			['+(+3+2)'],
-			['+(-3+2)'],
-			['-5'],
-			['-(-5)'],
-			['-(+5)'],
-			['+(-5)'],
-			['+(+5)'],
-			['-(3+2)'],
-			['-(-3+-2)'],
+            ['+5'],
+            ['+(3+2)'],
+            ['+(+3+2)'],
+            ['+(-3+2)'],
+            ['-5'],
+            ['-(-5)'],
+            ['-(+5)'],
+            ['+(-5)'],
+            ['+(+5)'],
+            ['-(3+2)'],
+            ['-(-3+-2)'],
 
             ['abs(1.5)'],
             ['acos(0.15)'],
@@ -264,6 +264,17 @@ class MathTest extends TestCase
         $calculator = new MathExecutor();
         $calculator->setDivisionByZeroIsZero();
         $this->assertEquals(0, $calculator->execute('10 / 0'));
+    }
+
+    public function testUnaryOperators()
+    {
+        $calculator = new MathExecutor();
+        $this->assertEquals(5, $calculator->execute('+5'));
+        $this->assertEquals(5, $calculator->execute('+(3+2)'));
+        $this->assertEquals(-5, $calculator->execute('-5'));
+        $this->assertEquals(5, $calculator->execute('-(-5)'));
+        $this->assertEquals(-5, $calculator->execute('+(-5)'));
+        $this->assertEquals(-5, $calculator->execute('-(3+2)'));
     }
 
     public function testZeroDivisionException()
@@ -488,6 +499,15 @@ class MathTest extends TestCase
             }
         );
         $this->assertEquals(15, $calculator->execute('5 * undefined'));
+        $this->assertEquals(3, $calculator->getVar('undefined'));
+        $this->assertNull($calculator->getVar('Lucy'));
+    }
+
+    public function testGetVarException()
+    {
+        $calculator = new MathExecutor();
+        $this->expectException(UnknownVariableException::class);
+        $this->assertNull($calculator->getVar('Lucy'));
     }
 
     public function testMinusZero()
@@ -495,6 +515,14 @@ class MathTest extends TestCase
         $calculator = new MathExecutor();
         $this->assertEquals(1, $calculator->execute('1 - 0'));
         $this->assertEquals(1, $calculator->execute('1-0'));
+    }
+
+    public function testScientificNotation()
+    {
+        $calculator = new MathExecutor();
+        $this->assertEquals(1.5e9, $calculator->execute('1.5e9'));
+        $this->assertEquals(1.5e-9, $calculator->execute('1.5e-9'));
+        $this->assertEquals(1.5e+9, $calculator->execute('1.5e+9'));
     }
 
     public function testGetFunctionsReturnsArray()
@@ -545,6 +573,9 @@ class MathTest extends TestCase
         $this->assertEquals(null, $calculator->getVar('null'));
         $this->assertEquals(1.1, $calculator->getVar('float'));
         $this->assertEquals('string', $calculator->getVar('string'));
+
+        $this->expectException(MathExecutorException::class);
+        $calculator->setVar('validVar', new \DateTime());
     }
 
     public function testSetVarsDoesNotAcceptObject()
@@ -559,6 +590,63 @@ class MathTest extends TestCase
         $calculator = new MathExecutor();
         $this->expectException(MathExecutorException::class);
         $calculator->setVar('resource', tmpfile());
+    }
+
+    public function testSetCustomVarValidator()
+    {
+        $calculator = new MathExecutor();
+        $calculator->setVarValidationHandler(function (string $name, $variable) {
+            // allow all scalars and null
+            if (is_scalar($variable) || $variable === null) {
+                return;
+            }
+            // Allow variables of type DateTime, but not others
+            if (! $variable instanceof \DateTime) {
+                throw new MathExecutorException("Invalid variable type");
+            }
+        });
+
+        $calculator->setVar('validFloat', 0.0);
+        $calculator->setVar('validInt', 0);
+        $calculator->setVar('validTrue', true);
+        $calculator->setVar('validFalse', false);
+        $calculator->setVar('validString', 'string');
+        $calculator->setVar('validNull', null);
+        $calculator->setVar('validDateTime', new \DateTime());
+
+        $this->expectException(MathExecutorException::class);
+        $calculator->setVar('validVar', $this);
+    }
+
+    public function testSetCustomVarNameValidator()
+    {
+        $calculator = new MathExecutor();
+        $calculator->setVarValidationHandler(function (string $name, $variable) {
+            // don't allow variable names with the word invalid in them
+            if (str_contains($name, 'invalid')) {
+                throw new MathExecutorException("Invalid variable name");
+            }
+        });
+
+        $calculator->setVar('validFloat', 0.0);
+        $calculator->setVar('validInt', 0);
+        $calculator->setVar('validTrue', true);
+        $calculator->setVar('validFalse', false);
+        $calculator->setVar('validString', 'string');
+        $calculator->setVar('validNull', null);
+        $calculator->setVar('validDateTime', new \DateTime());
+
+        $this->expectException(MathExecutorException::class);
+        $calculator->setVar('invalidVar', 12);
+    }
+
+    public function testVarExists()
+    {
+        $calculator = new MathExecutor();
+        $varName = 'Eythel';
+        $calculator->setVar($varName, 1);
+        $this->assertTrue($calculator->varExists($varName));
+        $this->assertFalse($calculator->varExists('Lucy'));
     }
 
     /**
@@ -643,8 +731,5 @@ class MathTest extends TestCase
 
         $this->assertEquals(2048, $calculator->execute('2 ^ 11', false));
         $this->assertEquals(0, count($calculator->getCache()));
-
-
     }
-
 }
