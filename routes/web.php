@@ -290,7 +290,7 @@ Route::get('getUserOnProjectForAssign', ['uses' => 'ToolsController@getUserOnPro
 
     // CALL CUTOMER LINKS:
 
-    Route::get('cl',['uses' => 'Apis\ClController@callCL', 'as' => 'callCL', 'middleware' => ['permission:tools-activity-view']]);
+    // Route::get('cl',['uses' => 'Apis\ClController@callCL', 'as' => 'callCL', 'middleware' => ['permission:tools-activity-view']]);
 
 
 
@@ -318,7 +318,7 @@ Route::get('getUserOnProjectForAssign', ['uses' => 'ToolsController@getUserOnPro
     Route::get('projectsWithoutCLID', ['uses' => 'Apis\ClController@projectsWithoutCLID', 'as' => 'projectsWithoutCLID', 'middleware' => ['permission:tools-activity-view']]);
 
 
-    Route::post('callCL', ['uses' => 'Apis\ClController@callCL', 'as' => 'callCL', 'middleware' => ['permission:tools-activity-view']]);
+    // Route::post('callCL', ['uses' => 'Apis\ClController@callCL', 'as' => 'callCL', 'middleware' => ['permission:tools-activity-view']]);
 
 
 Route::get('/home', 'HomeController@index')->name('home');
