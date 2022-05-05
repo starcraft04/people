@@ -9,11 +9,12 @@
 * Conditional If logic
 * Support for user defined operators
 * Support for user defined functions
+* Support for math on user defined objects
 * Dynamic variable resolution (delayed computation)
 * Unlimited variable name lengths
 * String support, as function parameters or as evaluated as a number by PHP
 * Exceptions on divide by zero, or treat as zero
-* Unary Minus (e.g. -3)
+* Unary Plus and Minus (e.g. +3 or -sin(12))
 * Pi ($pi) and Euler's number ($e) support to 11 decimal places
 * Easily extensible
 
@@ -138,6 +139,21 @@ $executor->setVar('var1', 0.15)->setVar('var2', 0.22);
 echo $executor->execute("$var1 + var2");
 ```
 
+By default, variables must be scalar values (int, float, bool or string).  If you would like to support another type, use **setVarValidationHandler**
+
+```php
+$executor->setVarValidationHandler(function (string $name, $variable) {
+		// allow all scalars and null
+		if (is_scalar($variable) || $variable === null) {
+				return;
+		}
+		// Allow variables of type DateTime, but not others
+		if (! $variable instanceof \DateTime) {
+				throw new MathExecutorException("Invalid variable type");
+		}
+});
+```
+
 You can dynamically define variables at run time. If a variable has a high computation cost, but might not be used, then you can define an undefined variable handler. It will only get called when the variable is used, rather than having to always set it initially.
 
 ```php
@@ -176,9 +192,6 @@ $executor->addOperator("/", false, 180, function($a, $b) {
 echo $executor->execute('1/0');
 ```
 
-## Unary Minus Operator:
-Negative numbers are supported via the unary minus operator. Positive numbers are not explicitly supported as unsigned numbers are assumed positive.
-
 ## String Support:
 Expressions can contain double or single quoted strings that are evaluated the same way as PHP evalutes strings as numbers. You can also pass strings to functions.
 
@@ -202,4 +215,4 @@ Full class documentation via [PHPFUI/InstaDoc](http://phpfui.com/?n=NXP&c=MathEx
 
 ## Future Enhancements
 
-This package will continue to track currently supported versions of PHP.  PHP 7.1 and earlier support will be dropped when PHP 8 is released.
+This package will continue to track currently supported versions of PHP.

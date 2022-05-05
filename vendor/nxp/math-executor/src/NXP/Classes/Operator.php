@@ -1,6 +1,5 @@
 <?php
 
-
 namespace NXP\Classes;
 
 use NXP\Exception\IncorrectExpressionException;
@@ -24,7 +23,7 @@ class Operator
     public $priority;
 
     /**
-     * @var callable<\SplStack>
+     * @var callable(\SplStack)
      */
     public $function;
 
@@ -50,7 +49,12 @@ class Operator
         $this->places = $reflection->getNumberOfParameters();
     }
 
-    public function execute(array &$stack) : Token
+    /**
+     * @param array<Token> $stack
+     *
+     * @throws IncorrectExpressionException
+     */
+    public function execute(array &$stack): Token
     {
         if (count($stack) < $this->places) {
             throw new IncorrectExpressionException();

@@ -10,6 +10,7 @@ use Spatie\Backup\Events\BackupHasFailed;
 use Spatie\Backup\Events\BackupManifestWasCreated;
 use Spatie\Backup\Events\BackupWasSuccessful;
 use Spatie\Backup\Events\BackupZipWasCreated;
+use Spatie\Backup\Events\DumpingDatabase;
 use Spatie\Backup\Exceptions\InvalidBackupJob;
 use Spatie\DbDumper\Compressors\GzipCompressor;
 use Spatie\DbDumper\Databases\MongoDb;
@@ -213,7 +214,11 @@ class BackupJob
 
         consoleOutput()->info("Created zip containing {$zip->count()} files and directories. Size is {$zip->humanReadableSize()}");
 
-        $this->sendNotification(new BackupZipWasCreated($pathToZip));
+        if ($this->sendNotifications) {
+            $this->sendNotification(new BackupZipWasCreated($pathToZip));
+        } else {
+            app()->call('\Spatie\Backup\Listeners\EncryptBackupArchive@handle', ['event' => new BackupZipWasCreated($pathToZip)]);
+        }
 
         return $pathToZip;
     }
@@ -249,6 +254,8 @@ class BackupJob
             }
 
             $temporaryFilePath = $this->temporaryDirectory->path('db-dumps'.DIRECTORY_SEPARATOR.$fileName);
+
+            event(new DumpingDatabase($dbDumper));
 
             $dbDumper->dumpToFile($temporaryFilePath);
 
@@ -288,6 +295,10 @@ class BackupJob
 
     protected function getExtension(DbDumper $dbDumper): string
     {
+        if ($extension = config('backup.backup.database_dump_file_extension')) {
+            return $extension;
+        }
+
         return $dbDumper instanceof MongoDb
             ? 'archive'
             : 'sql';

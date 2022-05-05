@@ -27,15 +27,15 @@ class Tokenizer
     /**
      * @var string
      */
-    private $input = "";
+    private $input = '';
     /**
      * @var string
      */
-    private $numberBuffer = "";
+    private $numberBuffer = '';
     /**
      * @var string
      */
-    private $stringBuffer = "";
+    private $stringBuffer = '';
     /**
      * @var bool
      */
@@ -66,7 +66,7 @@ class Tokenizer
         $this->operators = $operators;
     }
 
-    public function tokenize() : self
+    public function tokenize(): self
     {
         foreach (str_split($this->input, 1) as $ch) {
             switch (true) {
@@ -74,25 +74,25 @@ class Tokenizer
                     if ($ch === "'") {
                         $this->tokens[] = new Token(Token::String, $this->stringBuffer);
                         $this->inSingleQuotedString = false;
-                        $this->stringBuffer = "";
+                        $this->stringBuffer = '';
                         continue 2;
                     }
                     $this->stringBuffer .= $ch;
                     continue 2;
                 case $this->inDoubleQuotedString:
-                    if ($ch === "\"") {
+                    if ($ch === '"') {
                         $this->tokens[] = new Token(Token::String, $this->stringBuffer);
                         $this->inDoubleQuotedString = false;
-                        $this->stringBuffer = "";
+                        $this->stringBuffer = '';
                         continue 2;
                     }
                     $this->stringBuffer .= $ch;
                     continue 2;
-                case $ch == " " || $ch == "\n" || $ch == "\r" || $ch == "\t":
-                    $this->tokens[] = new Token(Token::Space, "");
+                case $ch == ' ' || $ch == "\n" || $ch == "\r" || $ch == "\t":
+                    $this->tokens[] = new Token(Token::Space, '');
                     continue 2;
                 case $this->isNumber($ch):
-                    if ($this->stringBuffer != "") {
+                    if ($this->stringBuffer != '') {
                         $this->stringBuffer .= $ch;
                         continue 2;
                     }
@@ -100,22 +100,22 @@ class Tokenizer
                     $this->allowNegative = false;
                     break;
                 /** @noinspection PhpMissingBreakStatementInspection */
-                case strtolower($ch) === "e":
-                    if ($this->numberBuffer != "" && strpos($this->numberBuffer, ".") !== false) {
-                        $this->numberBuffer .= "e";
-                        $this->allowNegative = true;
+                case strtolower($ch) === 'e':
+                    if (strlen($this->numberBuffer) && strpos($this->numberBuffer, '.') !== false) {
+                        $this->numberBuffer .= 'e';
+                        $this->allowNegative = false;
                         break;
                     }
                     // no break
                 case $this->isAlpha($ch):
-                    if ($this->numberBuffer != "") {
+                    if (strlen($this->numberBuffer)) {
                         $this->emptyNumberBufferAsLiteral();
-                        $this->tokens[] = new Token(Token::Operator, "*");
+                        $this->tokens[] = new Token(Token::Operator, '*');
                     }
                     $this->allowNegative = false;
                     $this->stringBuffer .= $ch;
                     break;
-                case $ch == "\"":
+                case $ch == '"':
                     $this->inDoubleQuotedString = true;
                     continue 2;
                 case $ch == "'":
@@ -127,33 +127,41 @@ class Tokenizer
                     $this->allowNegative = false;
                     break;
                 case $this->isLP($ch):
-                    if ($this->stringBuffer != "") {
+                    if ($this->stringBuffer != '') {
                         $this->tokens[] = new Token(Token::Function, $this->stringBuffer);
-                        $this->stringBuffer = "";
-                    } elseif ($this->numberBuffer != "") {
+                        $this->stringBuffer = '';
+                    } elseif (strlen($this->numberBuffer)) {
                         $this->emptyNumberBufferAsLiteral();
-                        $this->tokens[] = new Token(Token::Operator, "*");
+                        $this->tokens[] = new Token(Token::Operator, '*');
                     }
                     $this->allowNegative = true;
-                    $this->tokens[] = new Token(Token::LeftParenthesis, "");
+                    $this->tokens[] = new Token(Token::LeftParenthesis, '');
                     break;
                 case $this->isRP($ch):
                     $this->emptyNumberBufferAsLiteral();
                     $this->emptyStrBufferAsVariable();
                     $this->allowNegative = false;
-                    $this->tokens[] = new Token(Token::RightParenthesis, "");
+                    $this->tokens[] = new Token(Token::RightParenthesis, '');
                     break;
                 case $this->isComma($ch):
                     $this->emptyNumberBufferAsLiteral();
                     $this->emptyStrBufferAsVariable();
                     $this->allowNegative = true;
-                    $this->tokens[] = new Token(Token::ParamSeparator, "");
+                    $this->tokens[] = new Token(Token::ParamSeparator, '');
                     break;
                 default:
-                    if ($this->allowNegative && $ch == "-") {
-                        $this->allowNegative = false;
-                        $this->numberBuffer .= "-";
-                        continue 2;
+                    // special case for unary operations
+                    if ($ch == '-' || $ch == '+') {
+                        if ($this->allowNegative) {
+                            $this->allowNegative = false;
+                            $this->tokens[] = new Token(Token::Operator, $ch == '-' ? 'uNeg' : 'uPos');
+                            continue 2;
+                        }
+                        // could be in exponent, in which case negative should be added to the numberBuffer
+                        if ($this->numberBuffer && $this->numberBuffer[strlen($this->numberBuffer) - 1] == 'e') {
+                            $this->numberBuffer .= $ch;
+                            continue 2;
+                        }
                     }
                     $this->emptyNumberBufferAsLiteral();
                     $this->emptyStrBufferAsVariable();
@@ -176,48 +184,48 @@ class Tokenizer
         return $this;
     }
 
-    private function isNumber(string $ch) : bool
+    private function isNumber(string $ch): bool
     {
         return $ch >= '0' && $ch <= '9';
     }
 
-    private function isAlpha(string $ch) : bool
+    private function isAlpha(string $ch): bool
     {
         return $ch >= 'a' && $ch <= 'z' || $ch >= 'A' && $ch <= 'Z' || $ch == '_';
     }
 
-    private function emptyNumberBufferAsLiteral() : void
+    private function emptyNumberBufferAsLiteral(): void
     {
-        if ($this->numberBuffer != "") {
+        if (strlen($this->numberBuffer)) {
             $this->tokens[] = new Token(Token::Literal, $this->numberBuffer);
-            $this->numberBuffer = "";
+            $this->numberBuffer = '';
         }
     }
 
-    private function isDot(string $ch) : bool
+    private function isDot(string $ch): bool
     {
         return $ch == '.';
     }
 
-    private function isLP(string $ch) : bool
+    private function isLP(string $ch): bool
     {
         return $ch == '(';
     }
 
-    private function isRP(string $ch) : bool
+    private function isRP(string $ch): bool
     {
         return $ch == ')';
     }
 
-    private function emptyStrBufferAsVariable() : void
+    private function emptyStrBufferAsVariable(): void
     {
-        if ($this->stringBuffer != "") {
+        if ($this->stringBuffer != '') {
             $this->tokens[] = new Token(Token::Variable, $this->stringBuffer);
-            $this->stringBuffer = "";
+            $this->stringBuffer = '';
         }
     }
 
-    private function isComma(string $ch) : bool
+    private function isComma(string $ch): bool
     {
         return $ch == ',';
     }
@@ -227,7 +235,7 @@ class Tokenizer
      * @throws IncorrectBracketsException
      * @throws UnknownOperatorException
      */
-    public function buildReversePolishNotation() : array
+    public function buildReversePolishNotation(): array
     {
         $tokens = [];
         /** @var SplStack<Token> $stack */

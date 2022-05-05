@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of the MathExecutor package
  *
@@ -14,10 +13,11 @@ namespace NXP;
 use NXP\Classes\Calculator;
 use NXP\Classes\CustomFunction;
 use NXP\Classes\Operator;
+use NXP\Classes\Token;
 use NXP\Classes\Tokenizer;
 use NXP\Exception\DivisionByZeroException;
-use NXP\Exception\UnknownVariableException;
 use NXP\Exception\MathExecutorException;
+use NXP\Exception\UnknownVariableException;
 use ReflectionException;
 
 /**
@@ -29,29 +29,34 @@ class MathExecutor
     /**
      * Available variables
      *
-     * @var array
+     * @var array<string, float|string>
      */
-    private $variables = [];
+    protected $variables = [];
 
     /**
-     * @var callable
+     * @var callable|null
      */
-    private $onVarNotFound = null;
+    protected $onVarNotFound = null;
+
+    /**
+     * @var callable|null
+     */
+    protected $onVarValidation = null;
 
     /**
      * @var Operator[]
      */
-    private $operators = [];
+    protected $operators = [];
 
     /**
-     * @var CustomFunction[]
+     * @var array<string, CustomFunction>
      */
-    private $functions = [];
+    protected $functions = [];
 
     /**
-     * @var array
+     * @var array<string, Token[]>
      */
-    private $cache = [];
+    protected $cache = [];
 
     /**
      * Base math operators
@@ -65,7 +70,7 @@ class MathExecutor
      * Set default operands and functions
      * @throws ReflectionException
      */
-    protected function addDefaults() : void
+    protected function addDefaults(): void
     {
         foreach ($this->defaultOperators() as $name => $operator) {
             [$callable, $priority, $isRightAssoc] = $operator;
@@ -74,39 +79,55 @@ class MathExecutor
         foreach ($this->defaultFunctions() as $name => $callable) {
             $this->addFunction($name, $callable);
         }
+
+        $this->onVarValidation = [$this, 'defaultVarValidation'];
         $this->variables = $this->defaultVars();
     }
 
     /**
      * Get the default operators
      *
-     * @return array of class names
+     * @return array<string, array{callable, int, bool}>
      */
-    protected function defaultOperators() : array
+    protected function defaultOperators(): array
     {
         return [
-            '+' => [
+            '+'    => [
                 function ($a, $b) {
                     return $a + $b;
                 },
                 170,
                 false
             ],
-            '-' => [
+            '-'    => [
                 function ($a, $b) {
                     return $a - $b;
                 },
                 170,
                 false
             ],
-            '*' => [
+            'uPos' => [ // unary positive token
+                        function ($a) {
+                            return $a;
+                        },
+                        200,
+                        false
+            ],
+            'uNeg' => [ // unary minus token
+                        function ($a) {
+                            return 0 - $a;
+                        },
+                        200,
+                        false
+            ],
+            '*'    => [
                 function ($a, $b) {
                     return $a * $b;
                 },
                 180,
                 false
             ],
-            '/' => [
+            '/'    => [
                 function ($a, $b) {
                     if ($b == 0) {
                         throw new DivisionByZeroException();
@@ -116,28 +137,28 @@ class MathExecutor
                 180,
                 false
             ],
-            '^' => [
+            '^'    => [
                 function ($a, $b) {
                     return pow($a, $b);
                 },
                 220,
                 true
             ],
-            '&&' => [
+            '&&'   => [
                 function ($a, $b) {
                     return $a && $b;
                 },
                 100,
                 false
             ],
-            '||' => [
+            '||'   => [
                 function ($a, $b) {
                     return $a || $b;
                 },
                 90,
                 false
             ],
-            '==' => [
+            '=='   => [
                 function ($a, $b) {
                     if (is_string($a) || is_string($b)) {
                         return strcmp($a, $b) == 0;
@@ -148,7 +169,7 @@ class MathExecutor
                 140,
                 false
             ],
-            '!=' => [
+            '!='   => [
                 function ($a, $b) {
                     if (is_string($a) || is_string($b)) {
                         return strcmp($a, $b) != 0;
@@ -159,28 +180,28 @@ class MathExecutor
                 140,
                 false
             ],
-            '>=' => [
+            '>='   => [
                 function ($a, $b) {
                     return $a >= $b;
                 },
                 150,
                 false
             ],
-            '>' => [
+            '>'    => [
                 function ($a, $b) {
                     return $a > $b;
                 },
                 150,
                 false
             ],
-            '<=' => [
+            '<='   => [
                 function ($a, $b) {
                     return $a <= $b;
                 },
                 150,
                 false
             ],
-            '<' => [
+            '<'    => [
                 function ($a, $b) {
                     return $a < $b;
                 },
@@ -196,7 +217,7 @@ class MathExecutor
      * @param Operator $operator
      * @return MathExecutor
      */
-    public function addOperator(Operator $operator) : self
+    public function addOperator(Operator $operator): self
     {
         $this->operators[$operator->operator] = $operator;
         return $this;
@@ -206,9 +227,9 @@ class MathExecutor
      * Gets the default functions as an array.  Key is function name
      * and value is the function as a closure.
      *
-     * @return array
+     * @return array<callable>
      */
-    protected function defaultFunctions() : array
+    protected function defaultFunctions(): array
     {
         return [
             'abs' => function ($arg) {
@@ -422,14 +443,14 @@ class MathExecutor
      */
     public function execute(string $expression, bool $cache = true)
     {
-        $cachekey = $expression;
-        if (!array_key_exists($cachekey, $this->cache)) {
+        $cacheKey = $expression;
+        if (!array_key_exists($cacheKey, $this->cache)) {
             $tokens = (new Tokenizer($expression, $this->operators))->tokenize()->buildReversePolishNotation();
             if ($cache) {
-                $this->cache[$cachekey] = $tokens;
+                $this->cache[$cacheKey] = $tokens;
             }
         } else {
-            $tokens = $this->cache[$cachekey];
+            $tokens = $this->cache[$cacheKey];
         }
 
         $calculator = new Calculator($this->functions, $this->operators);
@@ -445,7 +466,7 @@ class MathExecutor
      * @return MathExecutor
      * @throws ReflectionException
      */
-    public function addFunction(string $name, ?callable $function = null, ?int $places = null) : self
+    public function addFunction(string $name, ?callable $function = null, ?int $places = null): self
     {
         $this->functions[$name] = new CustomFunction($name, $function, $places);
         return $this;
@@ -454,9 +475,9 @@ class MathExecutor
     /**
      * Returns the default variables names as key/value pairs
      *
-     * @return array
+     * @return array<string, float>
      */
-    protected function defaultVars() : array
+    protected function defaultVars(): array
     {
         return [
             'pi' => 3.14159265359,
@@ -467,9 +488,9 @@ class MathExecutor
     /**
      * Get all vars
      *
-     * @return array
+     * @return array<string, float|string>
      */
-    public function getVars() : array
+    public function getVars(): array
     {
         return $this->variables;
     }
@@ -479,28 +500,31 @@ class MathExecutor
      *
      * @param  string $variable
      * @return integer|float
-     * @throws UnknownVariableException
+     * @throws UnknownVariableException if VarNotFoundHandler is not set
      */
     public function getVar(string $variable)
     {
         if (!array_key_exists($variable, $this->variables)) {
+            if ($this->onVarNotFound) {
+                return call_user_func($this->onVarNotFound, $variable);
+            }
             throw new UnknownVariableException("Variable ({$variable}) not set");
         }
         return $this->variables[$variable];
     }
 
     /**
-     * Add variable to executor
+     * Add variable to executor. To set a custom validator use setVarValidationHandler.
      *
      * @param  string $variable
-     * @param  integer|float $value
+     * @param  $value
      * @return MathExecutor
+     * @throws MathExecutorException if the value is invalid based on the default or custom validator
      */
-    public function setVar(string $variable, $value) : self
+    public function setVar(string $variable, $value): self
     {
-        if (!is_scalar($value) && $value !== null) {
-            $type = gettype($value);
-            throw new MathExecutorException("Variable ({$variable}) type ({$type}) is not scalar");
+        if ($this->onVarValidation) {
+            call_user_func($this->onVarValidation, $variable, $value);
         }
 
         $this->variables[$variable] = $value;
@@ -508,14 +532,38 @@ class MathExecutor
     }
 
     /**
+     * Default variable validation, ensures that the value is a scalar.
+     * @param string $variable
+     * @param $value
+     * @throws MathExecutorException if the value is not a scalar
+     */
+    protected function defaultVarValidation(string $variable, $value): void
+    {
+        if (!is_scalar($value) && $value !== null) {
+            $type = gettype($value);
+            throw new MathExecutorException("Variable ({$variable}) type ({$type}) is not scalar");
+        }
+    }
+
+    /**
+     * Test to see if a variable exists
+     *
+     * @param  string $variable
+     */
+    public function varExists(string $variable): bool
+    {
+        return array_key_exists($variable, $this->variables);
+    }
+
+    /**
      * Add variables to executor
      *
-     * @param  array $variables
+     * @param  array<string, float|int|string> $variables
      * @param  bool $clear Clear previous variables
      * @return MathExecutor
      * @throws \Exception
      */
-    public function setVars(array $variables, bool $clear = true) : self
+    public function setVars(array $variables, bool $clear = true): self
     {
         if ($clear) {
             $this->removeVars();
@@ -541,12 +589,27 @@ class MathExecutor
     }
 
     /**
+     * Define a validation method that will be invoked when a variable is set using setVar.
+     * The first parameter will be the variable name, and the second will be the variable value.
+     * Set to null to disable validation.
+     *
+     * @param ?callable $handler throws a MathExecutorException in case of an invalid variable
+     *
+     * @return MathExecutor
+     */
+    public function setVarValidationHandler(?callable $handler): self
+    {
+        $this->onVarValidation = $handler;
+        return $this;
+    }
+
+    /**
      * Remove variable from executor
      *
      * @param  string $variable
      * @return MathExecutor
      */
-    public function removeVar(string $variable) : self
+    public function removeVar(string $variable): self
     {
         unset($this->variables[$variable]);
         return $this;
@@ -556,7 +619,7 @@ class MathExecutor
      * Remove all variables and the variable not found handler
      * @return MathExecutor
      */
-    public function removeVars() : self
+    public function removeVars(): self
     {
         $this->variables = [];
         $this->onVarNotFound = null;
@@ -566,7 +629,7 @@ class MathExecutor
     /**
      * Get all registered operators to executor
      *
-     * @return array of operator class names
+     * @return array<Operator> of operator class names
      */
     public function getOperators()
     {
@@ -576,10 +639,10 @@ class MathExecutor
     /**
      * Get all registered functions
      *
-     * @return array containing callback and places indexed by
+     * @return array<string, CustomFunction> containing callback and places indexed by
      *         function name
      */
-    public function getFunctions() : array
+    public function getFunctions(): array
     {
         return $this->functions;
     }
@@ -589,7 +652,7 @@ class MathExecutor
      *
      * @return MathExecutor
      */
-    public function setDivisionByZeroIsZero() : self
+    public function setDivisionByZeroIsZero(): self
     {
         $this->addOperator(new Operator("/", false, 180, function ($a, $b) {
             if ($b == 0) {
@@ -602,9 +665,9 @@ class MathExecutor
 
     /**
      * Get cache array with tokens
-     * @return array
+     * @return array<string, Token[]>
      */
-    public function getCache() : array
+    public function getCache(): array
     {
         return $this->cache;
     }
@@ -612,7 +675,7 @@ class MathExecutor
     /**
      * Clear token's cache
      */
-    public function clearCache() : void
+    public function clearCache(): void
     {
         $this->cache = [];
     }
