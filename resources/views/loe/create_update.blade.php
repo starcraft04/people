@@ -594,7 +594,7 @@ $(document).ready(function() {
           if (total_cost == 0) {
             margin = 0;
           } else {
-            margin = 100*(total_price-total_cost)/total_cost;
+            margin = 100*(total_price-total_cost)/total_price;
           }
           //We need to check if the sum of percentage is 100
           if (total_percentage != 100) {
