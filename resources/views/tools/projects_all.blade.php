@@ -156,6 +156,9 @@
 
             projectTable = $('#projectTable').DataTable({
                 scrollX: true,
+                orderCellsTop: true,
+                scrollY: '70vh',
+                scrollCollapse: true,
                 serverSide: true,
                 processing: true,
                 stateSave: true,
