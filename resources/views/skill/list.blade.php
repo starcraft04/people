@@ -131,7 +131,20 @@
                     { name: 'subdomain', data: 'subdomain' },
                     { name: 'technology', data: 'technology' },
                     { name: 'skill', data: 'skill' },
-                    { name: 'certification', data: 'certification' },
+                    { name: 'certification', data: 'certification' ,
+                    render:function(data){
+                        var cirtificate = "";
+                        if(data == '1'){
+                            cirtificate +='<div class = "cl"><span style="display:inline-block;">Cirtificate</span><img src ="img/cert.jpg"style="display: inline-block;width: 24%;margin-left: 6px;" ></div>';
+                            return cirtificate;
+                        }
+                        else
+                        {
+                            cirtificate +='<div class = "cl"><span style="display:inline-block;">Skill</span><img src ="img/skill.png"style="display: inline-block;width: 24%;margin-left: 6px;" ></div>';
+                            return cirtificate;
+                        }
+                    }
+                },
                     { name: 'created_at', data: 'created_at' },
                     {
                         name: 'actions',
