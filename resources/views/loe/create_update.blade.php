@@ -499,6 +499,8 @@ $(document).ready(function() {
       }
     }
 
+    //margin changes
+
     function fill_total(){
       var grand_total_loe=0;
       var grand_total_cost=0;
