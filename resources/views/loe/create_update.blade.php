@@ -619,7 +619,7 @@ $(document).ready(function() {
       if (grand_total_cost == 0) {
         grand_margin = 0;
       } else {
-        grand_margin = 100*(grand_total_price-grand_total_cost)/grand_total_cost;
+        grand_margin = 100*(grand_total_price-grand_total_cost)/grand_total_price;
       }
       $('#LoeTable tfoot tr td[data-colname=margin]').html(Math.round(grand_margin));
 
