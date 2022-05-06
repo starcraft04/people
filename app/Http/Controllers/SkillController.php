@@ -52,6 +52,7 @@ class SkillController extends Controller
     {
         $inputs = $request->only('domain', 'subdomain', 'technology', 'skill', 'certification');
         $date = time();
+        // add created date
         $inputs += ['created_at' => date("Y-m-d h:i:sa", $date)];
         
         Skill::create($inputs);
