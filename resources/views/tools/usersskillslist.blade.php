@@ -204,7 +204,11 @@
 
             skillTable = $('#skillTable').DataTable({
                 serverSide: true,
+                scrollX: true,
                 processing: true,
+                orderCellsTop: true,
+                scrollY: '70vh',
+                scrollCollapse: true,
                 stateSave: true,
                 ajax: {
                         url: "{!! route('listOfUsersSkills',['0']) !!}",

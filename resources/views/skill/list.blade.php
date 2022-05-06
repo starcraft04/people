@@ -118,6 +118,9 @@
                 serverSide: true,
                 processing: true,
                 scrollX: true,
+                 orderCellsTop: true,
+                scrollY: '70vh',
+                scrollCollapse: true,
                 ajax: {
                         url: "{!! route('listOfSkillsAjax') !!}",
                         type: "POST",
