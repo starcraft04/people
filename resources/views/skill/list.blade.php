@@ -135,7 +135,7 @@
                     render:function(data){
                         var cirtificate = "";
                         if(data == '1'){
-                            cirtificate +='<div class = "cl"><span style="display:inline-block;">Cirtificate</span><img src ="img/cert.jpg"style="display: inline-block;width: 24%;margin-left: 6px;" ></div>';
+                            cirtificate +='<div class = "cl"><span style="display:inline-block;">Certificate</span><img src ="img/cert.jpg"style="display: inline-block;width: 24%;margin-left: 6px;" ></div>';
                             return cirtificate;
                         }
                         else
