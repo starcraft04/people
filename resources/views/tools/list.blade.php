@@ -663,15 +663,7 @@
         { name: 'p.meta_activity', data: 'meta_activity' , searchable: true , visible: false, className: "dt-nowrap"},
         { name: 'p.project_subtype', data: 'project_subtype' , searchable: true , visible: false, className: "dt-nowrap"},
         { name: 'p.technology', data: 'technology' , searchable: true , visible: false, className: "dt-nowrap"},
-        { name: 'p.samba_id', data: 'samba_id',
-         render:function(data,type,rowData){
-          if(data != null){
-           data ='<a href="https://samba.lightning.force.com/lightning/r/Account/'+rowData.samba_18_id+'/view">'+data+'</a>';
-          }else{
-            data = data;
-          }
-          return data;
-         }, searchable: true , visible: false, className: "dt-nowrap"},
+        { name: 'p.samba_id', data: 'samba_id',searchable: true , visible: false, className: "dt-nowrap"},
         { name: 'p.pullthru_samba_id', data: 'pullthru_samba_id' , searchable: true , visible: false, className: "dt-nowrap"},
         { name: 'p.revenue', data: 'project_revenue' , searchable: true , visible: false, className: "dt-nowrap"},
         { name: 'p.samba_consulting_product_tcv', data: 'samba_consulting_product_tcv' , searchable: true , visible: false, className: "dt-nowrap"},
