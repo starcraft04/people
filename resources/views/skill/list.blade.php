@@ -135,12 +135,12 @@
                     render:function(data){
                         var cirtificate = "";
                         if(data == '1'){
-                            cirtificate +='<div class = "cl"><span style="display:inline-block;">Certificate</span><img src ="img/cert.jpg"style="display: inline-block;width: 20%;margin-left: 6px;" ></div>';
+                            cirtificate +='<div class = "cl"><span style="display:inline-block;">Certificate</span><img src ="img/cert.jpg"style="display: inline-block;width: 15%;margin-left: 6px;" ></div>';
                             return cirtificate;
                         }
                         else
                         {
-                            cirtificate +='<div class = "cl"><span style="display:inline-block;">Skill</span><img src ="img/skill.png"style="display: inline-block;width: 20%;margin-left: 6px;" ></div>';
+                            cirtificate +='<div class = "cl"><span style="display:inline-block;">Skill</span><img src ="img/skill.png"style="display: inline-block;width: 15%;margin-left: 6px;" ></div>';
                             return cirtificate;
                         }
                     }
