@@ -226,7 +226,8 @@ Route::get('getUserOnProjectForAssign', ['uses' => 'ToolsController@getUserOnPro
     
     Route::get('actiondashboard/{user_name?}', ['uses' => 'DashboardController@action', 'as' => 'actiondashboard', 'middleware' => ['permission:action-view']]);
     //  AJAX
-    Route::get('listOfLoadPerUserAjax', ['uses' => 'ActivityController@listOfLoadPerUserAjax', 'as' => 'listOfLoadPerUserAjax', 'middleware' => ['permission:dashboard-view']]);
+    //listOfLoadPerUserAjax may be get somewhere .... need to check.
+    Route::post('listOfLoadPerUserAjax', ['uses' => 'ActivityController@listOfLoadPerUserAjax', 'as' => 'listOfLoadPerUserAjax', 'middleware' => ['permission:dashboard-view']]);
     Route::post('listOfLoadPerUserChartAjax', ['uses' => 'ActivityController@listOfLoadPerUserChartAjax', 'as' => 'listOfLoadPerUserChartAjax', 'middleware' => ['permission:dashboard-view']]);
     // Skills
     //  Main skill list
