@@ -497,26 +497,211 @@ class UserController extends Controller
             }
     }
 
-    public function UpdateCreateUserEmp($employee_email,$manager_email,$create_emp_arr,$update_emp_arr)
+    public function UpdateCreateUserEmp(Request $request)
     {
-        $employee = User::where('email',$employee_email)->first();
-        $employee_manager_id = User::where('email',$manager_email)->pluck('id');
-        if($employee)
+         $file = $request->file;
+        $employes_file_list = Excel::toArray(new UserFullImport, $file);
+
+        $managment_code_list = config('select.users-mc');
+        $efl = $employes_file_list[0];
+        
+         $man_emp_mail    ='';
+         $man_emp_man_mail    ='';
+         $man_emp_fname    ='';
+         $man_emp_lname    ='';
+         $man_emp_pimsid  ='';
+         $man_emp_ftid    ='';
+         $man_emp_region  ='';
+         $man_emp_country ='';
+         $man_emp_mc      ='';
+         $is_manager      ='';
+         $man_emp_category    ='';
+         $man_emp_role='';
+         $man_emp_domain  ='';
+         $man_emp_practice='';
+         $man_emp_activty ='';
+         $man_emp_supplier='';
+         $man_emp_start_date='';
+         $man_emp_end_date='';
+         
+         $user_update=[
+            'start_date'=>$man_emp_start_date,
+            'end_date'=>$man_emp_end_date
+         ];
+          $users_for_update=[];
+            $users_for_equ=[];
+            $new_users=[];
+       
+         for($i=0;$i<sizeof($efl);$i++)
         {
-            // update
-            User::where('email',$employee_email)->update($update_emp_arr);
+        //start date and end date 
+            if($efl[$i]['is_manager'] == "Yes"){
+                $is_manager = 1;
+            }
+            else{
+                $is_manager =0;
+            }
+            //---------------------------//
+            if($efl[$i]['end_date'] != null){
+                $start_date = ($efl[$i]['start_date'] - 25569) * 86400;
+            $php_start_date = date("Y-m-d", $start_date);
+
+            $end_date = ($efl[$i]['end_date'] - 25569) * 86400;
+            $php_end_date = date("Y-m-d", $end_date);
+            
+            $man_emp_email      = $efl[$i]['email'];
+            $man_emp_start_date = $php_start_date;
+            $man_emp_end_date   = $php_end_date;
+            $man_emp_supplier = $efl[$i]['supplier'];
+
+            $user_update=[
+                    'date_started'=>$man_emp_start_date,
+                    'date_ended'=>$man_emp_end_date,
+                    'supplier'=>$man_emp_supplier
+                 ];
+            }
+            else{
+                $start_date = ($efl[$i]['start_date'] - 25569) * 86400;
+            $php_start_date = date("Y-m-d", $start_date);
+
+            $php_end_date = null;
+            
+            $man_emp_email      = $efl[$i]['email'];
+            $man_emp_start_date = $php_start_date;
+            $man_emp_end_date   = $php_end_date;
+            $man_emp_supplier = $efl[$i]['supplier'];
+
+            $user_update=[
+                    'date_started'=>$man_emp_start_date,
+                    'date_ended'=>$man_emp_end_date,
+                    'supplier'=>$man_emp_supplier
+                 ];
+            }
+            // end of start and end date
+
+
+            $user_name = $efl[$i]['last_name'].",".$efl[$i]['first_name'];
+
+            $get_user_email = User::where('email',$efl[$i]['email'])->first();
+            $get_user_name  = User::where('name',$user_name)->first();
+            $get_user_pims  = User::where('pimsid',$efl[$i]['pims_id'])->first();
+
+           
+
+           
+        if(isset($get_user_email)){
+            $current_date = date('Y-m-d');
+                if($php_end_date != null){
+                    if($current_date > $php_end_date){
+                        $activity="inactiv.";
+                    }
+                    else{
+                        $activity="active";
+                    }
+                }
+                else{
+                    $activity="active";
+                }
+                $user=[
+                    'pimsid'=>$efl[$i]['pims_id'],
+                    'ftid'=>$efl[$i]['ft_id'],
+                    'region'=>$efl[$i]['region'],
+                    'country'=>$efl[$i]['country'],
+                    'activity_status'=>$activity,
+                    'management_code'=>$efl[$i]['management_code'],
+                    'employee_type'=>$efl[$i]['category'],
+                    'domain'=>$efl[$i]['practice'],
+                    'supplier'=>$efl[$i]['supplier'],
+                    'date_started'=>$php_start_date,
+
+                ];
+
+            $man_email_check = $efl[$i]['manager_email'] ;
+            
+
+                $update_user_form_excel = User::where('email',$efl[$i]['email'])->update($user);
+                $update_user_form_excel_role = User::where('email',$efl[$i]['email'])->first();
+                $created_user = User::where('email',$man_email_check)->first();
+                $update_user_form_excel_role->managers()->attach($created_user['id']);
+
+                $roles = $update_user_form_excel_role->getRoleNames();
+                $update_user_form_excel_role->syncRoles($roles,$efl[$i]['role']);
+
+            print($get_user_email['name']."             ");
+                
+            }
+            else if($get_user_pims['pimsid'] == $efl[$i]['pims_id'])
+             {
+            $current_date = date('Y-m-d');
+                if($php_end_date != null){
+                    if($current_date > $php_end_date){
+                        $activity="inactiv.";
+                    }
+                    else{
+                        $activity="active";
+                    }
+                }
+                else{
+                    $activity="active";
+                }
+                $user=[
+                    'pimsid'=>$efl[$i]['pims_id'],
+                    'ftid'=>$efl[$i]['ft_id'],
+                    'region'=>$efl[$i]['region'],
+                    'country'=>$efl[$i]['country'],
+                    'activity_status'=>$activity,
+                    'management_code'=>$efl[$i]['management_code'],
+                    'employee_type'=>$efl[$i]['category'],
+                    'domain'=>$efl[$i]['practice'],
+                    'supplier'=>$efl[$i]['supplier'],
+                    'date_started'=>$php_start_date,
+
+                ];
+
+            $man_email_check = $efl[$i]['manager_email'] ;
+            
+
+                $update_user_form_excel = User::where('email',$efl[$i]['email'])->update($user);
+                $update_user_form_excel_role = User::where('email',$efl[$i]['email'])->first();
+                $created_user = User::where('email',$man_email_check)->first();
+                $update_user_form_excel_role->managers()->attach($created_user['id']);
+
+                $roles = $update_user_form_excel_role->getRoleNames();
+                $update_user_form_excel_role->syncRoles($roles,$efl[$i]['role']);
+                        }
+            else{   
+                $create_user_array=[
+                    'name'=>$user_name,
+                    'email'=>$efl[$i]['email'],
+                    'is_manager'=>$is_manager,
+                    'pimsid'=>$efl[$i]['pims_id'],
+                    'ftid'=>$efl[$i]['ft_id'],
+                    'region'=>$efl[$i]['region'],
+                    'country'=>$efl[$i]['country'],
+                    'activity_status'=>"active",
+                    'management_code'=>$efl[$i]['management_code'],
+                    'employee_type'=>$efl[$i]['category'],
+                    'domain'=>$efl[$i]['practice'],
+                    'supplier'=>$efl[$i]['supplier'],
+                    'date_started'=>$php_start_date,
+                    'date_end'=>$php_end_date
+
+                ];
+
+            $man_email_check = $efl[$i]['manager_email'] ;
+            $create_user = User::create($create_user_array);
+            $created_user = User::where('email',$man_email_check)->first();
+            echo $created_user->id;
+            $created_user->managers()->attach($created_user['id']);
+            $created_user->update_password('Welcome1',true);
+            $created_user->syncRoles('user',$efl[$i]['role']);   
+
+
+            
+
+            }
+           
         }
-        else
-        {
-            //create and attach to manager
-            $create_emp_arr['is_manager']=0;
-            $create_emp_user = User::create($create_emp_arr);
-
-            $create_emp_user->managers()->attach($employee_manager_id);
-            $create_emp_user->update_password('Welcome_1',true);
-            $create_emp_user->syncRoles('Only Skills');
-
-        }
-
+        return redirect()->route('userList');
     }
 }

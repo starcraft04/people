@@ -62,7 +62,7 @@
         </ul>
         <div class="clearfix"></div>
       </div>
-    <!--   <div class="container">
+      <div class="container">
         <div class="row justify-content-center">
       <div class="col-md-8">
         <div class="card" style="padding: 12px;">
@@ -87,7 +87,7 @@
       </div>
       
     </div>
-      </div> -->
+      </div>
       <!-- Window title -->
 
       <!-- Window content -->
@@ -113,6 +113,7 @@
                     <th>Type</th>
                     <th>From OTL</th>
                     <th>Roles</th>
+                    <th>Supplier</th>
                     <th class="last_column">
                       @can('user-create')
                         <a href="{{ route('userFormCreate') }}" class="btn btn-info btn-xs" align="right"><span class="glyphicon glyphicon-plus"> New</span></a>
@@ -140,6 +141,7 @@
                     <th>Type</th>
                     <th>From OTL</th>
                     <th></th>
+                    <th>Supplier</th>
                     <th class="last_column"></th>
                 </tr>
             </tfoot>
@@ -262,6 +264,7 @@
         serverSide: true,
         processing: true,
         scrollX: true,
+        scrollY: '70vh',
         stateSave: true,
         ajax: {
                 url: "{!! route('listOfUsersAjax','') !!}/"+exclude_contractors,
@@ -301,6 +304,7 @@
                 return $('<div/>').html(data).text();
               } 
             },
+             { name: 'users.supplier', data: 'supplier' , searchable: false , visible: true },
             {
                 name: 'actions',
                 data: null,
@@ -334,7 +338,7 @@
           {
             extend: "colvis",
             className: "btn-sm",
-            columns: [ 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,17 ]
+            columns: [ 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,17,18]
           },
           {
             extend: "pageLength",

@@ -327,7 +327,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 // Route::get('updator',['uses'=>'UpdateTableController@updator', 'as'=>'updator']);
 
-Route::post('import', ['uses' => 'UserController@updateCreateUsersFromExcel', 'as' => 'updateCreateUsersFromExcel', 'middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
+Route::post('import', ['uses' => 'UserController@UpdateCreateUserEmp', 'as' => 'UpdateCreateUserEmp', 'middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
 Route::post('CLimport', ['uses' => 'Apis\ClController@UploadExcelToAddCLID', 'as' => 'UploadExcelToAddCLID', 'middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
 // Route::get('export', 'UpdateTableController@export');
 // Route::get('import',['uses'=>'UpdateTableController@show', 'as' =>'show']);
