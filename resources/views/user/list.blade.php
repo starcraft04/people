@@ -109,7 +109,7 @@
                     <th>Country</th>
                     <th>Practice</th>
                     <th>Management Code</th>
-                    <th>Team</th>
+                    <th>Role</th>
                     <th>Category</th>
                     <th>From OTL</th>
                     <th>Roles</th>
@@ -137,7 +137,7 @@
                     <th>Country</th>
                     <th>Domain</th>
                     <th>Management Code</th>
-                    <th>Team</th>
+                    <th>Role</th>
                     <th>Category</th>
                     <th>From OTL</th>
                     <th></th>
