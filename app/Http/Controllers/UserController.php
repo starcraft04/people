@@ -636,8 +636,8 @@ class UserController extends Controller
                 $user = $get_user_pims->update($update);
                 $roles = $get_user_pims->getRoleNames();
                 $get_user_pims->syncRoles($roles,$efl[$i]['role']);
-                print("need email ");
-                print($efl[$i]['email']."<br>");
+                // print("need email ");
+                // print($efl[$i]['email']."<br>");
                 continue;
             }
             else{
@@ -669,8 +669,8 @@ class UserController extends Controller
             $created_user->managers()->attach($manager['id']);
             $created_user->update_password('Welcome1',true);
             $created_user->syncRoles('User',$efl[$i]['role']);   
-                print("need create ");
-                 print($efl[$i]['email']."<br>");
+                // print("need create ");
+                //  print($efl[$i]['email']."<br>");
 
                 continue;
             }
@@ -678,6 +678,6 @@ class UserController extends Controller
            
            
         }
-        //return redirect()->route('userList');
+        return redirect()->route('userList');
     }
 }
