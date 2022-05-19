@@ -577,6 +577,19 @@ class UserController extends Controller
                     'supplier'=>$man_emp_supplier
                  ];
             }
+
+            $current_date = date('Y-m-d');
+                if($php_end_date != null){
+                    if($current_date > $php_end_date){
+                        $activity="inactiv.";
+                    }
+                    else{
+                        $activity="active";
+                    }
+                }
+                else{
+                    $activity="active";
+                }
             // end of start and end date
 
 
@@ -586,23 +599,9 @@ class UserController extends Controller
             $get_user_name  = User::where('name',$user_name)->first();
             $get_user_pims  = User::where('pimsid',$efl[$i]['pims_id'])->first();
 
-           
-
-           
-        if(isset($get_user_email)){
-            $current_date = date('Y-m-d');
-                if($php_end_date != null){
-                    if($current_date > $php_end_date){
-                        $activity="inactiv.";
-                    }
-                    else{
-                        $activity="active";
-                    }
-                }
-                else{
-                    $activity="active";
-                }
-                $user=[
+            if($get_user_email)
+            {
+                $update = [
                     'pimsid'=>$efl[$i]['pims_id'],
                     'ftid'=>$efl[$i]['ft_id'],
                     'region'=>$efl[$i]['region'],
@@ -613,38 +612,15 @@ class UserController extends Controller
                     'domain'=>$efl[$i]['practice'],
                     'supplier'=>$efl[$i]['supplier'],
                     'date_started'=>$php_start_date,
-
+                    'date_ended'=>$php_end_date
                 ];
-
-            $man_email_check = $efl[$i]['manager_email'] ;
-            
-
-                $update_user_form_excel = User::where('email',$efl[$i]['email'])->update($user);
-                $update_user_form_excel_role = User::where('email',$efl[$i]['email'])->first();
-                $created_user = User::where('email',$man_email_check)->first();
-                $update_user_form_excel_role->managers()->attach($created_user['id']);
-
-                $roles = $update_user_form_excel_role->getRoleNames();
-                $update_user_form_excel_role->syncRoles($roles,$efl[$i]['role']);
-
-            print($get_user_email['name']."             ");
-                
+                $user = $get_user_email->update($update);
+                $roles = $get_user_email->getRoleNames();
+                $get_user_email->syncRoles($roles,$efl[$i]['role']);
             }
-            else if($get_user_pims['pimsid'] == $efl[$i]['pims_id'])
-             {
-            $current_date = date('Y-m-d');
-                if($php_end_date != null){
-                    if($current_date > $php_end_date){
-                        $activity="inactiv.";
-                    }
-                    else{
-                        $activity="active";
-                    }
-                }
-                else{
-                    $activity="active";
-                }
-                $user=[
+            elseif($get_user_pims){
+                $update = [
+                    'email'=>$efl[$i]['email'],
                     'pimsid'=>$efl[$i]['pims_id'],
                     'ftid'=>$efl[$i]['ft_id'],
                     'region'=>$efl[$i]['region'],
@@ -655,22 +631,18 @@ class UserController extends Controller
                     'domain'=>$efl[$i]['practice'],
                     'supplier'=>$efl[$i]['supplier'],
                     'date_started'=>$php_start_date,
-
+                    'date_ended'=>$php_end_date
                 ];
-
-            $man_email_check = $efl[$i]['manager_email'] ;
-            
-
-                $update_user_form_excel = User::where('email',$efl[$i]['email'])->update($user);
-                $update_user_form_excel_role = User::where('email',$efl[$i]['email'])->first();
-                $created_user = User::where('email',$man_email_check)->first();
-                $update_user_form_excel_role->managers()->attach($created_user['id']);
-
-                $roles = $update_user_form_excel_role->getRoleNames();
-                $update_user_form_excel_role->syncRoles($roles,$efl[$i]['role']);
-                        }
-            else{   
-                $create_user_array=[
+                $user = $get_user_pims->update($update);
+                $roles = $get_user_pims->getRoleNames();
+                $get_user_pims->syncRoles($roles,$efl[$i]['role']);
+                print("need email ");
+                print($efl[$i]['email']."<br>");
+                continue;
+            }
+            else{
+                           // change data by pims if exists
+            $create_user_array=[
                     'name'=>$user_name,
                     'email'=>$efl[$i]['email'],
                     'is_manager'=>$is_manager,
@@ -684,24 +656,28 @@ class UserController extends Controller
                     'domain'=>$efl[$i]['practice'],
                     'supplier'=>$efl[$i]['supplier'],
                     'date_started'=>$php_start_date,
-                    'date_end'=>$php_end_date
+                    'date_ended'=>$php_end_date
 
                 ];
-
             $man_email_check = $efl[$i]['manager_email'] ;
             $create_user = User::create($create_user_array);
-            $created_user = User::where('email',$man_email_check)->first();
-            echo $created_user->id;
-            $created_user->managers()->attach($created_user['id']);
-            $created_user->update_password('Welcome1',true);
-            $created_user->syncRoles('user',$efl[$i]['role']);   
+            $created_user = User::where('email',$efl[$i]['email'])->first();
 
-
+            //get manager name 
+            $manager = User::where('email',$efl[$i]['manager_email'])->first();
             
+            $created_user->managers()->attach($manager['id']);
+            $created_user->update_password('Welcome1',true);
+            $created_user->syncRoles('User',$efl[$i]['role']);   
+                print("need create ");
+                 print($efl[$i]['email']."<br>");
 
+                continue;
             }
+
+           
            
         }
-        return redirect()->route('userList');
+        //return redirect()->route('userList');
     }
 }
