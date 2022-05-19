@@ -11,6 +11,7 @@ return [
         'IoT and Edge' => 'IoT and Edge',
         'Customer Experience' => 'Customer Experience',
         'Digital Data & Cloud' => 'Digital Data & Cloud',
+        'Management'=>'Management',
     ],
     'domain-fpc' => [
         'APM' => ['P07', 'F27', 'H10'],
