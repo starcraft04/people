@@ -23,6 +23,7 @@ return [
         'LATAM' => 'LATAM',
         'APAC' => 'APAC',
         'Russia' => 'Russia',
+        'Emerging Markets'=>'Emerging Markets',
     ],
     'job_role' => [
         '' => '',
