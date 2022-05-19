@@ -3,8 +3,11 @@
 return [
     'employee_type' => [
         '' => '',
-        'employee' => 'employee',
-        'contractor' => 'contractor',
+        'Employee' => 'Employee',
+        'Contractor' => 'Contractor',
+        'External Worker'=>'External Worker',
+        'Affiliate Worker'=>'Affiliate Worker'
+
     ],
     'loe_type' => [
         'Consultant'=>'Consultant',
@@ -25,6 +28,10 @@ return [
         '' => '',
         'ASC' => 'ASC',
         'ISC' => 'ISC',
+        'Management'=>'Management',
+        'Integration'=>'Integration',
+        'Advisory'=>'Advisory',
+        'Business'=>'Business',
     ],
     'domain-users' => [
         '' => '',

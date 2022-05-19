@@ -165,7 +165,7 @@
           <div class="row">
               <div class="form-group {!! $errors->has('user.employee_type') ? 'has-error' : '' !!} col-md-12">
                   <div class="col-md-2">
-                      {!! Form::label('user[employee_type]', 'Type', ['class' => 'control-label']) !!}
+                      {!! Form::label('user[employee_type]', 'Category', ['class' => 'control-label']) !!}
                   </div>
                   <div class="col-md-10">
                       {!! Form::select('user[employee_type]', config('select.employee_type'), (isset($user)) ? $user->employee_type : '', ['id' => 'user_type','class' => 'form-control']) !!}
@@ -177,7 +177,7 @@
           <div class="row">
               <div class="form-group {!! $errors->has('user.job_role') ? 'has-error' : '' !!} col-md-12">
                   <div class="col-md-2">
-                      {!! Form::label('user[job_role]', 'Team', ['class' => 'control-label']) !!}
+                      {!! Form::label('user[job_role]', 'Team.(Role)', ['class' => 'control-label']) !!}
                   </div>
                   <div class="col-md-10">
                       {!! Form::select('user[job_role]', config('select.job_role'), (isset($user)) ? $user->job_role : '', ['id' => 'user_job_role','class' => 'form-control']) !!}

@@ -5,6 +5,7 @@ return [
         '' => '',
         'IT Assurance and Performance' => 'IT Assurance and Performance',
         'Business Cybersecurity' => 'Business Cybersecurity',
+        'Security'=>'Security',
         'Cloud Networking' => 'Cloud Networking',
         'Employee Experience' => 'Employee Experience',
         'IoT and Edge' => 'IoT and Edge',

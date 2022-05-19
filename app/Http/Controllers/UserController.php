@@ -608,15 +608,18 @@ class UserController extends Controller
                     'country'=>$efl[$i]['country'],
                     'activity_status'=>$activity,
                     'management_code'=>$efl[$i]['management_code'],
-                    'employee_type'=>$efl[$i]['category'],
                     'domain'=>$efl[$i]['practice'],
+                    'job_role'=>$efl[$i]['role'],
+                    'employee_type'=>$efl[$i]['category'],
                     'supplier'=>$efl[$i]['supplier'],
                     'date_started'=>$php_start_date,
                     'date_ended'=>$php_end_date
                 ];
+
                 $user = $get_user_email->update($update);
-                $roles = $get_user_email->getRoleNames();
-                $get_user_email->syncRoles($roles,$efl[$i]['role']);
+                 // print("founded  ");
+                 // print($efl[$i]['email']."<br>");
+
             }
             elseif($get_user_pims){
                 $update = [
@@ -627,17 +630,17 @@ class UserController extends Controller
                     'country'=>$efl[$i]['country'],
                     'activity_status'=>$activity,
                     'management_code'=>$efl[$i]['management_code'],
-                    'employee_type'=>$efl[$i]['category'],
                     'domain'=>$efl[$i]['practice'],
+                    'job_role'=>$efl[$i]['role'],
+                    'employee_type'=>$efl[$i]['category'],
                     'supplier'=>$efl[$i]['supplier'],
                     'date_started'=>$php_start_date,
                     'date_ended'=>$php_end_date
                 ];
+                //
                 $user = $get_user_pims->update($update);
-                $roles = $get_user_pims->getRoleNames();
-                $get_user_pims->syncRoles($roles,$efl[$i]['role']);
-                // print("need email ");
-                // print($efl[$i]['email']."<br>");
+                 print("need email ");
+                 print($efl[$i]['email']."<br>");
                 continue;
             }
             else{
@@ -651,6 +654,7 @@ class UserController extends Controller
                     'region'=>$efl[$i]['region'],
                     'country'=>$efl[$i]['country'],
                     'activity_status'=>"active",
+                    'job_role'=>$efl[$i]['role'],
                     'management_code'=>$efl[$i]['management_code'],
                     'employee_type'=>$efl[$i]['category'],
                     'domain'=>$efl[$i]['practice'],
@@ -659,18 +663,12 @@ class UserController extends Controller
                     'date_ended'=>$php_end_date
 
                 ];
-            $man_email_check = $efl[$i]['manager_email'] ;
             $create_user = User::create($create_user_array);
             $created_user = User::where('email',$efl[$i]['email'])->first();
-
-            //get manager name 
-            $manager = User::where('email',$efl[$i]['manager_email'])->first();
-            
-            $created_user->managers()->attach($manager['id']);
             $created_user->update_password('Welcome1',true);
-            $created_user->syncRoles('User',$efl[$i]['role']);   
-                // print("need create ");
-                //  print($efl[$i]['email']."<br>");
+            $created_user->syncRoles('Only Skills');
+                 print("need create ");
+                  print($efl[$i]['email']."<br>");
 
                 continue;
             }
@@ -678,6 +676,25 @@ class UserController extends Controller
            
            
         }
-        return redirect()->route('userList');
+
+        for($i=0;$i<sizeof($efl);$i++)
+        {
+            $user_id = User::where('email',$efl[$i]['email'])->first();
+            $manager_id = User::where('email',$efl[$i]['manager_email'])->first();
+            
+            
+            if($manager_id){
+                print("user_id ".$user_id->id."<br>");
+            print("user_id ".$user_id->name."<br>");
+            print("manager_id ".$manager_id->id."<br>");
+            print("manager_id ".$manager_id->name."<br>");
+            $manager_update = DB::table('users_users')->where('user_id',$user_id->id)->update(['manager_id'=>$manager_id->id]);    
+            }
+            else{
+                continue;
+            }
+        }
+
+       // return redirect()->route('userList');
     }
 }
