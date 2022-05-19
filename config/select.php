@@ -25,6 +25,7 @@ return [
         'Russia' => 'Russia',
         'Emerging Markets'=>'Emerging Markets',
         'Asia Pacific'=>'Asia Pacific',
+        'North America'=>'North America',
     ],
     'job_role' => [
         '' => '',
