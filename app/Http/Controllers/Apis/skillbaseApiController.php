@@ -100,7 +100,7 @@ public function activeUserCertificatesAPI()
     {
 
         $skillList = DB::table('skills')
-          ->select( 'skills.domain', 'skills.subdomain', 'skills.technology', 'skills.skill', 'm.name AS manager_name', 'm.email AS manager_email', 'u.email AS user_email', 'u.name AS user_name','u.management_code AS management_code','u.activity_status AS user_activity', 'u.region', 'u.country','u.pimsid','u.ftid','u.job_role', 'u.employee_type', 'skill_user.rating', 'skills.id AS skill_id')
+          ->select( 'skills.domain','skills.created_at','skills.subdomain', 'skills.technology', 'skills.skill', 'm.name AS manager_name', 'm.email AS manager_email', 'u.email AS user_email', 'u.name AS user_name','u.management_code AS management_code','u.activity_status AS user_activity', 'u.region', 'u.country','u.pimsid','u.ftid','u.job_role', 'u.employee_type', 'skill_user.rating', 'skills.id AS skill_id')
           ->leftjoin('skill_user', 'skills.id', '=', 'skill_user.skill_id')
           ->leftjoin('users AS u', 'u.id', '=', 'skill_user.user_id')
           ->leftjoin('users_users AS uu', 'u.id', '=', 'uu.user_id')
@@ -116,11 +116,50 @@ public function activeUserCertificatesAPI()
     }
 
 
+//add active people for both
+    public function activeUserCertificatesAPIDashboard()
+    {
+
+        $skillList = DB::table('skills')
+          ->select( 'skills.domain','skills.created_at','skills.subdomain', 'skills.technology', 'skills.skill', 'm.name AS manager_name', 'm.email AS manager_email', 'u.email AS user_email', 'u.name AS user_name','u.management_code AS management_code','u.activity_status AS user_activity', 'u.region', 'u.country','u.pimsid','u.ftid','u.job_role', 'u.employee_type', 'skill_user.rating', 'skills.id AS skill_id')
+          ->leftjoin('skill_user', 'skills.id', '=', 'skill_user.skill_id')
+          ->leftjoin('users AS u', 'u.id', '=', 'skill_user.user_id')
+          ->leftjoin('users_users AS uu', 'u.id', '=', 'uu.user_id')
+          ->leftjoin('users AS m', 'm.id', '=', 'uu.manager_id')
+          ->where(array(
+            'skills.certification'=>1
+        ))->get()->toArray();
+
+
+      return json_encode($skillList);
+
+    }
+
+    public function activeUserSkillsAPIDashboard()
+    {
+
+        $skillList = DB::table('skills')
+          ->select( 'skills.domain','skills.created_at','skills.subdomain', 'skills.technology', 'skills.skill', 'm.name AS manager_name', 'm.email AS manager_email', 'u.email AS user_email', 'u.name AS user_name','u.management_code AS management_code','u.activity_status AS user_activity', 'u.region', 'u.country','u.pimsid','u.ftid','u.job_role', 'u.employee_type', 'skill_user.rating', 'skills.id AS skill_id')
+          ->leftjoin('skill_user', 'skills.id', '=', 'skill_user.skill_id')
+          ->leftjoin('users AS u', 'u.id', '=', 'skill_user.user_id')
+          ->leftjoin('users_users AS uu', 'u.id', '=', 'uu.user_id')
+          ->leftjoin('users AS m', 'm.id', '=', 'uu.manager_id')
+          ->where(array(
+            'skills.certification'=>0
+        ))->get()->toArray();
+
+
+      return json_encode($skillList);
+
+    }
+
+
+
 public function activeUserSkillsAPI()
     {
 
         $skillList = DB::table('skills')
-          ->select( 'skills.domain', 'skills.subdomain', 'skills.technology', 'skills.skill', 'm.name AS manager_name', 'm.email AS manager_email', 'u.email AS user_email', 'u.name AS user_name','u.management_code AS management_code','u.activity_status AS user_activity', 'u.region', 'u.country','u.pimsid','u.ftid','u.job_role', 'u.employee_type', 'skill_user.rating', 'skills.id AS skill_id')
+          ->select( 'skills.domain','skills.created_at','skills.subdomain','skills.created_at','skills.created_at','skills.technology', 'skills.skill', 'm.name AS manager_name', 'm.email AS manager_email', 'u.email AS user_email', 'u.name AS user_name','u.management_code AS management_code','u.activity_status AS user_activity', 'u.region', 'u.country','u.pimsid','u.ftid','u.job_role', 'u.employee_type', 'skill_user.rating', 'skills.id AS skill_id')
           ->leftjoin('skill_user', 'skills.id', '=', 'skill_user.skill_id')
           ->leftjoin('users AS u', 'u.id', '=', 'skill_user.user_id')
           ->leftjoin('users_users AS uu', 'u.id', '=', 'uu.user_id')
