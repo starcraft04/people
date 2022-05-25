@@ -581,7 +581,7 @@ class UserController extends Controller
             $current_date = date('Y-m-d');
                 if($php_end_date != null){
                     if($current_date > $php_end_date){
-                        $activity="inactiv.";
+                        $activity="inact.";
                     }
                     else{
                         $activity="active";
@@ -592,7 +592,7 @@ class UserController extends Controller
                 }
             // end of start and end date
 
-
+            // here we check if the email of the user exists meaning that we check the email existance in the database so we proceed with updating data.
             $user_name = $efl[$i]['last_name'].",".$efl[$i]['first_name'];
 
             $get_user_email = User::where('email',$efl[$i]['email'])->first();
@@ -621,6 +621,7 @@ class UserController extends Controller
                  // print($efl[$i]['email']."<br>");
 
             }
+            // check wheather the PIMS exists for an email not exists so we can find a change in email used for account change from extenal to internal employees
             elseif($get_user_pims){
                 $update = [
                     'email'=>$efl[$i]['email'],
@@ -644,7 +645,7 @@ class UserController extends Controller
                 continue;
             }
             else{
-                           // change data by pims if exists
+            // create new account in dolphin with new email.
             $create_user_array=[
                     'name'=>$user_name,
                     'email'=>$efl[$i]['email'],
@@ -665,11 +666,13 @@ class UserController extends Controller
                 ];
             $create_user = User::create($create_user_array);
             $created_user = User::where('email',$efl[$i]['email'])->first();
+
             $created_user->update_password('Welcome1',true);
             $created_user->syncRoles('Only Skills');
                  print("need create ");
                   print($efl[$i]['email']."<br>");
-
+            $manager_id = User::where('email',$efl[$i]['manager_email'])->first();
+            $created_user->managers()->attach($manager_id->id);
                 continue;
             }
 
@@ -681,20 +684,32 @@ class UserController extends Controller
         {
             $user_id = User::where('email',$efl[$i]['email'])->first();
             $manager_id = User::where('email',$efl[$i]['manager_email'])->first();
+            print("manager_id : \n");
+            print($manager_id['id']."\n");
+            print($manager_id['name']."\n");
+
+            if(isset($user_id))
+            {
+                print("user_created \n");
+                print("user :".$user_id->name."\n");
+            }
+
             
-            
-            if($manager_id){
-                print("user_id ".$user_id->id."<br>");
+            if(isset($manager_id)){
+            print("here");
+            print("user_id ".$user_id->id."<br>");
             print("user_id ".$user_id->name."<br>");
             print("manager_id ".$manager_id->id."<br>");
             print("manager_id ".$manager_id->name."<br>");
+
             $manager_update = DB::table('users_users')->where('user_id',$user_id->id)->update(['manager_id'=>$manager_id->id]);    
             }
             else{
+                print("noooo");
                 continue;
             }
         }
 
-       // return redirect()->route('userList');
+       return redirect('userList')->with('success', 'Users data updated successfully');
     }
 }

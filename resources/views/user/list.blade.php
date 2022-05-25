@@ -62,7 +62,10 @@
         </ul>
         <div class="clearfix"></div>
       </div>
-      <!-- <div class="container">
+
+      @if ( Auth::user()->roles[0]->id = 1 || Auth::user()->roles[0]->id == 2)
+     
+      <div class="container">
         <div class="row justify-content-center">
       <div class="col-md-8">
         <div class="card" style="padding: 12px;">
@@ -87,7 +90,8 @@
       </div>
       
     </div>
-      </div> -->
+      </div>
+      @endif
       <!-- Window title -->
 
       <!-- Window content -->
