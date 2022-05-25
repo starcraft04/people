@@ -709,7 +709,7 @@ class UserController extends Controller
                 continue;
             }
         }
-
-       return redirect('userList')->with('success', 'Users data updated successfully');
+//redirect to same page
+       return redirect('userList');
     }
 }
