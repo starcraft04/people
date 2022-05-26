@@ -81,7 +81,7 @@
           <div class="form-group row">
             <div class="col-xs-2">
             <label for="closed" class="control-label">Totals</label>
-            <input name="closed" type="checkbox" id="closed" class="form-group js-switch-small" checked /> 
+            <input name="closed" type="checkbox" id="closed" class="form-group js-switch-small" /> 
           </div>
           </div>
         <div class="clearfix"></div>

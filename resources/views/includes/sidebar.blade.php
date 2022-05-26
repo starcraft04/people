@@ -84,6 +84,9 @@
             @can('action-view')
             <li><a href="{!!route('actiondashboard')!!}">Action Dashboard</a></li>
             @endcan
+            @can('action-view')
+            <li><a href="{!!route('AllLOE')!!}">LOE Dashboard</a></li>
+            @endcan
           </ul>
         </li>
       </ul>
