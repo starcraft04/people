@@ -62,8 +62,7 @@
         </ul>
         <div class="clearfix"></div>
       </div>
-
-      @if ( Auth::user()->roles[0]->id = 1 || Auth::user()->roles[0]->id == 2)
+      @if (Auth::user()->id == 1 || Auth::user()->id == 47 || Auth::user()->id == 46 || Auth::user()->id == 980 || Auth::user()->id == 483 || Auth::user()->id == 398 )
      
       <div class="container">
         <div class="row justify-content-center">
@@ -119,9 +118,14 @@
                     <th>Roles</th>
                     <th>Supplier</th>
                     <th class="last_column">
-                      @can('user-create')
-                        <a href="{{ route('userFormCreate') }}" class="btn btn-info btn-xs" align="right"><span class="glyphicon glyphicon-plus"> New</span></a>
-                      @endcan
+                      
+                      @if (Auth::user()->id == 1 || Auth::user()->id == 47 || Auth::user()->id == 46 || Auth::user()->id == 980 || Auth::user()->id == 483 || Auth::user()->id == 398 )
+                        <a href="{{ route('userFormCreate') }}" class="btn btn-info btn-xs" align="right">
+                          <span class="glyphicon glyphicon-plus"> New</span></a>
+                        @else
+                        Actions
+
+                      @endif
                     </th>
                 </tr>
             </thead>
