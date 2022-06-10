@@ -2016,7 +2016,7 @@ $(document).ready(function() {
                 if (data.result == 'success'){
                   //If we modified the MD, then we need to update the %
                   if (colname == 'consulting' && consulting_colsubname == 'md') {
-                    tr.find('td[data-id='+consulting_id+'][data-colsubname=percentage]').html(percentage);
+                    tr.find('td[data-id='+consulting_id+'][data-colsubname=percentage]').html(percentage.toFixed(2));
                   }
                   fill_total();
                   //SUCCESS
