@@ -392,7 +392,7 @@ DB::raw('SUM(case when plc.location IN ("poland","Romania") then ((pl.quantity*p
         ->join('projects as p','pl.project_id','=','p.id')
         ->join('customers as c','p.customer_id','c.id')
         ->select(
-            'p.id', 'p.project_name',
+            'p.id', 'p.project_name','c.name as customer_name',
             DB::raw('(select SUM(quantity) from project_loe where project_id = p.id group by project_id) as quantity'),
             DB::raw('(select SUM(loe_per_quantity) from project_loe where project_id = p.id group by project_id) as loe_per_quantity'),
             DB::raw('SUM(CASE when plc.location in ("Egypt","India") then ((pl.quantity*plc.percentage*pl.loe_per_quantity)/100) ELSE 0 END)  as off_MD'),
@@ -414,9 +414,9 @@ DB::raw('SUM(case when plc.location IN ("poland","Romania") then ((pl.quantity*p
         {
             $output.=
             '<tr id ='.$key->id.'>
-             <td>'.$key->id.'</td>
-              <td>--</td>
-              <td>--</td>
+             <td style="display:none">'.$key->id.'</td>
+              <td style="display:none">--</td>
+              <td>'.$key->customer_name.'</td>
              <td>'.$key->project_name.'</td>
              <td>--</td>
              <td>'.$key->quantity.'</td>
