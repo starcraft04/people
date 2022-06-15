@@ -100,7 +100,7 @@
           <table id="requestsTable" class="table table-striped table-hover table-bordered mytable" style="    overflow-x: auto;">
           <thead>
               <tr>
-                  <th colspan="7">Project Details</th>
+                  <th colspan="5">Project Details</th>
                   <th colspan="4">Off shore</th>
                   <th colspan="4">On shore</th>
                   <th colspan="4">Near shore</th>
@@ -108,8 +108,8 @@
 
               </tr>
               <tr>
-                <th data-field="project_id">Project ID</th>
-                <th>LOE ID</th>
+                <th data-field="project_id" style="display:none">Project ID</th>
+                <th style="display:none">LOE ID</th>
 
                 <th data-field="project_name" style="width:10px;">Customer</th>
                 <th data-field="project_name" style="width:10px;">Project_name</th>
@@ -229,8 +229,8 @@
 
 
            <tr id ="{{$key->id}}">
-             <td>{{$key->id}}</td>
-             <td>{{$key->plID}}</td>
+             <td style="display:none">{{$key->id}}</td>
+             <td style="display:none">{{$key->plID}}</td>
              <td>{{$key->name}}</td>
              <td><a href="{!! route('loeView','') !!}/{{$key->id}}">{{$key->project_name}}</a></td>
              <td>{{$key->main_phase}}</td>
@@ -351,6 +351,9 @@
 
 $(document).ready(function(){
 
+//filters 
+    var small = document.querySelector('.js-switch-small');
+    var switchery = new Switchery(small, { size: 'small' });
 
   $('#footer_content').hide();
   function grand_total_calculations()
