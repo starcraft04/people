@@ -676,7 +676,7 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
     {
         return view('tools/usersskillslist');
     }
-
+    //add new filters
     public function listOfUsersSkills($cert,$europe_cons,$active_cons)
     {
         $skillList = DB::table('skills')
