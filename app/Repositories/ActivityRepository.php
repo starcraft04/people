@@ -502,7 +502,7 @@ class ActivityRepository
         $activityList = DB::table('temp_a');
         
 
-        $activityList->select('uu.manager_id AS manager_id','u.management_code','u.activity_status', 'm.name AS manager_name', 'temp_a.user_id AS user_id', 'u.name AS user_name', 'u.country AS user_country', 'u.employee_type AS user_employee_type', 'u.domain AS user_domain',
+        $activityList->select('uu.manager_id AS manager_id','m.name AS manager_name', 'temp_a.user_id AS user_id', 'u.name AS user_name', 'u.country AS user_country', 'u.employee_type AS user_employee_type', 'u.domain AS user_domain',
                             'temp_a.project_id AS project_id',
                             'p.project_name AS project_name',
                             'p.otl_project_code AS otl_project_code', 'p.meta_activity AS meta_activity', 'p.project_subtype AS project_subtype',
@@ -517,7 +517,7 @@ class ActivityRepository
                             'm4_id','m4_com', 'm4_from_otl','m5_id','m5_com', 'm5_from_otl','m6_id','m6_com', 'm6_from_otl',
                             'm7_id','m7_com', 'm7_from_otl','m8_id','m8_com', 'm8_from_otl','m9_id','m9_com', 'm9_from_otl',
                             'm10_id','m10_com', 'm10_from_otl','m11_id','m11_com', 'm11_from_otl','m12_id','m12_com', 'm12_from_otl',
-                            DB::raw('COUNT(loe.id) as num_of_loe'),
+                            DB::raw('COUNT(loe.id) as num_of_loe','u.management_code','u.activity_status'),
         );
         $activityList->leftjoin('projects AS p', 'p.id', '=', 'temp_a.project_id');
         $activityList->leftjoin('project_loe AS loe', 'temp_a.project_id', '=', 'loe.project_id');
