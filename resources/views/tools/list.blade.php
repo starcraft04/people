@@ -142,7 +142,8 @@
             
         </div>
         <!-- Create new button -->
-        
+
+
 
 
         <!-- Modal Assign User to project Start-->
@@ -502,6 +503,8 @@
     });
 
     // Then we need to get back the information from the cookie
+
+    // recheck cookies
 
     year = fill_select('year');
     month = fill_select('month');
