@@ -855,7 +855,7 @@ class ActivityRepository
         $customers->orderBy(DB::raw('sum(task_hour)'), 'DESC');
         $customers->limit($limit);
         $data = $customers->get();
-        //dd($data);
+        
         return $data;
     }
 
