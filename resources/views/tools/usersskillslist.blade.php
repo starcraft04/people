@@ -8,7 +8,8 @@
     <link href="{{ asset('/plugins/gentelella/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('/plugins/gentelella/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('/plugins/gentelella/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css') }}" rel="stylesheet">
-    
+    <!-- Switchery -->
+    <link href="{{ asset('/plugins/gentelella/vendors/switchery/dist/switchery.min.css') }}" rel="stylesheet">
 
 @stop
 
@@ -34,6 +35,9 @@
 
     <!-- Bootbox -->
     <script src="{{ asset('/plugins/bootbox/bootbox.min.js') }}"></script>
+
+    <!-- Switchery -->
+    <script src="{{ asset('/plugins/gentelella/vendors/switchery/dist/switchery.min.js') }}" type="text/javascript"></script>
 @stop
 
 @section('content')
@@ -54,6 +58,14 @@
       <!-- Window title -->
       <div class="x_title">
         <h2>List</small></h2>
+
+
+        <div style="margin: 10px auto;">
+            <div class="col-sm-2">Europe Consultant  <input name="europe_cons" type="checkbox" id="europe_cons" class="form-group js-switch-small-cons" /></div>
+            <div class="col-sm-2">Active Consultant  <input name="active_cons" type="checkbox" id="active_cons" class="form-group js-switch-small-active-cons" /></div>
+            
+        </div>
+
         <ul class="nav navbar-right panel_toolbox">
           <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
         </ul>
@@ -84,6 +96,7 @@
                                 <th>Manager Name</th>
                                 <th>Manager Email</th>
                                 <th>User Name</th>
+                                <th>Management Code</th>
                                 <th>Activity</th>
                                 <th>Email</th>
                                 <th>PIMSID</th>
@@ -100,6 +113,7 @@
                         </thead>
                         <tfoot>
                             <tr>
+                                <th></th>
                                 <th></th>
                                 <th></th>
                                 <th></th>
@@ -135,6 +149,7 @@
                                 <th>Manager Name</th>
                                 <th>Manager Email</th>
                                 <th>User Name</th>
+                                <th>Management Code</th>
                                 <th>Activity</th>
                                 <th>Email</th>
                                 <th>PIMSID</th>
@@ -151,6 +166,7 @@
                         </thead>
                         <tfoot>
                             <tr>
+                                <th></th>
                                 <th></th>
                                 <th></th>
                                 <th></th>
@@ -190,11 +206,103 @@
         var skillTable;
         var certificationTable;
         var record_id;
+        var europe_cons;
+        var active_cons;
 
         //console.log(permissions);
 
 
         $(document).ready(function() {
+
+
+
+
+    var small_cons = document.querySelector('.js-switch-small-cons');
+    var switchery_cons = new Switchery(small_cons, { size: 'small' });
+    //js-switch-small-active-cons
+
+
+    var small_active_cons = document.querySelector('.js-switch-small-active-cons');
+    var switchery_active_cons = new Switchery(small_active_cons, { size: 'small' });
+
+    //exclude inactive and europe cons
+
+       // change filter for Europe consultant
+    if (Cookies.get('europe_cons') != null) {
+      if (Cookies.get('europe_cons') == 0) {
+        europe_cons = 0;
+        console.log("on load"+'\n');
+        console.log(Cookies.get('europe_cons'));
+        
+      } else {
+        console.log("on load"+'\n');
+        console.log(Cookies.get('europe_cons'));
+        $('#europe_cons').click();
+        europe_cons = 1;
+      }
+    }
+    // change filter for active consultant
+    if (Cookies.get('active_cons') != null) {
+      if (Cookies.get('active_cons') == 0) {
+        active_cons = 0;
+        console.log("on load active"+'\n');
+        console.log(Cookies.get('active_cons'));
+        
+      } else {
+        console.log("on load active"+'\n');
+        console.log(Cookies.get('active_cons'));
+        $('#active_cons').click();
+        active_cons = 1;
+      }
+    }
+     if ($('#europe_cons').is(':checked')) {
+      europe_cons = 1;
+    } else {
+      europe_cons = 0;
+    }    
+
+    // filter active consultant 
+    if ($('#active_cons').is(':checked')) {
+      active_cons = 1;
+    } else {
+      active_cons = 0;
+    }  
+
+    $('#europe_cons').on('change', function() {
+      if ($(this).is(':checked')) {
+        europe_cons = 1;
+        Cookies.set('europe_cons', 1);
+
+      } else {
+        europe_cons = 0;
+        Cookies.set('europe_cons', 0);
+      }
+
+
+    skillTable.ajax.url("{!! route('listOfUsersSkills',['0']) !!}/"+europe_cons+"/"+active_cons).load();
+    certificationTable.ajax.url("{!! route('listOfUsersSkills',['1']) !!}/"+europe_cons+"/"+active_cons).load();
+    });
+
+ // active consultant filter changes and cookies set.
+     $('#active_cons').on('change', function() {
+      if ($(this).is(':checked')) {
+        active_cons = 1;
+        console.log("affter load"+'\n');
+        Cookies.set('active_cons', 1);
+        console.log(Cookies.get('active_cons'));
+      } else {
+        active_cons = 0;
+        console.log("affter load"+'\n');
+        console.log(Cookies.get('active_cons'));
+        Cookies.set('active_cons', 0);
+      }
+
+      console.log("on change active cons"+'\n');
+      console.log(active_cons);
+      skillTable.ajax.url("{!! route('listOfUsersSkills',['0']) !!}/"+europe_cons+"/"+active_cons).load();
+      certificationTable.ajax.url("{!! route('listOfUsersSkills',['1']) !!}/"+europe_cons+"/"+active_cons).load();
+    });
+
 
             $.ajaxSetup({
                 headers: {
@@ -211,7 +319,7 @@
                 scrollCollapse: true,
                 stateSave: true,
                 ajax: {
-                        url: "{!! route('listOfUsersSkills',['0']) !!}",
+                        url: "{!! route('listOfUsersSkills',['0']) !!}/"+europe_cons+"/"+active_cons,
                         type: "POST",
                         dataType: "JSON"
                     },
@@ -224,9 +332,9 @@
                     { name: 'm.name', data: 'manager_name', searchable: true , visible: false },
                     { name: 'm.email', data: 'manager_email', searchable: true , visible: false },
                     { name: 'u.name', data: 'user_name', searchable: true , visible: true },
+                    { name: 'u.management_code', data: 'management_code', searchable: true , visible: true },
                     { name: 'u.activity_status', data: 'user_activity', searchable: true , visible: false },
                     { name: 'u.email', data: 'user_email', searchable: true , visible: true },
-
                     { name: 'u.pimsid', data: 'pimsid', searchable: true , visible: true },
                     { name: 'u.ftid', data: 'ftid', searchable: true , visible: true },
                     { name: 'u.region', data: 'region', searchable: true , visible: false },
@@ -265,7 +373,7 @@
                     {
                     extend: "colvis",
                     className: "btn-sm",
-                    columns: [ 1,2,3,4,5,6,7,8,9,10,11,12,13,14 ]
+                    columns: [ 1,2,3,4,5,6,7,8,9,10,11,12,13,14]
                     },
                     
                   {
@@ -335,7 +443,7 @@
                 processing: true,
                 stateSave: true,
                 ajax: {
-                        url: "{!! route('listOfUsersSkills',['1']) !!}",
+                        url: "{!! route('listOfUsersSkills',['1']) !!}/"+europe_cons+"/"+active_cons,
                         type: "POST",
                         dataType: "JSON"
                     },
@@ -348,6 +456,7 @@
                     { name: 'm.name', data: 'manager_name', searchable: true , visible: false },
                     { name: 'm.email', data: 'manager_email', searchable: true , visible: false },
                     { name: 'u.name', data: 'user_name', searchable: true , visible: true },
+                    { name: 'u.management_code', data: 'management_code', searchable: true , visible: true },
                     { name: 'u.activity_status', data: 'user_activity', searchable: true , visible: false },
                     { name: 'u.email', data: 'user_email', searchable: true , visible: true },
                     { name: 'u.pimsid', data: 'pimsid', searchable: true , visible: true },

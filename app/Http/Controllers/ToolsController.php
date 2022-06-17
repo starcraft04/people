@@ -50,7 +50,7 @@ class ToolsController extends Controller
         return view('tools/list', compact('authUsersForDataView', 'table_height','customers_list','customerlink_id'));
     }
 
-
+//get customer link id
 
     public function projectsAssignedAndNot()
     {
@@ -677,10 +677,10 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
         return view('tools/usersskillslist');
     }
 
-    public function listOfUsersSkills($cert)
+    public function listOfUsersSkills($cert,$europe_cons,$active_cons)
     {
         $skillList = DB::table('skills')
-          ->select('skill_user.id', 'skills.domain', 'skills.subdomain', 'skills.technology', 'skills.skill', 'm.name AS manager_name', 'm.email AS manager_email', 'u.email AS user_email', 'u.name AS user_name','u.activity_status AS user_activity', 'u.region', 'u.country','u.pimsid','u.ftid','u.job_role', 'u.employee_type', 'skill_user.rating', 'skills.id AS skill_id')
+          ->select('skill_user.id', 'skills.domain', 'skills.subdomain', 'skills.technology','u.management_code', 'skills.skill', 'm.name AS manager_name', 'm.email AS manager_email', 'u.email AS user_email', 'u.name AS user_name','u.activity_status AS user_activity', 'u.region', 'u.country','u.pimsid','u.ftid','u.job_role', 'u.employee_type', 'skill_user.rating', 'skills.id AS skill_id')
           ->leftjoin('skill_user', 'skills.id', '=', 'skill_user.skill_id')
           ->leftjoin('users AS u', 'u.id', '=', 'skill_user.user_id')
           ->leftjoin('users_users AS uu', 'u.id', '=', 'uu.user_id')
@@ -689,6 +689,17 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
 
         if (! Auth::user()->can('tools-usersskills-view-all')) {
             $skillList->where('u.id', '=', Auth::user()->id);
+        }
+         if ($active_cons == '1') {
+            $skillList->where('u.activity_status', '=', 'active');
+        }
+
+        if ($europe_cons == '1') {
+            $skillList->where(function($skillList) {
+        $skillList->where('u.management_code','=','DPS22')
+            ->orWhere('u.management_code','=','DCS58');
+        });
+               
         }
         $data = Datatables::of($skillList)->make(true);
 
@@ -827,5 +838,7 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
         return $activities;
     }
 
+
+   
     
 }
