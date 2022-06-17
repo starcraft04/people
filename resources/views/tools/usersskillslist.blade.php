@@ -60,6 +60,7 @@
         <h2>List</small></h2>
 
         <!-- added filters -->
+        <!-- fix merge conflict -->
         <div style="margin: 10px auto;">
             <div class="col-sm-2">Europe Consultant  <input name="europe_cons" type="checkbox" id="europe_cons" class="form-group js-switch-small-cons" /></div>
             <div class="col-sm-2">Active Consultant  <input name="active_cons" type="checkbox" id="active_cons" class="form-group js-switch-small-active-cons" /></div>

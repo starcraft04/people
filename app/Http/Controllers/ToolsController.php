@@ -676,7 +676,7 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
     {
         return view('tools/usersskillslist');
     }
-    //add new filters
+
     public function listOfUsersSkills($cert,$europe_cons,$active_cons)
     {
         $skillList = DB::table('skills')
@@ -839,6 +839,131 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
     }
 
 
-   
+    public function checkInactiveForcast(Request $request)
+    {
+        $arr=[];
+        
+        print(date('m'));
+        print(date('Y'));
+
+        $date_ended = User::whereNotNull('date_ended')->whereYear('date_ended','>=', date('Y'))->orderBy('date_ended','DESC')->get();
+        foreach($date_ended as $firstKey)
+        {
+            //the end date month
+            $the_date = date('m',strtotime($firstKey->date_ended));
+            // the end date year
+            $the_date_year = date('Y',strtotime($firstKey->date_ended));
+            print($firstKey->name."<br>");
+            print($firstKey->date_ended."<br>");
+            if($the_date_year == date('Y'))
+            {
+            print("--------------");
+            print($firstKey->name."<br>");
+            print($firstKey->date_ended."<br>");
+                
+            $activity_end = DB::table('activities as a')->select('u.name','p.project_name','a.month','a.task_hour','a.year')
+            ->join('users as u','u.id','=','a.user_id')
+            ->join('projects as p','p.id','=','a.project_id')
+            ->where('a.user_id',$firstKey->id)
+            ->where('a.year','>=',$the_date_year)
+            ->get();
+
+
+            foreach($activity_end as $key)
+            {
+                print($the_date."<br>");
+                if($key->year == $the_date_year){
+                    if($key->month > $the_date && $key->task_hour > 0)
+                    print($key->month."<br>");
+                    for($i = $the_date+1 ; $i <= 12; $i++)
+                    {
+                        $record = DB::table('activities')
+                        ->where('user_id',$firstKey->id)
+                        ->where('month',$i)
+                        ->where('year','>=',$the_date_year)
+                        ->update(['task_hour'=>0]);
+                    }
+                }else{
+                    for($i = 1 ; $i <= 12; $i++)
+                    {
+                        $record = DB::table('activities')
+                        ->where('user_id',$firstKey->id)
+                        ->where('month',$i)
+                        ->where('year','>',$the_date_year)
+                        ->update(['task_hour'=>0]);
+                    }   
+                }
+
+            }
+            }
+            // print($key->id."<br>");
+            // print(date('m',strtotime($key->date_ended))."<br>");
+
+        }
+
+        
+
+
+        
+    }
+
+    // public function addUsersToUnassigned()
+    // {
+    //     $difference = 0;
+    //     $users_to_unassigned = DB::table('activities as a')
+    //     ->select('u.name','p.project_Name','a.year','a.project_id','u.activity_status','u.supplier','a.month',DB::raw('SUM(a.task_hour) as sum'),'u.id')
+    //     ->join('users as u','u.id','a.user_id')
+    //     ->join('projects as p','p.id','a.project_id')
+    //     ->where('a.year','=',2022)
+    //     ->where('u.name','not LIKE','%ZZZ%')
+    //     ->where('u.activity_status','NOT LIKE','%inact%')
+    //     ->where('p.project_Name','Not Like','%unassigned%')
+    //     ->where('a.month','>=',date('m'))
+    //     ->groupBy('u.id','a.month')
+    //     ->orderBy('u.name')
+    //     ->get();
+
+    //     foreach($users_to_unassigned as $user)
+    //     {   
+    //             if($user->sum < 17 )
+    //         {
+
+    //             $difference = 17 - $user->sum;
+    //             print($user->sum."<br>");
+    //             print($user->project_Name."<br>");
+    //             print($user->project_id."<br>");
+                
+    //             print($user->name."<br>");
+    //             print($difference."<br>");
+
+    //             print($user->month."<br>");
+    //             print($user->activity_status."<br>");
+    //             print($user->supplier."<br>");
+
+
+
+    //             $load_hours_to_unassigned = Activity::updateOrCreate([
+    //                 'user_id'=>$user->id,
+    //                 'project_id'=>801,
+    //                 'month'=> $user->month,
+    //                 'year'=>2022
+    //             ],
+    //             ['task_hour'=>$difference]
+    //         );
+                   
+    //         }
+    //         else{
+    //             $load_hours_to_unassigned = Activity::updateOrCreate([
+    //                 'user_id'=>$user->id,
+    //                 'project_id'=>801,
+    //                 'month'=> $user->month,
+    //                 'year'=>2022
+    //             ],
+    //             ['task_hour'=>0]
+    //         );   
+    //         }
+    //     }
+    // }
+
     
 }
