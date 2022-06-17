@@ -57,6 +57,8 @@
       <div class="x_title">
         <div class="col-sm-1"><h2>List</small></h2></div>
         <div class="col-sm-2">Exclude contractors  <input name="exclude_contractors" type="checkbox" id="exclude_contractors" class="form-group js-switch-small" /></div>
+        <div class="col-sm-2">Europe Consultant  <input name="europe_cons" type="checkbox" id="europe_cons" class="form-group js-switch-small-cons" /></div>
+        <div class="col-sm-2">Active Consultant  <input name="active_cons" type="checkbox" id="active_cons" class="form-group js-switch-small-active-cons" /></div>
         <ul class="nav navbar-right panel_toolbox">
           <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
         </ul>
@@ -212,6 +214,8 @@
   var userTable;
   var record_id;
   var exclude_contractors;
+  var europe_cons;
+  var active_cons;
 
   $(document).ready(function() {
 
@@ -219,13 +223,70 @@
     var small = document.querySelector('.js-switch-small');
     var switchery = new Switchery(small, { size: 'small' });
 
+
+    var small_cons = document.querySelector('.js-switch-small-cons');
+    var switchery_cons = new Switchery(small_cons, { size: 'small' });
+    //js-switch-small-active-cons
+
+
+    var small_active_cons = document.querySelector('.js-switch-small-active-cons');
+    var switchery_active_cons = new Switchery(small_active_cons, { size: 'small' });
+
     // exclude contractors
+     // change filter for Europe consultant
+    if (Cookies.get('europe_cons') != null) {
+      if (Cookies.get('europe_cons') == 0) {
+        europe_cons = 0;
+        console.log("on load"+'\n');
+        console.log(Cookies.get('europe_cons'));
+        
+      } else {
+        console.log("on load"+'\n');
+        console.log(Cookies.get('europe_cons'));
+        $('#europe_cons').click();
+        europe_cons = 1;
+      }
+    }
+
+       
+
+   
+
+    // change filter for active consultant
+    if (Cookies.get('active_cons') != null) {
+      if (Cookies.get('active_cons') == 0) {
+        active_cons = 0;
+        console.log("on load active"+'\n');
+        console.log(Cookies.get('active_cons'));
+        
+      } else {
+        console.log("on load active"+'\n');
+        console.log(Cookies.get('active_cons'));
+        $('#active_cons').click();
+        active_cons = 1;
+      }
+    }
     // Init
     if ($('#exclude_contractors').is(':checked')) {
       exclude_contractors = 1;
     } else {
       exclude_contractors = 0;
     }
+
+    //filter with with Europe consultant 
+
+    if ($('#europe_cons').is(':checked')) {
+      europe_cons = 1;
+    } else {
+      europe_cons = 0;
+    }    
+
+    // filter active consultant 
+    if ($('#active_cons').is(':checked')) {
+      active_cons = 1;
+    } else {
+      active_cons = 0;
+    }  
 
     // Change
     $('#exclude_contractors').on('change', function() {
@@ -234,9 +295,40 @@
       } else {
         exclude_contractors = 0;
       }
-      userTable.ajax.url("{!! route('listOfUsersAjax','') !!}/"+exclude_contractors).load();
+      userTable.ajax.url("{!! route('listOfUsersAjax','') !!}/"+exclude_contractors+"/"+europe_cons+"/"+active_cons).load();
     });
 
+    $('#europe_cons').on('change', function() {
+      if ($(this).is(':checked')) {
+        europe_cons = 1;
+        Cookies.set('europe_cons', 1);
+
+      } else {
+        europe_cons = 0;
+        Cookies.set('europe_cons', 0);
+      }
+      userTable.ajax.url("{!! route('listOfUsersAjax','') !!}/"+exclude_contractors+"/"+europe_cons+"/"+active_cons).load();
+    });
+
+ // active consultant filter changes and cookies set.
+     $('#active_cons').on('change', function() {
+      if ($(this).is(':checked')) {
+        active_cons = 1;
+        console.log("affter load"+'\n');
+        Cookies.set('active_cons', 1);
+        console.log(Cookies.get('active_cons'));
+      } else {
+        active_cons = 0;
+        console.log("affter load"+'\n');
+        console.log(Cookies.get('active_cons'));
+        Cookies.set('active_cons', 0);
+      }
+
+      userTable.ajax.url("{!! route('listOfUsersAjax','') !!}/"+exclude_contractors+"/"+europe_cons+"/"+active_cons).load();
+    });
+
+   
+    
 
   
     // Generate a password string
@@ -277,7 +369,7 @@
       processing: true,
       stateSave: true,
         ajax: {
-                url: "{!! route('listOfUsersAjax','') !!}/"+exclude_contractors,
+                url: "{!! route('listOfUsersAjax','') !!}/"+exclude_contractors+"/"+europe_cons+"/"+active_cons,
                 type: "GET",
                 dataSrc: function ( json ) {
                   //console.log(json);;

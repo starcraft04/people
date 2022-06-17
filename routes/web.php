@@ -79,7 +79,7 @@ Route::group(['middleware' => ['auth', 'general','last_login']], function () {
     Route::post('passwordUpdateAjax/{user}', ['uses' => 'UserController@passwordUpdateAjax', 'as' => 'passwordUpdateAjax']);
     Route::post('optionsUpdate/{id}', ['uses' => 'UserController@optionsUpdate', 'as' => 'optionsUpdate']);
     //  AJAX
-    Route::get('listOfUsersAjax/{exclude_contractors?}', ['uses' => 'UserController@listOfUsers', 'as' => 'listOfUsersAjax', 'middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
+    Route::get('listOfUsersAjax/{exclude_contractors?}/{europe_cons?}/{active_cons?}', ['uses' => 'UserController@listOfUsers', 'as' => 'listOfUsersAjax', 'middleware' => ['permission:user-view|user-create|user-edit|user-delete']]);
 
     //ProfileToolsController
     Route::get('ajax_git_pull', ['uses' => 'ProfileToolsController@ajax_git_pull', 'as' => 'ajax_git_pull']);
@@ -208,11 +208,20 @@ Route::get('getUserOnProjectForAssign', ['uses' => 'ToolsController@getUserOnPro
     Route::get('projectRevenueDelete/{n}', ['uses' => 'ProjectController@deleteRevenue', 'as' => 'projectRevenueDelete', 'middleware' => ['permission:projectRevenue-delete']]);
     Route::post('listOfActivitiesPerUserAjax', ['uses' => 'ActivityController@listOfActivitiesPerUser', 'as' => 'listOfActivitiesPerUserAjax', 'middleware' => ['permission:tools-activity-view']]);
     Route::get('listOfProjectsMissingInfoAjax', ['uses' => 'ProjectController@listOfProjectsMissingInfo', 'as' => 'listOfProjectsMissingInfoAjax', 'middleware' => ['permission:tools-missing_info-view']]);
+    //change the forcast to 0 for inactive
+
+    // Route::get('checkInactiveForcast', ['uses' => 'ToolsController@checkInactiveForcast', 'as' => 'checkInactiveForcast', 'middleware' => ['permission:tools-missing_info-view']]);
+
+    // //users to unassigned
+
+    // Route::get('usersToUnassigned', ['uses' => 'ToolsController@addUsersToUnassigned', 'as' => 'addUsersToUnassigned', 'middleware' => ['permission:tools-missing_info-view']]);
+    
+
     Route::get('listOfProjectsMissingOTLAjax', ['uses' => 'ProjectController@listOfProjectsMissingOTL', 'as' => 'listOfProjectsMissingOTLAjax', 'middleware' => ['permission:tools-missing_info-view']]);
     Route::get('listOfProjectsLostAjax', ['uses' => 'ProjectController@listOfProjectsLost', 'as' => 'listOfProjectsLostAjax', 'middleware' => ['permission:tools-all_projects-view']]);
     Route::get('listOfProjectsAll', ['uses' => 'ProjectController@listOfProjectsAll', 'as' => 'listOfProjectsAllAjax', 'middleware' => ['permission:tools-all_projects-view']]);
     Route::post('listOfSkills/{cert}', ['uses' => 'ToolsController@listOfSkills', 'as' => 'listOfSkills', 'middleware' => ['permission:tools-usersskills']]);
-    Route::post('listOfUsersSkills/{cert}', ['uses' => 'ToolsController@listOfUsersSkills', 'as' => 'listOfUsersSkills', 'middleware' => ['permission:tools-usersskills']]);
+    Route::post('listOfUsersSkills/{cert}/{europe_cons?}/{active_cons?}', ['uses' => 'ToolsController@listOfUsersSkills', 'as' => 'listOfUsersSkills', 'middleware' => ['permission:tools-usersskills']]);
     Route::get('userskillDelete/{id}', ['uses' => 'ToolsController@userSkillDelete', 'as' => 'userskillDelete', 'middleware' => ['permission:tools-usersskills']]);
     Route::post('updateActivityAjax', ['uses' => 'ActivityController@updateActivityAjax', 'as' => 'updateActivityAjax', 'middleware' => ['permission:tools-activity-new|tools-activity-edit|tools-activity-all-edit']]);
 
@@ -288,6 +297,9 @@ Route::get('getUserOnProjectForAssign', ['uses' => 'ToolsController@getUserOnPro
 
 
     Route::get('show', ['uses' => 'ResourcesController@show', 'as' => 'show', 'middleware' => ['permission:tools-activity-view']]);
+    Route::get('gapUsers', ['uses' => 'ResourcesController@show_users', 'as' => 'show_users', 'middleware' => ['permission:tools-activity-view']]);
+
+    Route::post('gapUsersList', ['uses' => 'ResourcesController@get_users_on_unassigned_by_practices', 'as' => 'get_users_on_unassigned_by_practices', 'middleware' => ['permission:tools-activity-view']]);
 
     // CALL CUTOMER LINKS:
 

@@ -143,7 +143,7 @@ class UserRepository
         return $user;
     }
 
-    public function getListOfUsers($exclude_contractors)
+    public function getListOfUsers($exclude_contractors,$europe_cons,$active_cons)
     {
         /** We create here a SQL statement and the Datatables function will add the information it got from the AJAX request to have things like search or limit or show.
          *   So we need to have a proper SQL search that the ajax can use via get with parameters given to it.
@@ -164,6 +164,19 @@ class UserRepository
         }
         if ($exclude_contractors == '1') {
             $userList->where('users.employee_type', '!=', 'contractor');
+        }
+
+        if ($europe_cons == '1') {
+            $userList->where(function($userList) {
+        $userList->where('users.management_code','=','DPS22')
+            ->orWhere('users.management_code','=','DCS58');
+        });
+               
+        }
+
+        if ($active_cons == '1') {
+            $userList->where('users.activity_status','active');
+               
         }
         $data = Datatables::of($userList)
             ->addColumn('roles', function ($user) {

@@ -322,9 +322,9 @@ class UserController extends Controller
         return json_encode($result);
     }
 
-    public function ListOfusers($exclude_contractors = 0)
+    public function ListOfusers($exclude_contractors = 0,$europe_cons=0,$active_cons=0)
     {
-        return $this->userRepository->getListOfUsers($exclude_contractors);
+        return $this->userRepository->getListOfUsers($exclude_contractors,$europe_cons,$active_cons);
     }
 
     // update FTID and PIMSID function using the UsersImport class
