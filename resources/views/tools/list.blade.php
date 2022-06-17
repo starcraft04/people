@@ -479,7 +479,7 @@
 //     $('#modal_assign_user_form_project_user').select2().trigger('change');
 // })
     
-
+//add mc
     //region Selection
     // SELECTIONS START
     // ________________

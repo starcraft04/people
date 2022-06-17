@@ -501,6 +501,7 @@ class ActivityRepository
 
         $activityList = DB::table('temp_a');
         
+        //add management code to the button
 
         $activityList->select('uu.manager_id AS manager_id','m.name AS manager_name', 'temp_a.user_id AS user_id', 'u.name AS user_name', 'u.country AS user_country', 'u.employee_type AS user_employee_type', 'u.domain AS user_domain',
                             'temp_a.project_id AS project_id',
