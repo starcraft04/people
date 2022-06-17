@@ -134,6 +134,13 @@
         
         </div>
         @endcan
+
+
+        <div style="margin: 10px auto;display: inline-block;width: 85%;">
+            <div class="col-sm-2">Europe Consultant  <input name="europe_cons" type="checkbox" id="europe_cons" class="form-group js-switch-small-cons" /></div>
+            <div class="col-sm-2">Active Consultant  <input name="active_cons" type="checkbox" id="active_cons" class="form-group js-switch-small-active-cons" /></div>
+            
+        </div>
         <!-- Create new button -->
 
 
@@ -223,6 +230,8 @@
               <th>Manager name</th>
               <th>User ID</th>
               <th>User name</th>
+              <th>Management Code</th>
+              <th>Activity</th>
               <th>User Practice</th>
               <th>User country</th>
               <th>Employee type</th>
@@ -259,6 +268,8 @@
           </thead>
           <tfoot>
             <tr>
+              <th></th>
+              <th></th>
               <th></th>
               <th></th>
               <th></th>
@@ -363,6 +374,8 @@
   var month_col = [];
   var header_months = [];
   var checkbox_closed = 0;
+  var europe_cons=0;
+  var active_cons=0;
 
   // switchery
   var small = document.querySelector('.js-switch-small');
@@ -374,7 +387,9 @@
       'month[]': month,
       'manager[]': manager,
       'user[]': user,
-      'checkbox_closed':checkbox_closed
+      'checkbox_closed':checkbox_closed,
+      'europe_cons':europe_cons,
+      'active_cons':active_cons,
     };
     return obj;
   }
@@ -416,7 +431,34 @@
 
   $(document).ready(function() {
 
+   //filters 
+    var small_cons = document.querySelector('.js-switch-small-cons');
+    var switchery_cons = new Switchery(small_cons, { size: 'small' });
+    //js-switch-small-active-cons
+
+
+    var small_active_cons = document.querySelector('.js-switch-small-active-cons');
+    var switchery_active_cons = new Switchery(small_active_cons, { size: 'small' });
+
+
+      if (Cookies.get('europe_cons') != null) {
+      if (Cookies.get('europe_cons') == 0) {
+        europe_cons = 0;
+        console.log("on load"+'\n');
+        console.log(Cookies.get('europe_cons'));
+        
+      } else {
+        console.log("on load"+'\n');
+        console.log(Cookies.get('europe_cons'));
+        $('#europe_cons').click();
+        europe_cons = 1;
+      }
+    }
+
+       
+
    
+
     $.ajaxSetup({
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -466,6 +508,68 @@
     manager = fill_select('manager');
     user = fill_select('user');
 
+    // change filter for active consultant
+    if (Cookies.get('active_cons') != null) {
+      if (Cookies.get('active_cons') == 0) {
+        active_cons = 0;
+        console.log("on load active"+'\n');
+        console.log(Cookies.get('active_cons'));
+        
+      } else {
+        console.log("on load active"+'\n');
+        console.log(Cookies.get('active_cons'));
+        $('#active_cons').click();
+        active_cons = 1;
+      }
+    }
+
+
+     if ($('#europe_cons').is(':checked')) {
+      europe_cons = 1;
+    } else {
+      europe_cons = 0;
+    }    
+
+    // filter active consultant 
+    if ($('#active_cons').is(':checked')) {
+      active_cons = 1;
+    } else {
+      active_cons = 0;
+    }  
+
+     $('#europe_cons').on('change', function() {
+      if ($(this).is(':checked')) {
+        europe_cons = 1;
+        Cookies.set('europe_cons', 1);
+
+      } else {
+        europe_cons = 0;
+        Cookies.set('europe_cons', 0);
+      }
+
+      console.log("after change");
+      console.log(europe_cons);
+      activitiesTable.ajax.reload(update_headers());
+    });
+
+ // active consultant filter changes and cookies set.
+     $('#active_cons').on('change', function() {
+      if ($(this).is(':checked')) {
+        active_cons = 1;
+        console.log("affter load"+'\n');
+        Cookies.set('active_cons', 1);
+        console.log(Cookies.get('active_cons'));
+      } else {
+        active_cons = 0;
+        console.log("affter load"+'\n');
+        console.log(Cookies.get('active_cons'));
+        Cookies.set('active_cons', 0);
+      }
+      activitiesTable.ajax.reload(update_headers());
+    });
+
+   //end ffilters
+    
     if (Cookies.get('checkbox_closed') != null) {
       if (Cookies.get('checkbox_closed') == 0) {
         checkbox_closed = 0;
@@ -543,7 +647,7 @@
     // SELECTIONS END
     //endregion
 
-    month_col = [31, 34, 37, 40, 43, 46, 49, 52, 55, 58, 61, 64];
+    month_col = [33, 36, 39, 42, 45, 48, 51, 54, 57, 60, 63,66];
 
     // This is to color in case it comes from prime or if forecast
     function color_for_month_value(value,from_otl,id,colonne,project_id,user_id,td) {
@@ -618,9 +722,7 @@
         type: "POST",
         data: function ( d ) {
           $.extend(d,ajaxData());
-
         },
-
         complete: function () { // Set our complete callback, adding the .hidden class and hiding the spinner.
         },
         dataType: "JSON"
@@ -630,6 +732,8 @@
         { name: 'm.name', data: 'manager_name' , className: "dt-nowrap", visible: false},
         { name: 'temp_a.user_id', data: 'user_id' , searchable: false , visible: false},
         { name: 'u.name', data: 'user_name' , className: "dt-nowrap"},
+        { name: 'u.management_code', data: 'management_code' , searchable: true , visible: true ,className: "dt-nowrap"},
+        { name: 'u.activity_status', data: 'activity_status' , searchable: true , visible: true ,className: "dt-nowrap"},
         { name: 'u.domain', data: 'user_domain' , searchable: true, visible: false, className: "dt-nowrap"},
         { name: 'u.country', data: 'user_country' , searchable: true , visible: false, className: "dt-nowrap"},
         { name: 'u.employee_type', data: 'user_employee_type' , searchable: true , visible: false, className: "dt-nowrap"},
@@ -698,7 +802,7 @@
           extend: "colvis",
           className: "btn-sm",
           collectionLayout: "three-column",
-          columns: [ 1, 3, 4, 5, 6,7,8,9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 34, 37, 40, 43, 46, 49, 52, 55, 58, 61, 64 ]
+          columns: [ 1, 3, 4, 5, 6,7,8,9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 34, 37, 40, 43, 46, 49, 52, 55, 58, 61, 64,65,66 ]
         },
         {
           extend: "pageLength",

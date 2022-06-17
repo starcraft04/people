@@ -502,7 +502,7 @@ class ActivityRepository
         $activityList = DB::table('temp_a');
         
 
-        $activityList->select('uu.manager_id AS manager_id', 'm.name AS manager_name', 'temp_a.user_id AS user_id', 'u.name AS user_name', 'u.country AS user_country', 'u.employee_type AS user_employee_type', 'u.domain AS user_domain',
+        $activityList->select('uu.manager_id AS manager_id','u.management_code','u.activity_status', 'm.name AS manager_name', 'temp_a.user_id AS user_id', 'u.name AS user_name', 'u.country AS user_country', 'u.employee_type AS user_employee_type', 'u.domain AS user_domain',
                             'temp_a.project_id AS project_id',
                             'p.project_name AS project_name',
                             'p.otl_project_code AS otl_project_code', 'p.meta_activity AS meta_activity', 'p.project_subtype AS project_subtype',
@@ -571,6 +571,18 @@ class ActivityRepository
         );
         }
 
+        //active and europe 
+        if ($where['active_cons'] == 1) {
+            $activityList->where('u.activity_status', 'active');
+        }
+
+        if ($where['europe_cons'] == 1) {
+            $activityList->where(function($activityList) {
+        $activityList->where('u.management_code','=','DPS22')
+            ->orWhere('u.management_code','=','DCS58');
+        });
+               
+        }
         // Checking the roles to see if allowed to see all users
         if (Auth::user()->can('tools-activity-all-view')) {
             // Format of $manager_list is [ 1=> 'manager1', 2=>'manager2',...]
@@ -618,6 +630,7 @@ class ActivityRepository
         }
         // Destroying the object so it will remove the 2 temp tables created
         // unset($temp_table);
+        
 
         return $data;
     }
@@ -888,4 +901,60 @@ class ActivityRepository
 
         return $data;
     }
+
+
+    public function list_gaps($where = null)
+    {
+        // code...
+
+        $where['months'] = [];
+
+        for ($i=$where['month'][0]; $i <= 12 ; $i++) { 
+            array_push($where['months'],['year' => $where['year'][0],'month'=>$i]);
+        }
+
+        if ($where['month'][0] > 1) {
+            for ($i=1; $i <= $where['month'][0]-1 ; $i++) { 
+                array_push($where['months'],['year' => $where['year'][0]+1,'month'=>$i]);
+            }
+        } 
+
+        //dd($where['months']);
+
+        $temp_table = new ProjectTableRepositoryV2('temp_a',$where);
+
+        $activityList = DB::table('temp_a');
+        
+
+         $activityList->select('p.project_name','u.domain as practice','u.name AS name','uu.manager_id AS manager_id', 'm.name AS manager_name',
+                             DB::raw('SUM(m1_com) as m1_com_sum'),
+                             DB::raw('SUM(m2_com) as m2_com_sum'),
+                             DB::raw('SUM(m3_com) as m3_com_sum'),
+                             DB::raw('SUM(m4_com) as m4_com_sum'),
+                             DB::raw('SUM(m5_com) as m5_com_sum'),
+                             DB::raw('SUM(m6_com) as m6_com_sum'),
+                             DB::raw('SUM(m7_com) as m7_com_sum'),
+                             DB::raw('SUM(m8_com) as m8_com_sum'),
+                             DB::raw('SUM(m9_com) as m9_com_sum'),
+                             DB::raw('SUM(m10_com) as m10_com_sum'),
+                             DB::raw('SUM(m11_com) as m11_com_sum'),
+                             DB::raw('SUM(m12_com) as m12_com_sum')
+                         );
+        $activityList->where('p.project_name','LIKE','Unassigned');
+        $activityList->where('u.domain','LIKE',$where['domain']);
+        $activityList->leftjoin('users AS u', 'temp_a.user_id', '=', 'u.id');
+        $activityList->leftjoin('projects AS p', 'p.id', '=', 'temp_a.project_id');
+        $activityList->leftjoin('users_users AS uu', 'u.id', '=', 'uu.user_id');
+        $activityList->leftjoin('users AS m', 'm.id', '=', 'uu.manager_id');
+        $activityList->groupBy('u.id');
+
+        $data = Datatables::of($activityList)->make(true);
+        
+        unset($temp_table);
+
+        return $data;
+
+    }
+
+
 }
