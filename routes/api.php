@@ -31,6 +31,8 @@ Route::group(['middleware' => ['auth:api','role:Skillbase API']], function () {
 
 	Route::get("activeuserskills","Apis\skillbaseApiController@activeUserSkillsAPI");
 	Route::get("activeuserskillsdashboard","Apis\skillbaseApiController@activeUserSkillsAPIDashboard");
+	Route::get("allSkills","Apis\skillbaseApiController@allSkills");
+	Route::get("allCerts","Apis\skillbaseApiController@allCerts");
 });
 
 

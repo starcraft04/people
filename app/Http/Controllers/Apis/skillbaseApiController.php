@@ -176,6 +176,30 @@ public function activeUserSkillsAPI()
 
 
 
+public function allSkills()
+{
+        $skillList = DB::table('skills')
+          ->select('id', 'domain', 'subdomain', 'technology', 'skill','created_at')
+          ->where('certification', '=',0)->get()->toArray();
+
+        
+
+        return json_encode($skillList);
+
+}
+
+public function allCerts()
+{
+        $skillList = DB::table('skills')
+          ->select('id', 'domain', 'subdomain', 'technology', 'skill','created_at')
+          ->where('certification', '=',1)->get()->toArray();
+
+        return json_encode($skillList);
+
+}
+
+
+
 
 
 
