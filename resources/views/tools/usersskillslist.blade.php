@@ -234,28 +234,33 @@
         europe_cons = 0;
         console.log("on load"+'\n');
         console.log(Cookies.get('europe_cons'));
+        Cookies.set('europe_cons', 0,{ expires: 2000 });
         
       } else {
         console.log("on load"+'\n');
         console.log(Cookies.get('europe_cons'));
         $('#europe_cons').click();
         europe_cons = 1;
+        Cookies.set('europe_cons', 1,{ expires: 2000 });
       }
     }
-    // change filter for active consultant
+
+       // change filter for active consultant
     if (Cookies.get('active_cons') != null) {
       if (Cookies.get('active_cons') == 0) {
         active_cons = 0;
-        console.log("on load active"+'\n');
-        console.log(Cookies.get('active_cons'));
+        Cookies.set('active_cons', 0,{ expires: 2000 });
         
       } else {
         console.log("on load active"+'\n');
         console.log(Cookies.get('active_cons'));
         $('#active_cons').click();
         active_cons = 1;
+        Cookies.set('active_cons', 1,{ expires: 2000 });
+        
       }
     }
+
      if ($('#europe_cons').is(':checked')) {
       europe_cons = 1;
     } else {
@@ -272,11 +277,11 @@
     $('#europe_cons').on('change', function() {
       if ($(this).is(':checked')) {
         europe_cons = 1;
-        Cookies.set('europe_cons', 1);
+        Cookies.set('europe_cons', 1,{expires:2000});
 
       } else {
         europe_cons = 0;
-        Cookies.set('europe_cons', 0);
+        Cookies.set('europe_cons', 0,{expires : 2000});
       }
 
 
@@ -289,13 +294,13 @@
       if ($(this).is(':checked')) {
         active_cons = 1;
         console.log("affter load"+'\n');
-        Cookies.set('active_cons', 1);
+        Cookies.set('active_cons', 1,{expires:2000});
         console.log(Cookies.get('active_cons'));
       } else {
         active_cons = 0;
         console.log("affter load"+'\n');
         console.log(Cookies.get('active_cons'));
-        Cookies.set('active_cons', 0);
+        Cookies.set('active_cons', 0,{expires:2000});
       }
 
       console.log("on change active cons"+'\n');

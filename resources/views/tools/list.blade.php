@@ -375,9 +375,10 @@
   var month_col = [];
   var header_months = [];
   var checkbox_closed = 0;
-  var europe_cons=0;
-  var active_cons=0;
+  var europe_cons=1;
+  var active_cons=1;
 
+  
   // switchery
   var small = document.querySelector('.js-switch-small');
   var switchery = new Switchery(small, { size: 'small' });
@@ -432,6 +433,8 @@
 
   $(document).ready(function() {
 
+    const d = new Date();
+    
    //filters 
     var small_cons = document.querySelector('.js-switch-small-cons');
     var switchery_cons = new Switchery(small_cons, { size: 'small' });
@@ -441,22 +444,38 @@
     var small_active_cons = document.querySelector('.js-switch-small-active-cons');
     var switchery_active_cons = new Switchery(small_active_cons, { size: 'small' });
 
-
+      
       if (Cookies.get('europe_cons') != null) {
       if (Cookies.get('europe_cons') == 0) {
         europe_cons = 0;
         console.log("on load"+'\n');
         console.log(Cookies.get('europe_cons'));
+        Cookies.set('europe_cons', 0,{ expires: 2000 });
         
       } else {
         console.log("on load"+'\n');
         console.log(Cookies.get('europe_cons'));
         $('#europe_cons').click();
         europe_cons = 1;
+        Cookies.set('europe_cons', 1,{ expires: 2000 });
       }
     }
 
-       
+       // change filter for active consultant
+    if (Cookies.get('active_cons') != null) {
+      if (Cookies.get('active_cons') == 0) {
+        active_cons = 0;
+        Cookies.set('active_cons', 0,{ expires: 2000 });
+        
+      } else {
+        console.log("on load active"+'\n');
+        console.log(Cookies.get('active_cons'));
+        $('#active_cons').click();
+        active_cons = 1;
+        Cookies.set('active_cons', 1,{ expires: 2000 });
+        
+      }
+    }
 
    
 
@@ -511,20 +530,7 @@
     manager = fill_select('manager');
     user = fill_select('user');
 
-    // change filter for active consultant
-    if (Cookies.get('active_cons') != null) {
-      if (Cookies.get('active_cons') == 0) {
-        active_cons = 0;
-        console.log("on load active"+'\n');
-        console.log(Cookies.get('active_cons'));
-        
-      } else {
-        console.log("on load active"+'\n');
-        console.log(Cookies.get('active_cons'));
-        $('#active_cons').click();
-        active_cons = 1;
-      }
-    }
+    
 
 
      if ($('#europe_cons').is(':checked')) {
@@ -543,11 +549,11 @@
      $('#europe_cons').on('change', function() {
       if ($(this).is(':checked')) {
         europe_cons = 1;
-        Cookies.set('europe_cons', 1);
+        Cookies.set('europe_cons', 1,{ expires: 2000 });
 
       } else {
         europe_cons = 0;
-        Cookies.set('europe_cons', 0);
+        Cookies.set('europe_cons', 0, { expires: 2000 });
       }
 
       console.log("after change");
@@ -559,14 +565,10 @@
      $('#active_cons').on('change', function() {
       if ($(this).is(':checked')) {
         active_cons = 1;
-        console.log("affter load"+'\n');
-        Cookies.set('active_cons', 1);
-        console.log(Cookies.get('active_cons'));
+        Cookies.set('active_cons', 1,{ expires: 2000 });
       } else {
         active_cons = 0;
-        console.log("affter load"+'\n');
-        console.log(Cookies.get('active_cons'));
-        Cookies.set('active_cons', 0);
+        Cookies.set('active_cons', 0,{ expires: 2000 });
       }
       activitiesTable.ajax.reload(update_headers());
     });
