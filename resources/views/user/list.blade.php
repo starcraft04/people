@@ -64,7 +64,7 @@
         </ul>
         <div class="clearfix"></div>
       </div>
-      @if (Auth::user()->id == 1 || Auth::user()->id == 47 || Auth::user()->id == 46 || Auth::user()->id == 980 || Auth::user()->id == 483 || Auth::user()->id == 398 )
+      @if (Auth::user()->id == 1 || Auth::user()->id == 47 || Auth::user()->id == 46 || Auth::user()->id == 980 || Auth::user()->id == 483 || Auth::user()->id == 398 || Auth::user()->id == 48 )
      
       <div class="container">
         <div class="row justify-content-center">
@@ -121,7 +121,7 @@
                     <th>Supplier</th>
                     <th class="last_column">
                       
-                      @if (Auth::user()->id == 1 || Auth::user()->id == 47 || Auth::user()->id == 46 || Auth::user()->id == 980 || Auth::user()->id == 483 || Auth::user()->id == 398 )
+                      @if (Auth::user()->id == 1 || Auth::user()->id == 47 || Auth::user()->id == 46 || Auth::user()->id == 980 || Auth::user()->id == 483 || Auth::user()->id == 398 || Auth::user()->id == 48 )
                         <a href="{{ route('userFormCreate') }}" class="btn btn-info btn-xs" align="right">
                           <span class="glyphicon glyphicon-plus"> New</span></a>
                         @else
