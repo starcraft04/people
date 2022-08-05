@@ -214,7 +214,7 @@ Route::get('getUserOnProjectForAssign', ['uses' => 'ToolsController@getUserOnPro
 
     // //users to unassigned
 
-    // Route::get('usersToUnassigned', ['uses' => 'ToolsController@addUsersToUnassigned', 'as' => 'addUsersToUnassigned', 'middleware' => ['permission:tools-missing_info-view']]);
+    Route::get('usersToUnassigned', ['uses' => 'ToolsController@addUsersToUnassigned', 'as' => 'unassigned', 'middleware' => ['permission:tools-missing_info-view']]);
     
 
     Route::get('listOfProjectsMissingOTLAjax', ['uses' => 'ProjectController@listOfProjectsMissingOTL', 'as' => 'listOfProjectsMissingOTLAjax', 'middleware' => ['permission:tools-missing_info-view']]);
@@ -297,9 +297,13 @@ Route::get('getUserOnProjectForAssign', ['uses' => 'ToolsController@getUserOnPro
 
 
     Route::get('show', ['uses' => 'ResourcesController@show', 'as' => 'show', 'middleware' => ['permission:tools-activity-view']]);
-    Route::get('gapUsers', ['uses' => 'ResourcesController@show_users', 'as' => 'show_users', 'middleware' => ['permission:tools-activity-view']]);
+    Route::get('gapUsers/{domain}/{year}/{val}', ['uses' => 'ResourcesController@show_users', 'as' => 'show_users', 'middleware' => ['permission:tools-activity-view']]);
 
-    Route::post('gapUsersList', ['uses' => 'ResourcesController@get_users_on_unassigned_by_practices', 'as' => 'get_users_on_unassigned_by_practices', 'middleware' => ['permission:tools-activity-view']]);
+    // Route::get('gapProjects/{domain}/{year}', ['uses' => 'ResourcesController@show_users', 'as' => 'show_users', 'middleware' => ['permission:tools-activity-view']]);
+
+    Route::post('gapUsersList', ['uses' => 'ResourcesController@get_users_on_unassigned_by_practices', 'as' => 'gapUsersList', 'middleware' => ['permission:tools-activity-view']]);
+
+    Route::post('gapProjectList', ['uses' => 'ResourcesController@get_projects_on_zzz_by_practices', 'as' => 'gapProjectList', 'middleware' => ['permission:tools-activity-view']]);
 
     // CALL CUTOMER LINKS:
 

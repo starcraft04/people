@@ -663,7 +663,17 @@
           $(td).addClass("otl");
         }        
       } else {
-        @can('tools-activity-edit')
+        if(project_id == 801)
+        {
+        $(td).attr('data-id', id);
+        $(td).attr('data-colonne', colonne);
+        $(td).attr('data-project_id', project_id);
+        $(td).attr('data-user_id', user_id);
+        $(td).attr('data-value', value);
+       
+        }
+        else{
+          @can('tools-activity-edit')
         $(td).addClass("editable");
         $(td).attr('contenteditable', true);
         $(td).attr('data-id', id);
@@ -672,6 +682,8 @@
         $(td).attr('data-user_id', user_id);
         $(td).attr('data-value', value);
         @endcan
+        
+        }
         if (value == 0) {
           $(td).addClass("zero");
         } else {
@@ -682,6 +694,16 @@
 
     // This is to update the headers
     function update_headers() {
+      $.ajax({
+          type: 'GET',
+              url: "{!! route('unassigned') !!}",
+              
+              dataType: 'json',
+              success: function(data) {
+                console.log(data);
+                console.log("dddd");
+              }
+      });
       months_from_selection = [];
       months_name = [
         @foreach(config('select.month') as $key => $month)
@@ -977,8 +999,10 @@
     $(document).on('blur', '.editable', function(e){
       //console.log('editing');
       update_activity($(this));
+      activitiesTable.ajax.reload(update_headers());
     });
 
+    
     function update_activity(td) {
       /* console.log(td.data('id'));
       console.log(td.data('project_id'));
@@ -1039,6 +1063,8 @@
                       $(this).addClass('animated flipOutX')
                   });
                 }
+
+                
               }
         });
       }

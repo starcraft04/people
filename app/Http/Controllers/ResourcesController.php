@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Http\Controllers\Controller;
 use App\Action;
 use App\Activity;
@@ -12,6 +13,7 @@ use App\Http\Requests\ProjectCreateRequest;
 use App\Http\Requests\ProjectUpdateRequest;
 use App\ProjectRevenue;
 use App\Repositories\ActivityRepository;
+
 use App\Repositories\ProjectRepository;
 use App\Repositories\UserRepository;
 use App\Skill;
@@ -44,6 +46,20 @@ class ResourcesController extends Controller
         $table_height = Auth::user()->table_height;
 
         return view('resourcesGap.resources', compact('authUsersForDataView', 'table_height'));
+    }
+
+    public function show_users($domain,$year,$val,AuthUsersForDataView $authUsersForDataView){
+        $authUsersForDataView->userCanView('tools-activity-all-view');
+        Session::put('url', 'toolsActivities');
+        $table_height = Auth::user()->table_height;
+
+        if($val == 1)
+        {
+            return view('resourcesGap.gap_details', compact('domain','year','authUsersForDataView', 'table_height'));
+        }
+        if($val == 0){
+            return view('resourcesGap.gap_projects', compact('domain','year','authUsersForDataView', 'table_height'));
+        }
     }
 
     public function Lists(Request $request)
@@ -91,7 +107,9 @@ class ResourcesController extends Controller
                     $value->m10_com_sum = round(0 - (($value->m10_com_sum)/17),1);
                     $value->m11_com_sum = round(0 - (($value->m11_com_sum)/17),1);
                     $value->m12_com_sum = round(0 - (($value->m12_com_sum)/17),1);
-                        $value->sum = round(($value->m1_com_sum+$value->m2_com_sum+$value->m3_com_sum+$value->m4_com_sum+$value->m5_com_sum+$value->m6_com_sum+$value->m7_com_sum+$value->m8_com_sum+$value->m9_com_sum+$value->m10_com_sum+$value->m11_com_sum+$value->m12_com_sum)/12,1);                    }
+                        $value->sum = round(($value->m1_com_sum+$value->m2_com_sum+$value->m3_com_sum+$value->m4_com_sum+$value->m5_com_sum+$value->m6_com_sum+$value->m7_com_sum+$value->m8_com_sum+$value->m9_com_sum+$value->m10_com_sum+$value->m11_com_sum+$value->m12_com_sum)/12,1);                  
+                    }
+                    break;
                     
                 }
                 else{
@@ -104,9 +122,9 @@ class ResourcesController extends Controller
                     $value->m7_com_sum = round(0 - (($value->m7_com_sum)/17),1);
                     $value->m8_com_sum = round(0 - (($value->m8_com_sum)/17),1);
                     $value->m9_com_sum = round(0 - (($value->m9_com_sum)/17),1);
-                    $value->m10_com_sum = round0(0 - (($value->m10_com_sum)/17),1);
-                    $value->m11_com_sum = round0(0 - (($value->m11_com_sum)/17),1);
-                    $value->m12_com_sum = round0(0 - (($value->m12_com_sum)/17),1);
+                    $value->m10_com_sum = round(0 - (($value->m10_com_sum)/17),1);
+                    $value->m11_com_sum = round(0 - (($value->m11_com_sum)/17),1);
+                    $value->m12_com_sum = round(0 - (($value->m12_com_sum)/17),1);
                     $value->sum = round(($value->m1_com_sum+$value->m2_com_sum+$value->m3_com_sum+$value->m4_com_sum+$value->m5_com_sum+$value->m6_com_sum+$value->m7_com_sum+$value->m8_com_sum+$value->m9_com_sum+$value->m10_com_sum+$value->m11_com_sum+$value->m12_com_sum)/12,1);
                 }
                 
@@ -168,7 +186,9 @@ class ResourcesController extends Controller
                     $value->m10_com_sum = 0 - $value->m10_com_sum;
                     $value->m11_com_sum = 0 - $value->m11_com_sum;
                     $value->m12_com_sum = 0 - $value->m12_com_sum;
-                        $value->sum = round(($value->m1_com_sum+$value->m2_com_sum+$value->m3_com_sum+$value->m4_com_sum+$value->m5_com_sum+$value->m6_com_sum+$value->m7_com_sum+$value->m8_com_sum+$value->m9_com_sum+$value->m10_com_sum+$value->m11_com_sum+$value->m12_com_sum)/12,1);                    }
+                        $value->sum = round(($value->m1_com_sum+$value->m2_com_sum+$value->m3_com_sum+$value->m4_com_sum+$value->m5_com_sum+$value->m6_com_sum+$value->m7_com_sum+$value->m8_com_sum+$value->m9_com_sum+$value->m10_com_sum+$value->m11_com_sum+$value->m12_com_sum)/12,1);           
+                    }
+                    break;
                     
                 }
                 else{
@@ -391,6 +411,31 @@ class ResourcesController extends Controller
         }
 
      return json_encode($all_data_from_DB_project);
+
+    }
+
+    public function get_users_on_unassigned_by_practices(Request $request)
+    {
+        $domains = [];
+        $input = $request->all();
+
+         $unassigned = $this->activityRepository->list_gaps($input);
+
+         return $unassigned;
+        
+
+
+    }
+    public function get_projects_on_zzz_by_practices(Request $request)
+    {
+        $domains = [];
+        $input = $request->all();
+
+         $unassigned = $this->activityRepository->list_gaps_zzz($input);
+
+         return $unassigned;
+        
+        
 
     }
 

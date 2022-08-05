@@ -47,7 +47,7 @@
 <!-- Page title -->
 <div class="page-title">
   <div class="title_left">
-    <h3>Resources Gap</h3>
+    <h3>Unassigned : {{$domain}}</h3>
   </div>
 </div>
 <div class="clearfix"></div>
@@ -56,24 +56,7 @@
 <!-- Window -->
 <div class="row">
          <!-- Selections for the table -->
-<!-- Modal start -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" >
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Resource Gap</h5>
-      </div>
-      <div class="modal-body">
-        <p>Do You want to see Unassigned projects or ZZZ-Users</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="unassigned" class="btn btn-secondary" data-bs-dismiss="modal">Unassigned</button>
-        <button type="button" id="zzzuser" class="btn btn-primary">ZZZ-Users</button>
-      </div>
-    </div>
-  </div>
-</div>
-      <!-- Model end -->
+
  <!-- Selections for the table -->
   <div class="col-md-12 col-sm-12 col-xs-12">
     <div class="x_panel"><!-- Selections for the table -->
@@ -123,7 +106,7 @@
               @endforeach
             </select>
           </div>
-          <div class="col-xs-2" style="display:block;">
+          <div class="col-xs-2" style="display:none;">
             <label id="closed_name" for="closed_name" class="control-label"></label>
             <input name="closed" type="checkbox" id="closed" class="form-group js-switch-small" checked /> 
           </div>
@@ -132,6 +115,8 @@
         <!-- Selections for the table -->
        
       <!-- Window title -->
+
+      
       <div class="x_title">
         <div id="mdView">
           <h3>Mandays view</h3>
@@ -143,11 +128,10 @@
       </div>
 
       <div id="fteview">
-          <h3>FTE view</h3>
+          <h3>Unassigned view</h3>
         <ul>
-          <li>Figures below are in FTE</li>
-          <li>Negative figures mean that we have unassigned consultants in that practice that can be used (ZZZ < Unassigned)</li>
-          <li>Positive figures mean that we have a shortage in consultants (ZZZ > Unassigned) </li>
+          <li>Here you can find consultant who has free solts within {{$domain}} practice</li>
+          
         </ul>
       </div>
         <div class="clearfix"></div>
@@ -160,30 +144,29 @@
 
 
 
-        <!-- Main table -->
-        <table id="activitiesTable" class="table table-striped table-hover table-bordered mytable" width="100%">
+        <!-- Unassigned table -->
+      <table id="UnassignedTable" class="table table-striped table-hover table-bordered mytable" width="100%">
           <thead>
             <tr>
-              <th id="domain_name">User Practice</th>
+              <th>User Practice</th>
+              <th>User name</th>
+              <th>Manager</th>
               @foreach(config('select.available_months') as $key => $month)
               <th id="table_month_{{$key}}"></th>
               @endforeach
-              <th>AVG Per Practice</th>
-
             </tr>
           </thead>
           <tfoot>
-            <tr>
-              <th></th>
-              @foreach(config('select.available_months') as $key => $month)
-              <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            @foreach(config('select.available_months') as $key => $month)
+              <th id="table_month_{{$key}}"></th>
               @endforeach
-              <th></th>
-
-            </tr>
           </tfoot>
         </table>
-        <!-- Main table -->
+        <!-- Unassigned table -->
+
 
       <!-- Window content -->
 
@@ -201,24 +184,20 @@
 
     $(document).on('click','.sorting_1',function(){
       
-        var domain = this.closest('td').innerHTML;
-        var year = $('#year_res').val();
-        var month = $('#month_res').val();
-        console.log(domain);
-        console.log(year);
-        console.log(month);
-       
-        $('#exampleModal').modal('show');
-        $('#unassigned').click(function() {
-  window.open("gapUsers/"+domain+"/"+year+"/"+1,"_self");
-});
-    $('#zzzuser').click(function() {
-  window.open("gapUsers/"+domain+"/"+year+"/"+0,"_self");
-});
+        // var domain = this.closest('td').innerHTML;
+        // var year = $('#year_res').val();
+        // var month = $('#month_res').val();
+        // console.log(domain);
+        // console.log(year);
+        // console.log(month);
+        // window.open("gapUsers/"+domain+"/"+year,"_blank");
+
+
+        $(x).modal('show');
 
 
     });
-
+        
 
  var activitiesTable;
   var year = [];
@@ -227,6 +206,7 @@
   var user = [];
   var month_col = [];
   var header_months = [];
+  var domainarr = ['{{$domain}}'];
   var checkbox_closed = 0;
 
   // switchery
@@ -235,10 +215,11 @@
 
   function ajaxData(){
     var obj = {
-      'year[]': year,
+      'year[]': {{$year}},
       'month[]': month,
       'manager[]': manager,
       'user[]': user,
+      'domain[]':domainarr,
       'checkbox_closed':checkbox_closed
     };
     return obj;
@@ -300,7 +281,7 @@
     manager = fill_select('manager');
     user = fill_select('user');
 
-    month_col = [1,2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
+    month_col = [3,4,5,6,7,8,9,10,11,12,13,14];
 
     if (Cookies.get('checkbox_closed') == null) {
       console.log("now is null");
@@ -468,14 +449,15 @@ function color_for_month_value(value,td) {
     //endregion
 
 
-
-    activitiesTable = $('#activitiesTable').DataTable({
+  
+    //Unassigned users table Ajax
+    activitiesTable = $('#UnassignedTable').DataTable({
       scrollX: true,
       serverSide: true,
       processing: true,
       stateSave: true,
       ajax: {
-         url:"{!! route('lists') !!}",
+         url:"{!! route('gapUsersList') !!}",
         type: "POST",
         data: function ( d ) {
           $.extend(d,ajaxData());
@@ -485,20 +467,16 @@ function color_for_month_value(value,td) {
         dataType: "JSON"
       },
       columns: [
-        { name: 'u.domain', data: 'practice', width:'50px',searchable: true , visible: true}
+        { name: 'u.domain', data: 'practice', width:'50px',searchable: true , visible: true},
+        { name: 'u.name', data: 'name', width:'50px',searchable: true , visible: true},
+        { name: 'm.name', data: 'manager_name', width:'50px',searchable: true , visible: true},
         @foreach(config('select.available_months') as $key => $month)
-
-          ,{ name: 'm{{$key}}_com_sum', data: 'm{{$key}}_com_sum', 
+          { name: 'm{{$key}}_com_sum', data: 'm{{$key}}_com_sum', 
             createdCell: function (td, cellData, rowData, row, col) {
+              console.log(rowData);
               color_for_month_value(rowData.m{{$key}}_com_sum,td);
-            }, width: '20px', searchable: false, visible: true, orderable: false}
-
-        @endforeach
-
-        ,{ name: 'sum', data: 'sum' ,createdCell: function (td, cellData, rowData, row, col) {
-              color_for_month_value(rowData.sum,td);
-            },width:'50px',searchable: false , visible: true}
-        
+            }, width: '20px', searchable: false, visible: true, orderable: false},
+        @endforeach        
         ],
         footerCallback: function ( row, data, start, end, display ) {
         var api = this.api(), data;
@@ -535,7 +513,6 @@ function color_for_month_value(value,td) {
             activitiesTable.draw();
         
       }
-
     });
 
     })

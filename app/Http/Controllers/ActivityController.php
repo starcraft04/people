@@ -15,6 +15,8 @@ use Auth;
 use DB;
 use Illuminate\Http\Request;
 
+
+
 class ActivityController extends Controller
 {
     protected $activityRepository;
