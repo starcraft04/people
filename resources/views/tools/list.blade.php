@@ -692,18 +692,23 @@
       }
     }
 
-    // This is to update the headers
-    function update_headers() {
+    
+
+
+    function updateUnassigned()
+    {
       $.ajax({
           type: 'GET',
               url: "{!! route('unassigned') !!}",
-              
-              dataType: 'json',
               success: function(data) {
-                console.log(data);
+                console.log(data['msg']);
                 console.log("dddd");
               }
       });
+    }
+    // This is to update the headers
+    function update_headers() {
+      
       months_from_selection = [];
       months_name = [
         @foreach(config('select.month') as $key => $month)
@@ -733,6 +738,8 @@
           //console.log(month);
           $('#table_month_'+index).empty().html(months_from_selection[index-1]);
         }
+        
+
     }
   
 
@@ -909,6 +916,7 @@
             });
 
             activitiesTable.draw();
+            
         }
       }
     });
@@ -1068,7 +1076,7 @@
               }
         });
       }
-
+      updateUnassigned();
     }
     
     @endcan
