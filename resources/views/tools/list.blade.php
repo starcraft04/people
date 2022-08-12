@@ -738,7 +738,7 @@
           //console.log(month);
           $('#table_month_'+index).empty().html(months_from_selection[index-1]);
         }
-        
+
 
     }
   
@@ -916,7 +916,7 @@
             });
 
             activitiesTable.draw();
-            
+
         }
       }
     });
@@ -1076,6 +1076,7 @@
               }
         });
       }
+      //add unassigned 
       updateUnassigned();
     }
     
