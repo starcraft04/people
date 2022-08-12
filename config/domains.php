@@ -10,7 +10,7 @@ return [
         'Employee Experience' => 'Employee Experience',
         'IoT and Edge' => 'IoT and Edge',
         'Customer Experience' => 'Customer Experience',
-        'Digital Data & Cloud' => 'Digital Data & Cloud',
+        'Digital Data & Cloud' => 'Digital Data and Cloud',
         'Management'=>'Management',
     ],
     'domain-fpc' => [
