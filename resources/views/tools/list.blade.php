@@ -739,7 +739,9 @@
           $('#table_month_'+index).empty().html(months_from_selection[index-1]);
         }
 
-
+        
+      //add unassigned 
+      updateUnassigned();
     }
   
 
@@ -1076,8 +1078,6 @@
               }
         });
       }
-      //add unassigned 
-      updateUnassigned();
     }
     
     @endcan
