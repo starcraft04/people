@@ -741,7 +741,8 @@
 
         
       //add unassigned 
-      updateUnassigned();
+              updateUnassigned();
+
     }
   
 
@@ -886,6 +887,7 @@
       },
       initComplete: function () {
         update_headers();
+
         // We create section below columns
         var columns = this.api().init().columns;
         this.api().columns().every(function () {
@@ -916,7 +918,6 @@
                     $('input', activitiesTable.column(colIdx).footer()).val(colSearch.search);
                 }
             });
-
             activitiesTable.draw();
 
         }
@@ -957,6 +958,7 @@
         },
         complete: function () { // Set our complete callback, adding the .hidden class and hiding the spinner.
           activitiesTable.ajax.reload(update_headers());
+
             }
       });
     });
