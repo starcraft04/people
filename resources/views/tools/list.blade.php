@@ -917,10 +917,9 @@
                     $('input', activitiesTable.column(colIdx).footer()).val(colSearch.search);
                 }
             });
-                    update_headers();
-
+            
             activitiesTable.draw();
-
+            update_headers();
         }
       }
     });
