@@ -886,7 +886,6 @@
         });
       },
       initComplete: function () {
-        update_headers();
 
         // We create section below columns
         var columns = this.api().init().columns;
@@ -918,6 +917,8 @@
                     $('input', activitiesTable.column(colIdx).footer()).val(colSearch.search);
                 }
             });
+                    update_headers();
+
             activitiesTable.draw();
 
         }
