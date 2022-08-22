@@ -1,17 +1,17 @@
 <?php
-//
+//'Business Cybersecurity' => 'Business Cybersecurity',
 return [
     'domain-users' => [
         '' => '',
         'IT Performance and Assurance' => 'IT Performance and Assurance',
-        'Business Cybersecurity' => 'Business Cybersecurity',
-        'Security'=>'Security',
+        'Security and Compliance'=>'Security and Compliance',
         'Cloud Networking' => 'Cloud Networking',
         'Employee Experience' => 'Employee Experience',
         'IoT and Edge' => 'IoT and Edge',
         'Customer Experience' => 'Customer Experience',
-        'Digital Data and Cloud' => 'Digital Data and Cloud',
+        'Cloud and Data Digitalization' => 'Cloud and Data Digitalization',
         'Management'=>'Management',
+        'Project Management Office'=>'Project Management Office',
     ],
     'domain-fpc' => [
         'APM' => ['P07', 'F27', 'H10'],
