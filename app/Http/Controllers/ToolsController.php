@@ -915,13 +915,15 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
         ->select('u.name','p.project_Name','a.year','a.project_id','u.activity_status','u.supplier','a.month',DB::raw('SUM(a.task_hour) as sum'),'u.id')
         ->join('users as u','u.id','a.user_id')
         ->join('projects as p','p.id','a.project_id')
-        ->where('a.year','=',2022)
         ->where('u.name','not LIKE','%ZZZ%')
+        ->where('a.year','>=',2022)
+
+        ->where('p.project_Name','Like','Akzonobel LAN/WLAN Survey')
         ->where('u.activity_status','NOT LIKE','%inact%')
         ->where('p.project_Name','Not Like','%unassigned%')
-        ->where('a.month','>=',date('m'))
-        ->groupBy('u.id','a.month')
-        ->orderBy('u.name')
+        
+        ->groupBy('u.id','a.month','a.year')
+        
         ->get();
 
         foreach($users_to_unassigned as $user)
@@ -931,10 +933,9 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
 
                 $difference = 17 - $user->sum;
                 // print($user->sum."<br>");
-                // print($user->project_Name."<br>");
+                print($user->project_Name.' '.$user->name.' '.$user->year."<br>");
                 // print($user->project_id."<br>");
                 
-                print($user->name."<br>");
                 // print($difference."<br>");
 
                 // print($user->month."<br>");
@@ -947,7 +948,7 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
                     'user_id'=>$user->id,
                     'project_id'=>801,
                     'month'=> $user->month,
-                    'year'=>2022
+                    'year'=>$user->year
                 ],
                 ['task_hour'=>$difference]
             );
@@ -962,7 +963,7 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
                     'user_id'=>$user->id,
                     'project_id'=>801,
                     'month'=> $user->month,
-                    'year'=>2022
+                    'year'=>$user->year
                 ],
                 ['task_hour'=>0]
             );   
@@ -974,7 +975,7 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
             }
         }
 
-        return json_encode($result);
+        return json_encode($result->msg);
     }
 
     
