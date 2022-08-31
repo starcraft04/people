@@ -698,7 +698,7 @@
     function updateUnassigned()
     {
       $.ajax({
-          type: 'GET',
+          type: 'POST',
               url: "{!! route('unassigned') !!}",
               success: function(data) {
                 console.log(data['msg']);

@@ -214,7 +214,7 @@ Route::get('getUserOnProjectForAssign', ['uses' => 'ToolsController@getUserOnPro
 
     // //users to unassigned
 
-    Route::get('usersToUnassigned', ['uses' => 'ToolsController@addUsersToUnassigned', 'as' => 'unassigned', 'middleware' => ['permission:tools-missing_info-view']]);
+    Route::post('usersToUnassigned', ['uses' => 'ToolsController@addUsersToUnassigned', 'as' => 'unassigned', 'middleware' => ['permission:tools-missing_info-view']]);
     
 
     Route::get('listOfProjectsMissingOTLAjax', ['uses' => 'ProjectController@listOfProjectsMissingOTL', 'as' => 'listOfProjectsMissingOTLAjax', 'middleware' => ['permission:tools-missing_info-view']]);
