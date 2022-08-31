@@ -917,8 +917,6 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
         ->join('projects as p','p.id','a.project_id')
         ->where('u.name','not LIKE','%ZZZ%')
         ->where('a.year','>=',2022)
-
-        ->where('p.project_Name','Like','Akzonobel LAN/WLAN Survey')
         ->where('u.activity_status','NOT LIKE','%inact%')
         ->where('p.project_Name','Not Like','%unassigned%')
         
