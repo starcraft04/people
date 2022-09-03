@@ -886,7 +886,7 @@
         });
       },
       initComplete: function () {
-
+        updateUnassigned();
         // We create section below columns
         var columns = this.api().init().columns;
         this.api().columns().every(function () {
