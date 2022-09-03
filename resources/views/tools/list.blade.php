@@ -705,6 +705,7 @@
                 console.log("dddd");
               }
       });
+      update_headers();
     }
     // This is to update the headers
     function update_headers() {
@@ -1001,7 +1002,9 @@
 
     $(document).on('keypress', '.editable', function(e){
       //console.log('editing');
+      
       if (e.which  == 13) { //Enter key's keycode
+          
         update_activity($(this));
         return false;
       }
