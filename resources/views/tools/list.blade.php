@@ -1009,10 +1009,10 @@
 
 
     $(document).on('blur', '.editable', function(e){
-      //console.log('editing');
-
-      update_activity($(this));
+      console.log('editing');
       updateUnassigned();
+      update_activity($(this));
+      
       activitiesTable.ajax.reload(update_headers());
     });
 
