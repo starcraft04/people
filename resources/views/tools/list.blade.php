@@ -886,7 +886,7 @@
         });
       },
       initComplete: function () {
-        updateUnassigned();
+        
         // We create section below columns
         var columns = this.api().init().columns;
         this.api().columns().every(function () {
@@ -917,9 +917,9 @@
                     $('input', activitiesTable.column(colIdx).footer()).val(colSearch.search);
                 }
             });
-            
-            activitiesTable.draw();
             update_headers();
+            activitiesTable.draw();
+            
         }
       }
     });
@@ -1009,10 +1009,9 @@
 
 
     $(document).on('blur', '.editable', function(e){
-      console.log('editing');
+      //console.log('editing');
       updateUnassigned();
       update_activity($(this));
-      
       activitiesTable.ajax.reload(update_headers());
     });
 
