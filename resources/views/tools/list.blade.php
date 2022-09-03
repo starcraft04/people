@@ -705,7 +705,7 @@
                 console.log("dddd");
               }
       });
-      update_headers();
+      
     }
     // This is to update the headers
     function update_headers() {
@@ -762,6 +762,7 @@
           $.extend(d,ajaxData());
         },
         complete: function () { // Set our complete callback, adding the .hidden class and hiding the spinner.
+          updateUnassigned();
         },
         dataType: "JSON"
       },
@@ -1013,7 +1014,6 @@
 
     $(document).on('blur', '.editable', function(e){
       console.log('editing');
-      updateUnassigned();
       update_activity($(this));
       activitiesTable.ajax.reload(update_headers());
     });
