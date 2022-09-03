@@ -917,9 +917,9 @@
                     $('input', activitiesTable.column(colIdx).footer()).val(colSearch.search);
                 }
             });
-            update_headers();
-            activitiesTable.draw();
             
+            activitiesTable.draw();
+            update_headers();
         }
       }
     });
@@ -1009,7 +1009,7 @@
 
 
     $(document).on('blur', '.editable', function(e){
-      //console.log('editing');
+      console.log('editing');
       updateUnassigned();
       update_activity($(this));
       activitiesTable.ajax.reload(update_headers());
