@@ -707,17 +707,19 @@
               url: "{!! route('unassigned') !!}",
               beforeSend: function () {
                 // ... your initialization code here (so show loader) ...
-                  $('#LoeTable').hide();
+                  
                   $('#table_loader').show();
               },
               complete: function () {
-                $('#table_loader').hide();
-                activitiesTable.draw();
+                
+                
                 update_headers();
+
                 // ... your finalization code here (hide loader) ...
               },
               success: function(data) {
                 $('#table_loader').hide();
+                activitiesTable.ajax.reload(update_headers());
                 console.log(data['msg']);
                 console.log("dddd");
               }
@@ -779,8 +781,9 @@
           $.extend(d,ajaxData());
         },
         complete: function () { // Set our complete callback, adding the .hidden class and hiding the spinner.
-          updateUnassigned();
+          
           $('#table_loader').hide();
+          updateUnassigned();
 
         },
         dataType: "JSON"
@@ -905,6 +908,7 @@
               '<div style="font-size: 120%;">'+pageTotal.toFixed(1)+'</div>'
           );
         });
+        
       },
       initComplete: function () {
         
