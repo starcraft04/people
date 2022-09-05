@@ -224,6 +224,11 @@
             </div>
       </div> -->
         <!-- Main table -->
+        <div id="table_loader" class="row">
+            <div class="col-sm">
+              <img src="{{ asset("/img/loading.gif") }}" width="100" height="100">
+            </div>
+          </div>
         <table id="activitiesTable" class="table table-striped table-hover table-bordered mytable" width="100%">
           <thead>
             <tr>
@@ -698,9 +703,20 @@
     function updateUnassigned()
     {
       $.ajax({
-          type: 'POST',
+              type: 'POST',
               url: "{!! route('unassigned') !!}",
+              beforeSend: function () {
+                // ... your initialization code here (so show loader) ...
+                  $('#LoeTable').hide();
+                  $('#table_loader').show();
+              },
+              complete: function () {
+                $('#table_loader').hide();
+                update_headers();
+                // ... your finalization code here (hide loader) ...
+              },
               success: function(data) {
+                $('#table_loader').hide();
                 console.log(data['msg']);
                 console.log("dddd");
               }
@@ -762,7 +778,7 @@
           $.extend(d,ajaxData());
         },
         complete: function () { // Set our complete callback, adding the .hidden class and hiding the spinner.
-          updateUnassigned();
+          $('#table_loader').hide();
         },
         dataType: "JSON"
       },
@@ -1014,6 +1030,7 @@
 
     $(document).on('blur', '.editable', function(e){
       console.log('editing');
+      updateUnassigned();
       update_activity($(this));
       activitiesTable.ajax.reload(update_headers());
     });
