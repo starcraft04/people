@@ -705,7 +705,7 @@
                 
                 
                 console.log(data['msg']);
-                // update_headers()
+                update_headers()
                 console.log("dddd");
               }
       });
@@ -766,14 +766,9 @@
         data: function ( d ) {
           $.extend(d,ajaxData());
         },
-        beforeSend: function () {
-        // ... your initialization code here (so show loader) ...
-            
-          updateUnassigned();
-
-      },
+        
         complete: function () { // Set our complete callback, adding the .hidden class and hiding the spinner.
-          
+          updateUnassigned();
       
         },
         dataType: "JSON"
