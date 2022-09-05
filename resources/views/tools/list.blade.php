@@ -928,8 +928,9 @@
                 }
             });
             
-            activitiesTable.draw();
             update_headers();
+            activitiesTable.draw();
+
             activitiesTable.ajax.reload(update_headers());
         }
       }
