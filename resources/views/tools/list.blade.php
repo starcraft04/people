@@ -706,6 +706,10 @@
                 
                 console.log(data['msg']);
                 update_headers();
+                
+            activitiesTable.draw();
+
+            activitiesTable.ajax.reload(update_headers());
                 console.log("dddd");
               }
       });
@@ -928,10 +932,7 @@
                 }
             });
             
-            update_headers();
             activitiesTable.draw();
-
-            activitiesTable.ajax.reload(update_headers());
         }
       }
     });
