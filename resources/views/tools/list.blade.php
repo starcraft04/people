@@ -224,11 +224,7 @@
             </div>
       </div> -->
         <!-- Main table -->
-        <div id="table_loader" class="row">
-            <div class="col-sm">
-              <img src="{{ asset("/img/loading.gif") }}" width="100" height="100">
-            </div>
-          </div>
+        
         <table id="activitiesTable" class="table table-striped table-hover table-bordered mytable" width="100%">
           <thead>
             <tr>
@@ -708,17 +704,17 @@
               beforeSend: function () {
                 // ... your initialization code here (so show loader) ...
                   
-                  $('#table_loader').show();
+                  
               },
               complete: function () {
                 
                 
-                update_headers();
+                
 
                 // ... your finalization code here (hide loader) ...
               },
               success: function(data) {
-                $('#table_loader').hide();
+                
                 activitiesTable.ajax.reload(update_headers());
                 console.log(data['msg']);
                 console.log("dddd");
@@ -782,8 +778,8 @@
         },
         complete: function () { // Set our complete callback, adding the .hidden class and hiding the spinner.
           
-          $('#table_loader').hide();
           
+          updateUnassigned();
 
         },
         dataType: "JSON"
@@ -1036,8 +1032,8 @@
 
 
     $(document).on('blur', '.editable', function(e){
-      console.log('editing');
-      updateUnassigned();
+      // console.log('editing');
+
       update_activity($(this));
       activitiesTable.ajax.reload(update_headers());
     });
