@@ -701,22 +701,11 @@
       $.ajax({
               type: 'POST',
               url: "{!! route('unassigned') !!}",
-              beforeSend: function () {
-                // ... your initialization code here (so show loader) ...
-                  
-                  
-              },
-              complete: function () {
-                
-                
-                
-
-                // ... your finalization code here (hide loader) ...
-              },
               success: function(data) {
                 
-                activitiesTable.ajax.reload(update_headers());
+                
                 console.log(data['msg']);
+                activitiesTable.ajax.reload(update_headers());
                 console.log("dddd");
               }
       });
