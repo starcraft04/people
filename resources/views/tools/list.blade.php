@@ -778,7 +778,7 @@
           $.extend(d,ajaxData());
         },
         complete: function () { // Set our complete callback, adding the .hidden class and hiding the spinner.
-          
+          updateUnassigned();
           $('#table_loader').hide();
 
         },
@@ -1023,7 +1023,7 @@
       //console.log('editing');
       
       if (e.which  == 13) { //Enter key's keycode
-          updateUnassigned();
+          
         update_activity($(this));
         return false;
       }
