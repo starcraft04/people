@@ -712,6 +712,7 @@
               },
               complete: function () {
                 $('#table_loader').hide();
+                activitiesTable.draw();
                 update_headers();
                 // ... your finalization code here (hide loader) ...
               },
