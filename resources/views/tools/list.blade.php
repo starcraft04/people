@@ -778,7 +778,9 @@
           $.extend(d,ajaxData());
         },
         complete: function () { // Set our complete callback, adding the .hidden class and hiding the spinner.
+          update
           $('#table_loader').hide();
+
         },
         dataType: "JSON"
       },
@@ -1021,7 +1023,7 @@
       //console.log('editing');
       
       if (e.which  == 13) { //Enter key's keycode
-          
+          updateUnassigned();
         update_activity($(this));
         return false;
       }
@@ -1030,7 +1032,6 @@
 
     $(document).on('blur', '.editable', function(e){
       console.log('editing');
-      updateUnassigned();
       update_activity($(this));
       activitiesTable.ajax.reload(update_headers());
     });
