@@ -930,6 +930,7 @@
             
             activitiesTable.draw();
             update_headers();
+            activitiesTable.ajax.reload(update_headers());
         }
       }
     });
