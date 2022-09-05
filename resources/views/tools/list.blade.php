@@ -778,7 +778,7 @@
           $.extend(d,ajaxData());
         },
         complete: function () { // Set our complete callback, adding the .hidden class and hiding the spinner.
-          update
+          
           $('#table_loader').hide();
 
         },
