@@ -706,13 +706,10 @@
                 
                 console.log(data['msg']);
                 update_headers();
-                
-            activitiesTable.draw();
-
-            activitiesTable.ajax.reload(update_headers());
                 console.log("dddd");
               }
       });
+            
       
     }
     // This is to update the headers
@@ -769,11 +766,15 @@
         data: function ( d ) {
           $.extend(d,ajaxData());
         },
-        complete: function () { // Set our complete callback, adding the .hidden class and hiding the spinner.
-          
-          
+        beforeSend: function () {
+        // ... your initialization code here (so show loader) ...
+            
           updateUnassigned();
 
+      },
+        complete: function () { // Set our complete callback, adding the .hidden class and hiding the spinner.
+          
+      
         },
         dataType: "JSON"
       },
@@ -932,7 +933,10 @@
                 }
             });
             
+            update_headers();
             activitiesTable.draw();
+
+            activitiesTable.ajax.reload(update_headers());
         }
       }
     });
@@ -1025,7 +1029,7 @@
 
     $(document).on('blur', '.editable', function(e){
       // console.log('editing');
-
+      
       update_activity($(this));
       activitiesTable.ajax.reload(update_headers());
     });
