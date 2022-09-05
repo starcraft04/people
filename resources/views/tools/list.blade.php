@@ -783,7 +783,7 @@
         complete: function () { // Set our complete callback, adding the .hidden class and hiding the spinner.
           
           $('#table_loader').hide();
-          updateUnassigned();
+          
 
         },
         dataType: "JSON"
@@ -1037,6 +1037,7 @@
 
     $(document).on('blur', '.editable', function(e){
       console.log('editing');
+      updateUnassigned();
       update_activity($(this));
       activitiesTable.ajax.reload(update_headers());
     });
