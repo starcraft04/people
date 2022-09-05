@@ -705,7 +705,7 @@
                 
                 
                 console.log(data['msg']);
-                activitiesTable.ajax.reload(update_headers());
+                update_headers();
                 console.log("dddd");
               }
       });
