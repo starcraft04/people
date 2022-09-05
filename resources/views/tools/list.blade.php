@@ -705,7 +705,7 @@
                 
                 
                 console.log(data['msg']);
-                update_headers();
+                // update_headers()
                 console.log("dddd");
               }
       });
