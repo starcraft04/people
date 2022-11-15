@@ -515,6 +515,25 @@ h3:after {
 
                   <!-- Project Status -->
 
+                  @if($action == 'update')
+                  <div id="project_status_flag_row" class="row">
+                    <div class="form-group {!! $errors->has('estimated_end_date') ? 'has-error' : '' !!} col-md-12">
+                      <div class="col-md-3">
+                        {!! Form::label('Project Status Flag', 'Project Status Flag', ['class' => 'control-label', 'id' => 'project_status_flag_label']) !!}
+                      </div>
+                      <div class="col-md-9">
+                        <div class="control-group">
+                          <div class="controls">
+                            <div class="input-prepend input-group">
+                              <label style="width: 241px" name="project_status_flag" id="project_status_flag" class="form-control" />
+                            </div>
+                            {!! $errors->first('project_status_flag', '<small class="help-block">:message</small>') !!}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  @endif
                   <div id="project_status_flag_row" class="row" style="display:none;">
                     <div class="form-group {!! $errors->has('estimated_end_date') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
@@ -2406,6 +2425,41 @@ $(document).on('focusout','#description',function(){
 
 //project status 
 
+ @if($action == 'update')
+    {
+      let project_status = $('#project_status').val();
+    let estimated_end_date = $('#estimated_end_date').val();
+    //get date
+    var d = new Date();
+    var d2 = new Date(estimated_end_date);
+
+    var month = d.getMonth()+1;
+    var day = d.getDate();
+
+    var output = d.getFullYear() + '-' +
+        ((''+month).length<2 ? '0' : '') + month + '-' +
+        ((''+day).length<2 ? '0' : '') + day;
+    var cu = new Date(output);
+     if(cu.getTime() <= d2.getTime() && project_status == 'Won')
+    {
+      console.log("sh3'al");
+      $('#project_status_flag_row').css('display','block');
+      $('#project_status_flag').html('Ongoing');
+      $('#project_status_flag').css('color','green');
+
+
+
+    }
+    else{
+
+    console.log('fffff');
+    $('#project_status_flag_row').css('display','block');
+    $('#project_status_flag').html('closed');
+    $('#project_status_flag').css('color','red');
+    }
+    }
+  @endif
+
 $(document).on('change','#estimated_end_date',function(){
 
     let project_status = $('#project_status').val();
@@ -2429,6 +2483,7 @@ $(document).on('change','#estimated_end_date',function(){
     console.log('estimate');
     console.log(d2.getTime());
 
+   
     if(cu.getTime() <= d2.getTime() && project_status == 'Won')
     {
       console.log("sh3'al");
