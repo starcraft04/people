@@ -44,8 +44,8 @@ class ProjectUpdateRequest extends FormRequest
 
       'project_name' => 'required|max:255|unique:projects,project_name,'.$id.',id,customer_id,'.$customer_id,
       'customer_id' => 'required|max:255',
-      'otl_project_code' => 'sometimes|required_with:meta_activity|max:255|unique:projects,otl_project_code,'.$id.',id,meta_activity,'.$meta_activity,
-      'meta_activity' => 'sometimes|required_with:otl_project_code|max:255',
+      'otl_project_code' => 'nullable|max:255',
+      'meta_activity' => 'nullable|max:255',
       'LoE_onshore' => 'nullable|numeric',
       'LoE_nearshore' => 'nullable|numeric',
       'LoE_offshore' => 'nullable|numeric',
