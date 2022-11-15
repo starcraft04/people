@@ -97,7 +97,9 @@ class ProjectRepository
         if (isset($inputs['customer_id'])) {
             $project->customer_id = $inputs['customer_id'];
         }
-
+        if(isset($inputs['project_practice'])){
+            $project->project_practice = $inputs['project_practice'];
+        }
         // OTL project code and meta activity can be empty and then it needs to be entered as null
 
         if (array_key_exists('meta_activity', $inputs)) {

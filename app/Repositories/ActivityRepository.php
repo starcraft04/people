@@ -206,7 +206,7 @@ class ActivityRepository
         $activityList = DB::table('temp_a');
         
 
-        $activityList->select('u.domain AS practice',
+        $activityList->select('u.domain AS practice','p.project_name',
                              DB::raw('SUM(m1_com) as m1_com_sum'),
                              DB::raw('SUM(m2_com) as m2_com_sum'),
                              DB::raw('SUM(m3_com) as m3_com_sum'),
@@ -354,7 +354,7 @@ class ActivityRepository
 
         $activityList = DB::table('temp_a');
         
-
+        $ZZZ_user_array = [120,389,391,952,954,1055,1056,1057,1058];
          $activityList->select('u.domain as practice','u.name AS name',
                              DB::raw('SUM(m1_com) as m1_com_sum'),
                              DB::raw('SUM(m2_com) as m2_com_sum'),
@@ -369,7 +369,7 @@ class ActivityRepository
                              DB::raw('SUM(m11_com) as m11_com_sum'),
                              DB::raw('SUM(m12_com) as m12_com_sum')
                          );
-        $activityList->where('u.name','Like','%ZZZ%');
+        $activityList->where('u.name','LIKE','%ZZZ%');
         $activityList->leftjoin('projects AS p', 'p.id', '=', 'temp_a.project_id');
         $activityList->leftjoin('project_loe AS loe', 'temp_a.project_id', '=', 'loe.project_id');
         $activityList->leftjoin('users AS u', 'temp_a.user_id', '=', 'u.id');
@@ -472,6 +472,7 @@ class ActivityRepository
         return $data;
     }
 
+    
     public function getListOfActivitiesPerUser($where = null)
     {
         /** We create here a SQL statement and the Datatables function will add the information it got from the AJAX request to have things like search or limit or show.
