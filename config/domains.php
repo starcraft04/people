@@ -13,6 +13,19 @@ return [
         'Management'=>'Management',
         'Project Management Office'=>'Project Management Office',
     ],
+
+    'practice' => [
+        '' => '',
+        'ITPA' => 'IT Performance and Assurance',
+        'SC'=>'Security and Compliance',
+        'CN' => 'Cloud Networking',
+        'EmEx' => 'Employee Experience',
+        'IoT' => 'IoT and Edge',
+        'CuEx' => 'Customer Experience',
+        'CDD' => 'Cloud and Data Digitalization',
+        'MGT'=>'Management',
+        'PMO'=>'Project Management Office',
+    ],
     'domain-fpc' => [
         'APM' => ['P07', 'F27', 'H10'],
         'Security' => ['F35','S77'],

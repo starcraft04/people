@@ -656,7 +656,21 @@
     month_col = [33, 36, 39, 42, 45, 48, 51, 54, 57, 60, 63,66];
 
     // This is to color in case it comes from prime or if forecast
-    function color_for_month_value(value,from_otl,id,colonne,project_id,user_id,td) {
+    function color_for_month_value(value,from_otl,id,colonne,project_id,user_id,td,estimated_end_date) {
+      var d = new Date();
+      var d2 = new Date(estimated_end_date);
+
+      var month = d.getMonth()+1;
+      var day = d.getDate();
+
+      var output = d.getFullYear() + '-' +
+          ((''+month).length<2 ? '0' : '') + month + '-' +
+          ((''+day).length<2 ? '0' : '') + day;
+      var cu = new Date(output);
+
+
+      console.log("Sssssssssssssssssssssssssssss");
+      console.log(estimated_end_date);
       if (from_otl == 1) {
         if (value == 0) {
           $(td).addClass("otl_zero");
@@ -671,8 +685,21 @@
         $(td).attr('data-project_id', project_id);
         $(td).attr('data-user_id', user_id);
         $(td).attr('data-value', value);
+          if(value == 0){
+            $(td).html('17');
+            $(td).addClass("unassigned_forecast");
+          }
        
         }
+        else if(cu.getTime() >= d2.getTime()){
+
+        $(td).attr('data-id', id);
+        $(td).attr('data-colonne', colonne);
+        $(td).attr('data-project_id', project_id);
+        $(td).attr('data-user_id', user_id);
+        $(td).attr('data-value', value);
+        
+      }
         else{
           @can('tools-activity-edit')
         $(td).addClass("editable");
@@ -822,14 +849,36 @@
         { name: 'p.samba_lead_domain', data: 'samba_lead_domain' , searchable: true , visible: false, className: "dt-nowrap"},
         { name: 'p.samba_stage', data: 'samba_stage' , searchable: true , visible: false, className: "dt-nowrap"},
         { name: 'p.estimated_start_date', data: 'estimated_start_date' , searchable: true , visible: false, className: "dt-nowrap"},
-        { name: 'p.estimated_end_date', data: 'estimated_end_date' , searchable: true , visible: false, className: "dt-nowrap"},
+        { name: 'p.estimated_end_date', data: 'estimated_end_date' ,
+        render: function (data,type, rowData) {
+            var project_end_date = new Date(data);
+            var d = new Date();
+            var month = d.getMonth()+1;
+            var day = d.getDate();
+
+            var output = d.getFullYear() + '-' +
+                ((''+month).length<2 ? '0' : '') + month + '-' +
+                ((''+day).length<2 ? '0' : '') + day;
+            var cu = new Date(output);
+
+            if(cu.getTime() >= project_end_date.getTime())
+            {
+              return '<strong style="color:red">'+data+'</strong>';
+            }else{
+              return '<strong style="color:green">'+data+'</strong>';
+            }
+
+
+          
+          
+        }, searchable: true , visible: false, className: "dt-nowrap"},
         { name: 'p.gold_order_number', data: 'gold_order_number' , searchable: true , visible: false, className: "dt-nowrap"},
         { name: 'p.win_ratio', data: 'win_ratio' , searchable: true , visible: false, className: "dt-nowrap"}
         @foreach(config('select.available_months') as $key => $month)
 
           ,{ name: 'm{{$key}}_com', data: 'm{{$key}}_com', 
             createdCell: function (td, cellData, rowData, row, col) {
-              color_for_month_value(rowData.m{{$key}}_com,rowData.m{{$key}}_from_otl,rowData.m{{$key}}_id,{{$key}},rowData.project_id,rowData.user_id,td);
+              color_for_month_value(rowData.m{{$key}}_com,rowData.m{{$key}}_from_otl,rowData.m{{$key}}_id,{{$key}},rowData.project_id,rowData.user_id,td,rowData.estimated_end_date);
             }, width: '30px', searchable: false, visible: true, orderable: false},
 
           { name: 'm{{$key}}_id', data: 'm{{$key}}_id', width: '10px', searchable: false , visible: false, orderable: false},

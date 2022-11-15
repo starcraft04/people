@@ -188,9 +188,25 @@ Route::get('getUserOnProjectForAssign', ['uses' => 'ToolsController@getUserOnPro
 
     //  Create new activity
     Route::get('toolsFormCreate/{y}/{tab?}', ['uses' => 'ToolsController@getFormCreate', 'as' => 'toolsFormCreate', 'middleware' => ['permission:tools-activity-new']]);
+
+    // get country of the customer for project name
+
+    Route::post('customerCountry', ['uses' => 'ToolsController@getCustomerCountryByID', 'as' => 'getCustomerCountryByID', 'middleware' => ['permission:tools-activity-new']]);
+
+
+    Route::post('projectPrimeExists', ['uses' => 'ToolsController@checkExistingPrime', 'as' => 'projectPrimeExists', 'middleware' => ['permission:tools-activity-new']]);
+
+    
+    Route::post('checkProjectName', ['uses' => 'ToolsController@checkProjectExistsByName', 'as' => 'checkProjectName', 'middleware' => ['permission:tools-activity-new']]);
+
+    Route::post('checkPrimeCode', ['uses' => 'ToolsController@checkPrimeExistanceOnProject', 'as' => 'checkPrimeCode', 'middleware' => ['permission:tools-activity-new']]);
+
+
     Route::post('toolsFormCreate', ['uses' => 'ToolsController@postFormCreate', 'middleware' => ['permission:tools-activity-new']]);
     //  Update activity
     Route::get('toolsFormUpdate/{u}/{p}/{y}/{tab?}', ['uses' => 'ToolsController@getFormUpdate', 'as' => 'toolsFormUpdate', 'middleware' => ['permission:tools-activity-edit']]);
+
+
     Route::post('toolsFormUpdate', ['uses' => 'ToolsController@postFormUpdate', 'middleware' => ['permission:tools-activity-edit']]);
     //  Transfer user
     Route::get('toolsFormTransfer/{user_id}/{project_id}', ['uses' => 'ToolsController@getFormTransfer', 'as' => 'toolsFormTransfer', 'middleware' => ['permission:tools-user_assigned-transfer']]);
