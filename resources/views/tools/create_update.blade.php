@@ -398,7 +398,7 @@ h3:after {
                       </div>
                     </div>
                   </div>
-                  <div class="row">
+                  <!-- <div class="row">
                     <div class="form-group {!! $errors->has('meta_activity') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
                         {!! Form::label('meta_activity', 'Meta-activity', ['class' => 'control-label']) !!}
@@ -418,7 +418,7 @@ h3:after {
                         {!! $errors->first('meta_activity', '<small class="help-block">:message</small>') !!}
                       </div>
                     </div>
-                  </div>
+                  </div> -->
                  
                   
                   <div id="project_status_row" class="row">
@@ -448,10 +448,12 @@ h3:after {
                   <div class="row">
                     <div class="form-group {!! $errors->has('technology') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
-                        {!! Form::label('technology', 'Technology', ['class' => 'control-label']) !!}
+                        {!! Form::label('technology', 'Technology *', ['class' => 'control-label']) !!}
+                        <br>
+                        <span>Only alphabetic character</span>
                       </div>
                       <div class="col-md-9">
-                        {!! Form::text('technology', (isset($project)) ? $project->technology : '', ['class' => 'form-control', 'placeholder' => 'technology',$technology_disabled]) !!}
+                        {!! Form::text('technology', (isset($project)) ? $project->technology : '', ['class' => 'form-control', 'placeholder' => 'Technology',$technology_disabled ,'pattern'=>'/^[A-Za-z]+$/' ,   'minlength' => '4' , 'maxlength' => '30', 'required']) !!}
                         {!! $errors->first('technology', '<small class="help-block">:message</small>') !!}
                       </div>
                     </div>
@@ -459,11 +461,28 @@ h3:after {
                   <div class="row">
                     <div class="form-group {!! $errors->has('description') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
-                        {!! Form::label('description', 'description', ['class' => 'control-label']) !!}
+                        {!! Form::label('description', 'Famous name', ['class' => 'control-label']) !!}
+                        <br>
+                        <span>Only alphabetic character</span>
                       </div>
                       <div class="col-md-9">
-                        {!! Form::text('description', (isset($project)) ? $project->description : '', ['class' => 'form-control', 'placeholder' => 'description',$description_disabled]) !!}
+                        {!! Form::text('description', (isset($project)) ? $project->description : '', ['class' => 'form-control', 'placeholder' => 'example: pegasus',$description_disabled,'pattern'=>'/^[A-Za-z]+$/' ,   'minlength' => '4' , 'maxlength' => '30']) !!}
                         {!! $errors->first('description', '<small class="help-block">:message</small>') !!}
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div class="row">
+                    <div class="form-group {!! $errors->has('comments') ? 'has-error' : '' !!} col-md-12">
+                      <div class="col-md-3">
+                        {!! Form::label('comments', 'Comments', ['class' => 'control-label']) !!}
+                        <br>
+                        <span>Only alphabetic character</span>
+                      </div>
+                      <div class="col-md-9">
+                        {!! Form::text('comments', (isset($project)) ? $project->comments : '', ['class' => 'form-control', 'placeholder' => 'Project Comments',$comments_disabled,'minlength' => '4' , 'maxlength' => '100']) !!}
+                        {!! $errors->first('comments', '<small class="help-block">:message</small>') !!}
                       </div>
                     </div>
                   </div>

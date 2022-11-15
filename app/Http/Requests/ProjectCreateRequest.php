@@ -33,6 +33,7 @@ class ProjectCreateRequest extends FormRequest
           'customer_id' => 'required|max:255',
           'project_practice' =>'required|max:255',
           'otl_project_code' => 'nullable|max:255',
+          'comments' => 'nullable|max:255',
           'meta_activity' => 'max:255',
           'LoE_onshore' => 'nullable|numeric',
           'LoE_nearshore' => 'nullable|numeric',
