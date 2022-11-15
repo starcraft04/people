@@ -114,7 +114,7 @@ h3:after {
       <div class="x_title">
         <h2>
           @if($action == 'create')
-          Create project
+          Create project 2
           @elseif($action == 'update')
           Update project {{ isset($created_by_user_name) ? '(created by user '.$created_by_user_name.')' : '' }}
           @endif
