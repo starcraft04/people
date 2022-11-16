@@ -305,10 +305,10 @@ h3:after {
                   <div class="row">
                     <div class="form-group {!! $errors->has('user.domain') ? 'has-error' : '' !!} col-md-12">
                   <div class="col-md-3">
-                      {!! Form::label('user[domain]', 'Practice', ['class' => 'control-label']) !!}
+                      {!! Form::label('user[domain]', 'Practice *', ['class' => 'control-label']) !!}
                   </div>
                     <div class="col-md-9">
-                      {!! Form::select('project_practice', config('domains.practice'), (isset($project->project_practice)) ? $project->project_practice : '', ['id' => 'project_practice','class' => 'form-control', $project_practice_disabled 
+                      {!! Form::select('project_practice', config('domains.practice'), (isset($project->project_practice)) ? $project->project_practice : '', ['id' => 'project_practice','class' => 'form-control', $project_practice_disabled, 'required'
                       ]) !!}
                       {!! $errors->first('project_practice', '<small class="help-block">:message</small>') !!}
                     </div>
@@ -453,7 +453,7 @@ h3:after {
                         <span>Only alphabetic character</span>
                       </div>
                       <div class="col-md-9">
-                        {!! Form::text('technology', (isset($project)) ? $project->technology : '', ['class' => 'form-control', 'placeholder' => 'Technology',$technology_disabled ,'pattern'=>'/^[A-Za-z]+$/' ,   'minlength' => '4' , 'maxlength' => '30', 'required']) !!}
+                        {!! Form::text('technology', (isset($project)) ? $project->technology : '', ['class' => 'form-control', 'placeholder' => 'Technology',$technology_disabled ,'pattern'=>'([a-zA-Z- ])*',   'minlength' => '4' , 'maxlength' => '30', 'title'=> 'Alphabets: [a-z][A-Z], Special Char: [-]', 'required']) !!}
                         {!! $errors->first('technology', '<small class="help-block">:message</small>') !!}
                       </div>
                     </div>
@@ -466,7 +466,7 @@ h3:after {
                         <span>Only alphabetic character</span>
                       </div>
                       <div class="col-md-9">
-                        {!! Form::text('description', (isset($project)) ? $project->description : '', ['class' => 'form-control', 'placeholder' => 'example: pegasus',$description_disabled,'pattern'=>'/^[A-Za-z]+$/' ,   'minlength' => '4' , 'maxlength' => '30']) !!}
+                        {!! Form::text('description', (isset($project)) ? $project->description : '', ['class' => 'form-control', 'placeholder' => 'example: pegasus',$description_disabled,'pattern'=>'([a-zA-Z ])*' ,   'minlength' => '4' , 'maxlength' => '30']) !!}
                         {!! $errors->first('description', '<small class="help-block">:message</small>') !!}
                       </div>
                     </div>
@@ -2329,7 +2329,7 @@ $(document).on('change','#customer_id',function(){
       let customer_id = $('#customer_id').val();
       var selected = $(this).find('option:selected');
       var extra = selected.data('name');
-      var html="";
+      
       $.ajax({
             type: 'post',
             url: "{!! route('getCustomerCountryByID','') !!}",
@@ -2352,7 +2352,32 @@ $(document).on('change','#customer_id',function(){
                   project_name.val(project_name_variables);
                 }
 
-              
+            },
+            error: function (data, ajaxOptions, thrownError) {
+              console.log(data);
+              console.log("--------------");
+              console.log(thrownError);
+            }
+          });
+  });
+
+
+  //project type 
+
+  $(document).on('change','#project_type',function(){
+    var html="";
+    project_type= $('#project_type').val();
+    if(description == '')
+                {
+                  project_name_variables = practice+"-"+country+"-"+customer+"-"+project_type;
+                  project_name.val(project_name_variables);
+                }
+                else{
+                  project_name_variables = practice+"-"+country+"-"+customer+"-"+project_type+"-"+description;
+                  project_name.val(project_name_variables);
+                }
+
+              project_name.val(project_name_variables);
               $.ajax({
                 type:'post',
                 url: "{!! route('checkProjectName','') !!}",
@@ -2367,7 +2392,7 @@ $(document).on('change','#customer_id',function(){
                     $('#project_name').css('box-shadow','3px 3px #e57878');
                     
                     $('.project-list').on('click',function(){
-                      data.forEach(elem=>html+="<Strong><a href='{!! route('toolsFormUpdate',[Auth::user()->id,'','']) !!}/"+elem.id+"/{{$year}}'>"+elem.project_name+"</a></Strong><br>");
+                      data.forEach(elem=>html+="<Strong><a href='{!! route('toolsFormUpdate',[Auth::user()->id,'','']) !!}/"+elem.id+"/{{$year}}' target='_blank' >"+elem.project_name+"</a></Strong><br>");
 
                   Swal.fire({
 
@@ -2375,17 +2400,7 @@ $(document).on('change','#customer_id',function(){
                     html:html,
                     confirmButtonText: 'Ok',
 
-                  }).then((result) => {
-                      /* Read more about isConfirmed, isDenied below */
-                      if (result.isConfirmed) {
-                        project_name.val('');
-                        $('#project_practice').val(null).trigger('change');;
-                        $('#customer_id').val(null).trigger('change');;
-                        $('#country').val('');
-                        $('#project_name').val('');
-
-                      } 
-                    });
+                  })
                 });
                     project_names = data;
                     console.log("data");
@@ -2403,29 +2418,6 @@ $(document).on('change','#customer_id',function(){
                 }
 
               });
-
-
-
-
-              
-
-            },
-            error: function (data, ajaxOptions, thrownError) {
-              console.log(data);
-              console.log("--------------");
-              console.log(thrownError);
-            }
-          });
-  });
-
-
-  //project type 
-
-  $(document).on('change','#project_type',function(){
-
-    project_type= $('#project_type').val();
-    project_name_variables = practice+"-"+country+"-"+customer+"-"+project_type+"-"+description;
-              project_name.val(project_name_variables);
     
   });
 
@@ -2554,17 +2546,7 @@ $(document).on('focusout','.OTL_code',function(){
                     html:html,
                     confirmButtonText: 'Ok',
 
-                  }).then((result) => {
-                      /* Read more about isConfirmed, isDenied below */
-                      if (result.isConfirmed) {
-                        project_name.val('');
-                        $('#project_practice').val(null).trigger('change');;
-                        $('#customer_id').val(null).trigger('change');;
-                        $('#country').val('');
-                        $('#project_name').val('');
-
-                      } 
-                    });
+                  })
                     });
                     prime_codes = data;
                   }
@@ -2600,11 +2582,11 @@ function chcekOnClick(project_name,customer_id,project_names,prime_codes)
         e.preventDefault();
         console.log(project_names);
       });
-      project_names.forEach(elem=>html+="<Strong><a href='{!! route('toolsFormUpdate',[Auth::user()->id,'','']) !!}/"+elem.id+"/{{$year}}'>"+elem.project_name+"</a></Strong><br>");
+      project_names.forEach(elem=>html+="<Strong><a href='{!! route('toolsFormUpdate',[Auth::user()->id,'','']) !!}/"+elem.id+"/{{$year}}' target='_blank'>"+elem.project_name+"</a></Strong><br>");
 
       Swal.fire({
 
-                    title:"<Strong>It seems that this project already exists</Strong><br><br>At least one project exists with the same attributes. Do you want to proceed?",
+                    title:"<Strong>It seems that this project already exists</Strong><br><br><span style='font-size:20px;'>At least one project exists with the same attributes.<br>Do you want to proceed?</span>",
                     html:html,
                     confirmButtonText: 'Proceed',
                     showCancelButton: true,
@@ -2618,18 +2600,18 @@ function chcekOnClick(project_name,customer_id,project_names,prime_codes)
                       } 
                       else if (result.dismiss === Swal.DismissReason.cancel)
                       {
-                        $('#project_name').prop('disabled', true);
-                        project_name_variables = '';
-                        project_name.val(project_name_variables);
+                        // $('#project_name').prop('disabled', true);
+                        // project_name_variables = '';
+                        // project_name.val(project_name_variables);
 
-                        $('.project-list').css('display','none');
-                        $('#project_name').css('box-shadow','none');
-                        $('#country').prop('disabled', true);
-                        $('#project_practice').val(null).trigger('change');
-                        $('#customer_id').val(null).trigger('change');
-                        $('#project_type').val(null).trigger('change');
-                        $('#country').val('');
-                        $('#project_name').val('');
+                        // $('.project-list').css('display','none');
+                        // $('#project_name').css('box-shadow','none');
+                        // $('#country').prop('disabled', true);
+                        // $('#project_practice').val(null).trigger('change');
+                        // $('#customer_id').val(null).trigger('change');
+                        // $('#project_type').val(null).trigger('change');
+                        // $('#country').val('');
+                        // $('#project_name').val('');
                       }
                     });
 
@@ -2642,7 +2624,7 @@ function chcekOnClick(project_name,customer_id,project_names,prime_codes)
         e.preventDefault();
       });
 
-      prime_codes.forEach(elem=>html+="<Strong><a href='{!! route('toolsFormUpdate',[Auth::user()->id,'','']) !!}/"+elem.id+"/{{$year}}'>"+elem.project_name+"</a></Strong><br>");
+      prime_codes.forEach(elem=>html+="<Strong><a href='{!! route('toolsFormUpdate',[Auth::user()->id,'','']) !!}/"+elem.id+"/{{$year}}' target='_blank'>"+elem.project_name+"</a></Strong><br>");
 
       Swal.fire({
 
