@@ -9,6 +9,10 @@
     <link href="{{ asset('/plugins/gentelella/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('/plugins/gentelella/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css') }}" rel="stylesheet">
 
+    <!-- Sweetalert2 -->
+      <link href="{{ asset('/plugins/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" />
+      <!-- Switchery -->
+      <link href="{{ asset('/plugins/gentelella/vendors/switchery/dist/switchery.min.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('/css/datatables.css') }}">
     <!-- Select2 -->
     <link href="{{ asset('/plugins/select2/select2.min.css') }}" rel="stylesheet" type="text/css" />
@@ -18,6 +22,8 @@
 
 @section('scriptsrc')
     <!-- JS -->
+    <!-- Sweet alert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.35/dist/sweetalert2.all.min.js"></script>
     <!-- DataTables -->
     <script src="{{ asset('/plugins/gentelella/vendors/datatables.net/js/jquery.dataTables.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('/plugins/gentelella/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js') }}" type="text/javascript"></script>
@@ -667,10 +673,6 @@
           ((''+month).length<2 ? '0' : '') + month + '-' +
           ((''+day).length<2 ? '0' : '') + day;
       var cu = new Date(output);
-
-
-      console.log("Sssssssssssssssssssssssssssss");
-      console.log(estimated_end_date);
       if (from_otl == 1) {
         if (value == 0) {
           $(td).addClass("otl_zero");
@@ -698,7 +700,14 @@
         $(td).attr('data-project_id', project_id);
         $(td).attr('data-user_id', user_id);
         $(td).attr('data-value', value);
-        
+        $(td).on('click',function(){
+
+            Swal.fire({
+                icon: 'error',
+                title: 'The project reaches the end date',
+                text: 'Please refer to you manager to update the end date',
+              })
+        });
       }
         else{
           @can('tools-activity-edit')
@@ -864,6 +873,7 @@
             if(cu.getTime() >= project_end_date.getTime())
             {
               return '<strong style="color:red">'+data+'</strong>';
+              
             }else{
               return '<strong style="color:green">'+data+'</strong>';
             }
@@ -984,6 +994,7 @@
         }
       }
     });
+    
 
     //Create LoE
     @can('projectLoe-create')
