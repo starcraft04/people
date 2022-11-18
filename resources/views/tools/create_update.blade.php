@@ -2367,7 +2367,64 @@ $(document).on('change','#customer_id',function(){
   $(document).on('change','#project_type',function(){
     var html="";
     project_type= $('#project_type').val();
-    if(description == '')
+
+       @if($action == 'update')
+  
+  var pp = $('#project_name').val();
+
+    var x = [];
+
+    x = pp.split('-');
+
+    console.log(x);
+    x[3] = project_type;
+    console.log(x.join('-'));
+
+project_name_variables = x.join('-');
+project_name.val(project_name_variables);
+ $.ajax({
+                type:'post',
+                url: "{!! route('checkProjectName','') !!}",
+                data:{'project_name':project_name_variables},
+                success: function(data){
+                  console.log("--------------------");
+                  console.log(data);
+                  console.log("--------------------");
+                  if(data.length > 0)
+                  {
+                    $('.project-list').css('display','inline-block');
+                    $('#project_name').css('box-shadow','3px 3px #e57878');
+                    
+                    $('.project-list').on('click',function(){
+                      data.forEach(elem=>html+="<Strong><a href='{!! route('toolsFormUpdate',[Auth::user()->id,'','']) !!}/"+elem.id+"/{{$year}}' target='_blank' >"+elem.project_name+"</a></Strong><br>");
+
+                  Swal.fire({
+
+                    title:"Project already exits with the following names check them",
+                    html:html,
+                    confirmButtonText: 'Ok',
+
+                  })
+                });
+                    project_names = data;
+                    console.log("data");
+                    console.log(project_names);
+                    
+                  }
+
+                  
+                  console.log(html);
+                },
+                error: function (data, ajaxOptions, thrownError) {
+                  console.log(data);
+                  console.log("--------------");
+                  console.log(thrownError);
+                }
+
+              });
+@endif
+      @if ($action == 'create')
+      if(description == '')
                 {
                   project_name_variables = practice+"-"+country+"-"+customer+"-"+project_type;
                   project_name.val(project_name_variables);
@@ -2376,6 +2433,8 @@ $(document).on('change','#customer_id',function(){
                   project_name_variables = practice+"-"+country+"-"+customer+"-"+project_type+"-"+description;
                   project_name.val(project_name_variables);
                 }
+
+   
 
               project_name.val(project_name_variables);
               $.ajax({
@@ -2418,6 +2477,7 @@ $(document).on('change','#customer_id',function(){
                 }
 
               });
+      @endif
     
   });
 
@@ -2628,21 +2688,11 @@ function chcekOnClick(project_name,customer_id,project_names,prime_codes)
 
       Swal.fire({
 
-                    title:"<Strong>This project already exists</Strong><br><br>You cannot have two projects with the same prime code for the same practice",
+                    title:"<Strong>This project already exists</Strong><br><br><span style='font-size:20px;'>You cannot have two projects with the same prime code for the same practice</span>",
                     html:html,
                     confirmButtonText: 'Cacnel',
 
-                  }).then((result) => {
-                      /* Read more about isConfirmed, isDenied below */
-                      if (result.dismiss === Swal.DismissReason.cancel) {
-                        project_name.val('');
-                        $('#project_practice').val(null).trigger('change');;
-                        $('#customer_id').val(null).trigger('change');;
-                        $('#country').val('');
-                        $('#project_name').val('');
-
-                      } 
-                    });
+                  })
 
     }
 }
