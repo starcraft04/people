@@ -691,6 +691,14 @@
             $(td).html('17');
             $(td).addClass("unassigned_forecast");
           }
+          $(td).on('click',function(){
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Unassigned projects calculated Automaticlly',
+                text: '',
+              })
+        });
        
         }
         else if(cu.getTime() >= d2.getTime()){
