@@ -1015,6 +1015,7 @@
       if (e.which  == 13) { //Enter key's keycode
           
         update_activity($(this));
+        activitiesTable.ajax.reload(update_headers());
         return false;
       }
     });
