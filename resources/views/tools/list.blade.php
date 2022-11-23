@@ -1024,7 +1024,7 @@
       // console.log('editing');
       
       update_activity($(this));
-      update_headers();
+      activitiesTable.ajax.reload(update_headers());
       
     });
 
