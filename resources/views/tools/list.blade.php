@@ -748,6 +748,9 @@
         
       //add unassigned --
       
+        
+      
+      
 
     }
   
@@ -765,11 +768,6 @@
         type: "POST",
         data: function ( d ) {
           $.extend(d,ajaxData());
-        },
-        
-        complete: function () { // Set our complete callback, adding the .hidden class and hiding the spinner.
-          updateUnassigned();
-      
         },
         dataType: "JSON"
       },
@@ -1026,6 +1024,7 @@
       // console.log('editing');
       
       update_activity($(this));
+      // updateUnassigned();
       activitiesTable.ajax.reload(updateUnassigned());
       update_headers();
     });
