@@ -701,13 +701,10 @@
       $.ajax({
               type: 'POST',
               url: "{!! route('unassigned') !!}",
-              success: function(data) {
-                
-                
-                console.log(data['msg']);
-                update_headers()
-                console.log("dddd");
+              complete: function(data) {
+                update_headers();
               }
+
       });
             
       
@@ -1009,24 +1006,30 @@
         editable_old_value = $(this).html();
     });
 
-    $(document).on('keypress', '.editable', function(e){
-      //console.log('editing');
+    // $(document).on('keypress', '.editable', function(e){
+    //   //console.log('editing');
       
-      if (e.which  == 13) { //Enter key's keycode
+    //   if (e.which  == 13) { //Enter key's keycode
           
-        update_activity($(this));
-        
-        return false;
-      }
-    });
+    //     update_activity($(this));
+
+    //     return false;
+    //   }
+    // });
 
 
-    $(document).on('blur', '.editable', function(e){
-      // console.log('editing');
+    // $(document).on('blur', '.editable', function(e){
+    //   // console.log('editing');
+      
+    //   update_activity($(this));
       
       
-      activitiesTable.ajax.reload(update_headers());
-      
+    // });
+
+    $(document).on('focusout','.editable',function(){
+      update_activity($(this));
+      updateUnassigned();
+      setTimeout(activitiesTable.ajax.reload(update_headers()),10000);
     });
 
     
@@ -1092,9 +1095,6 @@
                 }
 
                 
-              },
-              complete:function(){
-                updateUnassigned();
               }
         });
       }
