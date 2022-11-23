@@ -1029,7 +1029,7 @@
     $(document).on('focusout','.editable',function(){
       update_activity($(this));
       updateUnassigned();
-      setTimeout(update_headers,10000);
+      setTimeout(activitiesTable.ajax.reload,5000);
     });
 
     
