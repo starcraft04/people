@@ -1024,9 +1024,9 @@
       // console.log('editing');
       
       update_activity($(this));
-      // updateUnassigned();
-      activitiesTable.ajax.reload(updateUnassigned());
-      update_headers();
+      updateUnassigned();
+      activitiesTable.ajax.reload(update_headers());
+      
     });
 
     
