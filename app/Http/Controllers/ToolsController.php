@@ -928,20 +928,8 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
         {   
                 if($user->sum < 17 )
             {
-
                 $difference = 17 - $user->sum;
-                // print($user->sum."<br>");
                 print($user->project_Name.' '.$user->name.' '.$user->year."<br>");
-                // print($user->project_id."<br>");
-                
-                // print($difference."<br>");
-
-                // print($user->month."<br>");
-                // print($user->activity_status."<br>");
-                // print($user->supplier."<br>");
-
-
-
                 $load_hours_to_unassigned = Activity::updateOrCreate([
                     'user_id'=>$user->id,
                     'project_id'=>801,
