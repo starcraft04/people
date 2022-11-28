@@ -26,6 +26,11 @@
 <!-- Sweet alert -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.35/dist/sweetalert2.all.min.js"></script>
 
+<!-- intro.js -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/6.0.0/intro.js" integrity="sha512-iC2jUAfCjQVVR2eGiPYjV2lb7ZIF0Tx3xPj/PdGZSJkSJVz5y+88tRwshNmrso1twhzhSQwBPXNLdAqUYmRAPg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/6.0.0/introjs.css" integrity="sha512-4OzqLjfh1aJa7M33b5+h0CSx0Q3i9Qaxlrr1T/Z+Vz+9zs5A7GM3T3MFKXoreghi3iDOSbkPMXiMBhFO7UBW/g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 <!-- Smart Wizard -->
 <link href="{{ asset('/plugins/smartwizard/dist/css/smart_wizard_all.min.css') }}" rel="stylesheet">
 <!-- Document styling -->
@@ -307,7 +312,7 @@ h3:after {
                   <div class="col-md-3">
                       {!! Form::label('user[domain]', 'Practice *', ['class' => 'control-label']) !!}
                   </div>
-                    <div class="col-md-9">
+                    <div class="col-md-9"- id="select_project_practice_field">
                       {!! Form::select('project_practice', config('domains.practice'), (isset($project->project_practice)) ? $project->project_practice : '', ['id' => 'project_practice','class' => 'form-control', $project_practice_disabled, 'required'
                       ]) !!}
                       {!! $errors->first('project_practice', '<small class="help-block">:message</small>') !!}
@@ -320,7 +325,7 @@ h3:after {
                       <div class="col-md-3">
                         {!! Form::label('customer_id', 'Customer name *', ['class' => 'control-label']) !!}
                       </div>
-                      <div class="col-md-9">
+                      <div class="col-md-9" id="select_customer_name_field">
                         <select class="form-control select2" style="width: 100%;" id="customer_id" name="customer_id" data-placeholder="Select a customer name">
                           @foreach($customers_list as $key => $value)
                           <option value="{{ $key }}" data-name="{{ $value }}"
@@ -353,7 +358,7 @@ h3:after {
                       <div class="col-md-3">
                         {!! Form::label('project_type', 'Project type', ['class' => 'control-label']) !!}
                       </div>
-                      <div class="col-md-9">
+                      <div class="col-md-9" id="select_project_type_field">
                         <select class="form-control select2" style="width: 100%;" id="project_type" name="project_type" data-placeholder="Select a project type">
                           <option value="" ></option>
                           @foreach(config('select.project_type_create') as $key => $value)
@@ -426,7 +431,7 @@ h3:after {
                       <div class="col-md-3">
                         {!! Form::label('project_status', 'Project status', ['class' => 'control-label']) !!}
                       </div>
-                      <div class="col-md-9">
+                      <div class="col-md-9" id="select_project_status_field">
                         <select class="form-control select2" style="width: 100%;" id="project_status" name="project_status" data-placeholder="Select a project status">
                           <option value="" ></option>
                           @foreach(config('select.project_status') as $key => $value)
@@ -1108,6 +1113,48 @@ var projectRevenue;
 var tab_origin = "{{ $tab }}";
 
 $(document).ready(function() {
+
+
+
+  introJs().setOptions({
+  steps: [{
+    title: 'Welcome',
+    intro: 'Add new project to Dolphin👋'
+  },
+  {
+    element: document.querySelector('#project_name'),
+    intro: 'Project name is auto fill from the next fields'
+  },
+  {
+    element: document.querySelector('#select_project_practice_field'),
+    intro: 'You can select project practice'
+  },
+  {
+    element: document.querySelector('#select_customer_name_field'),
+    intro: 'Select Customer name it is mandatory'
+  },
+  {
+    element: document.querySelector('#select_project_type_field'),
+    intro: 'Please select project type'
+  },
+  {
+    element: document.querySelector('#otl_project_code'),
+    intro: 'If you know the prime code you can add it here this field is optional'
+  },
+  {
+    element: document.querySelector('#select_project_status_field'),
+    intro: 'Select project status'
+  },
+  {
+    element: document.querySelector('#technology'),
+    intro: 'Please Add Technology realated to the practice name'
+  },
+  {
+    title: 'Farewell!',
+    element: document.querySelector('#create-project'),
+    intro: 'And this is our final step!'
+  }]
+}).start();
   //region Init Main interface
 
   // Ajax setup needed in case there is an update for revenue, comment, loe, ... tabs
