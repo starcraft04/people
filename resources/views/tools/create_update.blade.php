@@ -307,236 +307,238 @@ h3:after {
                       
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="form-group {!! $errors->has('user.domain') ? 'has-error' : '' !!} col-md-12">
-                  <div class="col-md-3">
-                      {!! Form::label('user[domain]', 'Practice *', ['class' => 'control-label']) !!}
-                  </div>
-                    <div class="col-md-9"- id="select_project_practice_field">
-                      {!! Form::select('project_practice', config('domains.practice'), (isset($project->project_practice)) ? $project->project_practice : '', ['id' => 'project_practice','class' => 'form-control', $project_practice_disabled, 'required'
-                      ]) !!}
-                      {!! $errors->first('project_practice', '<small class="help-block">:message</small>') !!}
-                    </div>
-                  </div>
-                  </div>
 
-                  <div class="row">
-                    <div class="form-group {!! $errors->has('customer_id') ? 'has-error' : '' !!} col-md-12">
-                      <div class="col-md-3">
-                        {!! Form::label('customer_id', 'Customer name *', ['class' => 'control-label']) !!}
-                      </div>
-                      <div class="col-md-9" id="select_customer_name_field">
-                        <select class="form-control select2" style="width: 100%;" id="customer_id" name="customer_id" data-placeholder="Select a customer name">
-                          @foreach($customers_list as $key => $value)
-                          <option value="{{ $key }}" data-name="{{ $value }}"
-                            @if (old('customer_id') == $key) selected
-                            @elseif (isset($project->customer_id) && $key == $project->customer_id) selected
-                            @endif>
-                            {{ $value }}
-                          </option>
-                          @endforeach
-                        </select>
-                        {!! $errors->first('customer_id', '<small class="help-block">:message</small>') !!}
-                      </div>
-                    </div>
-                  </div>
+                  <div class="form-intro">
+                        <div class="row">
+                          <div class="form-group {!! $errors->has('user.domain') ? 'has-error' : '' !!} col-md-12">
+                        <div class="col-md-3">
+                            {!! Form::label('user[domain]', 'Practice *', ['class' => 'control-label']) !!}
+                        </div>
+                          <div class="col-md-9"- id="select_project_practice_field">
+                            {!! Form::select('project_practice', config('domains.practice'), (isset($project->project_practice)) ? $project->project_practice : '', ['id' => 'project_practice','class' => 'form-control', $project_practice_disabled, 'required'
+                            ]) !!}
+                            {!! $errors->first('project_practice', '<small class="help-block">:message</small>') !!}
+                          </div>
+                        </div>
+                        </div>
 
-                   <div class="row">
-                    <div class="form-group {!! $errors->has('country') ? 'has-error' : '' !!} col-md-12">
-                      <div class="col-md-3">
-                        {!! Form::label('country', 'country', ['class' => 'control-label']) !!}
-                      </div>
-                      <div class="col-md-9">
-                        {!! Form::text('country', (isset($project)) ? $project->country : '', ['class' => 'form-control', 'placeholder' => 'country', 'disabled'=>'disabled']) !!}
-                        {!! $errors->first('country', '<small class="help-block">:message</small>') !!}
-                      </div>
-                    </div>
-                  </div>
+                        <div class="row">
+                          <div class="form-group {!! $errors->has('customer_id') ? 'has-error' : '' !!} col-md-12">
+                            <div class="col-md-3">
+                              {!! Form::label('customer_id', 'Customer name *', ['class' => 'control-label']) !!}
+                            </div>
+                            <div class="col-md-9" id="select_customer_name_field">
+                              <select class="form-control select2" style="width: 100%;" id="customer_id" name="customer_id" data-placeholder="Select a customer name">
+                                @foreach($customers_list as $key => $value)
+                                <option value="{{ $key }}" data-name="{{ $value }}"
+                                  @if (old('customer_id') == $key) selected
+                                  @elseif (isset($project->customer_id) && $key == $project->customer_id) selected
+                                  @endif>
+                                  {{ $value }}
+                                </option>
+                                @endforeach
+                              </select>
+                              {!! $errors->first('customer_id', '<small class="help-block">:message</small>') !!}
+                            </div>
+                          </div>
+                        </div>
 
-                  <div class="row">
-                    <div class="form-group {!! $errors->has('project_type') ? 'has-error' : '' !!} col-md-12">
-                      <div class="col-md-3">
-                        {!! Form::label('project_type', 'Project type *', ['class' => 'control-label']) !!}
-                      </div>
-                      <div class="col-md-9" id="select_project_type_field">
-                        <select class="form-control select2" style="width: 100%;" id="project_type" name="project_type" data-placeholder="Select a project type">
-                          <option value="" ></option>
-                          @foreach(config('select.project_type_create') as $key => $value)
-                          <option value="{{ $key }}"
-                            @if (old('project_type') == $key) selected
-                            @elseif (isset($project->project_type) && $value == $project->project_type) selected
-                            @endif>
-                            {{ $value }}
-                          </option>
-                          @endforeach
-                        </select>
-                        {!! $errors->first('project_type', '<small class="help-block">:message</small>') !!}
-                      </div>
-                    </div>
-                  </div>
-                  
+                         <div class="row">
+                          <div class="form-group {!! $errors->has('country') ? 'has-error' : '' !!} col-md-12">
+                            <div class="col-md-3">
+                              {!! Form::label('country', 'country', ['class' => 'control-label']) !!}
+                            </div>
+                            <div class="col-md-9">
+                              {!! Form::text('country', (isset($project)) ? $project->country : '', ['class' => 'form-control', 'placeholder' => 'country', 'disabled'=>'disabled']) !!}
+                              {!! $errors->first('country', '<small class="help-block">:message</small>') !!}
+                            </div>
+                          </div>
+                        </div>
 
-
-
-                  
-                  <div class="row">
-                    <div class="form-group {!! $errors->has('otl_project_code') ? 'has-error' : '' !!} col-md-12">
-                      <div class="col-md-3">
-                        {!! Form::label('otl_project_code', 'Prime project code', ['class' => 'control-label']) !!}
-                        <a id="help_otl" href="#">(?)</a>
-                        <i class="fa fa-list prime-list" aria-hidden="true" style="display:none;"></i>
-                      </div>
-                      <div class="col-md-9">
-                        {!! Form::text('otl_project_code', (isset($project->otl_project_code)) ? $project->otl_project_code : '', 
-                        ['class' => 'form-control OTL_code', 
-                        'placeholder' => 'Prime project code',
-                        'title' => "<p>This field is NOT mandatory.</BR>
-                                    If you do not know the OTL code yet, then do not enter the OTL code nor the Meta-activity.</BR>
-                                    You can come back later to edit it when you will have the right OTL code.</BR>
-                                    But if you enter either the OTL code or the Meta-activity, then you will need to fill in the other one too.</BR></p>
-                                    <p>Also, keep in mind that the OTL data is fetched every month in this tool for the existing OTL code </BR>
-                                    so if you enter the OTL code, you will need to wait the 5th of the month to see the values.</p>
-                                    ",
-                        $otl_name_disabled]
-                        ) !!}
-                        {!! $errors->first('otl_project_code', '<small class="help-block">:message</small>') !!}
-                      </div>
-                    </div>
-                  </div>
-                  <!-- <div class="row">
-                    <div class="form-group {!! $errors->has('meta_activity') ? 'has-error' : '' !!} col-md-12">
-                      <div class="col-md-3">
-                        {!! Form::label('meta_activity', 'Meta-activity', ['class' => 'control-label']) !!}
-                      </div>
-                      <div class="col-md-9">
-                        <select class="form-control select2" style="width: 100%;" id="meta_activity" name="meta_activity" data-placeholder="Select a meta-activity">
-                          <option value="" ></option>
-                          @foreach(config('select.meta_activity') as $key => $value)
-                          <option value="{{ $key }}"
-                            @if (old('meta_activity') == $key) selected
-                            @elseif (isset($project->meta_activity) && $value == $project->meta_activity) selected
-                            @endif>
-                            {{ $value }}
-                          </option>
-                          @endforeach
-                        </select>
-                        {!! $errors->first('meta_activity', '<small class="help-block">:message</small>') !!}
-                      </div>
-                    </div>
-                  </div> -->
-                 
-                  
-                  <div id="project_status_row" class="row">
-                    <div class="form-group {!! $errors->has('project_status') ? 'has-error' : '' !!} col-md-12">
-                      <div class="col-md-3">
-                        {!! Form::label('project_status', 'Project status *', ['class' => 'control-label']) !!}
-                      </div>
-                      <div class="col-md-9" id="select_project_status_field">
-                        <select class="form-control select2" style="width: 100%;" id="project_status" name="project_status" data-placeholder="Select a project status">
-                          <option value="" ></option>
-                          @foreach(config('select.project_status') as $key => $value)
-                          <option value="{{ $key }}"
-                            @if (old('project_status') == $key) selected
-                            @elseif (isset($project->project_status) && $value == $project->project_status) selected
-                            @endif>
-                            {{ $value }}
-                          </option>
-                          @endforeach
-                        </select>
-                        {!! $errors->first('project_status', '<small class="help-block">:message</small>') !!}
-                      </div>
-                    </div>
-                  </div>
-                  
-                 
-                  
-                  <div class="row">
-                    <div class="form-group {!! $errors->has('technology') ? 'has-error' : '' !!} col-md-12">
-                      <div class="col-md-3">
-                        {!! Form::label('technology', 'Technology *', ['class' => 'control-label']) !!}
-                        <br>
-                        <span>Only alphabetic character</span>
-                      </div>
-                      <div class="col-md-9">
-                        {!! Form::text('technology', (isset($project)) ? $project->technology : '', ['class' => 'form-control', 'placeholder' => 'Technology',$technology_disabled ,'pattern'=>'([a-zA-Z- ])*',   'minlength' => '4' , 'maxlength' => '30', 'title'=> 'Alphabets: [a-z][A-Z], Special Char: [-]', 'required']) !!}
-                        {!! $errors->first('technology', '<small class="help-block">:message</small>') !!}
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="form-group {!! $errors->has('description') ? 'has-error' : '' !!} col-md-12">
-                      <div class="col-md-3">
-                        {!! Form::label('description', 'Complementary name *', ['class' => 'control-label']) !!}
-                        <br>
-                        <span>Only alphabetic character</span>
-                      </div>
-                      <div class="col-md-9">
-                        {!! Form::text('description', (isset($project)) ? $project->description : '', ['class' => 'form-control', 'placeholder' => 'example: pegasus',$description_disabled,'pattern'=>'([a-zA-Z ])*' ,   'minlength' => '4' , 'maxlength' => '30']) !!}
-                        {!! $errors->first('description', '<small class="help-block">:message</small>') !!}
-                      </div>
-                    </div>
-                  </div>
+                        <div class="row">
+                          <div class="form-group {!! $errors->has('project_type') ? 'has-error' : '' !!} col-md-12">
+                            <div class="col-md-3">
+                              {!! Form::label('project_type', 'Project type *', ['class' => 'control-label']) !!}
+                            </div>
+                            <div class="col-md-9" id="select_project_type_field">
+                              <select class="form-control select2" style="width: 100%;" id="project_type" name="project_type" data-placeholder="Select a project type">
+                                <option value="" ></option>
+                                @foreach(config('select.project_type_create') as $key => $value)
+                                <option value="{{ $key }}"
+                                  @if (old('project_type') == $key) selected
+                                  @elseif (isset($project->project_type) && $value == $project->project_type) selected
+                                  @endif>
+                                  {{ $value }}
+                                </option>
+                                @endforeach
+                              </select>
+                              {!! $errors->first('project_type', '<small class="help-block">:message</small>') !!}
+                            </div>
+                          </div>
+                        </div>
+                        
 
 
-                  <div class="row">
-                    <div class="form-group {!! $errors->has('comments') ? 'has-error' : '' !!} col-md-12">
-                      <div class="col-md-3">
-                        {!! Form::label('comments', 'Comments', ['class' => 'control-label']) !!}
-                        <br>
-                        <span>Only alphabetic character</span>
-                      </div>
-                      <div class="col-md-9">
-                        {!! Form::text('comments', (isset($project)) ? $project->comments : '', ['class' => 'form-control', 'placeholder' => 'Project Comments',$comments_disabled,'minlength' => '4' , 'maxlength' => '100']) !!}
-                        {!! $errors->first('comments', '<small class="help-block">:message</small>') !!}
-                      </div>
-                    </div>
+
+                        
+                        <div class="row">
+                          <div class="form-group {!! $errors->has('otl_project_code') ? 'has-error' : '' !!} col-md-12">
+                            <div class="col-md-3">
+                              {!! Form::label('otl_project_code', 'Prime project code', ['class' => 'control-label']) !!}
+                              <a id="help_otl" href="#">(?)</a>
+                              <i class="fa fa-list prime-list" aria-hidden="true" style="display:none;"></i>
+                            </div>
+                            <div class="col-md-9">
+                              {!! Form::text('otl_project_code', (isset($project->otl_project_code)) ? $project->otl_project_code : '', 
+                              ['class' => 'form-control OTL_code', 
+                              'placeholder' => 'Prime project code',
+                              'title' => "<p>This field is NOT mandatory.</BR>
+                                          If you do not know the OTL code yet, then do not enter the OTL code nor the Meta-activity.</BR>
+                                          You can come back later to edit it when you will have the right OTL code.</BR>
+                                          But if you enter either the OTL code or the Meta-activity, then you will need to fill in the other one too.</BR></p>
+                                          <p>Also, keep in mind that the OTL data is fetched every month in this tool for the existing OTL code </BR>
+                                          so if you enter the OTL code, you will need to wait the 5th of the month to see the values.</p>
+                                          ",
+                              $otl_name_disabled]
+                              ) !!}
+                              {!! $errors->first('otl_project_code', '<small class="help-block">:message</small>') !!}
+                            </div>
+                          </div>
+                        </div>
+                        <!-- <div class="row">
+                          <div class="form-group {!! $errors->has('meta_activity') ? 'has-error' : '' !!} col-md-12">
+                            <div class="col-md-3">
+                              {!! Form::label('meta_activity', 'Meta-activity', ['class' => 'control-label']) !!}
+                            </div>
+                            <div class="col-md-9">
+                              <select class="form-control select2" style="width: 100%;" id="meta_activity" name="meta_activity" data-placeholder="Select a meta-activity">
+                                <option value="" ></option>
+                                @foreach(config('select.meta_activity') as $key => $value)
+                                <option value="{{ $key }}"
+                                  @if (old('meta_activity') == $key) selected
+                                  @elseif (isset($project->meta_activity) && $value == $project->meta_activity) selected
+                                  @endif>
+                                  {{ $value }}
+                                </option>
+                                @endforeach
+                              </select>
+                              {!! $errors->first('meta_activity', '<small class="help-block">:message</small>') !!}
+                            </div>
+                          </div>
+                        </div> -->
+                       
+                        
+                        <div id="project_status_row" class="row">
+                          <div class="form-group {!! $errors->has('project_status') ? 'has-error' : '' !!} col-md-12">
+                            <div class="col-md-3">
+                              {!! Form::label('project_status', 'Project status *', ['class' => 'control-label']) !!}
+                            </div>
+                            <div class="col-md-9" id="select_project_status_field">
+                              <select class="form-control select2" style="width: 100%;" id="project_status" name="project_status" data-placeholder="Select a project status">
+                                <option value="" ></option>
+                                @foreach(config('select.project_status') as $key => $value)
+                                <option value="{{ $key }}"
+                                  @if (old('project_status') == $key) selected
+                                  @elseif (isset($project->project_status) && $value == $project->project_status) selected
+                                  @endif>
+                                  {{ $value }}
+                                </option>
+                                @endforeach
+                              </select>
+                              {!! $errors->first('project_status', '<small class="help-block">:message</small>') !!}
+                            </div>
+                          </div>
+                        </div>
+                        
+                       
+                        
+                        <div class="row">
+                          <div class="form-group {!! $errors->has('technology') ? 'has-error' : '' !!} col-md-12">
+                            <div class="col-md-3">
+                              {!! Form::label('technology', 'Technology *', ['class' => 'control-label']) !!}
+                              <br>
+                              <span>Only alphabetic character</span>
+                            </div>
+                            <div class="col-md-9">
+                              {!! Form::text('technology', (isset($project)) ? $project->technology : '', ['class' => 'form-control', 'placeholder' => 'Technology',$technology_disabled ,'pattern'=>'([a-zA-Z- ])*',   'minlength' => '4' , 'maxlength' => '30', 'title'=> 'Alphabets: [a-z][A-Z], Special Char: [-]', 'required']) !!}
+                              {!! $errors->first('technology', '<small class="help-block">:message</small>') !!}
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="form-group {!! $errors->has('description') ? 'has-error' : '' !!} col-md-12">
+                            <div class="col-md-3">
+                              {!! Form::label('description', 'Complementary name *', ['class' => 'control-label']) !!}
+                              <br>
+                              <span>Only alphabetic character</span>
+                            </div>
+                            <div class="col-md-9">
+                              {!! Form::text('description', (isset($project)) ? $project->description : '', ['class' => 'form-control', 'placeholder' => 'example: pegasus',$description_disabled,'pattern'=>'([a-zA-Z ])*' ,   'minlength' => '4' , 'maxlength' => '30']) !!}
+                              {!! $errors->first('description', '<small class="help-block">:message</small>') !!}
+                            </div>
+                          </div>
+                        </div>
+
+
+                        <div class="row">
+                          <div class="form-group {!! $errors->has('comments') ? 'has-error' : '' !!} col-md-12">
+                            <div class="col-md-3">
+                              {!! Form::label('comments', 'Comments', ['class' => 'control-label']) !!}
+                              <br>
+                              <span>Only alphabetic character</span>
+                            </div>
+                            <div class="col-md-9">
+                              {!! Form::text('comments', (isset($project)) ? $project->comments : '', ['class' => 'form-control', 'placeholder' => 'Project Comments',$comments_disabled,'minlength' => '4' , 'maxlength' => '100']) !!}
+                              {!! $errors->first('comments', '<small class="help-block">:message</small>') !!}
+                            </div>
+                          </div>
+                        </div>
                   </div>
-                  
                 </div>
 
                 <div class="col-md-6">
-                 
+                  <div id="form-dates"> 
 
-                  <div id="estimated_date_row" class="row">
-                    <div class="form-group {!! $errors->has('estimated_date') ? 'has-error' : '' !!} col-md-12">
-                      <div class="col-md-3">
-                        {!! Form::label('estimated_start_date', 'Estimated start date *', ['class' => 'control-label', 'id' => 'estimated_start_date_text']) !!}
-                      </div>
-                      <div class="col-md-9">
-                        <div class="control-group">
-                          <div class="controls">
-                            <div class="input-prepend input-group">
-                              <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i></span>
-                              <input type="text" style="width: 200px" name="estimated_start_date" id="estimated_start_date" class="form-control" {{$estimated_start_date_disabled}} />
+                      <div id="estimated_date_row" class="row">
+                        <div class="form-group {!! $errors->has('estimated_date') ? 'has-error' : '' !!} col-md-12">
+                          <div class="col-md-3">
+                            {!! Form::label('estimated_start_date', 'Estimated start date *', ['class' => 'control-label', 'id' => 'estimated_start_date_text']) !!}
+                          </div>
+                          <div class="col-md-9">
+                            <div class="control-group">
+                              <div class="controls">
+                                <div class="input-prepend input-group">
+                                  <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i></span>
+                                  <input type="text" style="width: 200px" name="estimated_start_date" id="estimated_start_date" class="form-control" {{$estimated_start_date_disabled}} />
+                                </div>
+                                {!! $errors->first('estimated_start_date', '<small class="help-block">:message</small>') !!}
+                              </div>
                             </div>
-                            {!! $errors->first('estimated_start_date', '<small class="help-block">:message</small>') !!}
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
 
-                  <!-- END DATE -->
+                      <!-- END DATE -->
 
-                  <div id="estimated_date_row" class="row">
-                    <div class="form-group {!! $errors->has('estimated_end_date') ? 'has-error' : '' !!} col-md-12">
-                      <div class="col-md-3">
-                        {!! Form::label('estimated_end_date', 'Estimated end date *', ['class' => 'control-label', 'id' => 'estimated_end_date_text']) !!}
-                      </div>
-                      <div class="col-md-9">
-                        <div class="control-group">
-                          <div class="controls">
-                            <div class="input-prepend input-group">
-                              <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i></span>
-                              <input type="text" style="width: 200px" name="estimated_end_date" id="estimated_end_date" class="form-control" {{$estimated_end_date_disabled}} />
+                      <div id="estimated_date_row" class="row">
+                        <div class="form-group {!! $errors->has('estimated_end_date') ? 'has-error' : '' !!} col-md-12">
+                          <div class="col-md-3">
+                            {!! Form::label('estimated_end_date', 'Estimated end date *', ['class' => 'control-label', 'id' => 'estimated_end_date_text']) !!}
+                          </div>
+                          <div class="col-md-9">
+                            <div class="control-group">
+                              <div class="controls">
+                                <div class="input-prepend input-group">
+                                  <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i></span>
+                                  <input type="text" style="width: 200px" name="estimated_end_date" id="estimated_end_date" class="form-control" {{$estimated_end_date_disabled}} />
+                                </div>
+                                {!! $errors->first('estimated_end_date', '<small class="help-block">:message</small>') !!}
+                              </div>
                             </div>
-                            {!! $errors->first('estimated_end_date', '<small class="help-block">:message</small>') !!}
                           </div>
                         </div>
                       </div>
-                    </div>
                   </div>
-
                   <!-- Project Status -->
 
                   @if($action == 'update')
@@ -1126,28 +1128,13 @@ $(document).ready(function() {
     intro: 'Project name is auto fill from the next fields'
   },
   {
-    element: document.querySelector('#select_project_practice_field'),
-    intro: 'You can select project practice'
+    element: document.querySelector('.form-intro'),
+    intro: 'please fill in the form'
   },
+
   {
-    element: document.querySelector('#select_customer_name_field'),
-    intro: 'Select Customer name it is mandatory'
-  },
-  {
-    element: document.querySelector('#select_project_type_field'),
-    intro: 'Please select project type'
-  },
-  {
-    element: document.querySelector('#otl_project_code'),
-    intro: 'If you know the prime code you can add it here this field is optional'
-  },
-  {
-    element: document.querySelector('#select_project_status_field'),
-    intro: 'Select project status'
-  },
-  {
-    element: document.querySelector('#technology'),
-    intro: 'Please Add Technology realated to the practice name'
+    element: document.querySelector('#form-dates'),
+    intro: 'please fill in dates'
   },
   {
     title: 'Farewell!',
