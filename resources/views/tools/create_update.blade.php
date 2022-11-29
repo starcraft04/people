@@ -1116,7 +1116,7 @@ var tab_origin = "{{ $tab }}";
 
 $(document).ready(function() {
 
-  function myFunction() {
+  function checkExists() {
   var myVar = setTimeout(showPage, 1000);
 }
 
@@ -1148,7 +1148,7 @@ function showPage() {
   //region Init Main interface
 }
 if(!localStorage.getItem("visited")){
-   myFunction();
+   checkExists();
    localStorage.setItem("visited",true);
 }
 
