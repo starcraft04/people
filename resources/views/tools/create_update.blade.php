@@ -1385,32 +1385,26 @@ if(!localStorage.getItem("visited")){
 
   $("#project_type").select2({
     allowClear: true,
-    disabled: {{ $project_type_select_disabled }}
   });
 
   $("#project_subtype").select2({
     allowClear: true,
-    disabled: {{ $project_type_select_disabled }}
   });
 
   $("#activity_type").select2({
     allowClear: true,
-    disabled: {{ $activity_type_select_disabled }}
   });
 
   $("#project_status").select2({
     allowClear: true,
-    disabled: {{ $project_status_select_disabled }}
   });
 
   $("#samba_stage").select2({
     allowClear: true,
-    disabled: {{ $project_status_select_disabled }}
   });
 
   $("#region").select2({
     allowClear: true,
-    disabled: {{ $region_select_disabled }}
   });
 
   //endregion

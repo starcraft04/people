@@ -479,12 +479,12 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
         // Here we setup all the disabled fields to be disabled
         $project_name_disabled = 'disabled';
         $customer_id_select_disabled = 'disabled';
-        $project_practice_disabled ='disabled';
+        $project_practice_disabled ='';
         $otl_name_disabled = 'disabled';
-        $meta_activity_select_disabled = 'true';
-        $project_type_select_disabled = 'true';
-        $activity_type_select_disabled = 'true';
-        $project_status_select_disabled = 'true';
+        $meta_activity_select_disabled = '';
+        $project_type_select_disabled = '';
+        $activity_type_select_disabled = '';
+        $project_status_select_disabled = '';
         $region_select_disabled = 'true';
         $country_select_disabled = 'true';
         $user_select_disabled = 'true';
@@ -511,13 +511,13 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
 
         if (Auth::user()->can('tools-all_projects-edit') || (isset($project->created_by_user_id) && (Auth::user()->id == $project->created_by_user_id))) {
             $project_name_disabled = 'true';
-            $customer_id_select_disabled = 'true';
-            $project_practice='true';
+            $customer_id_select_disabled = 'false';
+            $project_practice='';
             $otl_name_disabled = '';
             $meta_activity_select_disabled = 'false';
-            $project_type_select_disabled = 'false';
-            $activity_type_select_disabled = 'false';
-            $project_status_select_disabled = 'false';
+            $project_type_select_disabled = '';
+            $activity_type_select_disabled = '';
+            $project_status_select_disabled = '';
             $region_select_disabled = 'false';
             $country_select_disabled = 'false';
             $user_select_disabled = 'false';
