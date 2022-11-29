@@ -2730,7 +2730,7 @@ function chcekOnClick(project_name,customer_id,project_names,prime_codes)
 
                     title:"<Strong>This project already exists</Strong><br><br><span style='font-size:20px;'>You cannot have two projects with the same prime code for the same practice</span>",
                     html:html,
-                    confirmButtonText: 'Cacnel',
+                    confirmButtonText: 'Cancel',
 
                   })
 
