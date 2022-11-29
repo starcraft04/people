@@ -1116,9 +1116,12 @@ var tab_origin = "{{ $tab }}";
 
 $(document).ready(function() {
 
+  function myFunction() {
+  var myVar = setTimeout(showPage, 1000);
+}
 
-
-  introJs().setOptions({
+function showPage() {
+   introJs().setOptions({
   steps: [{
     title: 'Welcome',
     intro: 'Add new project to Dolphin👋'
@@ -1143,6 +1146,15 @@ $(document).ready(function() {
   }]
 }).start();
   //region Init Main interface
+}
+if(!localStorage.getItem("visited")){
+   myFunction();
+   localStorage.setItem("visited",true);
+}
+
+
+
+ 
 
   // Ajax setup needed in case there is an update for revenue, comment, loe, ... tabs
   @if($action == 'update')
