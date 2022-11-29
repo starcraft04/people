@@ -356,7 +356,7 @@ h3:after {
                   <div class="row">
                     <div class="form-group {!! $errors->has('project_type') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
-                        {!! Form::label('project_type', 'Project type', ['class' => 'control-label']) !!}
+                        {!! Form::label('project_type', 'Project type *', ['class' => 'control-label']) !!}
                       </div>
                       <div class="col-md-9" id="select_project_type_field">
                         <select class="form-control select2" style="width: 100%;" id="project_type" name="project_type" data-placeholder="Select a project type">
@@ -429,7 +429,7 @@ h3:after {
                   <div id="project_status_row" class="row">
                     <div class="form-group {!! $errors->has('project_status') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
-                        {!! Form::label('project_status', 'Project status', ['class' => 'control-label']) !!}
+                        {!! Form::label('project_status', 'Project status *', ['class' => 'control-label']) !!}
                       </div>
                       <div class="col-md-9" id="select_project_status_field">
                         <select class="form-control select2" style="width: 100%;" id="project_status" name="project_status" data-placeholder="Select a project status">
@@ -466,7 +466,7 @@ h3:after {
                   <div class="row">
                     <div class="form-group {!! $errors->has('description') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
-                        {!! Form::label('description', 'Famous name', ['class' => 'control-label']) !!}
+                        {!! Form::label('description', 'Complementary name *', ['class' => 'control-label']) !!}
                         <br>
                         <span>Only alphabetic character</span>
                       </div>
@@ -500,7 +500,7 @@ h3:after {
                   <div id="estimated_date_row" class="row">
                     <div class="form-group {!! $errors->has('estimated_date') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
-                        {!! Form::label('estimated_start_date', 'Estimated start date', ['class' => 'control-label', 'id' => 'estimated_start_date_text']) !!}
+                        {!! Form::label('estimated_start_date', 'Estimated start date *', ['class' => 'control-label', 'id' => 'estimated_start_date_text']) !!}
                       </div>
                       <div class="col-md-9">
                         <div class="control-group">
@@ -521,7 +521,7 @@ h3:after {
                   <div id="estimated_date_row" class="row">
                     <div class="form-group {!! $errors->has('estimated_end_date') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
-                        {!! Form::label('estimated_end_date', 'Estimated end date', ['class' => 'control-label', 'id' => 'estimated_end_date_text']) !!}
+                        {!! Form::label('estimated_end_date', 'Estimated end date *', ['class' => 'control-label', 'id' => 'estimated_end_date_text']) !!}
                       </div>
                       <div class="col-md-9">
                         <div class="control-group">
