@@ -507,7 +507,8 @@ class UserController extends Controller
         
          $man_emp_mail    ='';
          $man_emp_man_mail    ='';
-         $man_emp_name    ='';
+         $man_emp_fname    ='';
+         $man_emp_lname    ='';
          $man_emp_pimsid  ='';
          $man_emp_ftid    ='';
          $man_emp_region  ='';
@@ -592,7 +593,7 @@ class UserController extends Controller
             // end of start and end date
 
             // here we check if the email of the user exists meaning that we check the email existance in the database so we proceed with updating data.
-            $user_name = $efl[$i]['name'];
+            $user_name = $efl[$i]['last_name'].",".$efl[$i]['first_name'];
 
             $get_user_email = User::where('email',$efl[$i]['email'])->first();
             $get_user_name  = User::where('name',$user_name)->first();
