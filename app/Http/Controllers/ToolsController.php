@@ -251,6 +251,8 @@ class ToolsController extends Controller
 
     }
 
+
+
     public function checkPrimeExistanceOnProject(Request $request)
     {
         $inputs = $request->all();
@@ -549,6 +551,8 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
         $customers_list = Customer::orderBy('name')->pluck('name', 'id');
         $customers_list->prepend('', '');
 
+
+
         // Here we will define if we can select a user for this project and activity or not
         // Attention, we need to prevent in the user_list to have ids when already assigned to a project
         if (Auth::user()->can('tools-activity-all-edit')) {
@@ -652,7 +656,34 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
     ->groupBy('users.name')
     ->pluck('users.name', 'users.id');
 
-        return view('tools/create_update', compact('users_on_project','num_of_actions','user_id','project','year','activities','from_otl','forecast','otl','customers_list',
+        $customer_country = $project->customer_id;
+        $country = Customer::where('id',$customer_country)->get('country_owner');
+        //print("country_owner : ".$country[0]->country_owner);
+        $CON_Code = $country[0]->country_owner;
+
+        $CON_ISO_2 = json_decode(Http::get('http://country.io/names.json'),true);
+
+
+        $ISO_3 = json_decode(Http::get('http://country.io/iso3.json'),true);
+
+        foreach($CON_ISO_2 as $key => $val)
+        {
+            if($val == $CON_Code)
+            {
+               // print($key." ".$val."<br>");
+                foreach($ISO_3 as $key3 => $val3)
+                {
+                    if($key3 == $key)
+                    {
+                       // print($val3);
+                        $customer_country_ascii =$val3;
+                    }
+                }
+            }
+        }
+
+
+        return view('tools/create_update', compact('users_on_project','num_of_actions','user_id','project','year','activities','from_otl','forecast','otl','customers_list','customer_country_ascii',
     'project_name_disabled',
     'customer_id_select_disabled',
     'project_practice_disabled',

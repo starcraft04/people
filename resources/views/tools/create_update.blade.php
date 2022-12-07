@@ -349,7 +349,7 @@ h3:after {
                               {!! Form::label('country', 'country', ['class' => 'control-label']) !!}
                             </div>
                             <div class="col-md-9">
-                              {!! Form::text('country', (isset($project)) ? $project->country : '', ['class' => 'form-control', 'placeholder' => 'country', 'disabled'=>'disabled']) !!}
+                              {!! Form::text('country', (isset($project)) ? $customer_country_ascii : '', ['class' => 'form-control', 'placeholder' => 'country', 'disabled'=>'disabled']) !!}
                               {!! $errors->first('country', '<small class="help-block">:message</small>') !!}
                             </div>
                           </div>
@@ -2329,6 +2329,7 @@ if(!localStorage.getItem("visited")){
 
 // automate project name with many msgs
 $(document).ready(function(){
+
 
 
 var prime_codes=[];
