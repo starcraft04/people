@@ -361,10 +361,10 @@ h3:after {
                               {!! Form::label('project_type', 'Project type *', ['class' => 'control-label']) !!}
                             </div>
                             <div class="col-md-9" id="select_project_type_field">
-                              <select class="form-control select2" style="width: 100%;" id="project_type" name="project_type" data-placeholder="Select a project type">
+                              <select class="form-control select2" style="width: 100%;" id="project_type" name="project_type" data-placeholder="Select a project type" >
                                 <option value="" ></option>
                                 @foreach(config('select.project_type_create') as $key => $value)
-                                <option value="{{ $key }}"
+                                <option value="{{ $key }}" data-name="{{ $value }}"
                                   @if (old('project_type') == $key) selected
                                   @elseif (isset($project->project_type) && $value == $project->project_type) selected
                                   @endif>
@@ -2354,13 +2354,42 @@ let project_name_variables = practice+"-"+country+"-"+customer+"-"+project_type+
 //practice
 $(document).on('change','#project_practice',function(){
     practice = $('#project_practice').val();
+
+    @if($action=='update')
+
+      
+        customer = $("#customer_id").select2().find(":selected").data("name");
+        description = $('#description').val();
+        project_type = $('#project_type').find(":selected").data("name");
+        country = $('#country').val();
+        console.log(customer);
+        project_name_variables = practice+"-"+country+"-"+customer+"-"+project_type+"-"+description;
+        project_name.val(project_name_variables);
+
+        
+
+    @endif
     
+    if(customer == '')
+    {
+      console.log("co");
+      console.log(customer_id);
+      project_name_variables = practice;
+      console.log(project_name_variables);
+      project_name.val(practice); 
+    }
+    else{
+      console.log("da");
+      project_name_variables = practice+"-"+country+"-"+customer;
+      project_name.val(project_name_variables);
+    }
     if(description == '')
     {
       project_name_variables = practice+"-"+country+"-"+customer;
       project_name.val(project_name_variables);
     }
     else{
+      console.log("fade");
       project_name_variables = practice+"-"+country+"-"+customer+"-"+project_type+"-"+description;
       project_name.val(project_name_variables);
     }
@@ -2405,6 +2434,7 @@ $(document).on('change','#customer_id',function(){
 
   //project type 
 
+
   $(document).on('change','#project_type',function(){
     var html="";
     project_type= $('#project_type').val();
@@ -2418,9 +2448,10 @@ $(document).on('change','#customer_id',function(){
     x = pp.split('-');
 
     console.log(x);
+    x.splice(3,1);
     x[3] = project_type;
     console.log(x.join('-'));
-
+console.log(x);
 project_name_variables = x.join('-');
 project_name.val(project_name_variables);
  $.ajax({
@@ -2467,6 +2498,7 @@ project_name.val(project_name_variables);
       @if ($action == 'create')
       if(description == '')
                 {
+                  console.log("jjjj");
                   project_name_variables = practice+"-"+country+"-"+customer+"-"+project_type;
                   project_name.val(project_name_variables);
                 }
