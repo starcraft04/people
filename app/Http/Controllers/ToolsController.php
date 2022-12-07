@@ -336,6 +336,8 @@ class ToolsController extends Controller
             }
         }
 
+
+
         // Here I will test if there is a comment
         if (! empty($inputs['project_comment'])) {
             $comment_input = [
@@ -356,8 +358,13 @@ class ToolsController extends Controller
         $user = User::find(Auth::user()->id);
         $user->last_activity_update = date('Y-m-d H:i:s');
         $user->save();
+        $u = Auth::user()->id;
+        $pid = $project->id;
+        $year = $inputs['year'];
+        $year_p = intval($year);
+        
 
-        return redirect($redirect)->with('success', 'New project created successfully');
+        return redirect('toolsFormUpdate/'.$u.'/'.$pid.'/'.$year_p)->with('success', 'New project created successfully');
     }
 
     public function getCustomerAndProjectBySambaID($samba_id){
