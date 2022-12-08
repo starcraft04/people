@@ -712,7 +712,7 @@
 
             Swal.fire({
                 icon: 'error',
-                title: 'The project reaches the end date',
+                title: 'The project reached the end date',
                 text: 'Please refer to you manager to update the end date',
               })
         });
