@@ -491,7 +491,7 @@ h3:after {
                               <span>Only alphabetic character</span>
                             </div>
                             <div class="col-md-9">
-                              {!! Form::text('description', (isset($project)) ? $project->description : '', ['class' => 'form-control', 'placeholder' => 'example: pegasus',$description_disabled,'pattern'=>'([a-zA-Z ])*' ,   'minlength' => '4' , 'maxlength' => '30']) !!}
+                              {!! Form::text('description', (isset($project)) ? $project->description : '', ['class' => 'form-control', 'placeholder' => 'example: pegasus',$description_disabled,'minlength' => '4' , 'maxlength' => '30']) !!}
                               {!! $errors->first('description', '<small class="help-block">:message</small>') !!}
                             </div>
                           </div>
