@@ -488,7 +488,6 @@ h3:after {
                             <div class="col-md-3">
                               {!! Form::label('description', 'Complementary name *', ['class' => 'control-label']) !!}
                               <br>
-                              <span>Only alphabetic character</span>
                             </div>
                             <div class="col-md-9">
                               {!! Form::text('description', (isset($project)) ? $project->description : '', ['class' => 'form-control', 'placeholder' => 'example: pegasus',$description_disabled,'minlength' => '4' , 'maxlength' => '30']) !!}
