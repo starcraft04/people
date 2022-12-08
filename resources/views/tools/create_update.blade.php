@@ -213,13 +213,15 @@ h3:after {
                 <div class="col-md-6">
                   <div class="form-group {!! $errors->has('user_id') ? 'has-error' : '' !!} col-md-12">
                     <div class="col-md-1">
-                      {!! Form::label('user_id', 'User', ['class' => 'control-label']) !!}
+                      
                       @if($action == 'update')
+                      {!! Form::label('user_id', 'User', ['class' => 'control-label']) !!}
                       @if($show_change_button)
                       <span class="glyphicon glyphicon-refresh" id="change_user"></span>
                       @endif
                       @endif
                     </div>
+                    @if($action == 'update')
                     <div class="col-md-11">
                       <select class="form-control select2" style="width: 100%;" id="user_id" name="user_id" data-placeholder="Select a user to be assigned">
                         <option value="" ></option>
@@ -234,6 +236,23 @@ h3:after {
                       </select>
                       {!! $errors->first('user_id', '<small class="help-block">:message</small>') !!}
                     </div>
+                    @endif
+                    @if($action == 'create')
+                    <div class="col-md-11" style="display: none;">
+                      <select class="form-control select2" style="width: 100%;" id="user_id" name="user_id" data-placeholder="Select a user to be assigned">
+                        <option value="" ></option>
+                        @foreach($user_list as $key => $value)
+                        <option value="{{ $key }}"
+                          @if (old('user_id') == $key) selected
+                          @elseif ($key == $user_selected) selected
+                          @endif>
+                          {{ $value }}
+                        </option>
+                        @endforeach
+                      </select>
+                      {!! $errors->first('user_id', '<small class="help-block">:message</small>') !!}
+                    </div>
+                    @endif
                   </div>
                 </div>
                 <div class="col-md-6">
@@ -457,10 +476,9 @@ h3:after {
                             <div class="col-md-3">
                               {!! Form::label('technology', 'Technology *', ['class' => 'control-label']) !!}
                               <br>
-                              <span>Only alphabetic character</span>
                             </div>
                             <div class="col-md-9">
-                              {!! Form::text('technology', (isset($project)) ? $project->technology : '', ['class' => 'form-control', 'placeholder' => 'Technology',$technology_disabled ,'pattern'=>'([a-zA-Z- ])*',   'minlength' => '4' , 'maxlength' => '30', 'title'=> 'Alphabets: [a-z][A-Z], Special Char: [-]', 'required']) !!}
+                              {!! Form::text('technology', (isset($project)) ? $project->technology : '', ['class' => 'form-control', 'placeholder' => 'Technology',$technology_disabled ,'minlength' => '10' , 'maxlength' => '40','required']) !!}
                               {!! $errors->first('technology', '<small class="help-block">:message</small>') !!}
                             </div>
                           </div>
@@ -2351,6 +2369,52 @@ let project_type ="";
 let project_name_variables = practice+"-"+country+"-"+customer+"-"+project_type+"-"+description;
 
 
+function getPractice()
+{
+  practice = $('#project_practice').val();
+  return practice;
+}
+
+function getProjectType()
+{
+  project_type = $('#project_type').val();
+  return project_type;
+}
+
+var getCustomerAndCountry = function()
+{
+
+      let customer_id = $('#customer_id').val();
+      var selected = $('#customer_id').find('option:selected');
+      var extra = selected.data('name');
+
+      var setCustomerAndCountry =null;
+      $.ajax({
+          async: false,
+          type: "POST",
+          global: false,
+            url: "{!! route('getCustomerCountryByID','') !!}",
+            data:{'customer_id':customer_id},
+            
+            success: function(data) {
+              console.log("here");
+              console.log(data);
+              $('#country').val(data);
+              country = $('#country').val();
+              customer = extra;
+
+              console.log(customer);
+              setCustomerAndCountry = country+"-"+extra;
+            }
+
+          });
+
+      return setCustomerAndCountry;
+
+
+}();
+
+
 //practice
 $(document).on('change','#project_practice',function(){
     practice = $('#project_practice').val();
@@ -2362,7 +2426,6 @@ $(document).on('change','#project_practice',function(){
         description = $('#description').val();
         project_type = $('#project_type').find(":selected").data("name");
         country = $('#country').val();
-        console.log(customer);
         project_name_variables = practice+"-"+country+"-"+customer+"-"+project_type+"-"+description;
         project_name.val(project_name_variables);
 
@@ -2438,21 +2501,36 @@ $(document).on('change','#customer_id',function(){
   $(document).on('change','#project_type',function(){
     var html="";
     project_type= $('#project_type').val();
-
        @if($action == 'update')
-  
-  var pp = $('#project_name').val();
 
-    var x = [];
+    
+    practice = getPractice();
+    var CustomerAndCountry = getCustomerAndCountry;
+    
+        description = $('#description').val();
+//   var pp = $('#project_name').val();
 
-    x = pp.split('-');
+//     var x = [];
 
-    console.log(x);
-    x.splice(3,1);
-    x[3] = project_type;
-    console.log(x.join('-'));
-console.log(x);
-project_name_variables = x.join('-');
+//     x = pp.split('-');
+
+//     console.log(x);
+//     x.splice(3,1);
+//     x[3] = project_type;
+//     console.log(x.join('-'));
+// console.log(x);
+// project_name_variables = x.join('-');
+if(description == '')
+                {
+                  project_name_variables = practice+"-"+CustomerAndCountry+"-"+project_type;
+                  project_name.val(project_name_variables);
+                }
+                else{
+                  project_name_variables = practice+"-"+CustomerAndCountry+"-"+project_type+"-"+description;
+                  project_name.val(project_name_variables);
+                }
+
+
 project_name.val(project_name_variables);
  $.ajax({
                 type:'post',
@@ -2496,6 +2574,9 @@ project_name.val(project_name_variables);
               });
 @endif
       @if ($action == 'create')
+
+    practice = getPractice();
+    var CustomerAndCountry = getCustomerAndCountry;
       if(description == '')
                 {
                   console.log("jjjj");
@@ -2559,10 +2640,28 @@ project_name.val(project_name_variables);
 $(document).on('focusout','#description',function(){
     var i=0;
     
+
     description = $('#description').val();
-    
-    project_name_variables = practice+"-"+country+"-"+customer+"-"+project_type+"-"+description.toUpperCase();
+
+
+    @if($action =='create')
+    {
+
+      project_name_variables = practice+"-"+country+"-"+customer+"-"+project_type+"-"+description.toUpperCase();
     project_name.val(project_name_variables);
+    }
+    @endif
+
+    @if($action == 'update')
+    var CustomerAndCountry = getCustomerAndCountry;
+    console.log(CustomerAndCountry);
+    practice = getPractice();
+    project_type = getProjectType();
+
+        project_name_variables = practice+"-"+CustomerAndCountry+"-"+project_type+"-"+description.toUpperCase();
+        project_name.val(project_name_variables);
+
+        @endif
     
   });
 

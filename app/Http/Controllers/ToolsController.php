@@ -364,7 +364,7 @@ class ToolsController extends Controller
         $year_p = intval($year);
         
 
-        return redirect('toolsFormUpdate/'.$u.'/'.$pid.'/'.$year_p)->with('success', 'New project created successfully');
+        return redirect('toolsFormUpdate/0/'.$pid.'/'.$year_p)->with('success', 'New project created successfully');
     }
 
     public function getCustomerAndProjectBySambaID($samba_id){
@@ -731,7 +731,7 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
         if (! empty(Session::get('url'))) {
             $redirect = Session::get('url');
         } else {
-            $redirect = 'toolsActivities';
+         $redirect = 'toolsActivities';   
         }
 
         $inputs = $request->all();
@@ -801,8 +801,9 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
         $user = User::find(Auth::user()->id);
         $user->last_activity_update = date('Y-m-d H:i:s');
         $user->save();
+        $tools = 'toolsActivities';
 
-        return redirect($redirect)->with('success', 'Project updated successfully');
+        return redirect($tools)->with('success', 'Project updated successfully');
     }
 
     public function getFormTransfer($user_id, $project_id)
