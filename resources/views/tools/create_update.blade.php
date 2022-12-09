@@ -478,7 +478,7 @@ h3:after {
                               <br>
                             </div>
                             <div class="col-md-9">
-                              {!! Form::text('technology', (isset($project)) ? $project->technology : '', ['class' => 'form-control', 'placeholder' => 'Technology',$technology_disabled ,'minlength' => '10' , 'maxlength' => '40','required']) !!}
+                              {!! Form::text('technology', (isset($project)) ? $project->technology : '', ['class' => 'form-control', 'placeholder' => 'Technology',$technology_disabled ,'minlength' => '3' , 'maxlength' => '40','required']) !!}
                               {!! $errors->first('technology', '<small class="help-block">:message</small>') !!}
                             </div>
                           </div>
@@ -488,9 +488,10 @@ h3:after {
                             <div class="col-md-3">
                               {!! Form::label('description', 'Complementary name *', ['class' => 'control-label']) !!}
                               <br>
+                              <span>Only alphabetic character</span>
                             </div>
                             <div class="col-md-9">
-                              {!! Form::text('description', (isset($project)) ? $project->description : '', ['class' => 'form-control', 'placeholder' => 'example: pegasus',$description_disabled,'minlength' => '4' , 'maxlength' => '30']) !!}
+                              {!! Form::text('description', (isset($project)) ? $project->description : '', ['class' => 'form-control', 'placeholder' => 'example: pegasus',$description_disabled,'minlength' => '3' , 'maxlength' => '30']) !!}
                               {!! $errors->first('description', '<small class="help-block">:message</small>') !!}
                             </div>
                           </div>
@@ -2380,10 +2381,14 @@ function getProjectType()
   return project_type;
 }
 
+let customer_id = $('#customer_id').find('option:selected').data('name');
+if(customer_id != '')
+{
+
 var getCustomerAndCountry = function()
 {
 
-      let customer_id = $('#customer_id').val();
+      
       var selected = $('#customer_id').find('option:selected');
       var extra = selected.data('name');
 
@@ -2413,6 +2418,7 @@ var getCustomerAndCountry = function()
 
 }();
 
+} 
 
 //practice
 $(document).on('change','#project_practice',function(){
@@ -2802,7 +2808,7 @@ function chcekOnClick(project_name,customer_id,project_names,prime_codes)
 {
   var html="";
 
-  
+  console.log("function");
 
 
   
@@ -2831,7 +2837,7 @@ function chcekOnClick(project_name,customer_id,project_names,prime_codes)
                       } 
                       else if (result.dismiss === Swal.DismissReason.cancel)
                       {
-                        // $('#project_name').prop('disabled', true);
+                         $('#project_name').prop('disabled', true);
                         // project_name_variables = '';
                         // project_name.val(project_name_variables);
 
@@ -2861,9 +2867,18 @@ function chcekOnClick(project_name,customer_id,project_names,prime_codes)
 
                     title:"<Strong>This project already exists</Strong><br><br><span style='font-size:20px;'>You cannot have two projects with the same prime code for the same practice</span>",
                     html:html,
-                    confirmButtonText: 'Cancel',
+                    showConfirmButton: false,
+                    showCancelButton: true,
+                    cancelButtonText: 'No, cancel!',
 
-                  })
+                  }).then((result) => {
+                      /* Read more about isConfirmed, isDenied below */
+                      if (result.dismiss === Swal.DismissReason.cancel)
+                      {
+                         $('#project_name').prop('disabled', true);
+                        
+                      }
+                    });
 
     }
 }

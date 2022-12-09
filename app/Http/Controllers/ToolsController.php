@@ -258,14 +258,17 @@ class ToolsController extends Controller
         $inputs = $request->all();
         $project_practice = $inputs['project_practice'];
         $prime_code = $inputs['prime_code'];
+        $responseWithExistsPrimeAndPractice = [];
+        $responseWithExistsPrimeDiffPractice = [];
 
-        $response =  Project::where('otl_project_code',$prime_code)->get(['id','project_name']);
+        $response =  Project::where('otl_project_code',$prime_code)->get(['id','project_name','project_practice','otl_project_code']);
 
         foreach($response as $key=> $value)
         {
-            if(str_contains($value['project_name'],$project_practice))
+            if($value['otl_project_code'] == $prime_code && $value['project_practice'] == $project_practice )
             {
-                return $response;
+                $responseWithExistsPrimeAndPractice = $response;
+                return $responseWithExistsPrimeAndPractice;
             }
             else{
                 $response = [];
