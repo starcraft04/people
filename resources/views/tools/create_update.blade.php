@@ -1134,6 +1134,7 @@ var tab_origin = "{{ $tab }}";
 
 $(document).ready(function() {
 
+
   function checkExists() {
   var myVar = setTimeout(showPage, 1000);
 }
@@ -1279,6 +1280,7 @@ if(!localStorage.getItem("visited")){
       title: 'How to enter the correct OTL code',
       width: '80%',
       animation: false,
+      allowOutsideClick: false,
       html:
         'You can fin the <b>OTL code</b> and the <b>Meta-activity</b> by login into OTL and find the below fields</BR></BR></BR>' +
         '<img src="{{ asset("/img/help/OTL_help.jpg") }}">'
@@ -2558,6 +2560,7 @@ project_name.val(project_name_variables);
                     title:"Project already exits with the following names check them",
                     html:html,
                     confirmButtonText: 'Ok',
+                    allowOutsideClick: false,
 
                   })
                 });
@@ -2617,6 +2620,7 @@ project_name.val(project_name_variables);
                     title:"Project already exits with the following names check them",
                     html:html,
                     confirmButtonText: 'Ok',
+                    allowOutsideClick: false,
 
                   })
                 });
@@ -2782,6 +2786,7 @@ $(document).on('focusout','.OTL_code',function(){
                     title:"Project already exits with the following names check them",
                     html:html,
                     confirmButtonText: 'Ok',
+                    allowOutsideClick: false,
 
                   })
                     });
@@ -2828,7 +2833,7 @@ function chcekOnClick(project_name,customer_id,project_names,prime_codes)
                     confirmButtonText: 'Proceed',
                     showCancelButton: true,
                     cancelButtonText: 'No, cancel!',
-
+                    allowOutsideClick: false,
                   }).then((result) => {
                       /* Read more about isConfirmed, isDenied below */
                       if (result.isConfirmed) {
@@ -2870,7 +2875,7 @@ function chcekOnClick(project_name,customer_id,project_names,prime_codes)
                     showConfirmButton: false,
                     showCancelButton: true,
                     cancelButtonText: 'No, cancel!',
-
+                    allowOutsideClick: false,
                   }).then((result) => {
                       /* Read more about isConfirmed, isDenied below */
                       if (result.dismiss === Swal.DismissReason.cancel)
