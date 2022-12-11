@@ -267,7 +267,7 @@ class ToolsController extends Controller
         {
             if($value['otl_project_code'] == $prime_code && $value['project_practice'] == $project_practice )
             {
-                $responseWithExistsPrimeAndPractice = $response;
+                array_push($responseWithExistsPrimeAndPractice,$value);
                 return $responseWithExistsPrimeAndPractice;
             }
             else{

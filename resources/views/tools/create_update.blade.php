@@ -2562,7 +2562,12 @@ project_name.val(project_name_variables);
                     confirmButtonText: 'Ok',
                     allowOutsideClick: false,
 
-                  })
+                  }).then((result) => {
+                      /* Read more about isConfirmed, isDenied below */
+                      if (result.isConfirmed) {
+                        html="";
+                      }                     
+                    });
                 });
                     project_names = data;
                     console.log("data");
@@ -2622,7 +2627,12 @@ project_name.val(project_name_variables);
                     confirmButtonText: 'Ok',
                     allowOutsideClick: false,
 
-                  })
+                  }).then((result) => {
+                      /* Read more about isConfirmed, isDenied below */
+                      if (result.isConfirmed) {
+                        html="";
+                      }                     
+                    });
                 });
                     project_names = data;
                     console.log("data");
@@ -2780,7 +2790,7 @@ $(document).on('focusout','.OTL_code',function(){
 
                     $('.prime-list').on('click', function(){
 
-                      // data.forEach(elem=>html+="<Strong><a href='{!! route('toolsFormUpdate',[Auth::user()->id,'','']) !!}/"+elem.id+"/{{$year}}'>"+elem.project_name+"</a></Strong><br>");
+                       data.forEach(elem=>html+="<Strong><a href='{!! route('toolsFormUpdate',[Auth::user()->id,'','']) !!}/"+elem.id+"/{{$year}}'>"+elem.project_name+"</a></Strong><br>");
                       Swal.fire({
 
                     title:"Project already exits with the following names check them",
@@ -2788,7 +2798,12 @@ $(document).on('focusout','.OTL_code',function(){
                     confirmButtonText: 'Ok',
                     allowOutsideClick: false,
 
-                  })
+                  }).then((result) => {
+                      /* Read more about isConfirmed, isDenied below */
+                      if (result.isConfirmed) {
+                        html="";
+                      }                     
+                    });
                     });
                     prime_codes = data;
                   }
@@ -2838,11 +2853,12 @@ function chcekOnClick(project_name,customer_id,project_names,prime_codes)
                       /* Read more about isConfirmed, isDenied below */
                       if (result.isConfirmed) {
                         $('#projectForm').unbind('submit').submit();
-
+                        html="";
                       } 
                       else if (result.dismiss === Swal.DismissReason.cancel)
                       {
                          $('#project_name').prop('disabled', true);
+                         html="";
                         // project_name_variables = '';
                         // project_name.val(project_name_variables);
 
@@ -2881,6 +2897,7 @@ function chcekOnClick(project_name,customer_id,project_names,prime_codes)
                       if (result.dismiss === Swal.DismissReason.cancel)
                       {
                          $('#project_name').prop('disabled', true);
+                         html="";
                         
                       }
                     });
