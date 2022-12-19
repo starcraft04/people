@@ -76,6 +76,7 @@ return [
         'Pre-Sales' => 'Pre-Sales',
         'POC' => 'POC',
         'Build' => 'Build',
+        'Run' => 'Run',
         'Lifecycle' => 'Lifecycle',
         'Standalone engagement' => 'Standalone engagement',
     ],

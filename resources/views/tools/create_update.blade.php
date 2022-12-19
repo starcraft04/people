@@ -343,7 +343,7 @@ h3:after {
                               {!! Form::label('customer_id', 'Customer name *', ['class' => 'control-label']) !!}
                             </div>
                             <div class="col-md-9" id="select_customer_name_field">
-                              <select class="form-control select2" style="width: 100%;" id="customer_id" name="customer_id" data-placeholder="Select a customer name" onchange="changeCustomerAndCountry($(this))">
+                              <select class="form-control select2" style="width: 100%;" id="customer_id" name="customer_id" data-placeholder="Select a customer name" onchange="changeCustomerAndCountry($(this))" required>
                                 @foreach($customers_list as $key => $value)
                                 <option value="{{ $key }}" data-name="{{ $value }}"
                                   @if (old('customer_id') == $key) selected
@@ -376,7 +376,7 @@ h3:after {
                               {!! Form::label('project_type', 'Project type *', ['class' => 'control-label']) !!}
                             </div>
                             <div class="col-md-9" id="select_project_type_field">
-                              <select class="form-control select2" style="width: 100%;" id="project_type" name="project_type" data-placeholder="Select a project type" onchange="changeProjectType($(this).val())">
+                              <select class="form-control select2" style="width: 100%;" id="project_type" name="project_type" data-placeholder="Select a project type" onchange="changeProjectType($(this).val())" required>
                                 <option value="" ></option>
                                 @foreach(config('select.project_type_create') as $key => $value)
                                 <option value="{{ $key }}" data-name="{{ $value }}"
@@ -449,7 +449,7 @@ h3:after {
                               {!! Form::label('project_status', 'Project status *', ['class' => 'control-label']) !!}
                             </div>
                             <div class="col-md-9" id="select_project_status_field">
-                              <select class="form-control select2" style="width: 100%;" id="project_status" name="project_status" data-placeholder="Select a project status">
+                              <select class="form-control select2" style="width: 100%;" id="project_status" name="project_status" data-placeholder="Select a project status" required>
                                 <option value="" ></option>
                                 @foreach(config('select.project_status') as $key => $value)
                                 <option value="{{ $key }}"
@@ -487,7 +487,7 @@ h3:after {
                               
                             </div>
                             <div class="col-md-9">
-                              {!! Form::text('description', (isset($project)) ? $project->description : '', ['class' => 'form-control', 'placeholder' => 'example: pegasus',$description_disabled,'minlength' => '3' , 'maxlength' => '30', 'onfocusout'=>'getDescription(this.value);']) !!}
+                              {!! Form::text('description', (isset($project)) ? $project->description : '', ['class' => 'form-control', 'placeholder' => 'example: pegasus',$description_disabled,'minlength' => '3' , 'maxlength' => '30', 'onfocusout'=>'getDescription(this.value);', 'required']) !!}
                               {!! $errors->first('description', '<small class="help-block">:message</small>') !!}
                             </div>
                           </div>
@@ -1223,7 +1223,7 @@ if(!localStorage.getItem("visited")){
   function project_type_value_check() {
     project_type_val = $("#project_type option:selected").val();
     project_status_val = $("#project_status option:selected").val();
-    if (project_type_val == "Pre-sales")
+    if (project_type_val == "Pre-Sales")
     {
       $('#estimated_date_text').text("Start / Close date");
       $("#gold_order_row").hide();
@@ -1392,6 +1392,7 @@ if(!localStorage.getItem("visited")){
   $("#customer_id").select2({
     allowClear: false,
     disabled: {{ $customer_id_select_disabled }}
+    
   });
 
   $("#meta_activity").select2({
@@ -2681,6 +2682,7 @@ function getProjectType()
         ((''+month).length<2 ? '0' : '') + month + '-' +
         ((''+day).length<2 ? '0' : '') + day;
     var cu = new Date(output);
+     
      if(cu.getTime() <= d2.getTime() && project_status == 'Won')
     {
       console.log("sh3'al");
@@ -2691,6 +2693,17 @@ function getProjectType()
 
 
     }
+    else if(cu.getTime() <= d2.getTime() && project_status == 'Pipeline')
+    {
+      console.log("sh3'al");
+      $('#project_status_flag_row').css('display','block');
+      $('#project_status_flag').html('Ongoing');
+      $('#project_status_flag').css('color','green');
+
+
+
+    }
+    
     else{
 
     console.log('fffff');
@@ -2726,6 +2739,16 @@ $(document).on('change','#estimated_end_date',function(){
 
    
     if(cu.getTime() <= d2.getTime() && project_status == 'Won')
+    {
+      console.log("sh3'al");
+      $('#project_status_flag_row').css('display','block');
+      $('#project_status_flag').html('Ongoing');
+      $('#project_status_flag').css('color','green');
+
+
+
+    }
+    else if(cu.getTime() <= d2.getTime() && project_status == 'Pipeline')
     {
       console.log("sh3'al");
       $('#project_status_flag_row').css('display','block');
@@ -2792,6 +2815,8 @@ $('#create-project').click(function () {chcekOnClick(project_name,customer_id)})
 //                     console.log("ana d5lt hna wala ")
 //                   }
 // }
+
+
 function chcekOnClick(project_name,customer_id)
 {
 
@@ -2825,12 +2850,38 @@ function chcekOnClick(project_name,customer_id)
                     html:html,
                     confirmButtonText: 'Proceed',
                     showCancelButton: true,
-                    cancelButtonText: 'No, cancel!',
+                    cancelButtonText: 'Cancel!',
                     allowOutsideClick: false,
                   }).then((result) => {
                       /* Read more about isConfirmed, isDenied below */
                       if (result.isConfirmed) {
-                        $('#projectForm').unbind('submit').submit();
+                        $('#projectForm').unbind('submit').submit(); 
+                        // if($('#project_status').val() == ''){
+
+                        //   $('#projectForm').submit(function(e){
+                        //           e.preventDefault();
+                        //           alert("Fill the required fields");
+                        //   });
+
+                        // }
+                        // else if($('#technology').val() == '' ){
+                        //   $('#projectForm').submit(function(e){
+                        //           e.preventDefault();
+                        //           alert("Fill the required fields");
+                        //   });
+                        // }
+                        // else if($('#description').val() == '')
+                        // {
+                        //   $('#projectForm').submit(function(e){
+                        //           e.preventDefault();
+                        //           alert("Fill the required fields");
+                        //   });
+                        // }
+                        // else{
+                        //   $('#projectForm').unbind('submit').submit(); 
+                        // }
+                        
+                        
                         html="";
                       } 
                       else if (result.dismiss === Swal.DismissReason.cancel)
