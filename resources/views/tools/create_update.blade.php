@@ -2358,10 +2358,12 @@ function changeProjectPractice(pp){
 
   @if($action == 'update')
     updateProjectName();
+    getValueOfPrimeCode(pn);
   @endif
   @if($action == 'create')
     createProjectNameFromFields(pn);
   @endif
+
   checkProjectName(pn);
   getValueOfPrimeCode(pn);
  
