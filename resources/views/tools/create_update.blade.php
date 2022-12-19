@@ -199,7 +199,7 @@ h3:after {
                   @if($action == 'create')
                   <input class="btn btn-success btn-sm" type="submit" id="create-project" name="action" value="Create" />
                   @elseif($action == 'update')
-                  <input class="btn btn-success btn-sm" type="submit" name="action" value="Update" />
+                  <input class="btn btn-success btn-sm" type="submit" id="update-project" name="action" value="Update" />
                   @endif
                 </div>
               </div>
@@ -2483,10 +2483,15 @@ function getValueOfPrimeCode(pp)
 {
   var html="";
   let prime_code = pp;
+  let practice=""
+  @if($action == 'update')
+  practice = $('#project_practice').val();
+  @endif
+  @if($action == 'create')
+  practice = pn.project_practice;
+  @endif
 
-
-
-  let practice = pn.project_practice;
+  
   console.log("000000000000");
   console.log(pp);
   
@@ -2541,7 +2546,7 @@ function getValueOfPrimeCode(pp)
         }  
         else{
            $('.prime-list').css('display','none');
-                     $('.OTL_code').css('box-shadow','none');
+           $('.OTL_code').css('box-shadow','none');
 
         } 
   
@@ -2607,8 +2612,17 @@ function getDescription(pp)
 {
   pn['description'] = pp;
   console.log(pn);
-  createProjectNameFromFields(pn);
+
+   @if($action == 'update')
+    updateProjectName();
+    
+  @endif
+  @if($action == 'create')
+    createProjectNameFromFields(pn);
+  @endif
+
   checkProjectName(pn);
+  
   return pn
 }
 
@@ -2734,8 +2748,50 @@ $(document).on('change','#estimated_end_date',function(){
 
 });
 $('#create-project').click(function () {chcekOnClick(project_name,customer_id)});
+// $('#update-project').click(function () {checkonUpdate()});
 
 
+// function checkonUpdate()
+// {
+//   var html="";
+//   if(prime_codes.length > 0)
+//     {
+//       console.log("not free");
+//       console.log("ana get hna lah");
+//       console.log(prime_codes);
+//       $('#projectForm').submit(function(e){
+//         e.preventDefault();
+        
+//       });
+
+//       prime_codes.forEach(elem=>html+="<Strong><a href='{!! route('toolsFormUpdate',[Auth::user()->id,'','']) !!}/"+elem.id+"/{{$year}}' target='_blank'>"+elem.project_name+"</a></Strong><br>");
+
+//       Swal.fire({
+
+//                     title:"<Strong>This project already exists</Strong><br><br><span style='font-size:20px;'>You cannot have two projects with the same prime code for the same practice</span>",
+//                     html:html,
+//                     showConfirmButton: false,
+//                     showCancelButton: true,
+//                     cancelButtonText: 'No, cancel!',
+//                     allowOutsideClick: false,
+//                   }).then((result) => {
+//                       /* Read more about isConfirmed, isDenied below */
+//                       if (result.dismiss === Swal.DismissReason.cancel)
+//                       {
+//                          $('#project_name').prop('disabled', true);
+//                          $('#country').prop('disabled', true);
+//                          html="";
+                        
+//                       }
+//                     });
+
+
+//     }
+//     if(prime_codes.length == 0)
+//                   {
+//                     console.log("ana d5lt hna wala ")
+//                   }
+// }
 function chcekOnClick(project_name,customer_id)
 {
 
@@ -2797,7 +2853,7 @@ function chcekOnClick(project_name,customer_id)
       console.log(prime_codes);
       $('#projectForm').submit(function(e){
         e.preventDefault();
-        if(project_names.length == 0)
+        if(prime_codes.length == 0)
                   {
                     $('#projectForm').unbind('submit').submit();
                   }
