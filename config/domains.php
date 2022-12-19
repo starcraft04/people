@@ -12,6 +12,7 @@ return [
         'Cloud and Data Digitalization' => 'Cloud and Data Digitalization',
         'Management'=>'Management',
         'Project Management Office'=>'Project Management Office',
+        'Digital System & Integration'=>'Digital System & Integration',
     ],
 
     'practice' => [
@@ -22,9 +23,11 @@ return [
         'EX' => 'Employee Experience',
         'IoT' => 'IoT and Edge',
         'CX' => 'Customer Experience',
+        'DSI'=>'Digital System & Integration',
         'CDD' => 'Cloud and Data Digitalization',
         'MGT'=>'Management',
         'PMO'=>'Project Management Office',
+
     ],
     'domain-fpc' => [
         'APM' => ['P07', 'F27', 'H10'],

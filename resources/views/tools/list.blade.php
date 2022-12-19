@@ -889,7 +889,7 @@
 
           
           
-        }, searchable: true , visible: false, className: "dt-nowrap"},
+        }, searchable: true , visible: true, className: "dt-nowrap"},
         { name: 'p.gold_order_number', data: 'gold_order_number' , searchable: true , visible: false, className: "dt-nowrap"},
         { name: 'p.win_ratio', data: 'win_ratio' , searchable: true , visible: false, className: "dt-nowrap"}
         @foreach(config('select.available_months') as $key => $month)
