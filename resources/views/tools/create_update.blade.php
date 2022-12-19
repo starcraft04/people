@@ -2918,7 +2918,7 @@ function chcekOnClick(project_name,customer_id)
                     html:html,
                     showConfirmButton: false,
                     showCancelButton: true,
-                    cancelButtonText: 'No, cancel!',
+                    cancelButtonText: 'Cancel',
                     allowOutsideClick: false,
                   }).then((result) => {
                       /* Read more about isConfirmed, isDenied below */
