@@ -23,11 +23,26 @@
 <link href="{{ asset('/plugins/gentelella/vendors/ion.rangeSlider/css/ion.rangeSlider.css') }}" rel="stylesheet">
 <link href="{{ asset('/plugins/gentelella/vendors/ion.rangeSlider/css/ion.rangeSlider.skinModern.css') }}" rel="stylesheet">
 
+<!-- Sweet alert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.35/dist/sweetalert2.all.min.js"></script>
+
+<!-- intro.js -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/6.0.0/intro.js" integrity="sha512-iC2jUAfCjQVVR2eGiPYjV2lb7ZIF0Tx3xPj/PdGZSJkSJVz5y+88tRwshNmrso1twhzhSQwBPXNLdAqUYmRAPg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/6.0.0/introjs.css" integrity="sha512-4OzqLjfh1aJa7M33b5+h0CSx0Q3i9Qaxlrr1T/Z+Vz+9zs5A7GM3T3MFKXoreghi3iDOSbkPMXiMBhFO7UBW/g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 <!-- Smart Wizard -->
 <link href="{{ asset('/plugins/smartwizard/dist/css/smart_wizard_all.min.css') }}" rel="stylesheet">
 <!-- Document styling -->
 <link href="{{ asset('/css/loe.css') }}" rel="stylesheet" />
 <style>
+
+  .swal2-container.swal2-center > .swal2-popup
+  {
+    width: 37%;
+    padding: 30px;
+  }
+
 h3 {
   overflow: hidden;
   text-align: center;
@@ -105,6 +120,7 @@ h3:after {
 @stop
 
 @section('content')
+
 <!-- Window -->
 <div class="row">
   <div class="col-md-12 col-sm-12 col-xs-12">
@@ -140,6 +156,7 @@ h3:after {
               @endcan
               @can('tools-projects-comments')
               <li role="presentation"><a href="#tab_content3" id="tab_comment" role="tab" data-toggle="tab" aria-expanded="true">Comments (<span id="num_of_comments">{{ $num_of_comments }}</span>)</a></li>
+              <li role="presentation"><a href="#tab_content3" id="tab_comment" role="tab" data-toggle="tab" aria-expanded="true">Consultants (<span id="users_on_project">{{ count($users_on_project)}}</span>)</a></li>
               @endcan
             @endif
           </ul>
@@ -159,11 +176,7 @@ h3:after {
               @endif
               <!-- Row with buttons -->
               <div class="row">
-                <div class="col-md-1">
-                  <a href="javascript:history.back()" class="btn btn-primary btn-sm">
-                    <span class="glyphicon glyphicon-circle-arrow-left"></span> Back
-                  </a>
-                </div>
+                
                 <div class="col-md-offset-8 col-md-1" style="text-align: right;">
                   @if($action == 'update')
                   @can('tools-user_assigned-remove')
@@ -184,9 +197,9 @@ h3:after {
                 </div>
                 <div class="col-md-1" style="text-align: right;">
                   @if($action == 'create')
-                  <input class="btn btn-success btn-sm" type="submit" name="action" value="Create" />
+                  <input class="btn btn-success btn-sm" type="submit" id="create-project" name="action" value="Create" />
                   @elseif($action == 'update')
-                  <input class="btn btn-success btn-sm" type="submit" name="action" value="Update" />
+                  <input class="btn btn-success btn-sm" type="submit" id="update-project" name="action" value="Update" />
                   @endif
                 </div>
               </div>
@@ -196,13 +209,15 @@ h3:after {
                 <div class="col-md-6">
                   <div class="form-group {!! $errors->has('user_id') ? 'has-error' : '' !!} col-md-12">
                     <div class="col-md-1">
-                      {!! Form::label('user_id', 'User', ['class' => 'control-label']) !!}
+                      
                       @if($action == 'update')
+                      {!! Form::label('user_id', 'User', ['class' => 'control-label']) !!}
                       @if($show_change_button)
                       <span class="glyphicon glyphicon-refresh" id="change_user"></span>
                       @endif
                       @endif
                     </div>
+                    @if($action == 'update')
                     <div class="col-md-11">
                       <select class="form-control select2" style="width: 100%;" id="user_id" name="user_id" data-placeholder="Select a user to be assigned">
                         <option value="" ></option>
@@ -217,6 +232,23 @@ h3:after {
                       </select>
                       {!! $errors->first('user_id', '<small class="help-block">:message</small>') !!}
                     </div>
+                    @endif
+                    @if($action == 'create')
+                    <div class="col-md-11" style="display: none;">
+                      <select class="form-control select2" style="width: 100%;" id="user_id" name="user_id" data-placeholder="Select a user to be assigned">
+                        <option value="" ></option>
+                        @foreach($user_list as $key => $value)
+                        <option value="{{ $key }}"
+                          @if (old('user_id') == $key) selected
+                          @elseif ($key == $user_selected) selected
+                          @endif>
+                          {{ $value }}
+                        </option>
+                        @endforeach
+                      </select>
+                      {!! $errors->first('user_id', '<small class="help-block">:message</small>') !!}
+                    </div>
+                    @endif
                   </div>
                 </div>
                 <div class="col-md-6">
@@ -268,10 +300,12 @@ h3:after {
                     <div class="form-group {!! $errors->has('project_name') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
                         {!! Form::label('project_name', 'Project name *', ['class' => 'control-label']) !!}
+                      <i class="fa fa-list project-list" aria-hidden="true" style="display:none;"></i>
                       </div>
+                      
                       <div class="col-md-9">
                         {!! Form::text('project_name', (isset($project->project_name)) ? $project->project_name : '', 
-                        ['class' => 'form-control mandatory', 
+                        ['class' => 'form-control mandatory', 'disabled'=>'disabled',
                         'placeholder' => 'project name',
                         'title' => "<p>The only mandatory fields to save the project have a * next to them and are:</BR>
                                       <ul>
@@ -285,257 +319,273 @@ h3:after {
                         ]) !!}
                         {!! $errors->first('project_name', '<small class="help-block">:message</small>') !!}
                       </div>
+                      
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="form-group {!! $errors->has('customer_id') ? 'has-error' : '' !!} col-md-12">
-                      <div class="col-md-3">
-                        {!! Form::label('customer_id', 'Customer name *', ['class' => 'control-label']) !!}
-                      </div>
-                      <div class="col-md-9">
-                        <select class="form-control select2" style="width: 100%;" id="customer_id" name="customer_id" data-placeholder="Select a customer name">
-                          @foreach($customers_list as $key => $value)
-                          <option value="{{ $key }}"
-                            @if (old('customer_id') == $key) selected
-                            @elseif (isset($project->customer_id) && $key == $project->customer_id) selected
-                            @endif>
-                            {{ $value }}
-                          </option>
-                          @endforeach
-                        </select>
-                        {!! $errors->first('customer_id', '<small class="help-block">:message</small>') !!}
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="form-group {!! $errors->has('otl_project_code') ? 'has-error' : '' !!} col-md-12">
-                      <div class="col-md-3">
-                        {!! Form::label('otl_project_code', 'Prime project code', ['class' => 'control-label']) !!}
-                        <a id="help_otl" href="#">(?)</a>
-                      </div>
-                      <div class="col-md-9">
-                        {!! Form::text('otl_project_code', (isset($project->otl_project_code)) ? $project->otl_project_code : '', 
-                        ['class' => 'form-control OTL_code', 
-                        'placeholder' => 'Prime project code',
-                        'title' => "<p>This field is NOT mandatory.</BR>
-                                    If you do not know the OTL code yet, then do not enter the OTL code nor the Meta-activity.</BR>
-                                    You can come back later to edit it when you will have the right OTL code.</BR>
-                                    But if you enter either the OTL code or the Meta-activity, then you will need to fill in the other one too.</BR></p>
-                                    <p>Also, keep in mind that the OTL data is fetched every month in this tool for the existing OTL code </BR>
-                                    so if you enter the OTL code, you will need to wait the 5th of the month to see the values.</p>
-                                    ",
-                        $otl_name_disabled]
-                        ) !!}
-                        {!! $errors->first('otl_project_code', '<small class="help-block">:message</small>') !!}
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="form-group {!! $errors->has('meta_activity') ? 'has-error' : '' !!} col-md-12">
-                      <div class="col-md-3">
-                        {!! Form::label('meta_activity', 'Meta-activity', ['class' => 'control-label']) !!}
-                      </div>
-                      <div class="col-md-9">
-                        <select class="form-control select2" style="width: 100%;" id="meta_activity" name="meta_activity" data-placeholder="Select a meta-activity">
-                          <option value="" ></option>
-                          @foreach(config('select.meta_activity') as $key => $value)
-                          <option value="{{ $key }}"
-                            @if (old('meta_activity') == $key) selected
-                            @elseif (isset($project->meta_activity) && $value == $project->meta_activity) selected
-                            @endif>
-                            {{ $value }}
-                          </option>
-                          @endforeach
-                        </select>
-                        {!! $errors->first('meta_activity', '<small class="help-block">:message</small>') !!}
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="form-group {!! $errors->has('project_type') ? 'has-error' : '' !!} col-md-12">
-                      <div class="col-md-3">
-                        {!! Form::label('project_type', 'Project type', ['class' => 'control-label']) !!}
-                      </div>
-                      <div class="col-md-9">
-                        <select class="form-control select2" style="width: 100%;" id="project_type" name="project_type" data-placeholder="Select a project type">
-                          <option value="" ></option>
-                          @foreach(config('select.project_type') as $key => $value)
-                          <option value="{{ $key }}"
-                            @if (old('project_type') == $key) selected
-                            @elseif (isset($project->project_type) && $value == $project->project_type) selected
-                            @endif>
-                            {{ $value }}
-                          </option>
-                          @endforeach
-                        </select>
-                        {!! $errors->first('project_type', '<small class="help-block">:message</small>') !!}
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="form-group {!! $errors->has('project_subtype') ? 'has-error' : '' !!} col-md-12">
-                      <div class="col-md-3">
-                        {!! Form::label('project_subtype', ' ', ['class' => 'control-label']) !!}
-                      </div>
-                      <div class="col-md-9">
-                        <select class="form-control select2" style="width: 100%;" id="project_subtype" name="project_subtype" data-placeholder="Select a sub-type">
-                          <option value="" ></option>
-                          @foreach(config('select.project_subtype') as $key => $value)
-                          <option value="{{ $key }}"
-                            @if (old('project_subtype') == $key) selected
-                            @elseif (isset($project->project_subtype) && $value == $project->project_subtype) selected
-                            @endif>
-                            {{ $value }}
-                          </option>
-                          @endforeach
-                        </select>
-                        {!! $errors->first('project_subtype', '<small class="help-block">:message</small>') !!}
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="form-group {!! $errors->has('activity_type') ? 'has-error' : '' !!} col-md-12">
-                      <div class="col-md-3">
-                        {!! Form::label('activity_type', 'Activity type', ['class' => 'control-label']) !!}
-                      </div>
-                      <div class="col-md-9">
-                        <select class="form-control select2" style="width: 100%;" id="activity_type" name="activity_type" data-placeholder="Select an activity type">
-                          <option value="" ></option>
-                          @foreach(config('select.activity_type') as $key => $value)
-                          <option value="{{ $key }}"
-                            @if (old('activity_type') == $key) selected
-                            @elseif (isset($project->activity_type) && $value == $project->activity_type) selected
-                            @endif>
-                            {{ $value }}
-                          </option>
-                          @endforeach
-                        </select>
-                        {!! $errors->first('activity_type', '<small class="help-block">:message</small>') !!}
-                      </div>
-                    </div>
-                  </div>
-                  <div id="project_status_row" class="row">
-                    <div class="form-group {!! $errors->has('project_status') ? 'has-error' : '' !!} col-md-12">
-                      <div class="col-md-3">
-                        {!! Form::label('project_status', 'Project status', ['class' => 'control-label']) !!}
-                      </div>
-                      <div class="col-md-9">
-                        <select class="form-control select2" style="width: 100%;" id="project_status" name="project_status" data-placeholder="Select a project status">
-                          <option value="" ></option>
-                          @foreach(config('select.project_status') as $key => $value)
-                          <option value="{{ $key }}"
-                            @if (old('project_status') == $key) selected
-                            @elseif (isset($project->project_status) && $value == $project->project_status) selected
-                            @endif>
-                            {{ $value }}
-                          </option>
-                          @endforeach
-                        </select>
-                        {!! $errors->first('project_status', '<small class="help-block">:message</small>') !!}
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="form-group {!! $errors->has('region') ? 'has-error' : '' !!} col-md-12">
-                      <div class="col-md-3">
-                        {!! Form::label('region', 'Region', ['class' => 'control-label']) !!}
-                      </div>
-                      <div class="col-md-9">
-                        <select class="form-control select2" style="width: 100%;" id="region" name="region" data-placeholder="Select a region">
-                          <option value="" ></option>
-                          @foreach(config('select.region') as $key => $value)
-                          <option value="{{ $key }}"
-                            @if (old('region') == $key) selected
-                            @elseif (isset($project->region) && $value == $project->region) selected
-                            @endif>
-                            {{ $value }}
-                          </option>
-                          @endforeach
-                        </select>
-                        {!! $errors->first('region', '<small class="help-block">:message</small>') !!}
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="form-group {!! $errors->has('country') ? 'has-error' : '' !!} col-md-12">
-                      <div class="col-md-3">
-                        {!! Form::label('country', 'Country', ['class' => 'control-label']) !!}
-                      </div>
-                      <div class="col-md-9">
-                        <select class="form-control select2" style="width: 100%;" id="country" name="country" data-placeholder="Select a country">
-                          <option value="" ></option>
-                          @foreach(config('countries.country') as $key => $value)
-                          <option value="{{ $key }}"
-                            @if (old('country') == $key) selected
-                            @elseif (isset($project->country) && $value == $project->country) selected
-                            @endif>
-                            {{ $value }}
-                          </option>
-                          @endforeach
-                        </select>
-                        {!! $errors->first('country', '<small class="help-block">:message</small>') !!}
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="form-group {!! $errors->has('customer_location') ? 'has-error' : '' !!} col-md-12">
-                      <div class="col-md-3">
-                        {!! Form::label('customer_location', 'Customer location', ['class' => 'control-label']) !!}
-                      </div>
-                      <div class="col-md-9">
-                        {!! Form::text('customer_location', (isset($project)) ? $project->customer_location : '', ['class' => 'form-control', 'placeholder' => 'customer location',$customer_location_disabled]) !!}
-                        {!! $errors->first('customer_location', '<small class="help-block">:message</small>') !!}
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="form-group {!! $errors->has('technology') ? 'has-error' : '' !!} col-md-12">
-                      <div class="col-md-3">
-                        {!! Form::label('technology', 'Technology', ['class' => 'control-label']) !!}
-                      </div>
-                      <div class="col-md-9">
-                        {!! Form::text('technology', (isset($project)) ? $project->technology : '', ['class' => 'form-control', 'placeholder' => 'technology',$technology_disabled]) !!}
-                        {!! $errors->first('technology', '<small class="help-block">:message</small>') !!}
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="form-group {!! $errors->has('description') ? 'has-error' : '' !!} col-md-12">
-                      <div class="col-md-3">
-                        {!! Form::label('description', 'description', ['class' => 'control-label']) !!}
-                      </div>
-                      <div class="col-md-9">
-                        {!! Form::text('description', (isset($project)) ? $project->description : '', ['class' => 'form-control', 'placeholder' => 'description',$description_disabled]) !!}
-                        {!! $errors->first('description', '<small class="help-block">:message</small>') !!}
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="form-group {!! $errors->has('comments') ? 'has-error' : '' !!} col-md-12">
-                      <div class="col-md-3">
-                        {!! Form::label('comments', 'Comments', ['class' => 'control-label']) !!}
-                      </div>
-                      <div class="col-md-9">
-                        {!! Form::text('comments', (isset($project)) ? $project->comments : '', ['class' => 'form-control', 'placeholder' => 'Comments',$comments_disabled]) !!}
-                        {!! $errors->first('comments', '<small class="help-block">:message</small>') !!}
-                      </div>
-                    </div>
+
+                  <div class="form-intro">
+                        <div class="row">
+                          <div class="form-group {!! $errors->has('user.domain') ? 'has-error' : '' !!} col-md-12">
+                        <div class="col-md-3">
+                            {!! Form::label('user[domain]', 'Practice *', ['class' => 'control-label']) !!}
+                        </div>
+                          <div class="col-md-9"- id="select_project_practice_field">
+                            {!! Form::select('project_practice', config('domains.practice'), (isset($project->project_practice)) ? $project->project_practice : '', ['id' => 'project_practice','class' => 'form-control', $project_practice_disabled,'onchange'=>"changeProjectPractice(this.value);", 'required'
+                            ]) !!}
+                            {!! $errors->first('project_practice', '<small class="help-block">:message</small>') !!}
+                          </div>
+                        </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="form-group {!! $errors->has('customer_id') ? 'has-error' : '' !!} col-md-12">
+                            <div class="col-md-3">
+                              {!! Form::label('customer_id', 'Customer name *', ['class' => 'control-label']) !!}
+                            </div>
+                            <div class="col-md-9" id="select_customer_name_field">
+                              <select class="form-control select2" style="width: 100%;" id="customer_id" name="customer_id" data-placeholder="Select a customer name" onchange="changeCustomerAndCountry($(this))" required>
+                                @foreach($customers_list as $key => $value)
+                                <option value="{{ $key }}" data-name="{{ $value }}"
+                                  @if (old('customer_id') == $key) selected
+                                  @elseif (isset($project->customer_id) && $key == $project->customer_id) selected
+                                  @endif>
+                                  {{ $value }}
+                                </option>
+                                @endforeach
+                              </select>
+                              {!! $errors->first('customer_id', '<small class="help-block">:message</small>') !!}
+                            </div>
+                          </div>
+                        </div>
+
+                         <div class="row">
+                          <div class="form-group {!! $errors->has('country') ? 'has-error' : '' !!} col-md-12">
+                            <div class="col-md-3">
+                              {!! Form::label('country', 'Country *', ['class' => 'control-label']) !!}
+                            </div>
+                            <div class="col-md-9">
+                              {!! Form::text('country', (isset($project)) ? $customer_country_ascii : '', ['class' => 'form-control', 'placeholder' => 'country', 'disabled'=>'disabled']) !!}
+                              {!! $errors->first('country', '<small class="help-block">:message</small>') !!}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="form-group {!! $errors->has('project_type') ? 'has-error' : '' !!} col-md-12">
+                            <div class="col-md-3">
+                              {!! Form::label('project_type', 'Project type *', ['class' => 'control-label']) !!}
+                            </div>
+                            <div class="col-md-9" id="select_project_type_field">
+                              <select class="form-control select2" style="width: 100%;" id="project_type" name="project_type" data-placeholder="Select a project type" onchange="changeProjectType($(this).val())" required>
+                                <option value="" ></option>
+                                @foreach(config('select.project_type_create') as $key => $value)
+                                <option value="{{ $key }}" data-name="{{ $value }}"
+                                  @if (old('project_type') == $key) selected
+                                  @elseif (isset($project->project_type) && $value == $project->project_type) selected
+                                  @endif>
+                                  {{ $value }}
+                                </option>
+                                @endforeach
+                              </select>
+                              {!! $errors->first('project_type', '<small class="help-block">:message</small>') !!}
+                            </div>
+                          </div>
+                        </div>
+                        
+
+
+
+                        
+                        <div class="row">
+                          <div class="form-group {!! $errors->has('otl_project_code') ? 'has-error' : '' !!} col-md-12">
+                            <div class="col-md-3">
+                              {!! Form::label('otl_project_code', 'Prime project code', ['class' => 'control-label']) !!}
+                              <a id="help_otl" href="#">(?)</a>
+                              <i class="fa fa-list prime-list" aria-hidden="true" style="display:none;"></i>
+                            </div>
+                            <div class="col-md-9">
+                              {!! Form::text('otl_project_code', (isset($project->otl_project_code)) ? $project->otl_project_code : '', 
+                              ['class' => 'form-control OTL_code', 
+                              'placeholder' => 'Prime project code','onfocusout'=>'getValueOfPrimeCode(this.value);',
+                              'title' => "<p>This field is NOT mandatory.</BR>
+                                          If you do not know the OTL code yet, then do not enter the OTL code nor the Meta-activity.</BR>
+                                          You can come back later to edit it when you will have the right OTL code.</BR>
+                                          But if you enter either the OTL code or the Meta-activity, then you will need to fill in the other one too.</BR></p>
+                                          <p>Also, keep in mind that the OTL data is fetched every month in this tool for the existing OTL code </BR>
+                                          so if you enter the OTL code, you will need to wait the 5th of the month to see the values.</p>
+                                          ",
+                              $otl_name_disabled]
+                              ) !!}
+                              {!! $errors->first('otl_project_code', '<small class="help-block">:message</small>') !!}
+                            </div>
+                          </div>
+                        </div>
+                        <!-- <div class="row">
+                          <div class="form-group {!! $errors->has('meta_activity') ? 'has-error' : '' !!} col-md-12">
+                            <div class="col-md-3">
+                              {!! Form::label('meta_activity', 'Meta-activity', ['class' => 'control-label']) !!}
+                            </div>
+                            <div class="col-md-9">
+                              <select class="form-control select2" style="width: 100%;" id="meta_activity" name="meta_activity" data-placeholder="Select a meta-activity">
+                                <option value="" ></option>
+                                @foreach(config('select.meta_activity') as $key => $value)
+                                <option value="{{ $key }}"
+                                  @if (old('meta_activity') == $key) selected
+                                  @elseif (isset($project->meta_activity) && $value == $project->meta_activity) selected
+                                  @endif>
+                                  {{ $value }}
+                                </option>
+                                @endforeach
+                              </select>
+                              {!! $errors->first('meta_activity', '<small class="help-block">:message</small>') !!}
+                            </div>
+                          </div>
+                        </div> -->
+                       
+                        
+                        <div id="project_status_row" class="row">
+                          <div class="form-group {!! $errors->has('project_status') ? 'has-error' : '' !!} col-md-12">
+                            <div class="col-md-3">
+                              {!! Form::label('project_status', 'Project status *', ['class' => 'control-label']) !!}
+                            </div>
+                            <div class="col-md-9" id="select_project_status_field">
+                              <select class="form-control select2" style="width: 100%;" id="project_status" name="project_status" data-placeholder="Select a project status" required>
+                                <option value="" ></option>
+                                @foreach(config('select.project_status') as $key => $value)
+                                <option value="{{ $key }}"
+                                  @if (old('project_status') == $key) selected
+                                  @elseif (isset($project->project_status) && $value == $project->project_status) selected
+                                  @endif>
+                                  {{ $value }}
+                                </option>
+                                @endforeach
+                              </select>
+                              {!! $errors->first('project_status', '<small class="help-block">:message</small>') !!}
+                            </div>
+                          </div>
+                        </div>
+                        
+                       
+                        
+                        <div class="row">
+                          <div class="form-group {!! $errors->has('technology') ? 'has-error' : '' !!} col-md-12">
+                            <div class="col-md-3">
+                              {!! Form::label('technology', 'Technology *', ['class' => 'control-label']) !!}
+                              <br>
+                            </div>
+                            <div class="col-md-9">
+                              {!! Form::text('technology', (isset($project)) ? $project->technology : '', ['class' => 'form-control', 'placeholder' => 'Technology',$technology_disabled ,'minlength' => '3' , 'maxlength' => '40','required']) !!}
+                              {!! $errors->first('technology', '<small class="help-block">:message</small>') !!}
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="form-group {!! $errors->has('description') ? 'has-error' : '' !!} col-md-12">
+                            <div class="col-md-3">
+                              {!! Form::label('description', 'Complementary name *', ['class' => 'control-label']) !!}
+                              <br>
+                              
+                            </div>
+                            <div class="col-md-9">
+                              {!! Form::text('description', (isset($project)) ? $project->description : '', ['class' => 'form-control', 'placeholder' => 'example: pegasus',$description_disabled,'minlength' => '3' , 'maxlength' => '30', 'onfocusout'=>'getDescription(this.value);', 'required']) !!}
+                              {!! $errors->first('description', '<small class="help-block">:message</small>') !!}
+                            </div>
+                          </div>
+                        </div>
+
+
+                        <div class="row">
+                          <div class="form-group {!! $errors->has('comments') ? 'has-error' : '' !!} col-md-12">
+                            <div class="col-md-3">
+                              {!! Form::label('comments', 'Comments', ['class' => 'control-label']) !!}
+                              <br>
+                              
+                            </div>
+                            <div class="col-md-9">
+                              {!! Form::text('comments', (isset($project)) ? $project->comments : '', ['class' => 'form-control', 'placeholder' => 'Project Comments',$comments_disabled,'minlength' => '4' , 'maxlength' => '100']) !!}
+                              {!! $errors->first('comments', '<small class="help-block">:message</small>') !!}
+                            </div>
+                          </div>
+                        </div>
                   </div>
                 </div>
+
                 <div class="col-md-6">
-                  <div id="estimated_date_row" class="row">
-                    <div class="form-group {!! $errors->has('estimated_date') ? 'has-error' : '' !!} col-md-12">
+                  <div id="form-dates"> 
+
+                      <div id="estimated_date_row" class="row">
+                        <div class="form-group {!! $errors->has('estimated_date') ? 'has-error' : '' !!} col-md-12">
+                          <div class="col-md-3">
+                            {!! Form::label('estimated_start_date', 'Estimated start date *', ['class' => 'control-label', 'id' => 'estimated_start_date_text']) !!}
+                          </div>
+                          <div class="col-md-9">
+                            <div class="control-group">
+                              <div class="controls">
+                                <div class="input-prepend input-group">
+                                  <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i></span>
+                                  <input type="text" style="width: 200px" name="estimated_start_date" id="estimated_start_date" class="form-control" {{$estimated_start_date_disabled}} />
+                                </div>
+                                {!! $errors->first('estimated_start_date', '<small class="help-block">:message</small>') !!}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- END DATE -->
+
+                      <div id="estimated_date_row" class="row">
+                        <div class="form-group {!! $errors->has('estimated_end_date') ? 'has-error' : '' !!} col-md-12">
+                          <div class="col-md-3">
+                            {!! Form::label('estimated_end_date', 'Estimated end date *', ['class' => 'control-label', 'id' => 'estimated_end_date_text']) !!}
+                          </div>
+                          <div class="col-md-9">
+                            <div class="control-group">
+                              <div class="controls">
+                                <div class="input-prepend input-group">
+                                  <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i></span>
+                                  <input type="text" style="width: 200px" name="estimated_end_date" id="estimated_end_date" class="form-control" {{$estimated_end_date_disabled}} />
+                                </div>
+                                {!! $errors->first('estimated_end_date', '<small class="help-block">:message</small>') !!}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                  </div>
+                  <!-- Project Status -->
+
+                  @if($action == 'update')
+                  <div id="project_status_flag_row" class="row">
+                    <div class="form-group {!! $errors->has('estimated_end_date') ? 'has-error' : '' !!} col-md-12">
                       <div class="col-md-3">
-                        {!! Form::label('estimated_date', 'Estimated start to end date', ['class' => 'control-label', 'id' => 'estimated_date_text']) !!}
+                        {!! Form::label('Project Status Flag', 'Project Status Flag', ['class' => 'control-label', 'id' => 'project_status_flag_label']) !!}
                       </div>
                       <div class="col-md-9">
                         <div class="control-group">
                           <div class="controls">
                             <div class="input-prepend input-group">
-                              <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i></span>
-                              <input type="text" style="width: 200px" name="estimated_date" id="estimated_date" class="form-control" {{$estimated_date_disabled}} />
+                              <label style="width: 241px" name="project_status_flag" id="project_status_flag" class="form-control" />
                             </div>
-                            {!! $errors->first('estimated_date', '<small class="help-block">:message</small>') !!}
+                            {!! $errors->first('project_status_flag', '<small class="help-block">:message</small>') !!}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  @endif
+                  <div id="project_status_flag_row" class="row" style="display:none;">
+                    <div class="form-group {!! $errors->has('estimated_end_date') ? 'has-error' : '' !!} col-md-12">
+                      <div class="col-md-3">
+                        {!! Form::label('Project Status Flag', 'Project Status Flag', ['class' => 'control-label', 'id' => 'project_status_flag_label']) !!}
+                      </div>
+                      <div class="col-md-9">
+                        <div class="control-group">
+                          <div class="controls">
+                            <div class="input-prepend input-group">
+                              <label style="width: 241px" name="project_status_flag" id="project_status_flag" class="form-control" />
+                            </div>
+                            {!! $errors->first('project_status_flag', '<small class="help-block">:message</small>') !!}
                           </div>
                         </div>
                       </div>
@@ -1004,6 +1054,19 @@ h3:after {
                 @endif
                 </div>
               </div>
+              <!-- Consultant -->
+              
+              <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="tab_comment">
+                
+                <div class="row">
+                  <div class="col-md-1">
+                    
+                </div>
+               
+                </div>
+              </div>
+
+
               <!-- Modal -->
               <div class="modal fade" id="modal_comment" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" style="display:table;">
@@ -1050,6 +1113,8 @@ h3:after {
     </div>
   </div>
 </div>
+
+
 <!-- Window -->
 @stop
 
@@ -1059,11 +1124,52 @@ h3:after {
 var year;
 var revenues;
 var projectRevenue;
+
 // If we set up the tab to be selected in the url it will be in variable tab_origin
 var tab_origin = "{{ $tab }}";
 
 $(document).ready(function() {
+
+
+  function checkExists() {
+  var myVar = setTimeout(showPage, 1000);
+}
+
+function showPage() {
+   introJs().setOptions({
+  steps: [{
+    title: 'Welcome',
+    intro: 'Add new project to Dolphin👋'
+  },
+  {
+    element: document.querySelector('#project_name'),
+    intro: 'Project name is auto fill from the next fields'
+  },
+  {
+    element: document.querySelector('.form-intro'),
+    intro: 'please fill in the form'
+  },
+
+  {
+    element: document.querySelector('#form-dates'),
+    intro: 'please fill in dates'
+  },
+  {
+    title: 'Farewell!',
+    element: document.querySelector('#create-project'),
+    intro: 'And this is our final step!'
+  }]
+}).start();
   //region Init Main interface
+}
+if(!localStorage.getItem("visited")){
+   checkExists();
+   localStorage.setItem("visited",true);
+}
+
+
+
+ 
 
   // Ajax setup needed in case there is an update for revenue, comment, loe, ... tabs
   @if($action == 'update')
@@ -1117,7 +1223,7 @@ $(document).ready(function() {
   function project_type_value_check() {
     project_type_val = $("#project_type option:selected").val();
     project_status_val = $("#project_status option:selected").val();
-    if (project_type_val == "Pre-sales")
+    if (project_type_val == "Pre-Sales")
     {
       $('#estimated_date_text').text("Start / Close date");
       $("#gold_order_row").hide();
@@ -1170,6 +1276,7 @@ $(document).ready(function() {
       title: 'How to enter the correct OTL code',
       width: '80%',
       animation: false,
+      allowOutsideClick: false,
       html:
         'You can fin the <b>OTL code</b> and the <b>Meta-activity</b> by login into OTL and find the below fields</BR></BR></BR>' +
         '<img src="{{ asset("/img/help/OTL_help.jpg") }}">'
@@ -1211,23 +1318,67 @@ $(document).ready(function() {
   });
 
   // init DateRange picker
-  $('#estimated_date').daterangepicker({
+  // $('#estimated_date').daterangepicker({
+  //   locale: {
+  //   format: 'YYYY-MM-DD'
+  //   },
+  //   singleDatePicker: true,
+  //   showISOWeekNumbers: true,
+  //   showDropdowns: true,
+  //   autoApply: true,
+  //   disabled: true,
+  //   @if(!empty(old('estimated_date')))
+  //   startDate: '{{ explode(" - ",old("estimated_date"))[0] }}',
+  //   endDate: '{{ explode(" - ",old("estimated_date"))[1] }}'
+  //   @elseif(isset($project->estimated_start_date))
+  //   startDate: '{{ $project->estimated_start_date }}',
+  //   endDate: '{{ $project->estimated_end_date }}'
+  //   @endif
+  // });
+
+  //start date
+
+  $('#estimated_start_date').daterangepicker({
     locale: {
     format: 'YYYY-MM-DD'
     },
+    singleDatePicker: true,
     showISOWeekNumbers: true,
     showDropdowns: true,
     autoApply: true,
     disabled: true,
-    @if(!empty(old('estimated_date')))
-    startDate: '{{ explode(" - ",old("estimated_date"))[0] }}',
-    endDate: '{{ explode(" - ",old("estimated_date"))[1] }}'
+    @if(!empty(old('estimated_start_date')))
+    startDate: '{{ explode(" - ",old("estimated_start_date"))}}',
     @elseif(isset($project->estimated_start_date))
     startDate: '{{ $project->estimated_start_date }}',
-    endDate: '{{ $project->estimated_end_date }}'
     @endif
   });
 
+
+  // end date
+
+
+  $('#estimated_end_date').daterangepicker({
+    locale: {
+    format: 'YYYY-MM-DD'
+    },
+    singleDatePicker: true,
+    showISOWeekNumbers: true,
+    showDropdowns: true,
+    autoApply: true,
+    disabled: true,
+    @if(!empty(old('estimated_end_date')))
+    startDate: '{{ explode(" - ",old("estimated_end_date"))}}',
+    @elseif(isset($project->estimated_end_date))
+    startDate: '{{ $project->estimated_end_date }}',
+    @endif
+  });
+
+  // user practices for test
+  $("#project_practice").select2({
+    placeholder: 'Select a Practice',
+    allowClear: true
+  });
   //region Init select2 boxes
   $("#user_id").select2({
     allowClear: true,
@@ -1241,6 +1392,7 @@ $(document).ready(function() {
   $("#customer_id").select2({
     allowClear: false,
     disabled: {{ $customer_id_select_disabled }}
+    
   });
 
   $("#meta_activity").select2({
@@ -1250,38 +1402,28 @@ $(document).ready(function() {
 
   $("#project_type").select2({
     allowClear: true,
-    disabled: {{ $project_type_select_disabled }}
   });
 
   $("#project_subtype").select2({
     allowClear: true,
-    disabled: {{ $project_type_select_disabled }}
   });
 
   $("#activity_type").select2({
     allowClear: true,
-    disabled: {{ $activity_type_select_disabled }}
   });
 
   $("#project_status").select2({
     allowClear: true,
-    disabled: {{ $project_status_select_disabled }}
   });
 
   $("#samba_stage").select2({
     allowClear: true,
-    disabled: {{ $project_status_select_disabled }}
   });
 
   $("#region").select2({
     allowClear: true,
-    disabled: {{ $region_select_disabled }}
   });
 
-  $("#country").select2({
-    allowClear: true,
-    disabled: {{ $country_select_disabled }}
-  });
   //endregion
 
   // Change when year has been changed
@@ -2200,5 +2342,605 @@ $(document).ready(function() {
   @endif
 
 });
+
+
+// create more automated project name with functions and object name
+
+var prime_codes=[];
+var project_names =[];
+let pn = {
+  
+};
+
+function changeProjectPractice(pp){
+
+  pn['project_practice'] = pp;
+  console.log(pn);
+
+  @if($action == 'update')
+    updateProjectName();
+    getValueOfPrimeCode(pn);
+  @endif
+  @if($action == 'create')
+    createProjectNameFromFields(pn);
+  @endif
+
+  checkProjectName(pn);
+  getValueOfPrimeCode(pn);
+ 
+
+
+
+  return pn
+}
+
+
+function changeCustomerAndCountry(pp){
+      var customer_id = pp.val();
+      var selected = pp.find('option:selected');
+      var extra = selected.data('name');
+
+      var setCustomerAndCountry =null;
+      $.ajax({
+          async: false,
+          type: "POST",
+          global: false,
+            url: "{!! route('getCustomerCountryByID','') !!}",
+            data:{'customer_id':customer_id},
+            
+            success: function(data) {
+              console.log("here");
+              console.log(data);
+              $('#country').val(data);
+              country = $('#country').val();
+              customer = extra;
+
+              console.log(customer);
+              setCustomerAndCountry = country+"-"+extra;
+            }
+
+          });
+      pn['customer']=extra;
+      pn['country']=country;
+      createProjectNameFromFields(pn);
+      checkProjectName(pn);
+      console.log(pn);
+      return pn;
+}
+
+function checkProjectName(pn)
+{
+
+  var html= "";
+  project_name_variables = pn.project_practice+"-"+pn.country+"-"+pn.customer+"-"+pn.project_type;
+  $.ajax({
+                type:'post',
+                url: "{!! route('checkProjectName','') !!}",
+                data:{'project_name':project_name_variables},
+                success: function(data){
+                  console.log("--------------------");
+                  console.log(data);
+                  console.log("--------------------");
+                  if(data.length > 0)
+                  {
+                    $('.project-list').css('display','inline-block');
+                    $('#project_name').css('box-shadow','3px 3px #e57878');
+                    
+                    $('.project-list').on('click',function(){
+                      data.forEach(elem=>html+="<Strong><a href='{!! route('toolsFormUpdate',[Auth::user()->id,'','']) !!}/"+elem.id+"/{{$year}}' target='_blank' >"+elem.project_name+"</a></Strong><br>");
+
+                  Swal.fire({
+
+                    title:"Project already exits with the following names check them",
+                    html:html,
+                    confirmButtonText: 'Ok',
+                    allowOutsideClick: false,
+
+                  }).then((result) => {
+                      /* Read more about isConfirmed, isDenied below */
+                      if (result.isConfirmed) {
+                        html="";
+                      }                     
+                    });
+                });
+                    project_names = data;
+                    console.log("data");
+                    console.log(project_names);
+                    
+                  }
+                  else{
+                    $('.project-list').css('display','none');
+                    $('#project_name').css('box-shadow','none');
+                    project_names =[];
+                  }
+
+                  
+                  console.log(html);
+                },
+                error: function (data, ajaxOptions, thrownError) {
+                  console.log(data);
+                  console.log("--------------");
+                  console.log(thrownError);
+                }
+
+              });
+  console.log("this is project names");
+  console.log(project_names);
+  console.log("this is project names");
+   
+}
+function changeProjectType(pp)
+{
+  
+  pn['project_type'] = pp;
+  createProjectNameFromFields(pn);
+  checkProjectName(pn);
+
+  console.log(pn);
+  return pn
+}
+
+function getValueOfPrimeCode(pp)
+{
+  var html="";
+  let prime_code = pp;
+  let practice=""
+  @if($action == 'update')
+  practice = $('#project_practice').val();
+  @endif
+  @if($action == 'create')
+  practice = pn.project_practice;
+  @endif
+
+  
+  console.log("000000000000");
+  console.log(pp);
+  
+        if(pp != '')
+        {
+          $.ajax({
+         type:'post',
+          url: "{!! route('checkPrimeCode','') !!}",
+          data:{'prime_code':prime_code,'project_practice': practice},
+          success: function(data){
+            console.log(data);
+            if(data.length > 0)
+                  {
+                     $('.prime-list').css('display','inline-block');
+                     $('.OTL_code').css('box-shadow','3px 3px #e57878');
+                   
+                    console.log(data);
+
+                    $('.prime-list').on('click', function(){
+
+                       data.forEach(elem=>html+="<Strong><a href='{!! route('toolsFormUpdate',[Auth::user()->id,'','']) !!}/"+elem.id+"/{{$year}}'>"+elem.project_name+"</a></Strong><br>");
+                      Swal.fire({
+
+                    title:"Project already exits with the following names check them",
+                    html:html,
+                    confirmButtonText: 'Ok',
+                    allowOutsideClick: false,
+
+                  }).then((result) => {
+                      /* Read more about isConfirmed, isDenied below */
+                      if (result.isConfirmed) {
+                        html="";
+                      }                     
+                    });
+                    });
+                    
+                  }
+                  else{
+                    $('.prime-list').css('display','none');
+                     $('.OTL_code').css('box-shadow','none');
+
+                  }
+
+            prime_codes = data;
+          },
+          error: function (data, ajaxOptions, thrownError) {
+              console.log(data);
+              console.log("--------------");
+              console.log(thrownError);
+            }
+    }); 
+        }  
+        else{
+           $('.prime-list').css('display','none');
+           $('.OTL_code').css('box-shadow','none');
+
+        } 
+  
+
+}
+
+
+function updateProjectName()
+{
+  let practice = $('#project_practice').val();
+  let country = $('#country').val();
+  let customer = $('#customer_id').find('option:selected').data('name');
+  let project_type = $('#project_type').val();
+  let description = $('#description').val();
+
+  console.log("practice");
+  console.log(practice);
+  console.log("country");
+  console.log(country);
+  console.log("customer");
+  console.log(customer);
+  pn['project_practice'] = practice;
+  pn['country'] = country;
+  pn['customer'] = customer;
+  pn['project_type'] =project_type;
+  pn['description'] = description;
+
+
+  createProjectNameFromFields(pn);
+}
+function createProjectNameFromFields(pn)
+{
+  let project_name_variables_data = "";
+  var project = [
+    pn.project_practice,
+    pn.country,
+    pn.customer,
+    pn.project_type,
+    pn.description
+  ];
+
+  project.forEach(function(item){
+    if(item != null)
+    {
+      
+      project_name_variables_data +=item;
+      console.log(project_name_variables_data);
+      $('#project_name').val(project_name_variables_data);
+      project_name_variables_data+="-";
+    }
+    else{
+      console.log("no");
+    }
+    
+  });
+
+
+  
+  return project;
+}
+
+function getDescription(pp)
+{
+  pn['description'] = pp;
+  console.log(pn);
+
+   @if($action == 'update')
+    updateProjectName();
+    
+  @endif
+  @if($action == 'create')
+    createProjectNameFromFields(pn);
+  @endif
+
+  checkProjectName(pn);
+  
+  return pn
+}
+
+
+
+
+// automate project name with many msgs
+$(document).ready(function(){
+
+
+
+
+  $.ajaxSetup({
+  headers: {
+    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+  }
+});
+
+let project_name = $('#project_name');
+
+let practice="";
+let country="";
+let customer="";
+let description="";
+let project_type ="";
+let project_name_variables = practice+"-"+country+"-"+customer+"-"+project_type+"-"+description;
+
+
+function getPractice()
+{
+  practice = $('#project_practice').val();
+  return practice;
+}
+
+function getProjectType()
+{
+  project_type = $('#project_type').val();
+  return project_type;
+}
+
+
+
+
+ @if($action == 'update')
+    {
+      let project_status = $('#project_status').val();
+    let estimated_end_date = $('#estimated_end_date').val();
+    //get date
+    var d = new Date();
+    var d2 = new Date(estimated_end_date);
+
+    var month = d.getMonth()+1;
+    var day = d.getDate();
+
+    var output = d.getFullYear() + '-' +
+        ((''+month).length<2 ? '0' : '') + month + '-' +
+        ((''+day).length<2 ? '0' : '') + day;
+    var cu = new Date(output);
+     
+     if(cu.getTime() <= d2.getTime() && project_status == 'Won')
+    {
+      console.log("sh3'al");
+      $('#project_status_flag_row').css('display','block');
+      $('#project_status_flag').html('Ongoing');
+      $('#project_status_flag').css('color','green');
+
+
+
+    }
+    else if(cu.getTime() <= d2.getTime() && project_status == 'Pipeline')
+    {
+      console.log("sh3'al");
+      $('#project_status_flag_row').css('display','block');
+      $('#project_status_flag').html('Ongoing');
+      $('#project_status_flag').css('color','green');
+
+
+
+    }
+    
+    else{
+
+    console.log('fffff');
+    $('#project_status_flag_row').css('display','block');
+    $('#project_status_flag').html('closed');
+    $('#project_status_flag').css('color','red');
+    }
+    }
+  @endif
+
+$(document).on('change','#estimated_end_date',function(){
+
+    let project_status = $('#project_status').val();
+    let estimated_end_date = $('#estimated_end_date').val();
+    //get date
+    var d = new Date();
+    var d2 = new Date(estimated_end_date);
+
+    var month = d.getMonth()+1;
+    var day = d.getDate();
+
+    var output = d.getFullYear() + '-' +
+        ((''+month).length<2 ? '0' : '') + month + '-' +
+        ((''+day).length<2 ? '0' : '') + day;
+    var cu = new Date(output);
+
+
+    console.log('today');
+    console.log(d.getTime());
+
+    console.log('estimate');
+    console.log(d2.getTime());
+
+   
+    if(cu.getTime() <= d2.getTime() && project_status == 'Won')
+    {
+      console.log("sh3'al");
+      $('#project_status_flag_row').css('display','block');
+      $('#project_status_flag').html('Ongoing');
+      $('#project_status_flag').css('color','green');
+
+
+
+    }
+    else if(cu.getTime() <= d2.getTime() && project_status == 'Pipeline')
+    {
+      console.log("sh3'al");
+      $('#project_status_flag_row').css('display','block');
+      $('#project_status_flag').html('Ongoing');
+      $('#project_status_flag').css('color','green');
+
+
+
+    }
+    else{
+
+    console.log('fffff');
+    $('#project_status_flag_row').css('display','block');
+    $('#project_status_flag').html('closed');
+    $('#project_status_flag').css('color','red');
+    }
+});
+
+
+
+});
+$('#create-project').click(function () {chcekOnClick(project_name,customer_id)});
+// $('#update-project').click(function () {checkonUpdate()});
+
+
+// function checkonUpdate()
+// {
+//   var html="";
+//   if(prime_codes.length > 0)
+//     {
+//       console.log("not free");
+//       console.log("ana get hna lah");
+//       console.log(prime_codes);
+//       $('#projectForm').submit(function(e){
+//         e.preventDefault();
+        
+//       });
+
+//       prime_codes.forEach(elem=>html+="<Strong><a href='{!! route('toolsFormUpdate',[Auth::user()->id,'','']) !!}/"+elem.id+"/{{$year}}' target='_blank'>"+elem.project_name+"</a></Strong><br>");
+
+//       Swal.fire({
+
+//                     title:"<Strong>This project already exists</Strong><br><br><span style='font-size:20px;'>You cannot have two projects with the same prime code for the same practice</span>",
+//                     html:html,
+//                     showConfirmButton: false,
+//                     showCancelButton: true,
+//                     cancelButtonText: 'No, cancel!',
+//                     allowOutsideClick: false,
+//                   }).then((result) => {
+//                       /* Read more about isConfirmed, isDenied below */
+//                       if (result.dismiss === Swal.DismissReason.cancel)
+//                       {
+//                          $('#project_name').prop('disabled', true);
+//                          $('#country').prop('disabled', true);
+//                          html="";
+                        
+//                       }
+//                     });
+
+
+//     }
+//     if(prime_codes.length == 0)
+//                   {
+//                     console.log("ana d5lt hna wala ")
+//                   }
+// }
+
+
+function chcekOnClick(project_name,customer_id)
+{
+
+  console.log(pn);
+  
+  var html="";
+  
+
+  
+  
+
+  console.log("function");
+
+    if(project_names.length > 0)
+    {
+      console.log("not free");
+     $('#projectForm').submit(function(e){
+        e.preventDefault();
+        console.log("jjjj");
+        console.log(project_names);
+        if(project_names.length == 0)
+                  {
+                    $('#projectForm').unbind('submit').submit();
+                  }
+      });
+      project_names.forEach(elem=>html+="<Strong><a href='{!! route('toolsFormUpdate',[Auth::user()->id,'','']) !!}/"+elem.id+"/{{$year}}' target='_blank'>"+elem.project_name+"</a></Strong><br>");
+
+      Swal.fire({
+
+                    title:"<Strong>It seems that this project already exists</Strong><br><br><span style='font-size:20px;'>At least one project exists with the same attributes.<br>Do you want to proceed?</span>",
+                    html:html,
+                    confirmButtonText: 'Proceed',
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancel!',
+                    allowOutsideClick: false,
+                  }).then((result) => {
+                      /* Read more about isConfirmed, isDenied below */
+                      if (result.isConfirmed) {
+                        $('#projectForm').unbind('submit').submit(); 
+                        // if($('#project_status').val() == ''){
+
+                        //   $('#projectForm').submit(function(e){
+                        //           e.preventDefault();
+                        //           alert("Fill the required fields");
+                        //   });
+
+                        // }
+                        // else if($('#technology').val() == '' ){
+                        //   $('#projectForm').submit(function(e){
+                        //           e.preventDefault();
+                        //           alert("Fill the required fields");
+                        //   });
+                        // }
+                        // else if($('#description').val() == '')
+                        // {
+                        //   $('#projectForm').submit(function(e){
+                        //           e.preventDefault();
+                        //           alert("Fill the required fields");
+                        //   });
+                        // }
+                        // else{
+                        //   $('#projectForm').unbind('submit').submit(); 
+                        // }
+                        
+                        
+                        html="";
+                      } 
+                      else if (result.dismiss === Swal.DismissReason.cancel)
+                      {
+                         $('#project_name').prop('disabled', true);
+                         $('#country').prop('disabled', true);
+                         html="";
+                      }
+                    });
+
+
+
+    }
+   
+
+  if(prime_codes.length > 0)
+    {
+      console.log("not free");
+      console.log("ana get hna lah");
+      console.log(prime_codes);
+      $('#projectForm').submit(function(e){
+        e.preventDefault();
+        if(prime_codes.length == 0)
+                  {
+                    $('#projectForm').unbind('submit').submit();
+                  }
+      });
+
+      prime_codes.forEach(elem=>html+="<Strong><a href='{!! route('toolsFormUpdate',[Auth::user()->id,'','']) !!}/"+elem.id+"/{{$year}}' target='_blank'>"+elem.project_name+"</a></Strong><br>");
+
+      Swal.fire({
+
+                    title:"<Strong>This project already exists</Strong><br><br><span style='font-size:20px;'>You cannot have two projects with the same prime code for the same practice</span>",
+                    html:html,
+                    showConfirmButton: false,
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancel',
+                    allowOutsideClick: false,
+                  }).then((result) => {
+                      /* Read more about isConfirmed, isDenied below */
+                      if (result.dismiss === Swal.DismissReason.cancel)
+                      {
+                         $('#project_name').prop('disabled', true);
+                         $('#country').prop('disabled', true);
+                         html="";
+                        
+                      }
+                    });
+
+
+    }
+    
+
+}
+
+
+    
+
+
+
 </script>
 @stop

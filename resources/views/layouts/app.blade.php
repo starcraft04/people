@@ -50,7 +50,7 @@
               <span>Dolphin @if(env('APP_DEBUG') == 'true') TEST @endif</span>
             </a>
           </div>
-
+          <span style="color: white; float:right;margin-right: 10%;">V1.1.0</span>
           <div class="clearfix"></div>
 
           <br /><br />

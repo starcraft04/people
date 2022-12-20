@@ -62,14 +62,23 @@ return [
     ],
     'project_status' => [
         'Pipeline' => 'Pipeline',
-        'Started' => 'Started',
-        'Closed' => 'Closed',
+        'Won' => 'Won',
+        'Lost' => 'Lost',
     ],
     'project_type' => [
         'Baseline' => 'Baseline',
         'Project' => 'Project',
         'Pre-sales' => 'Pre-sales',
         'Orange absence or other' => 'Orange absence or other',
+    ],
+
+    'project_type_create' => [
+        'Pre-Sales' => 'Pre-Sales',
+        'POC' => 'POC',
+        'Build' => 'Build',
+        'Run' => 'Run',
+        'Lifecycle' => 'Lifecycle',
+        'Standalone engagement' => 'Standalone engagement',
     ],
     'project_subtype' => [
         'POC' => 'POC',

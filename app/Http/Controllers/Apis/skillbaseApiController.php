@@ -174,6 +174,7 @@ public function activeUserSkillsAPI()
 
     }
 
+    // select users.name, GROUP_CONCAT(skills.skill) from skills left JOIN skill_user on skills.id = skill_user.skill_id left JOIN users on skill_user.user_id = users.id where users.activity_status = 'active' and skills.certification=0 GROUP By (users.name)
 
 
 public function allSkills()

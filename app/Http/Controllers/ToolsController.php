@@ -6,6 +6,7 @@ use App\Action;
 use App\Activity;
 use App\Comment;
 use App\Customer;
+use App\Project;
 use App\Http\Controllers\Auth\AuthUsersForDataView;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProjectCreateRequest;
@@ -22,6 +23,7 @@ use Datatables;
 use DB;
 use Illuminate\Http\Request;
 use Session;
+use Illuminate\Support\Facades\Http;
 
 class ToolsController extends Controller
 {
@@ -137,6 +139,7 @@ class ToolsController extends Controller
         $project_name_disabled = '';
         $customer_id_select_disabled = 'false';
         $otl_name_disabled = '';
+        $project_practice_disabled='false';
         $meta_activity_select_disabled = 'false';
         $project_type_select_disabled = 'false';
         $activity_type_select_disabled = 'false';
@@ -148,7 +151,13 @@ class ToolsController extends Controller
         $technology_disabled = '';
         $description_disabled = '';
         $comments_disabled = '';
-        $estimated_date_disabled = '';
+        // $estimated_date_disabled = '';
+        //START DATE
+        $estimated_start_date_disabled='';
+        //END DATE
+        $estimated_end_date_disabled='';
+
+
         $LoE_onshore_disabled = '';
         $LoE_nearshore_disabled = '';
         $LoE_offshore_disabled = '';
@@ -183,9 +192,20 @@ class ToolsController extends Controller
 
         $num_of_comments = 0;
 
+
+         $year = date('Y');
+        $manager_list = [];
+        if (Auth::user()->can('tools-activity-all-edit')) {
+            $user_id_for_update = '0';
+        } elseif (Auth::user()->is_manager == 1) {
+            $user_id_for_update = '0';
+        } else {
+            $user_id_for_update = Auth::user()->id;
+        }
+
         return view('tools/create_update', compact('year', 'customers_list',
-      'user_list', 'user_selected', 'created_by_user_id',
-      'project_name_disabled',
+      'user_list', 'user_selected', 'created_by_user_id','project_name_disabled',
+      'project_practice_disabled',
       'customer_id_select_disabled',
       'otl_name_disabled',
       'meta_activity_select_disabled',
@@ -199,7 +219,9 @@ class ToolsController extends Controller
       'technology_disabled',
       'description_disabled',
       'comments_disabled',
-      'estimated_date_disabled',
+      // 'estimated_date_disabled',
+      'estimated_start_date_disabled',
+      'estimated_end_date_disabled',
       'LoE_onshore_disabled',
       'LoE_nearshore_disabled',
       'LoE_offshore_disabled',
@@ -215,14 +237,90 @@ class ToolsController extends Controller
       ->with('action', 'create');
     }
 
+    public function checkProjectExistsByName(Request $request)
+    {
+        $inputs = $request->all();
+
+        $name = $inputs['project_name'];
+
+        $response = Project::where('project_name','like','%'.$name.'%')->get(['id','project_name']);
+
+
+        return $response;
+
+
+    }
+
+
+
+    public function checkPrimeExistanceOnProject(Request $request)
+    {
+        $inputs = $request->all();
+        $project_practice = $inputs['project_practice'];
+        $prime_code = $inputs['prime_code'];
+        $responseWithExistsPrimeAndPractice = [];
+        $responseWithExistsPrimeDiffPractice = [];
+
+        $response =  Project::where('otl_project_code',$prime_code)->get(['id','project_name','project_practice','otl_project_code']);
+
+        foreach($response as $key=> $value)
+        {
+            if($value['otl_project_code'] == $prime_code && $value['project_practice'] == $project_practice )
+            {
+                array_push($responseWithExistsPrimeAndPractice,$value);
+                return $responseWithExistsPrimeAndPractice;
+            }
+            else{
+                $response = [];
+            }
+        }
+
+        return $response;
+    }
+    public function getCustomerCountryByID(Request $request)
+    {
+        // code...
+        $inputs = $request->all();
+        
+
+        $customer_id = $inputs['customer_id'];
+
+        $country = Customer::where('id',$customer_id)->get('country_owner');
+        //print("country_owner : ".$country[0]->country_owner);
+        $CON_Code = $country[0]->country_owner;
+
+        $CON_ISO_2 = json_decode(Http::get('http://country.io/names.json'),true);
+
+
+        $ISO_3 = json_decode(Http::get('http://country.io/iso3.json'),true);
+
+        foreach($CON_ISO_2 as $key => $val)
+        {
+            if($val == $CON_Code)
+            {
+               // print($key." ".$val."<br>");
+                foreach($ISO_3 as $key3 => $val3)
+                {
+                    if($key3 == $key)
+                    {
+                       // print($val3);
+                        $result =$val3;
+                    }
+                }
+            }
+        }
+
+        return $result;
+
+    }
     public function postFormCreate(ProjectCreateRequest $request)
     {
         $inputs = $request->all();
 
         //dd($inputs);
-        $start_end_date = explode(' - ', $inputs['estimated_date']);
-        $inputs['estimated_start_date'] = trim($start_end_date[0]);
-        $inputs['estimated_end_date'] = trim($start_end_date[1]);
+        // $start_end_date = explode(' - ', $inputs['estimated_date']);
+        $inputs['estimated_start_date'] = $inputs['estimated_start_date']; 
+        $inputs['estimated_end_date'] = $inputs['estimated_end_date'];
 
         $project = $this->projectRepository->create($inputs);
 
@@ -240,6 +338,8 @@ class ToolsController extends Controller
                 $activity = $this->activityRepository->create($inputsActivities);
             }
         }
+
+
 
         // Here I will test if there is a comment
         if (! empty($inputs['project_comment'])) {
@@ -261,8 +361,13 @@ class ToolsController extends Controller
         $user = User::find(Auth::user()->id);
         $user->last_activity_update = date('Y-m-d H:i:s');
         $user->save();
+        $u = Auth::user()->id;
+        $pid = $project->id;
+        $year = $inputs['year'];
+        $year_p = intval($year);
+        
 
-        return redirect($redirect)->with('success', 'New project created successfully');
+        return redirect('toolsFormUpdate/0/'.$pid.'/'.$year_p)->with('success', 'New project created successfully');
     }
 
     public function getCustomerAndProjectBySambaID($samba_id){
@@ -367,16 +472,31 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
             return json_encode($result);
     }
 
+    //check existing prime codes
+
+    public function checkExistingPrime(Request $request)
+    {
+         $inputs = $request->all();
+        
+
+        $prime_code = $inputs['prime_code'];
+
+        $project_list = Project::where('otl_project_code',$prime_code)->get(['id','project_name']);
+
+        return $project_list;
+    }
+
     public function getFormUpdate($user_id, $project_id, $year, $tab = 'tab_main')
     {
         // Here we setup all the disabled fields to be disabled
         $project_name_disabled = 'disabled';
-        $customer_id_select_disabled = 'true';
+        $customer_id_select_disabled = 'disabled';
+        $project_practice_disabled ='';
         $otl_name_disabled = 'disabled';
-        $meta_activity_select_disabled = 'true';
-        $project_type_select_disabled = 'true';
-        $activity_type_select_disabled = 'true';
-        $project_status_select_disabled = 'true';
+        $meta_activity_select_disabled = '';
+        $project_type_select_disabled = '';
+        $activity_type_select_disabled = '';
+        $project_status_select_disabled = '';
         $region_select_disabled = 'true';
         $country_select_disabled = 'true';
         $user_select_disabled = 'true';
@@ -384,7 +504,9 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
         $technology_disabled = 'disabled';
         $description_disabled = 'disabled';
         $comments_disabled = 'disabled';
-        $estimated_date_disabled = 'disabled';
+        // $estimated_date_disabled = 'disabled';
+        $estimated_start_date_disabled = 'disabled';
+        $estimated_end_date_disabled = 'disabled';
         $LoE_onshore_disabled = 'disabled';
         $LoE_nearshore_disabled = 'disabled';
         $LoE_offshore_disabled = 'disabled';
@@ -400,13 +522,14 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
         $project = $this->projectRepository->getById($project_id);
 
         if (Auth::user()->can('tools-all_projects-edit') || (isset($project->created_by_user_id) && (Auth::user()->id == $project->created_by_user_id))) {
-            $project_name_disabled = '';
+            $project_name_disabled = 'true';
             $customer_id_select_disabled = 'false';
+            $project_practice='';
             $otl_name_disabled = '';
             $meta_activity_select_disabled = 'false';
-            $project_type_select_disabled = 'false';
-            $activity_type_select_disabled = 'false';
-            $project_status_select_disabled = 'false';
+            $project_type_select_disabled = '';
+            $activity_type_select_disabled = '';
+            $project_status_select_disabled = '';
             $region_select_disabled = 'false';
             $country_select_disabled = 'false';
             $user_select_disabled = 'false';
@@ -414,7 +537,9 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
             $technology_disabled = '';
             $description_disabled = '';
             $comments_disabled = '';
-            $estimated_date_disabled = '';
+            // $estimated_date_disabled = '';
+            $estimated_start_date_disabled = '';
+            $estimated_end_date_disabled = '';
             $LoE_onshore_disabled = '';
             $LoE_nearshore_disabled = '';
             $LoE_offshore_disabled = '';
@@ -435,6 +560,8 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
 
         $customers_list = Customer::orderBy('name')->pluck('name', 'id');
         $customers_list->prepend('', '');
+
+
 
         // Here we will define if we can select a user for this project and activity or not
         // Attention, we need to prevent in the user_list to have ids when already assigned to a project
@@ -539,9 +666,37 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
     ->groupBy('users.name')
     ->pluck('users.name', 'users.id');
 
-        return view('tools/create_update', compact('users_on_project','num_of_actions','user_id','project','year','activities','from_otl','forecast','otl','customers_list',
+        $customer_country = $project->customer_id;
+        $country = Customer::where('id',$customer_country)->get('country_owner');
+        //print("country_owner : ".$country[0]->country_owner);
+        $CON_Code = $country[0]->country_owner;
+
+        $CON_ISO_2 = json_decode(Http::get('http://country.io/names.json'),true);
+
+
+        $ISO_3 = json_decode(Http::get('http://country.io/iso3.json'),true);
+
+        foreach($CON_ISO_2 as $key => $val)
+        {
+            if($val == $CON_Code)
+            {
+               // print($key." ".$val."<br>");
+                foreach($ISO_3 as $key3 => $val3)
+                {
+                    if($key3 == $key)
+                    {
+                       // print($val3);
+                        $customer_country_ascii =$val3;
+                    }
+                }
+            }
+        }
+
+
+        return view('tools/create_update', compact('users_on_project','num_of_actions','user_id','project','year','activities','from_otl','forecast','otl','customers_list','customer_country_ascii',
     'project_name_disabled',
     'customer_id_select_disabled',
+    'project_practice_disabled',
     'otl_name_disabled',
     'meta_activity_select_disabled',
     'project_type_select_disabled',
@@ -554,7 +709,9 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
     'technology_disabled',
     'description_disabled',
     'comments_disabled',
-    'estimated_date_disabled',
+    // 'estimated_date_disabled',
+    'estimated_start_date_disabled',
+    'estimated_end_date_disabled',
     'LoE_onshore_disabled',
     'LoE_nearshore_disabled',
     'LoE_offshore_disabled',
@@ -577,7 +734,7 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
         if (! empty(Session::get('url'))) {
             $redirect = Session::get('url');
         } else {
-            $redirect = 'toolsActivities';
+         $redirect = 'toolsActivities';   
         }
 
         $inputs = $request->all();
@@ -593,9 +750,9 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
             return redirect($redirect)->with('error', 'You do not have permission to remove a user');
         }
 
-        $start_end_date = explode(' - ', $inputs['estimated_date']);
-        $inputs['estimated_start_date'] = trim($start_end_date[0]);
-        $inputs['estimated_end_date'] = trim($start_end_date[1]);
+        // $start_end_date = explode(' - ', $inputs['estimated_date']);
+        $inputs['estimated_start_date'] = $inputs['estimated_start_date']; 
+        $inputs['estimated_end_date'] = $inputs['estimated_end_date'];
 
         $project = $this->projectRepository->update($inputs['project_id'], $inputs);
 
@@ -647,8 +804,9 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
         $user = User::find(Auth::user()->id);
         $user->last_activity_update = date('Y-m-d H:i:s');
         $user->save();
+        $tools = 'toolsActivities';
 
-        return redirect($redirect)->with('success', 'Project updated successfully');
+        return redirect($tools)->with('success', 'Project updated successfully');
     }
 
     public function getFormTransfer($user_id, $project_id)
