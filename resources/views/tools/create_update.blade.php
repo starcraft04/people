@@ -2391,6 +2391,7 @@ function changeCustomerAndCountry(pp){
             success: function(data) {
               console.log("here");
               console.log(data);
+              
               $('#country').val(data);
               country = $('#country').val();
               customer = extra;
@@ -2855,34 +2856,15 @@ function chcekOnClick(project_name,customer_id)
                   }).then((result) => {
                       /* Read more about isConfirmed, isDenied below */
                       if (result.isConfirmed) {
-                        $('#projectForm').unbind('submit').submit(); 
-                        // if($('#project_status').val() == ''){
+                        $('#projectForm').unbind('submit').submit();
+                        // $('#projectForm').each(function() {
+                        //   console.log($(this).attr('value', $(this).val()));
+                        // });
 
-                        //   $('#projectForm').submit(function(e){
-                        //           e.preventDefault();
-                        //           alert("Fill the required fields");
-                        //   });
+                       
 
-                        // }
-                        // else if($('#technology').val() == '' ){
-                        //   $('#projectForm').submit(function(e){
-                        //           e.preventDefault();
-                        //           alert("Fill the required fields");
-                        //   });
-                        // }
-                        // else if($('#description').val() == '')
-                        // {
-                        //   $('#projectForm').submit(function(e){
-                        //           e.preventDefault();
-                        //           alert("Fill the required fields");
-                        //   });
-                        // }
-                        // else{
-                        //   $('#projectForm').unbind('submit').submit(); 
-                        // }
-                        
-                        
-                        html="";
+                                                html="";
+
                       } 
                       else if (result.dismiss === Swal.DismissReason.cancel)
                       {
