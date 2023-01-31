@@ -9,10 +9,16 @@
 <link href="{{ asset('/plugins/daterangepicker/daterangepicker.css') }}" rel="stylesheet" />
 <!-- Document styling -->
 <link href="{{ asset('/css/loe.css') }}" rel="stylesheet" />
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous"/>
+
+
+
 @stop
 
 @section('scriptsrc')
 <!-- JS -->
+
+
 <!-- jquery-ui -->
 <script src="{{ asset('/plugins/jQueryUI/jquery-ui.min.js') }}" type="text/javascript"></script>
 <!-- Select2 -->
@@ -75,6 +81,9 @@
                   <li><a class="dropdown-selection loe_template" href="#">Load template</a></li>
                 </ul>
               </div>
+            </div>
+            <div class="col-md-1v" style="float: right;">
+              <button class="buttonLoeCreate btn btn-success"><span class="glyphicon glyphicon-plus"></span></button>
             </div>
           </div>
           <div id="table_loader" class="row">
@@ -348,7 +357,12 @@
 
 @section('script')
 <script>
+
+
 $(document).ready(function() {
+  
+
+
   //region Init
   // Ajax setup needed in case there is an update
   $.ajaxSetup({
@@ -649,12 +663,12 @@ $(document).ready(function() {
             html += '<tr>';
             html += '<th rowspan="3" data-colname="action" style="min-width:140px;" data-tableexport-display="none">'+'Action'+'</th>';
             html += '<th rowspan="3" data-colname="row_order" style="min-width:20px;" data-tableexport-display="none">'+'#'+'</th>';
-            html += '<th rowspan="3" data-colname="main_phase" style="min-width:150px;">'+'Main Phase'+'</th>';
-            html += '<th rowspan="3" data-colname="secondary_phase" style="min-width:150px;">'+'Secondary Phase'+'</th>';
-            html += '<th rowspan="3" data-colname="domain" style="min-width:150px;">'+'Domain'+'</th>';
+            html += '<th rowspan="3" data-colname="main_phase" style="min-width:150px;">'+'Technology'+'</th>';
+            // html += '<th rowspan="3" data-colname="secondary_phase" style="min-width:150px;">'+'Secondary Phase'+'</th>';
+            // html += '<th rowspan="3" data-colname="domain" style="min-width:150px;">'+'Domain'+'</th>';
             html += '<th rowspan="3" data-colname="description" style="min-width:250px;">'+'Description'+'</th>';
-            html += '<th rowspan="3" data-colname="option" style="min-width:150px;">'+'Option'+'</th>';
-            html += '<th rowspan="3" data-colname="assumption" style="min-width:250px;">'+'Assumption'+'</th>';
+            html += '<th rowspan="3" data-colname="option" style="min-width:150px;">'+'Responder Name'+'</th>';
+            // html += '<th rowspan="3" data-colname="assumption" style="min-width:250px;">'+'Assumption'+'</th>';
             if (data.col.site.length>0) {
               html += '<th data-colname="formula" rowspan="3" style="min-width:150px;">'+'Formula'+'</th>';
             }
@@ -665,9 +679,10 @@ $(document).ready(function() {
             html += '<th data-colname="recurrent" rowspan="3">'+'Recurrent'+'</th>';
             html += '<th data-colname="loe_per_quantity" rowspan="3">'+'LoE<br>(per unit)<br>in days'+'</th>';
             html += '<th data-colname="fte" rowspan="3">'+'FTE'+'</th>';
-            html += '<th data-colname="num_of_months" rowspan="3">'+'Number<br>of<br>months'+'</th>';
+            
             html += '<th data-colname="start_date" rowspan="3" style="min-width:150px;">'+'Start date'+'</th>';
             html += '<th data-colname="end_date" rowspan="3" style="min-width:150px;">'+'End date'+'</th>';
+            html += '<th data-colname="num_of_months" rowspan="3">'+'Number<br>of<br>months'+'</th>';
             if (data.col.cons.length>0) {
               html += '<th data-colname="consulting" colspan="'+4*data.col.cons.length+'">'+'Consulting type'+'</th>';
             }
@@ -752,38 +767,75 @@ $(document).ready(function() {
               html += '<tr data-position="'+row.row_order+'" data-id="'+row.id+'">';
               //region actions
               html += '<td data-colname="action" data-tableexport-display="none">';
-              html += '<div class="btn-group btn-group-xs">';
+              // html += '<div class="btn-group btn-group-xs">';
+              // if ({{ Auth::user()->can('projectLoe-signoff') ? 'true' : 'false' }}){
+              //   if (row.signoff_user_id != null) {
+              //     html += '<button type="button" data-id="'+row.id+'" class="buttonLoeSignoff btn"><span class="glyphicon glyphicon-ok"></span></button>';
+              //   } else {
+              //     html += '<button type="button" data-id="'+row.id+'" class="buttonLoeSignoff btn btn-default"><span class="glyphicon glyphicon-remove"></span></button>';
+              //   }
+              // };
+              // if ({{ Auth::user()->can('projectLoe-create') ? 'true' : 'false' }}){
+              //   html += '<button type="button" data-id="'+row.id+'" class="buttonLoeCreate btn btn-info"><span class="glyphicon glyphicon-plus"></span></button>';
+              // };
+              // if ({{ Auth::user()->can('projectLoe-create') ? 'true' : 'false' }} || {{ Auth::user()->can('projectLoe-editAll') ? 'true' : 'false' }}){
+              //   html += '<button type="button" data-id="'+row.id+'" class="buttonLoeDuplicate btn btn-warning"><span class="glyphicon glyphicon-duplicate"></span></button>';
+              // };
+              // if ({{ Auth::user()->can('projectLoe-delete') ? 'true' : 'false' }} || {{ Auth::user()->can('projectLoe-deleteAll') ? 'true' : 'false' }}){
+              //   if (row.user_id == {{ Auth::user()->id }} || {{ Auth::user()->can('projectLoe-deleteAll') ? 'true' : 'false' }}) {
+              //     html += '<button type="button" data-id="'+row.id+'" data-first_line="'+row.first_line+'" class="buttonLoeDelete btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
+              //   }
+              // };
+
+              //kebab
+              // html += '</div>';
+              html+='<div class="row">';
+              html+='<div class="col-md-1">';
+              html+='<div class="dropdown">';
+              html+='<button id="options_loe" class="btn btn-sm dropdown-toggle" type="button" data-toggle="dropdown" style="display: block;margin: 0 auto;width: 123px;">';
+              html+='<i class="fa fa-bars" aria-hidden="true"></i>';
+              html+='</button>';
+              html+='<ul class="dropdown-menu">';          
+              
+              html+='<li style="text-align:center;"><a class="dropdown-selection loe_mass_signoff" href="#"> </a>';
+              html += '<div class="btn-group btn-group-xs" style="width:100%;">';
               if ({{ Auth::user()->can('projectLoe-signoff') ? 'true' : 'false' }}){
                 if (row.signoff_user_id != null) {
-                  html += '<button type="button" data-id="'+row.id+'" class="buttonLoeSignoff btn"><span class="glyphicon glyphicon-ok"></span></button>';
+                  html += '<button type="button" data-id="'+row.id+'" class="buttonLoeSignoff btn" style="background:none; width:100%;border: none;"><span class="">Sign Off</span></button>';
                 } else {
-                  html += '<button type="button" data-id="'+row.id+'" class="buttonLoeSignoff btn btn-default"><span class="glyphicon glyphicon-remove"></span></button>';
+                  html += '<button type="button" data-id="'+row.id+'" class="buttonLoeSignoff btn btn-default" style="background:none; width:100%;border:none;"><span class="">Remove Sign Off</span></button>';
                 }
               };
-              if ({{ Auth::user()->can('projectLoe-create') ? 'true' : 'false' }}){
-                html += '<button type="button" data-id="'+row.id+'" class="buttonLoeCreate btn btn-info"><span class="glyphicon glyphicon-plus"></span></button>';
-              };
-              if ({{ Auth::user()->can('projectLoe-create') ? 'true' : 'false' }} || {{ Auth::user()->can('projectLoe-editAll') ? 'true' : 'false' }}){
-                html += '<button type="button" data-id="'+row.id+'" class="buttonLoeDuplicate btn btn-warning"><span class="glyphicon glyphicon-duplicate"></span></button>';
-              };
+              html+='</div>';
+              html+='</li>';
+              html+='<li style="text-align:center;">';
               if ({{ Auth::user()->can('projectLoe-delete') ? 'true' : 'false' }} || {{ Auth::user()->can('projectLoe-deleteAll') ? 'true' : 'false' }}){
                 if (row.user_id == {{ Auth::user()->id }} || {{ Auth::user()->can('projectLoe-deleteAll') ? 'true' : 'false' }}) {
-                  html += '<button type="button" data-id="'+row.id+'" data-first_line="'+row.first_line+'" class="buttonLoeDelete btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>';
+                  html += '<button type="button" data-id="'+row.id+'" data-first_line="'+row.first_line+'" class="buttonLoeDelete" style="background:none; width:100%;border: none;"><span class="">Delet LOE</span></button>';
                 }
               };
-              html += '</div>';
 
-              html +='</td>';
+              html+='</li>';
+              html+='<li style="text-align:center;">';
+               if ({{ Auth::user()->can('projectLoe-create') ? 'true' : 'false' }} || {{ Auth::user()->can('projectLoe-editAll') ? 'true' : 'false' }}){
+                html += '<button type="button" data-id="'+row.id+'" class="buttonLoeDuplicate" style="background:none; width:100%;border: none;"><span>Duplicate LOE</span></button>';
+              };
+              html+='</li>';
+                html+='</ul>';
+              html+='</div>';
+            html+='</div>';
+          html+='</div>';
+            
               //endregion
 
               //region main text
               html += '<td data-colname="row_order" data-tableexport-display="none" class="drag-handler">'+row.row_order+'</td>';
               html += td_no_null(row.main_phase,'','main_phase','editable');
-              html += td_no_null(row.secondary_phase,'','secondary_phase','editable');
-              html += td_no_null(row.domain,'','domain','editable');
+              // html += td_no_null(row.secondary_phase,'','secondary_phase','editable');
+              // html += td_no_null(row.domain,'','domain','editable');
               html += td_no_null(row.description,'','description','editable cr',true);
               html += td_no_null(row.option,'','option','editable');
-              html += td_no_null(row.assumption,'','assumption','editable cr',true);
+              // html += td_no_null(row.assumption,'','assumption','editable cr',true);
               //endregion
 
               //region sites
@@ -816,7 +868,6 @@ $(document).ready(function() {
               }
               html += '<td data-colname="loe_per_quantity" data-value="'+row.loe_per_quantity+'" @can('projectLoe-edit') contenteditable="true" @endcan @can('projectLoe-edit') class="editable" @endcan>'+row.loe_per_quantity+'</td>';
               html += '<td data-colname="fte" @can('projectLoe-edit') data-value="'+row.fte+'" contenteditable="true" @endcan @can('projectLoe-edit') class="editable" @endcan>'+row.fte+'</td>';
-              html += '<td data-colname="num_of_months" @can('projectLoe-edit') data-value="'+row.num_of_months+'" contenteditable="true" @endcan @can('projectLoe-edit') class="editable" @endcan>'+row.num_of_months+'</td>';
               
               //endregion
 
@@ -825,6 +876,8 @@ $(document).ready(function() {
               html += td_no_null(row.end_date,'','end_date','editable');
               //endregion
 
+              html += '<td data-colname="num_of_months" @can('projectLoe-edit') data-value="'+row.num_of_months+'" contenteditable="true" @endcan @can('projectLoe-edit') class="editable" @endcan>'+row.num_of_months+'</td>';
+              
               //region consulting
               //Being in row.id, we will loop through the different consulting values
               for (const item in data.data.cons[row.id]) {
@@ -859,11 +912,11 @@ $(document).ready(function() {
             html += '<td data-colname="action" data-tableexport-display="none"></td>';
             html += '<td data-colname="row_order" data-tableexport-display="none"></td>';
             html += '<td data-colname="main_phase" class="grand_total">Grand Total</td>';
-            html += '<td data-colname="secondary_phase"></td>';
-            html += '<td data-colname="domain"></td>';
+            // html += '<td data-colname="secondary_phase"></td>';
+            // html += '<td data-colname="domain"></td>';
             html += '<td data-colname="description"></td>';
             html += '<td data-colname="option"></td>';
-            html += '<td data-colname="assumption"></td>';
+            // html += '<td data-colname="assumption"></td>';
             // We need to remove one column named formula in case there is no calculation
             if (data.col.site.length != 0) {
               html += '<td data-colname="formula"></td>';
@@ -876,10 +929,11 @@ $(document).ready(function() {
             html += '<td data-colname="recurrent"></td>';
             html += '<td data-colname="loe_per_quantity"></td>';
             html += '<td data-colname="fte"></td>';
-            html += '<td data-colname="num_of_months"></td>';
+            
             
             html += '<td data-colname="start_date"></td>';
             html += '<td data-colname="end_date"></td>';
+            html += '<td data-colname="num_of_months"></td>';
             for (let index = 0; index < data.col.cons.length; index++) {
               html += '<td data-colname="consulting"></td>';
               html += '<td data-colname="consulting"></td>';
@@ -1827,7 +1881,9 @@ $(document).ready(function() {
     //region CREATE
     $(document).on('click', '.buttonLoeCreate', function () {
       //console.log($(this).data('id'));
-      var id = $(this).data('id');
+
+
+      var id = $('#LoeTableTbody tr:last').attr('data-id');
       $.ajax({
             type: 'get',
             url: "{!! route('loeCreate','') !!}/"+id,
@@ -1900,6 +1956,7 @@ $(document).ready(function() {
       var colname = td.data('colname');
       var value = td.html();
       var old_value = editable_old_value;
+      var difference =0;
       //console.log(value);
 
       if (value != editable_old_value) {
@@ -1912,7 +1969,10 @@ $(document).ready(function() {
           case 'option':
           case 'assumption':
           case 'start_date':
+
+
           case 'end_date':
+            
           case 'quantity':
           case 'recurrent':
           case 'loe_per_quantity':
@@ -1951,6 +2011,64 @@ $(document).ready(function() {
                   if (colname == 'quantity' || colname == 'loe_per_quantity' || colname == 'fte' || colname == 'num_of_months' || colname == 'recurrent') {
                     td.data('value',value);
                     fill_total();
+                  }
+                  if(colname == 'start_date'){
+                    var regEx = /^\d{4}-(\d{1}|\d{2})-(\d{1}|\d{2})$/;
+
+                      if(value.match(regEx)){
+                        console.log("true");
+                        td.addClass('update_success');
+                        td.removeClass('update_error');
+
+
+
+                      }else{
+                        console.log("false");
+                        td.addClass('update_error');
+                        td.data('value',"");
+                        
+                      }
+                  }
+                  if(colname == 'end_date')
+                  {
+                    var regEx = /^\d{4}-(\d{1}|\d{2})-(\d{1}|\d{2})$/;
+
+                      if(value.match(regEx)){
+                        console.log("true");
+                        td.addClass('update_success');
+                        td.removeClass('update_error');
+
+                        var st = tr.find('td[data-colname=start_date]').html();
+                        var end = tr.find('td[data-colname=end_date]').html();
+                        
+                        var startdate = new Date(st);
+                        var enddate= new Date(end);
+
+                        difference = (enddate.getFullYear()*12 + enddate.getMonth()) - (startdate.getFullYear()*12 + startdate.getMonth());
+                        console.log(difference);
+                        console.log(loe_id);
+
+      // var tr = td.closest('tr');
+      // var loe_id = tr.data('id');
+      // var colname = td.data('colname');
+      // var value = td.html();
+      // var old_value = editable_old_value;
+                        tr.find('td[data-colname=num_of_months]').html(difference);
+                        tr.find('td[data-colname=num_of_months]').val(difference);
+                        $(tr.find('td[data-colname=num_of_months]')).attr('data-value',difference);
+                        update_cell(tr.find('td[data-colname=num_of_months]'));
+                        
+                        
+
+
+
+
+                      }else{
+                        console.log("false");
+                        td.addClass('update_error');
+                        td.data('value',"");
+                        
+                      }
                   }
                   td.addClass('update_success');
                   setTimeout(function () {
@@ -2156,6 +2274,27 @@ $(document).ready(function() {
 
   //endregion
 
+
+$('a[data-toggle="dropdown"]').click(function() {
+  
+  console.log("jjj");
 });
+
+function dropDownFixPosition(a, dropdown) {
+  // var dropDownTop = a.offset().top + a.outerHeight();
+  dropdown.css('top',"100px");
+  //Delete - dropdown.width() if you want menu to be bottom right of link
+  dropdown.css('left',"100px");
+}
+
+
+});
+
+
+
+$(document).on('click','.buttonCreate',function(){
+         
+});
+
 </script>
 @stop
