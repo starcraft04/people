@@ -177,7 +177,7 @@
                       render: function (data,type, rowData) {
                         if (type === 'display') {
                             @can('projectLoe-view')
-                            if (data == 'Pre-sales') {
+                            
                               if (rowData.num_of_loe >=1) {
                                 return data + '<a href="{!! route('loeView','') !!}/'+rowData.id+'"><img src="{{ asset("/img/loe.png") }}" width="20" height="20" style="margin-left:10px;"></a>';
                               } 
@@ -186,7 +186,7 @@
                                 return data + '<span><img class="create_loe" data-id="'+rowData.id+'" src="{{ asset("/img/loe-bw.png") }}" width="20" height="20" style="margin-left:10px;"></span>';
                               }
                               @endcan
-                            }
+                            
                             @endcan
                           }
                         return data;
