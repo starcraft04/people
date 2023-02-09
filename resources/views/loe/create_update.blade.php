@@ -680,8 +680,8 @@ $(document).ready(function() {
             html += '<th data-colname="loe_per_quantity" rowspan="3">'+'LoE<br>(per unit)<br>in days'+'</th>';
             html += '<th data-colname="fte" rowspan="3">'+'FTE'+'</th>';
             
-            html += '<th data-colname="start_date" rowspan="3" style="min-width:150px;">'+'Start date'+'</th>';
-            html += '<th data-colname="end_date" rowspan="3" style="min-width:150px;">'+'End date'+'</th>';
+            html += '<th data-colname="start_date" rowspan="3" style="min-width:150px;">'+'Start date *<br> YYYY-MM-DD'+'</th>';
+            html += '<th data-colname="end_date" rowspan="3" style="min-width:150px;">'+'End date *<br> YYYY-MM-DD'+'</th>';
             html += '<th data-colname="num_of_months" rowspan="3">'+'Number<br>of<br>months'+'</th>';
             if (data.col.cons.length>0) {
               html += '<th data-colname="consulting" colspan="'+4*data.col.cons.length+'">'+'Consulting type'+'</th>';
