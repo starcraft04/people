@@ -795,7 +795,7 @@ $(document).ready(function() {
               html+='<button id="options_loe" class="btn btn-sm dropdown-toggle" type="button" data-toggle="dropdown" style="display: block;margin: 0 auto;width: 123px;">';
               html+='<i class="fa fa-bars" aria-hidden="true"></i>';
               html+='</button>';
-              html+='<ul class="dropdown-menu">';          
+              html+='<ul class="dropdown-menu" style="position: absolute;top:-111px;">';          
               
               html+='<li style="text-align:center;"><a class="dropdown-selection loe_mass_signoff" href="#"> </a>';
               html += '<div class="btn-group btn-group-xs" style="width:100%;">';
@@ -2004,9 +2004,10 @@ $(document).ready(function() {
                td.attr('contenteditable', false);
               },
               success: function(data) {
-                
+                console.log(data);
                 if (data.result == 'success'){
                   //SUCCESS
+
 
                   if (colname == 'quantity' || colname == 'loe_per_quantity' || colname == 'fte' || colname == 'num_of_months' || colname == 'recurrent') {
                     td.data('value',value);
@@ -2044,7 +2045,7 @@ $(document).ready(function() {
                         var startdate = new Date(st);
                         var enddate= new Date(end);
 
-                        difference = (enddate.getFullYear()*12 + enddate.getMonth()) - (startdate.getFullYear()*12 + startdate.getMonth());
+                        difference = (enddate.getFullYear()*12 + enddate.getMonth()) - (startdate.getFullYear()*12 + startdate.getMonth())+1;
                         console.log(difference);
                         console.log(loe_id);
 
@@ -2099,6 +2100,25 @@ $(document).ready(function() {
                 if (colname != 'recurrent') {
                   td.attr('contenteditable', true);
                 }
+                 if(colname == 'num_of_months')
+                 {
+                  var req = {'id':loe_id};
+                  //console.log(request);
+                    $.ajax({
+                       type: 'post',
+                    url: "{!! route('addZuser') !!}",
+                    data:req,
+                    dataType: 'json',
+                    
+                    success:function(data)
+                    {
+                      console.log(data);
+                    }
+                  });
+                 }
+
+                
+                
                 
               }
             });

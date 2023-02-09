@@ -7,10 +7,13 @@ use Auth;
 use DB;
 use App\Loe;
 use App\User;
+use App\Activity;
+
 use App\LoeHistory;
 use App\LoeSite;
 use App\LoeConsultant;
 use NXP\MathExecutor;
+use App\Repositories\ActivityRepository;
 use App\Http\Controllers\Auth\AuthUsersForDataView;
 use App\Customer;
 use Datatables;
@@ -20,6 +23,12 @@ use App\ConsultingPricing;
 class LoeController extends Controller
 {
     //region LoE general
+    public function __construct(ActivityRepository $activityRepository)
+    {
+        $this->activityRepository = $activityRepository;
+        
+    }
+
     public function view($id)
     {
         $project = Project::find($id);
@@ -448,10 +457,52 @@ DB::raw('SUM(case when plc.location IN ("poland","Romania") then ((pl.quantity*p
  
     }
 
+    // public function addSudoUsersToProject($id)
+    // {
+        
+    //     var_dump($project_practice);
+    // }
 
-
+    public function addFTEtoZZZuser()
+    {
+        /* project id , zzz user id, start-date, end-date,
+        differenece
+        for($i=st;$i<=diff;$i++)
+        {
+            Activity::updateOrCreate(
+                ['project_id' => $id,
+                'user_id' => $zzz_user_id],
+                [
+                'year' => '2023',
+                'month' => $i,
+                'task_hour' => 17,
+                'from_otl' => 0,
+                ]);
+        }
+        */
+    }
     public function init($id)
     {
+        
+        $project_practice = Project::where('id',$id)->get('project_practice');
+
+        $zzz_user_name = 'ZZZ_'.$project_practice[0]->project_practice;
+        
+        $zzz_user_id_query = User::where('name',$zzz_user_name)->get('id');
+        $zzz_user_id = $zzz_user_id_query[0]->id;
+        
+        for($i=1;$i<13;$i++){
+
+        $inputsActivities = [
+          'year' => '2023',
+          'month' => $i,
+          'project_id' => $id,
+          'user_id' => $zzz_user_id,
+          'task_hour' => 0,
+          'from_otl' => 0,
+        ];
+                $activity = $this->activityRepository->create($inputsActivities);
+        }
         $result = new \stdClass();
         $inputs = [
             'project_id' => $id,
@@ -1665,6 +1716,8 @@ public  function get_different_cons_type($x,$y){
     //Various Edit
     public function edit_general(Request $request)
     {
+        // save start date and end date to get the values
+
         $result = new \stdClass();
         $result->result = 'success';
 
@@ -1699,7 +1752,8 @@ public  function get_different_cons_type($x,$y){
         }
         //endregion
 
-
+        
+        
         $loe = LOE::find($inputs['id']);
         $loe_old_value = $loe[$inputs['colname']];
         $loe->update([$inputs['colname'] => $inputs['value']]);
@@ -1718,7 +1772,138 @@ public  function get_different_cons_type($x,$y){
             }
         }
 
+        
+
         return json_encode($result);
+    }
+
+    public function AddDataToSudoUser(Request $request)
+    {
+         $result = new \stdClass();
+        $result->result = 'success';
+
+        $inputs = $request->all();
+        // //region Error check
+        // $loe_to_edit = LOE::find($inputs['id']);
+
+
+        //add loe to the zzz user on change the start date
+
+            $loeForZZZ = LOE::find($inputs['id']);
+            $start_date = $loeForZZZ['start_date'];
+            $end_date = $loeForZZZ['end_date'];
+            $no_of_days = $loeForZZZ['loe_per_quantity'];
+            $number_of_mons = intval($loeForZZZ['num_of_months']);
+            $number_of_fte = $loeForZZZ['fte'];
+            $time=strtotime($start_date);
+            $st_month_of_zzz=intval(date("m",$time));
+            $st_year_of_zzz = intval(date("Y",$time));
+
+            $end_time=strtotime($end_date);
+            $end_month_of_zzz=intval(date("m",$end_time));
+            $end_year_of_zzz = intval(date("Y",$end_time));
+
+            //number of years
+
+            $no_of_years = $end_year_of_zzz - $st_year_of_zzz;
+
+            //project data
+
+            $project_id_for_zzz = $loeForZZZ['project_id'];
+            $project_practice = Project::where('id',$project_id_for_zzz)->get('project_practice');
+
+            $zzz_user_name = 'ZZZ_'.$project_practice[0]->project_practice;
+            
+            $zzz_user_id_query = User::where('name',$zzz_user_name)->get('id');
+            $zzz_user_id = $zzz_user_id_query[0]->id;
+            
+            //
+            $recurrent_for_zzz = $loeForZZZ['recurrent'];
+            if($recurrent_for_zzz == 1){
+                $total_task_hours = ($number_of_mons*17*$number_of_fte)/$number_of_mons;
+            }
+            else{
+                $total_task_hours = ($no_of_days)/$number_of_mons;
+            }
+            $cond = [
+                      'project_id' => $project_id_for_zzz,
+                      'user_id' => $zzz_user_id
+                  ];
+
+            if($no_of_years > 0)
+            {
+                for($i=$st_month_of_zzz;$i<=12;$i++)
+                {
+                    
+                    
+                    $load_hours_to_unassigned = Activity::updateOrCreate([
+                    'user_id'=>$zzz_user_id,
+                    'project_id'=>$project_id_for_zzz,
+                    'month'=> $i,
+                    'year'=> $st_year_of_zzz
+                ],
+                ['task_hour'=>$total_task_hours]
+                );
+                }
+
+                for($j=$end_year_of_zzz;$j>$st_year_of_zzz;$j--)
+                {
+                    if($j == $end_year_of_zzz)
+                    {
+                        for($k=1;$k<=$end_month_of_zzz;$k++)
+                            {
+                                
+                                $load_hours_to_unassigned = Activity::updateOrCreate([
+                            'user_id'=>$zzz_user_id,
+                            'project_id'=>$project_id_for_zzz,
+                            'month'=> $k,
+                            'year'=> $j
+                                    ],
+                                    ['task_hour'=>$total_task_hours]
+                                );
+                            }
+                    }
+                    else{
+                        for($k=1;$k<=12;$k++)
+                            {
+                                $load_hours_to_unassigned = Activity::updateOrCreate([
+                            'user_id'=>$zzz_user_id,
+                            'project_id'=>$project_id_for_zzz,
+                            'month'=> $k,
+                            'year'=> $j
+                                    ],
+                                    ['task_hour'=>$total_task_hours]
+                                );
+                            }
+                    }
+                }  
+            }
+        else{
+            $count = 0;
+            for($i=$st_month_of_zzz;$i<=$end_month_of_zzz;$i++)
+                {
+                    $count++;
+                    $task_exists = Activity::where(['project_id'=>$project_id_for_zzz,'user_id'=>$zzz_user_id,'month'=>$i, 'year'=>$st_year_of_zzz])->get('task_hour');
+                    
+                    
+                        $th = $task_exists[0]->task_hour;
+                    
+                    // return $task_exists;
+                    $load_hours_to_unassigned = Activity::updateOrCreate([
+                    'user_id'=>$zzz_user_id,
+                    'project_id'=>$project_id_for_zzz,
+                    'month'=> $i,
+                    'year'=> $st_year_of_zzz
+                ],
+                ['task_hour'=>($total_task_hours+$th)]
+                );
+                } 
+                return $count;
+         }   
+
+        
+        return json_encode($end_year_of_zzz);
+
     }
 
     public function edit_consulting(Request $request)
