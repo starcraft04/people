@@ -287,6 +287,10 @@ Route::get('getUserOnProjectForAssign', ['uses' => 'ToolsController@getUserOnPro
     Route::get('loe/duplicate/{id}', ['uses' => 'LoeController@duplicate', 'as' => 'loeDuplicate', 'middleware' => ['permission:projectLoe-create']]);
     //Various AJAX edit
     Route::post('loe/edit_general', ['uses' => 'LoeController@edit_general', 'as' => 'loeEditGeneral', 'middleware' => ['permission:projectLoe-edit']]);
+
+
+    Route::post('loe/addZuser', ['uses' => 'LoeController@AddDataToSudoUser', 'as' => 'addZuser', 'middleware' => ['permission:projectLoe-edit']]);
+
     Route::post('loe/edit_consulting', ['uses' => 'LoeController@edit_consulting', 'as' => 'loeEditConsulting', 'middleware' => ['permission:projectLoe-edit']]);
     Route::post('loe/edit_site', ['uses' => 'LoeController@edit_site', 'as' => 'loeEditSite', 'middleware' => ['permission:projectLoe-edit']]);
     Route::post('loe/edit_row_order', ['uses' => 'LoeController@edit_row_order', 'as' => 'loeEditRowOrder', 'middleware' => ['permission:projectLoe-edit']]);
