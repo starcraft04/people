@@ -664,6 +664,7 @@
     // This is to color in case it comes from prime or if forecast
     function color_for_month_value(value,from_otl,id,colonne,project_id,user_id,td,estimated_end_date) {
       var d = new Date();
+      
       var d2 = new Date(estimated_end_date);
 
       var month = d.getMonth()+1;
@@ -835,18 +836,7 @@
         { name: 'p.project_type', data: 'project_type', 
         render: function (data,type, rowData) {
           if (type === 'display') {
-            @can('projectLoe-view')
-            if (data == 'Pre-sales') {
-              if (rowData.num_of_loe >=1) {
-                return data + '<a href="{!! route('loeView','') !!}/'+rowData.project_id+'"><img src="{{ asset("/img/loe.png") }}" width="20" height="20" style="margin-left:10px;"></a>';
-              } 
-              @can('projectLoe-create')
-              else {
-                return data + '<span><img class="create_loe" data-project_id="'+rowData.project_id+'" src="{{ asset("/img/loe-bw.png") }}" width="20" height="20" style="margin-left:10px;"></span>';
-              }
-              @endcan
-            }
-            @endcan
+            return data + '<span><img class="create_loe" data-project_id="'+rowData.project_id+'" src="{{ asset("/img/loe-bw.png") }}" width="20" height="20" style="margin-left:10px;"></span>';
           }
           return data;
         },

@@ -411,6 +411,8 @@ $(document).ready(function() {
         {'name':'domain','hide':false},
         {'name':'description','hide':false},
         {'name':'option','hide':false},
+        {'name':'status','hide':false},
+        {'name':'consultant_name','hide':false},
         {'name':'assumption','hide':false},
         {'name':'site','hide':false},
         {'name':'quantity','hide':false},
@@ -449,6 +451,8 @@ $(document).ready(function() {
       });
       $("#LoeTableTbody").disableSelection();
     }
+
+
 
     function change_row_order(row_id,new_position) {
       var request = {'id':row_id,'new_position':new_position};
@@ -512,8 +516,91 @@ $(document).ready(function() {
         return '<td data-colname="'+colname+'" @can('projectLoe-edit') contenteditable="true" @endcan @can('projectLoe-edit') class="'+myclass+'" @endcan></td>';
       }
     }
+   //status select2 
+    $("#status_select").select2({
+          allowClear: false,
+      });
+
+    $("#assigned_user_id").select2({
+          allowClear: false,
+      });
+
+    // td_no_null for status , cons name, dates
+    function td_no_null_non_editables(item,end='',colname='',myclass='',cr = false) {
+      // if (item != null && item != '') {
+      //   if (cr) {
+      //     item = item.replace(/\r?\n|\r/g,'<br>');
+      //     //console.log(item);
+      //   }
+      //   return '<td data-colname="'+colname+'" @can('projectLoe-edit') contenteditable="true" @endcan @can('projectLoe-edit') class="'+myclass+'" @endcan>'+item+end+'</td>';
+      // } else {
+      //   return '<td data-colname="'+colname+'" @can('projectLoe-edit') contenteditable="true" @endcan @can('projectLoe-edit') class="'+myclass+'" @endcan></td>';
+      // }
+      var mm="";
+      var x = {!! json_encode($usersX->toArray()) !!};
+      let status_codes = {
+        "Canceled":"Canceled",
+        "Deal Lost":"Deal Lost",
+        "Onhold":   "Onhold",
+        "Under Assignement":"Under Assignement",
+        "In Planning":"In Planning",
+        "Assigned Not Signed":"Assigned Not Signed",
+        "Assigned and Closed":"Assigned and Closed"
+      }
+
+      
+      if(colname == 'status')
+      {
+if(item != null)
+        {
+
+        mm+= '<td data-colname="'+colname+'" @can('projectLoe-edit') style="min-width:220px;" contenteditable="ture" @endcan @can('projectLoe-edit') class="'+myclass+'" @endcan>'+
+          '<select class="form-control '+myclass+' select2" name="status" id="status_select"><option value=""></option>';
+          for(var key in status_codes){
+          if(key == item){
+            
+            mm+='<option value="'+item+'" selected>'+status_codes[item]+'</option>'    
+          }
+          console.log(key);
+          console.log(item);
+        mm+='<option value="'+key+'">'+status_codes[key]+'</option>' 
+        }
+        mm+='</select>'+'</td>';
+        return mm;
+        
+        
+
+        }
+       
+        
+      }
+      if(colname == 'consultant_name')
+      {
+
+        
+        
+        
+         mm+='<td data-colname="'+colname+'"style="min-width:220px;" contenteditable="false" class="'+myclass+'">'+'<select class="form-control '+myclass+'select2" id="assigned_user_id" data-placeholder="Select a user"><option value=""></option>';
+        for(var key in x){
+          if(key == item){
+            
+            mm+='<option value="'+item+'" selected>'+x[item]+'</option>'    
+          }
+
+        mm+='<option value="'+key+'">'+x[key]+'</option>' 
+        }
+        mm+='</select>'+'</td>';
+        
+        return mm;
+      }
+        
+       
+    }
 
     //margin changes
+
+     
+
 
     function fill_total(){
       var grand_total_loe=0;
@@ -668,6 +755,10 @@ $(document).ready(function() {
             // html += '<th rowspan="3" data-colname="domain" style="min-width:150px;">'+'Domain'+'</th>';
             html += '<th rowspan="3" data-colname="description" style="min-width:250px;">'+'Description'+'</th>';
             html += '<th rowspan="3" data-colname="option" style="min-width:150px;">'+'Responder Name'+'</th>';
+
+            html += '<th rowspan="3" data-colname="status" style="min-width:150px;">'+'Status'+'</th>';
+
+            html += '<th rowspan="3" data-colname="consultant_name" style="min-width:150px;">'+'Consultant Name'+'</th>';
             // html += '<th rowspan="3" data-colname="assumption" style="min-width:250px;">'+'Assumption'+'</th>';
             if (data.col.site.length>0) {
               html += '<th data-colname="formula" rowspan="3" style="min-width:150px;">'+'Formula'+'</th>';
@@ -831,10 +922,10 @@ $(document).ready(function() {
               //region main text
               html += '<td data-colname="row_order" data-tableexport-display="none" class="drag-handler">'+row.row_order+'</td>';
               html += td_no_null(row.main_phase,'','main_phase','editable');
-              // html += td_no_null(row.secondary_phase,'','secondary_phase','editable');
-              // html += td_no_null(row.domain,'','domain','editable');
-              html += td_no_null(row.description,'','description','editable cr',true);
-              html += td_no_null(row.option,'','option','editable');
+              html += td_no_null(row.secondary_phase,'','secondary_phase','editable');
+              html += td_no_null(row.domain,'','domain','editable');
+              html += td_no_null_non_editables(row.status,'','status','editable cr',true);
+              html += td_no_null_non_editables(row.cons_id,'','consultant_name','editable');
               // html += td_no_null(row.assumption,'','assumption','editable cr',true);
               //endregion
 
@@ -916,6 +1007,10 @@ $(document).ready(function() {
             // html += '<td data-colname="domain"></td>';
             html += '<td data-colname="description"></td>';
             html += '<td data-colname="option"></td>';
+            html += '<td data-colname="status"></td>';
+            html += '<td data-colname="consultant_name">';
+            
+            html+='<div class="col-md-11" style="display: none;"></td>';
             // html += '<td data-colname="assumption"></td>';
             // We need to remove one column named formula in case there is no calculation
             if (data.col.site.length != 0) {
@@ -1069,6 +1164,8 @@ $(document).ready(function() {
               html += td_no_null_history(row.project_loe_id);
               html += td_no_null_history(row.main_phase);
               html += td_no_null_history(row.secondary_phase);
+              html += td_no_null_history(row.status);
+              html += td_no_null_history(row.consultant_name);
               html += td_no_null_history(row.loe_desc);
               html += td_no_null_history(row.history_desc);
               html += td_no_null_history(row.field_modified);
@@ -1176,6 +1273,9 @@ $(document).ready(function() {
 
       $('#modal_loe_signoff').modal("show");
     });
+
+    
+
 
     $(document).on('click', '#modal_loe_signoff_create_update_button', function () {
       var modal_loe_signoff_form_project_id = $('input#modal_loe_signoff_form_project_id').val();
@@ -1949,6 +2049,81 @@ $(document).ready(function() {
     $(document).on("click","td[data-colname=recurrent]", function() {
       update_cell($(this));
     });
+    $(document).on('change','#status_select',function(){
+
+      var tr = $(this).closest('tr');
+      var loe_id = tr.data('id');
+      var old_cons_select = tr.find('#assigned_user_id').val();
+      console.log(loe_id);
+              console.log("jjjj");
+              var value_select = tr.find('#status_select').val();
+              var request = {'id':loe_id,'project_id':project_id,'colname':'status','value':value_select,'cons_id':old_cons_select};
+              $.ajax({
+              type: 'post',
+              url: "{!! route('loeEditGeneral') !!}",
+              data:request,
+              dataType: 'json',
+              success:function(data){
+                console.log(data);
+              }
+            });
+              if(value_select == 'Canceled' || value_select == 'Deal Lost')
+              {
+                tr.find('#assigned_user_id').val("").trigger('change');
+
+                $.ajax({
+              type: 'get',
+              url: "{!! route('changeBevahiorOnZZZ') !!}",
+              data:request,
+              dataType: 'json',
+              success:function(data){
+                console.log(data);
+              }
+            });
+
+              }
+              if(value_select == 'Onhold' || value_select == 'Under Assignement' || value_select == 'In Planning'){
+                // tr.find('#assigned_user_id').val("").trigger('change');
+                console.log("add");
+                $.ajax({
+                       type: 'post',
+                    url: "{!! route('addZuser') !!}",
+                    data:request,
+                    dataType: 'json',
+                    
+                    success:function(data)
+                    {
+                      console.log("addZuser");
+                      console.log(data);
+                    }
+                  });
+              }
+
+              console.log(value_select);
+              
+              
+      });
+    $(document).on('change','#assigned_user_id',function(){
+
+      var tr = $(this).closest('tr');
+
+      var loe_id = tr.data('id');
+      console.log(loe_id);
+              console.log("jjjj");
+              var value_select = tr.find('#assigned_user_id').val();
+              console.log(value_select);
+              console.log("ssssssssssss")
+              var request = {'id':loe_id,'colname':'cons_id','value':value_select};
+              $.ajax({
+              type: 'post',
+              url: "{!! route('loeEditGeneral') !!}",
+              data:request,
+              dataType: 'json',
+              success:function(data){
+                console.log(data);
+              }
+            });
+      });
 
     function update_cell(td) {
       var tr = td.closest('tr');
@@ -1967,6 +2142,7 @@ $(document).ready(function() {
           case 'domain':
           case 'description':
           case 'option':
+          case 'consultant_name':
           case 'assumption':
           case 'start_date':
 
@@ -2112,6 +2288,7 @@ $(document).ready(function() {
                     
                     success:function(data)
                     {
+                      console.log("addZuser");
                       console.log(data);
                     }
                   });

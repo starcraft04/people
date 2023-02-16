@@ -33,11 +33,13 @@ class LoeController extends Controller
     {
         $project = Project::find($id);
         $customer = Customer::find($project->customer_id);
+        $usersX  = User::pluck('name', 'id');
+
         $customers_list = Customer::leftjoin('projects','projects.customer_id','=','customers.id')
         ->leftjoin('project_loe','project_loe.project_id','=','projects.id')
         ->whereNotNull('project_loe.id')
         ->pluck('customers.name', 'customers.id');
-        return view('loe/create_update', compact('project','customer','customers_list'));
+        return view('loe/create_update', compact('project','customer','customers_list','usersX'));
     }
 
 
@@ -486,7 +488,40 @@ DB::raw('SUM(case when plc.location IN ("poland","Romania") then ((pl.quantity*p
         
         $project_practice = Project::where('id',$id)->get('project_practice');
 
-        $zzz_user_name = 'ZZZ_'.$project_practice[0]->project_practice;
+        if($$project_practice[0]->project_practice == 'SC')
+        {
+            $zzz_user_name = 'ZZZ_Security_and_Compliance';
+        }
+
+        if($$project_practice[0]->project_practice == 'IOT')
+        {
+            $zzz_user_name = 'ZZZ_IoT_and_Edge';
+        }
+        if($$project_practice[0]->project_practice == 'CX')
+        {
+            $zzz_user_name = 'ZZZ_Customer_Experience';
+        }
+        if($$project_practice[0]->project_practice == 'PMO')
+        {
+            $zzz_user_name = 'ZZZ_Project_Management_Office';
+        }
+        
+        if($$project_practice[0]->project_practice == 'ITPA')
+        {
+            $zzz_user_name = 'ZZZ_IT_Performance_and_Assurace';
+        }
+        if($$project_practice[0]->project_practice == 'CN')
+        {
+            $zzz_user_name = 'ZZZ_Cloud_Networking';
+        }
+        if($$project_practice[0]->project_practice == 'CDD')
+        {
+            $zzz_user_name = 'ZZZ_Cloud_and_Data_Digitalization';
+        }
+        if($$project_practice[0]->project_practice == 'MGT')
+        {
+            $zzz_user_name = 'ZZZ_Management';
+        }
         
         $zzz_user_id_query = User::where('name',$zzz_user_name)->get('id');
         $zzz_user_id = $zzz_user_id_query[0]->id;
@@ -544,6 +579,32 @@ DB::raw('SUM(case when plc.location IN ("poland","Romania") then ((pl.quantity*p
         $this->cons_create($request,$id);
         
         return json_encode($result);
+    }
+
+    public function getStatusConsName(Request $request, $id)
+    {
+        $request = $request->all();
+        $m="";
+        $column_name = $request['colname'];
+        $results = array();
+        $loe_data = Loe::where('project_id',$id)
+                    ->orderBy('row_order','asc')
+                    ->orderBy('main_phase','asc')
+                    ->orderBy('secondary_phase','asc')
+                    ->orderBy('domain','asc')
+                    ->orderBy('description','asc')
+                    ->get();
+        $userX = User::pluck('id','name');
+
+
+        foreach($loe_data as $key => $value)
+        {
+
+                 $m= '<td data-colname="'.$column_name.'" style="min-width:220px;" contenteditable="false"><select class="form-control select2" id="assigned_user_id" data-placeholder="Select a user"><option></option></select></td>';  
+            
+        }
+        
+        return $m;
     }
 
     public function listFromProjectID($id)
@@ -1749,6 +1810,7 @@ public  function get_different_cons_type($x,$y){
                 $result->msg = 'Must be between 0 and 1';
                 return json_encode($result);
             }
+
         }
         //endregion
 
@@ -1777,9 +1839,47 @@ public  function get_different_cons_type($x,$y){
         return json_encode($result);
     }
 
-    public function AddDataToSudoUser(Request $request)
+    public function changeBevahiorOnZZZ(Request $request)
     {
-         $result = new \stdClass();
+        //status
+        //project_id
+        //user_id
+        //loe_id
+        //project practice
+
+        $inputs = $request->all();
+
+        $result = new \stdClass();
+        $result->result = 'success';
+        $project_id = $inputs['project_id'];
+        $status = $inputs['value'];
+        $project_loe_id = $inputs['id'];
+
+        $project_cons_id = $inputs['cons_id'];
+
+        if($status == 'Canceled' || $status == 'Deal Lost')
+        {
+            $behavior = Activity::where(['project_id'=>$project_id, 'user_id'=>$project_cons_id])->delete();
+            $result->result = 'Activity Removed';
+
+        }
+        return json_encode($result);
+    }
+
+    public function assignConsAndZZZ(Request $request)
+    {
+        // required
+        // project ID
+        // user ID
+        // get project practice 
+        // get ZZZ 
+        // number of months
+
+
+
+    }
+    public function AddDataToSudoUser(Request $request){   
+        $result = new \stdClass();
         $result->result = 'success';
 
         $inputs = $request->all();
@@ -1789,107 +1889,298 @@ public  function get_different_cons_type($x,$y){
 
         //add loe to the zzz user on change the start date
 
-            $loeForZZZ = LOE::find($inputs['id']);
-            $start_date = $loeForZZZ['start_date'];
-            $end_date = $loeForZZZ['end_date'];
-            $no_of_days = $loeForZZZ['loe_per_quantity'];
-            $number_of_mons = intval($loeForZZZ['num_of_months']);
-            $number_of_fte = $loeForZZZ['fte'];
-            $time=strtotime($start_date);
-            $st_month_of_zzz=intval(date("m",$time));
-            $st_year_of_zzz = intval(date("Y",$time));
+        $loeForZZZ = LOE::find($inputs['id']);
+        $start_date = $loeForZZZ['start_date'];
+        $end_date = $loeForZZZ['end_date'];
+        $no_of_days = $loeForZZZ['loe_per_quantity'];
+        $number_of_mons = intval($loeForZZZ['num_of_months']);
+        $number_of_fte = $loeForZZZ['fte']; // for calculation, either 1 or smaller
+        $time=strtotime($start_date);
+        $st_month_of_zzz=intval(date("m",$time));
+        $st_year_of_zzz = intval(date("Y",$time));
 
-            $end_time=strtotime($end_date);
-            $end_month_of_zzz=intval(date("m",$end_time));
-            $end_year_of_zzz = intval(date("Y",$end_time));
+        $end_time=strtotime($end_date);
+        $end_month_of_zzz=intval(date("m",$end_time));
+        $end_year_of_zzz = intval(date("Y",$end_time));
 
-            //number of years
+        //number of years
+        $no_of_years = $end_year_of_zzz - $st_year_of_zzz;
 
-            $no_of_years = $end_year_of_zzz - $st_year_of_zzz;
+        //project data
 
-            //project data
+        $project_id_for_zzz = $loeForZZZ['project_id'];
+        $project_practice = Project::where('id',$project_id_for_zzz)->get('project_practice'); // to make Z user
 
-            $project_id_for_zzz = $loeForZZZ['project_id'];
-            $project_practice = Project::where('id',$project_id_for_zzz)->get('project_practice');
-
-            $zzz_user_name = 'ZZZ_'.$project_practice[0]->project_practice;
-            
-            $zzz_user_id_query = User::where('name',$zzz_user_name)->get('id');
-            $zzz_user_id = $zzz_user_id_query[0]->id;
-            
-            //
-            $recurrent_for_zzz = $loeForZZZ['recurrent'];
-            if($recurrent_for_zzz == 1){
-                $total_task_hours = ($number_of_mons*17*$number_of_fte)/$number_of_mons;
-            }
-            else{
-                $total_task_hours = ($no_of_days)/$number_of_mons;
-            }
-            $cond = [
-                      'project_id' => $project_id_for_zzz,
-                      'user_id' => $zzz_user_id
-                  ];
-
-            if($no_of_years > 0)
-            {
-                for($i=$st_month_of_zzz;$i<=12;$i++)
-                {
-                    
-                    
+        $zzz_user_name = 'ZZZ_'.$project_practice[0]->project_practice;
+        
+        $zzz_user_id_query = User::where('name',$zzz_user_name)->get('id');
+        $zzz_user_id = $zzz_user_id_query[0]->id;
+        
+        //
+        $recurrent_for_zzz = $loeForZZZ['recurrent'];
+        if($recurrent_for_zzz == 1){
+            $total_task_hours = ($number_of_mons*17*$number_of_fte)/$number_of_mons;
+        }
+        else{
+            $total_task_hours = ($no_of_days)/$number_of_mons;
+        }
+        $cond = [
+                  'project_id' => $project_id_for_zzz,
+                  'user_id' => $zzz_user_id
+              ];
+        $user = $loeForZZZ['cons_id'];
+        if($no_of_years > 0){
+            for($i=$st_month_of_zzz;$i<=12;$i++){
+                if($loeForZZZ['status'] == "Assigned Not Signed" || $loeForZZZ['status'] == "Assigned and Closed"){
+                    $task_exists = Activity::where(['project_id'=>$project_id_for_zzz,'user_id'=>$user
+                        ,'month'=>$i, 'year'=>$st_year_of_zzz])->get('task_hour');
+                    if ($task_exists->isEmpty()) {
+                        $th = 0;
+                    }else{$th = $task_exists[0]->task_hour;}
                     $load_hours_to_unassigned = Activity::updateOrCreate([
-                    'user_id'=>$zzz_user_id,
-                    'project_id'=>$project_id_for_zzz,
-                    'month'=> $i,
-                    'year'=> $st_year_of_zzz
-                ],
-                ['task_hour'=>$total_task_hours]
-                );
+                        'user_id'=>$user,
+                        'project_id'=>$project_id_for_zzz,
+                        'month'=> $i,
+                        'year'=> $st_year_of_zzz
+                    ],
+                        ['task_hour'=>$total_task_hours+$th]
+                    );
                 }
+                elseif($loeForZZZ['status'] =='Onhold' || $loeForZZZ['status'] == 'Under Assignement' || $loeForZZZ['status'] == 'In Planning'){
+                    if($user != ""){
+                        $task_exists = Activity::where(['project_id'=>$project_id_for_zzz,'user_id'=>$user,'month'=>$i,
+                            'year'=>$st_year_of_zzz])->get('task_hour');
+                        $total_t_hours = Activity::where(['project_id'=>$project_id_for_zzz,'user_id'=>$zzz_user_id,'month'=>$i,
+                            'year'=>$st_year_of_zzz])->get('task_hour');
 
-                for($j=$end_year_of_zzz;$j>$st_year_of_zzz;$j--)
-                {
-                    if($j == $end_year_of_zzz)
-                    {
-                        for($k=1;$k<=$end_month_of_zzz;$k++)
-                            {
-                                
-                                $load_hours_to_unassigned = Activity::updateOrCreate([
-                            'user_id'=>$zzz_user_id,
-                            'project_id'=>$project_id_for_zzz,
-                            'month'=> $k,
-                            'year'=> $j
-                                    ],
-                                    ['task_hour'=>$total_task_hours]
-                                );
-                            }
+                        $th = $task_exists[0]->task_hour;
+                        $total_task_hours = $total_t_hours[0]->task_hour;
                     }
                     else{
-                        for($k=1;$k<=12;$k++)
-                            {
-                                $load_hours_to_unassigned = Activity::updateOrCreate([
-                            'user_id'=>$zzz_user_id,
-                            'project_id'=>$project_id_for_zzz,
-                            'month'=> $k,
-                            'year'=> $j
-                                    ],
-                                    ['task_hour'=>$total_task_hours]
-                                );
-                            }
+                        $th =0;
                     }
-                }  
+                    $load_hours_to_unassigned = Activity::updateOrCreate([
+                        'user_id'=>$zzz_user_id,
+                        'project_id'=>$project_id_for_zzz,
+                        'month'=> $i,
+                        'year'=> $st_year_of_zzz
+                    ],
+                        ['task_hour'=>$total_task_hours+$th]
+                    );
+                    // will remove everything!!!
+                    $remove_load = Activity::updateOrCreate([
+                        'user_id'=>$user,
+                        'project_id'=>$project_id_for_zzz,
+                        'month'=> $i,
+                        'year'=> $st_year_of_zzz
+                    ],
+                        ['task_hour'=>0]
+                    );
+                }
+                // When is empty
+                else{
+                    $load_hours_to_unassigned = Activity::updateOrCreate([
+                        'user_id'=>$zzz_user_id,
+                        'project_id'=>$project_id_for_zzz,
+                        'month'=> $i,
+                        'year'=> $st_year_of_zzz
+                    ],
+                        ['task_hour'=>$total_task_hours]
+                    );
+                }
             }
+            for($j=$end_year_of_zzz;$j>$st_year_of_zzz;$j--){
+                if($j == $end_year_of_zzz){
+                    for($k=1;$k<=$end_month_of_zzz;$k++){
+                        if($loeForZZZ['status'] == "Assigned Not Signed" || $loeForZZZ['status'] == "Assigned and Closed"){
+                            $task_exists = Activity::where(['project_id'=>$project_id_for_zzz,'user_id'=>$user
+                                ,'month'=>$k, 'year'=>$j])->get('task_hour');
+                            if ($task_exists->isEmpty()) {
+                                $th = 0;
+                            }else{$th = $task_exists[0]->task_hour;}
+                            $load_hours_to_unassigned = Activity::updateOrCreate([
+                                'user_id'=>$user,
+                                'project_id'=>$project_id_for_zzz,
+                                'month'=> $k,
+                                'year'=> $j
+                            ],
+                                ['task_hour'=>$total_task_hours+$th]
+                            );
+                        }
+                        elseif($loeForZZZ['status'] =='Onhold' || $loeForZZZ['status'] == 'Under Assignement' || $loeForZZZ['status'] == 'In Planning'){
+                            if($user != ""){
+                                $task_exists = Activity::where(['project_id'=>$project_id_for_zzz,'user_id'=>$user
+                                    ,'month'=>$k, 'year'=>$j])->get('task_hour');
+
+                                $total_t_hours = Activity::where(['project_id'=>$project_id_for_zzz,'user_id'=>$zzz_user_id
+                                    ,'month'=>$k, 'year'=>$j])->get('task_hour');
+
+                                $total_task_hours = $total_t_hours[0]->task_hour;
+                                $th = $task_exists[0]->task_hour;
+                            }
+                            else{
+                                $th =0;
+                            }
+                            $load_hours_to_unassigned = Activity::updateOrCreate([
+                                'user_id'=>$zzz_user_id,
+                                'project_id'=>$project_id_for_zzz,
+                                'month'=> $k,
+                                'year'=> $j
+                            ],
+                                ['task_hour'=>$total_task_hours+$th]
+                            );
+                            // will remove everything!!!
+                            $remove_load = Activity::updateOrCreate([
+                                'user_id'=>$user,
+                                'project_id'=>$project_id_for_zzz,
+                                'month'=> $k,
+                                'year'=> $j
+                            ],
+                                ['task_hour'=>0]
+                            );
+                        }
+                        // When is empty
+                        else{
+                            $load_hours_to_unassigned = Activity::updateOrCreate([
+                                'user_id'=>$zzz_user_id,
+                                'project_id'=>$project_id_for_zzz,
+                                'month'=> $k,
+                                'year'=> $j
+                            ],
+                                ['task_hour'=>$total_task_hours]
+                            );
+                        }                                
+                    }
+                }
+                else{
+                    for($k=1;$k<=12;$k++){
+                        if($loeForZZZ['status'] == "Assigned Not Signed" || $loeForZZZ['status'] == "Assigned and Closed"){
+                            $task_exists = Activity::where(['project_id'=>$project_id_for_zzz,'user_id'=>$user
+                                ,'month'=>$k, 'year'=>$j])->get('task_hour');
+                            if ($task_exists->isEmpty()) {
+                                $th = 0;
+                            }else{$th = $task_exists[0]->task_hour;}
+                            $load_hours_to_unassigned = Activity::updateOrCreate([
+                                'user_id'=>$user,
+                                'project_id'=>$project_id_for_zzz,
+                                'month'=> $k,
+                                'year'=> $j
+                            ],
+                                ['task_hour'=>$total_task_hours+$th]
+                            );
+                        }
+                        elseif($loeForZZZ['status'] =='Onhold' || $loeForZZZ['status'] == 'Under Assignement' || $loeForZZZ['status'] == 'In Planning'){
+                            if($user != ""){
+                                $task_exists = Activity::where(['project_id'=>$project_id_for_zzz,'user_id'=>$user,'month'=>$k,
+                                    'year'=>$j])->get('task_hour');
+
+                                $total_t_hours = Activity::where(['project_id'=>$project_id_for_zzz,'user_id'=>$zzz_user_id
+                                    ,'month'=>$k, 'year'=>$j])->get('task_hour');
+                                $total_task_hours = $total_t_hours[0]->task_hour;
+
+                                $th = $task_exists[0]->task_hour;
+                            }
+                            else{
+                                $th =0;
+                            }
+                            $load_hours_to_unassigned = Activity::updateOrCreate([
+                                'user_id'=>$zzz_user_id,
+                                'project_id'=>$project_id_for_zzz,
+                                'month'=> $k,
+                                'year'=> $j
+                            ],
+                                ['task_hour'=>$total_task_hours+$th]
+                            );
+                            $remove_load = Activity::updateOrCreate([
+                                'user_id'=>$user,
+                                'project_id'=>$project_id_for_zzz,
+                                'month'=> $k,
+                                'year'=> $j
+                            ],
+                                ['task_hour'=>0]
+                            );
+                        }
+                        // When is empty
+                        else{
+                            $load_hours_to_unassigned = Activity::updateOrCreate([
+                                'user_id'=>$zzz_user_id,
+                                'project_id'=>$project_id_for_zzz,
+                                'month'=> $k,
+                                'year'=> $j
+                            ],
+                                ['task_hour'=>$total_task_hours]
+                            );
+                        }
+                    }
+                }
+            }  
+        }
         else{
             $count = 0;
             for($i=$st_month_of_zzz;$i<=$end_month_of_zzz;$i++)
                 {
                     $count++;
-                    $task_exists = Activity::where(['project_id'=>$project_id_for_zzz,'user_id'=>$zzz_user_id,'month'=>$i, 'year'=>$st_year_of_zzz])->get('task_hour');
+                    if($loeForZZZ['status'] == "Assigned Not Signed" || $loeForZZZ['status'] == "Assigned and Closed")    
+                    {
+                        $task_exists = Activity::where(['project_id'=>$project_id_for_zzz,'user_id'=>$zzz_user_id,'month'=>$i, 'year'=>$st_year_of_zzz])->get('task_hour');
                     
                     
                         $th = $task_exists[0]->task_hour;
-                    
-                    // return $task_exists;
                     $load_hours_to_unassigned = Activity::updateOrCreate([
+                    'user_id'=>$user,
+                    'project_id'=>$project_id_for_zzz,
+                    'month'=> $i,
+                    'year'=> $st_year_of_zzz
+                ],
+                ['task_hour'=>($total_task_hours)]
+                );
+                    }
+                    elseif($loeForZZZ['status'] =='Onhold' || $loeForZZZ == 'Under Assignement' || $loeForZZZ == 'In Planning')    
+                    {
+                       if($user != "")
+                        {
+                            $task_exists = Activity::where(['project_id'=>$project_id_for_zzz,'user_id'=>$user,'month'=>$i, 'year'=>$st_year_of_zzz])->get('task_hour');
+
+                            $total_t_hours = Activity::where(['project_id'=>$project_id_for_zzz,'user_id'=>$zzz_user_id
+                                    ,'month'=>$i, 'year'=>$st_year_of_zzz])->get('task_hour');
+
+
+                            $total_task_hours = $total_t_hours[0]->task_hour;
+
+                            $th = $task_exists[0]->task_hour;
+                        }
+                        else{
+                            $th =0;
+                        }
+                            $remove_load = Activity::updateOrCreate
+                                                    ([
+                                                    'user_id'=>$user,
+                                                    'project_id'=>$project_id_for_zzz,
+                                                    'month'=> $i,
+                                                    'year'=> $st_year_of_zzz
+                                                ],
+                                                ['task_hour'=>0]
+                                                );
+                            $load_hours_to_unassigned = Activity::updateOrCreate
+                                                    ([
+                                                    'user_id'=>$zzz_user_id,
+                                                    'project_id'=>$project_id_for_zzz,
+                                                    'month'=> $i,
+                                                    'year'=> $st_year_of_zzz
+                                                ],
+                                                ['task_hour'=>$total_task_hours+$th]
+                                                );
+                            
+                        }
+                    else{
+                        // return $task_exists;
+
+                    $task_exists = Activity::where(['project_id'=>$project_id_for_zzz,'user_id'=>$zzz_user_id,'month'=>$i, 'year'=>$st_year_of_zzz])->get('task_hour');
+                    
+                    
+                    $th = $task_exists[0]->task_hour;
+                    $load_hours_to_unassigned = Activity::updateOrCreate(
+                [
                     'user_id'=>$zzz_user_id,
                     'project_id'=>$project_id_for_zzz,
                     'month'=> $i,
@@ -1897,13 +2188,12 @@ public  function get_different_cons_type($x,$y){
                 ],
                 ['task_hour'=>($total_task_hours+$th)]
                 );
+                    }
+                    
                 } 
-                return $count;
+                
          }   
-
-        
-        return json_encode($end_year_of_zzz);
-
+        return json_encode($no_of_years);
     }
 
     public function edit_consulting(Request $request)

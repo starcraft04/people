@@ -82,10 +82,10 @@
                       <th>Customer name</th>
                       <th>Project name</th>
                       <th>OTL project code</th>
-                      <th>Meta-activity</th>
+                      <!-- <th>Meta-activity</th> -->
                       <th>CL ID</th>
                       <th>Project type</th>
-                      <th>Activity type</th>
+                      <!-- <th>Activity type</th> -->
                       <th>Project status</th>
                       <th>Region</th>
                       <th>Country</th>
@@ -108,8 +108,8 @@
                     <tr>
                       <th></th>
                       <th></th>
-                      <th></th>
-                      <th></th>
+<!--                       <th></th>
+                      <th></th> -->
                       <th></th>
                       <th></th>
                       <th></th>
@@ -171,7 +171,7 @@
                     { name: 'customers.name', data: 'customer_name',width:'40px'},
                     { name: 'projects.project_name', data: 'project_name',width:'40px' },
                     { name: 'projects.otl_project_code', data: 'otl_project_code' },
-                    { name: 'projects.meta_activity', data: 'meta_activity'},
+                    
                     { name: 'projects.samba_id', data: 'samba_id', searchable: true , visible: true},
                     { name: 'projects.project_type', data: 'project_type',
                       render: function (data,type, rowData) {
@@ -192,7 +192,7 @@
                         return data;
                       },width: '88px'
                     },
-                    { name: 'projects.activity_type', data: 'activity_type'},
+                    
                     { name: 'projects.project_status', data: 'project_status'},
                     { name: 'projects.region', data: 'region'  , visible: false},
                     { name: 'projects.country', data: 'country'  , visible: false},
