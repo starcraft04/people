@@ -1911,7 +1911,45 @@ public  function get_different_cons_type($x,$y){
         $project_id_for_zzz = $loeForZZZ['project_id'];
         $project_practice = Project::where('id',$project_id_for_zzz)->get('project_practice'); // to make Z user
 
-        $zzz_user_name = 'ZZZ_'.$project_practice[0]->project_practice;
+        //project practice 
+        
+
+        if($project_practice[0]->project_practice == 'SC')
+        {
+            $zzz_user_name = 'ZZZ_Security_and_Compliance';
+        }
+
+        if($project_practice[0]->project_practice == 'IOT')
+        {
+            $zzz_user_name = 'ZZZ_IoT_and_Edge';
+        }
+        if($project_practice[0]->project_practice == 'CX')
+        {
+            $zzz_user_name = 'ZZZ_Customer_Experience';
+        }
+        if($project_practice[0]->project_practice == 'PMO')
+        {
+            $zzz_user_name = 'ZZZ_Project_Management_Office';
+        }
+        
+        if($project_practice[0]->project_practice == 'ITPA')
+        {
+            $zzz_user_name = 'ZZZ_IT_Performance_and_Assurace';
+        }
+        if($project_practice[0]->project_practice == 'CN')
+        {
+            $zzz_user_name = 'ZZZ_Cloud_Networking';
+        }
+        if($project_practice[0]->project_practice == 'CDD')
+        {
+            $zzz_user_name = 'ZZZ_Cloud_and_Data_Digitalization';
+        }
+        if($project_practice[0]->project_practice == 'MGT')
+        {
+            $zzz_user_name = 'ZZZ_Management';
+        }
+
+        // $zzz_user_name = 'ZZZ_'.$project_practice[0]->project_practice;
         
         $zzz_user_id_query = User::where('name',$zzz_user_name)->get('id');
         $zzz_user_id = $zzz_user_id_query[0]->id;
