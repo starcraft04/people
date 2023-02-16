@@ -277,7 +277,8 @@ Route::get('getUserOnProjectForAssign', ['uses' => 'ToolsController@getUserOnPro
         Route::get('LOE/', ['uses' => 'LoeController@list', 'as' => 'list', 'middleware' => ['permission:projectLoe-view']]);
 
     Route::get('listAllLoe/', ['uses' => 'LoeController@listAllLoe', 'as' => 'listAllLoe', 'middleware' => ['permission:projectLoe-view']]);
-
+    //changeBevahiorOnZZZ
+    Route::get('changeBehavior/', ['uses' => 'LoeController@changeBevahiorOnZZZ', 'as' => 'changeBevahiorOnZZZ', 'middleware' => ['permission:projectLoe-view']]);
     
 
     Route::get('loeHistory/{id}', ['uses' => 'LoeController@loeHistory', 'as' => 'loeHistory', 'middleware' => ['permission:projectLoe-view']]);
@@ -314,6 +315,8 @@ Route::get('getUserOnProjectForAssign', ['uses' => 'ToolsController@getUserOnPro
     Route::get('loe/dashboard/projectsdomain/{id}', ['uses' => 'LoeController@dashboardProjectsDomain', 'as' => 'loedashboardProjectsDomain', 'middleware' => ['permission:projectLoe-dashboard_view']]);
 
     Route::get('loe/{id}', ['uses' => 'LoeController@listFromProjectID', 'as' => 'listFromProjectID', 'middleware' => ['permission:projectLoe-view|projectLoe-dashboard_view']]);
+
+    Route::get('loeedit/{id}', ['uses' => 'LoeController@getStatusConsName', 'as' => 'getStatusConsName', 'middleware' => ['permission:projectLoe-view|projectLoe-dashboard_view']]);
 
 
     Route::get('show', ['uses' => 'ResourcesController@show', 'as' => 'show', 'middleware' => ['permission:tools-activity-view']]);
