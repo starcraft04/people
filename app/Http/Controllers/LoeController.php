@@ -488,37 +488,37 @@ DB::raw('SUM(case when plc.location IN ("poland","Romania") then ((pl.quantity*p
         
         $project_practice = Project::where('id',$id)->get('project_practice');
 
-        if($$project_practice[0]->project_practice == 'SC')
+        if($project_practice[0]->project_practice == 'SC')
         {
             $zzz_user_name = 'ZZZ_Security_and_Compliance';
         }
 
-        if($$project_practice[0]->project_practice == 'IOT')
+        if($project_practice[0]->project_practice == 'IOT')
         {
             $zzz_user_name = 'ZZZ_IoT_and_Edge';
         }
-        if($$project_practice[0]->project_practice == 'CX')
+        if($project_practice[0]->project_practice == 'CX')
         {
             $zzz_user_name = 'ZZZ_Customer_Experience';
         }
-        if($$project_practice[0]->project_practice == 'PMO')
+        if($project_practice[0]->project_practice == 'PMO')
         {
             $zzz_user_name = 'ZZZ_Project_Management_Office';
         }
         
-        if($$project_practice[0]->project_practice == 'ITPA')
+        if($project_practice[0]->project_practice == 'ITPA')
         {
             $zzz_user_name = 'ZZZ_IT_Performance_and_Assurace';
         }
-        if($$project_practice[0]->project_practice == 'CN')
+        if($project_practice[0]->project_practice == 'CN')
         {
             $zzz_user_name = 'ZZZ_Cloud_Networking';
         }
-        if($$project_practice[0]->project_practice == 'CDD')
+        if($project_practice[0]->project_practice == 'CDD')
         {
             $zzz_user_name = 'ZZZ_Cloud_and_Data_Digitalization';
         }
-        if($$project_practice[0]->project_practice == 'MGT')
+        if($project_practice[0]->project_practice == 'MGT')
         {
             $zzz_user_name = 'ZZZ_Management';
         }
