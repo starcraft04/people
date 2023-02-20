@@ -1912,7 +1912,7 @@ public  function get_different_cons_type($x,$y){
         $project_practice = Project::where('id',$project_id_for_zzz)->get('project_practice'); // to make Z user
 
         //project practice 
-        
+
 
         if($project_practice[0]->project_practice == 'SC')
         {
@@ -1967,6 +1967,7 @@ public  function get_different_cons_type($x,$y){
                   'user_id' => $zzz_user_id
               ];
         $user = $loeForZZZ['cons_id'];
+
         if($no_of_years > 0){
             for($i=$st_month_of_zzz;$i<=12;$i++){
                 if($loeForZZZ['status'] == "Assigned Not Signed" || $loeForZZZ['status'] == "Assigned and Closed"){
@@ -1988,6 +1989,7 @@ public  function get_different_cons_type($x,$y){
                     if($user != ""){
                         $task_exists = Activity::where(['project_id'=>$project_id_for_zzz,'user_id'=>$user,'month'=>$i,
                             'year'=>$st_year_of_zzz])->get('task_hour');
+
                         $total_t_hours = Activity::where(['project_id'=>$project_id_for_zzz,'user_id'=>$zzz_user_id,'month'=>$i,
                             'year'=>$st_year_of_zzz])->get('task_hour');
 
@@ -2035,7 +2037,8 @@ public  function get_different_cons_type($x,$y){
                                 ,'month'=>$k, 'year'=>$j])->get('task_hour');
                             if ($task_exists->isEmpty()) {
                                 $th = 0;
-                            }else{$th = $task_exists[0]->task_hour;}
+                            }
+                            else{$th = $task_exists[0]->task_hour;}
                             $load_hours_to_unassigned = Activity::updateOrCreate([
                                 'user_id'=>$user,
                                 'project_id'=>$project_id_for_zzz,
@@ -2108,7 +2111,7 @@ public  function get_different_cons_type($x,$y){
                             );
                         }
                         elseif($loeForZZZ['status'] =='Onhold' || $loeForZZZ['status'] == 'Under Assignement' || $loeForZZZ['status'] == 'In Planning'){
-                            if($user != ""){
+                            if($user != " "){
                                 $task_exists = Activity::where(['project_id'=>$project_id_for_zzz,'user_id'=>$user,'month'=>$k,
                                     'year'=>$j])->get('task_hour');
 
@@ -2231,7 +2234,7 @@ public  function get_different_cons_type($x,$y){
                 } 
                 
          }   
-        return json_encode($no_of_years);
+        return json_encode($user);
     }
 
     public function edit_consulting(Request $request)

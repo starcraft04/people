@@ -835,9 +835,7 @@
         { name: 'p.project_name', data: 'project_name', className: "dt-nowrap"},
         { name: 'p.project_type', data: 'project_type', 
         render: function (data,type, rowData) {
-          if (type === 'display') {
-            return data + '<span><img class="create_loe" data-project_id="'+rowData.project_id+'" src="{{ asset("/img/loe-bw.png") }}" width="20" height="20" style="margin-left:10px;"></span>';
-          }
+          
           return data;
         },
         visible: true, className: "dt-nowrap"},
