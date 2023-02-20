@@ -156,8 +156,11 @@ h3:after {
               @endcan
               @can('tools-projects-comments')
               <li role="presentation"><a href="#tab_content3" id="tab_comment" role="tab" data-toggle="tab" aria-expanded="true">Comments (<span id="num_of_comments">{{ $num_of_comments }}</span>)</a></li>
-              <li role="presentation"><a href="#tab_content3" id="tab_comment" role="tab" data-toggle="tab" aria-expanded="true">Consultants (<span id="users_on_project">{{ count($users_on_project)}}</span>)</a></li>
               @endcan
+              <li role="presentation"><a href="#tab_content3" id="tab_cons" role="tab" data-toggle="tab" aria-expanded="true">Consultants (<span id="users_on_project">{{ count($users_on_project)}}</span>)</a></li>
+
+              <li role="presentation"><a href="#tab_content3" id="tab_cont_loe" role="tab" data-toggle="tab" aria-expanded="true">Project LOE </a></li>
+              
             @endif
           </ul>
 
@@ -354,6 +357,34 @@ h3:after {
                                 @endforeach
                               </select>
                               {!! $errors->first('customer_id', '<small class="help-block">:message</small>') !!}
+                            </div>
+                          </div>
+                        </div>
+
+
+                        <div class="row">
+                          <div class="form-group {!! $errors->has('customer_id') ? 'has-error' : '' !!} col-md-12">
+                            <div class="col-md-3">
+                              {!! Form::label('customer_ic01', 'Customer IC01 *', ['class' => 'control-label']) !!}
+                            </div>
+                            <div class="col-md-9" id="select_customer_ic01_field">
+                              <select class="form-control select2" style="width: 100%;" id="customer_ic01" name="customer_ic01" data-placeholder="Select a customer IC01">
+                                @if(isset($customer_ic01))
+                                @foreach($all_customer_ic01_values as $key => $value)
+                                @if($customer_ic01 == $key)
+                                <option value="{{$key}}" data-name="" selected>
+                                  {{$key.$value}}
+                                </option>
+                                @else
+                                <option value="{{$key}}" data-name="" selected>
+                                  {{$key.$value}}
+                                </option>
+                                @endif
+
+                                @endforeach
+                                @endif
+                              </select>
+                              {!! $errors->first('customer_ic01', '<small class="help-block">:message</small>') !!}
                             </div>
                           </div>
                         </div>
@@ -1056,7 +1087,19 @@ h3:after {
               </div>
               <!-- Consultant -->
               
-              <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="tab_comment">
+              <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="tab_cons">
+                
+                <div class="row">
+                  <div class="col-md-1">
+                    
+                </div>
+               
+                </div>
+              </div>
+
+              <!-- LOE -->
+              
+              <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="tab_cont_loe">
                 
                 <div class="row">
                   <div class="col-md-1">
@@ -1395,6 +1438,11 @@ if(!localStorage.getItem("visited")){
     
   });
 
+  // customer_ic01
+
+  $("#customer_ic01").select2({
+    allowClear: false,
+  });
   $("#meta_activity").select2({
     allowClear: true,
     disabled: {{ $meta_activity_select_disabled }}
@@ -2389,7 +2437,7 @@ function changeCustomerAndCountry(pp){
             data:{'customer_id':customer_id},
             
             success: function(data) {
-              console.log("here");
+              
               console.log(data);
               
               $('#country').val(data);
@@ -2398,6 +2446,52 @@ function changeCustomerAndCountry(pp){
 
               console.log(customer);
               setCustomerAndCountry = country+"-"+extra;
+            }
+
+          });
+
+      $.ajax({
+          
+          type: "GET",
+          
+            url: "{!! route('getCustomerIc01','') !!}",
+            data:{'customer_id':customer_id},
+            
+            success: function(data) {
+              html="";
+              console.log("ic01");
+              console.log(data);
+              console.log("length");
+              var length = Object.keys(data).length;
+              console.log(length);
+              if(length==1)
+              {
+                console.log("!111!!")
+                console.log(data);
+                $.each(data,function(key,value){
+                html+='<option value="'+key+'">'+key+""+value+'</option>';
+
+                $('#customer_ic01').append(html);
+                $('#customer_ic01').val(key);
+                $('#customer_ic01').select2().trigger('change');
+                });
+                
+              }
+              else{
+                    $.each(data, function(key, value) {
+                          //For example
+
+                        console.log("---ico1---");
+                        console.log(key + value)
+                        html+='<option value="'+key+'">'+key+""+value+'</option>';
+                        $('#customer_ic01').empty();
+                        $('#customer_ic01').select2().trigger('change');
+                        $('#customer_ic01').append(html);
+                        
+                        console.log("------");
+                      });
+              }
+              
             }
 
           });
@@ -2717,6 +2811,9 @@ function getProjectType()
 
 $(document).on('change','#estimated_end_date',function(){
 
+    console.log("aaaaaaaaaaaaaaaaaaaaa")
+    console.log($('#customer_ic01').val());
+    console.log("aaaaaaaaaaaaaaaaaaaaa")
     let project_status = $('#project_status').val();
     let estimated_end_date = $('#estimated_end_date').val();
     //get date
@@ -2918,11 +3015,6 @@ function chcekOnClick(project_name,customer_id)
     
 
 }
-
-
-    
-
-
 
 </script>
 @stop

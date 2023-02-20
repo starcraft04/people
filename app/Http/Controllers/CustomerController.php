@@ -79,6 +79,7 @@ class CustomerController extends Controller
     public function listOfCustomers()
     {
         $customerList = Customer::select('id', 'name', 'cluster_owner');
+        
         $data = Datatables::of($customerList)->make(true);
 
         return $data;

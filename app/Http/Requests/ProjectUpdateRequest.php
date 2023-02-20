@@ -53,6 +53,7 @@ class ProjectUpdateRequest extends FormRequest
       'LoE_contractor' => 'nullable|numeric',
       'revenue' => 'nullable|numeric',
       'win_ratio' => 'nullable|integer',
+      'customer_ic01' =>'nullable|numeric',
     ];
     }
 

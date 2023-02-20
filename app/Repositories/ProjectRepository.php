@@ -79,7 +79,7 @@ class ProjectRepository
     {
         $project = new $this->project;
         $inputs['created_by_user_id'] = Auth::user()->id;
-        //dd($inputs);
+        // dd($inputs);
         return $this->save($project, $inputs);
     }
 
@@ -99,6 +99,9 @@ class ProjectRepository
         }
         if(isset($inputs['project_practice'])){
             $project->project_practice = $inputs['project_practice'];
+        }
+        if(isset($inputs['customer_ic01'])){
+            $project->customer_ic01 = $inputs['customer_ic01'];
         }
         // OTL project code and meta activity can be empty and then it needs to be entered as null
 

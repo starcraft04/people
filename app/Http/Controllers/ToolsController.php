@@ -134,12 +134,27 @@ class ToolsController extends Controller
         return view('tools/projects_lost', compact('manager_list', 'year', 'user_id_for_update'));
     }
 
+
+    // create function to get the customer ic01 
+    // post function with the id of the customer to retun empty array or list.
+    public function getCustomerIc01(Request $request)
+    {
+        $inputs= $request->all();
+
+        $customer_id = $inputs['customer_id'];
+
+        $customer_ic01_info = DB::table('customeric01')->where('customer_id',$customer_id)->pluck('ic01_name','ic01_code');
+
+        return $customer_ic01_info;
+    }
     public function getFormCreate($year, $tab = 'tab_main')
     {
         $project_name_disabled = '';
         $customer_id_select_disabled = 'false';
+        $customer_ic01='';
         $otl_name_disabled = '';
         $project_practice_disabled='false';
+        $customer_ic01_disabled ='false';
         $meta_activity_select_disabled = 'false';
         $project_type_select_disabled = 'false';
         $activity_type_select_disabled = 'false';
@@ -202,10 +217,11 @@ class ToolsController extends Controller
         } else {
             $user_id_for_update = Auth::user()->id;
         }
-
-        return view('tools/create_update', compact('year', 'customers_list',
+        $all_customer_ic01_values =[];
+        return view('tools/create_update', compact('year', 'customers_list','all_customer_ic01_values',
       'user_list', 'user_selected', 'created_by_user_id','project_name_disabled',
       'project_practice_disabled',
+      'customer_ic01',
       'customer_id_select_disabled',
       'otl_name_disabled',
       'meta_activity_select_disabled',
@@ -494,6 +510,7 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
         $project_name_disabled = 'disabled';
         $customer_id_select_disabled = 'disabled';
         $project_practice_disabled ='';
+        $customer_ic01 ='';
         $otl_name_disabled = 'disabled';
         $meta_activity_select_disabled = '';
         $project_type_select_disabled = '';
@@ -527,6 +544,7 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
             $project_name_disabled = 'true';
             $customer_id_select_disabled = 'false';
             $project_practice='';
+            $customer_ic01='';
             $otl_name_disabled = '';
             $meta_activity_select_disabled = 'false';
             $project_type_select_disabled = '';
@@ -659,6 +677,7 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
 
         $num_of_actions = Action::where('project_id', '=', $project_id)->get()->count();
 
+
         // all users on this project for the actions
         $users_on_project = DB::table('projects')
     ->leftjoin('activities', 'projects.id', '=', 'activities.project_id')
@@ -694,11 +713,15 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
             }
         }
 
+        $customer_ic01 = $project->customer_ic01;
+        $all_customer_ic01_values = DB::table('customeric01')->where('customer_id',$project->customer_id)->pluck('ic01_name','ic01_code');
 
         return view('tools/create_update', compact('users_on_project','num_of_actions','user_id','project','year','activities','from_otl','forecast','otl','customers_list','customer_country_ascii',
+            'all_customer_ic01_values',
     'project_name_disabled',
     'customer_id_select_disabled',
     'project_practice_disabled',
+    'customer_ic01',
     'otl_name_disabled',
     'meta_activity_select_disabled',
     'project_type_select_disabled',
