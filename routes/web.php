@@ -189,6 +189,10 @@ Route::get('getUserOnProjectForAssign', ['uses' => 'ToolsController@getUserOnPro
     //  Create new activity
     Route::get('toolsFormCreate/{y}/{tab?}', ['uses' => 'ToolsController@getFormCreate', 'as' => 'toolsFormCreate', 'middleware' => ['permission:tools-activity-new']]);
 
+    //cutomer ic01 code retrive 
+    Route::get('getIc01', ['uses' => 'ToolsController@getCustomerIc01', 'as' => 'getCustomerIc01', 'middleware' => ['permission:tools-activity-new']]);
+
+
     // get country of the customer for project name
 
     Route::post('customerCountry', ['uses' => 'ToolsController@getCustomerCountryByID', 'as' => 'getCustomerCountryByID', 'middleware' => ['permission:tools-activity-new']]);
