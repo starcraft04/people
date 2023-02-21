@@ -166,6 +166,7 @@
     <script>
         var customerTable;
         var record_id;
+        var clickCount = 0;
 
         
 
@@ -333,19 +334,22 @@
         $('#ic01_table tbody').append(trHTML);
           }
           });
+                
         $(document).on('click','#add_ic01_records',function(){
             
             
-            console.log(id);
+            console.log(clickCount);
 
             
             clickCount++;
             if (clickCount === 1) {
               // First click code
+                console.log(clickCount);
                 $('#ic01_adding_form').css('display','block'); 
             } else if (clickCount === 2) {
-              // Second click code
 
+              // Second click code
+                console.log('seco');
               console.log('Second click!');
 
               var ic01_code = $('#ic01_code').val();
@@ -356,7 +360,7 @@
               {
                 console.log('empty');
               }
-              else{
+              else {
                 $.ajax({
           
             type: "GET",
@@ -367,12 +371,22 @@
             success: function(data) {
             
               console.log(data);
-              $()
+                $('#exampleModal').modal('toggle');
+                $('#ic01_adding_form').css('display','none');
+                $('#ic01_adding_form').reset();
+                clickCount=0;
               
             }
 
           });
               }
+            } else if(clickCount >2){
+                
+                console.log('third');
+                $('#exampleModal').modal('toggle');
+                $('#ic01_adding_form').css('display','none');
+                
+
             }
           });
                 
@@ -380,7 +394,7 @@
 
 
 
-            var clickCount = 0;
+            
           
           // Handle first click event
           
