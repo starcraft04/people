@@ -68,6 +68,7 @@
                         <th>ID</th>
                         <th>Name</th>
                         <th>Cluster owner</th>
+                        <th>Country owner</th>
                         <th>
                             <a href="{{ route('customerFormCreate') }}" class="btn btn-info btn-xs" align="right"><span class="glyphicon glyphicon-plus"> New</span></a>
                         </th>
@@ -75,6 +76,7 @@
                 </thead>
                 <tfoot>
                     <tr>
+                        <th></th>
                         <th></th>
                         <th></th>
                         <th></th>
@@ -118,6 +120,7 @@
                     { name: 'id', data: 'id', searchable: false , visible: false },
                     { name: 'name', data: 'name' },
                     { name: 'cluster_owner', data: 'cluster_owner' },
+                    { name: 'country_owner', data: 'country_owner' },
                     {
                         name: 'actions',
                         data: null,
@@ -156,21 +159,21 @@
                     extend: "csv",
                     className: "btn-sm",
                     exportOptions: {
-                        columns: [ 1, 2, 3, 4, 5, 6 ]
+                        columns: [ 1, 2, 3, 4, 5, 6 ,7]
                     }
                   },
                   {
                     extend: "excel",
                     className: "btn-sm",
                     exportOptions: {
-                        columns: [ 1, 2, 3, 4, 5, 6 ]
+                        columns: [ 1, 2, 3, 4, 5, 6,7 ]
                     }
                   },
                   {
                     extend: "print",
                     className: "btn-sm",
                     exportOptions: {
-                        columns: [ 1, 2, 3, 4, 5, 6 ]
+                        columns: [ 1, 2, 3, 4, 5, 6,7 ]
                     }
                   },
                 ],
