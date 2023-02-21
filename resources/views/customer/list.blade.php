@@ -373,7 +373,7 @@
               console.log(data);
                 $('#exampleModal').modal('toggle');
                 $('#ic01_adding_form').css('display','none');
-                $('#ic01_adding_form').reset();
+                
                 clickCount=0;
               
             }
