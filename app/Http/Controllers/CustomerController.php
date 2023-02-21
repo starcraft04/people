@@ -9,6 +9,7 @@ use App\Http\Requests\CustomerUpdateRequest;
 use Auth;
 use Datatables;
 use DB;
+use App\CustomerIC01;
 use Illuminate\Http\Request;
 
 class CustomerController extends Controller
@@ -84,4 +85,19 @@ class CustomerController extends Controller
 
         return $data;
     }
+
+    public function addNewIC01Record(Request $request)
+    {
+        $inputs = $request->all();
+
+        $record = CustomerIC01::create(
+            [
+                'customer_id'=>$inputs['customer_id'],
+                'ic01_code'=>$inputs['ic01_code'],
+                'ic01_name'=>$inputs['ic01_name']
+            ]
+        );
+        return json_encode($record);
+    }
+
 }
