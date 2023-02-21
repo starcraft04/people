@@ -192,6 +192,8 @@ Route::get('getUserOnProjectForAssign', ['uses' => 'ToolsController@getUserOnPro
     //cutomer ic01 code retrive 
     Route::get('getIc01', ['uses' => 'ToolsController@getCustomerIc01', 'as' => 'getCustomerIc01', 'middleware' => ['permission:tools-activity-new']]);
 
+    //add new IC01 to customer
+    Route::get('addIc01', ['uses' => 'CustomerController@addNewIC01Record', 'as' => 'addNewIC01Record', 'middleware' => ['permission:tools-activity-new']]);
 
     // get country of the customer for project name
 
