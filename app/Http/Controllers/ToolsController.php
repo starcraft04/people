@@ -143,7 +143,7 @@ class ToolsController extends Controller
 
         $customer_id = $inputs['customer_id'];
 
-        $customer_ic01_info = DB::table('customerIC01')->where('customer_id',$customer_id)->pluck('ic01_name','ic01_code');
+        $customer_ic01_info = DB::table('customeric01')->where('customer_id',$customer_id)->pluck('ic01_name','ic01_code');
 
         return $customer_ic01_info;
     }
@@ -714,7 +714,8 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
         }
 
         $customer_ic01 = $project->customer_ic01;
-        $all_customer_ic01_values = DB::table('customerIC01')->where('customer_id',$project->customer_id)->pluck('ic01_name','ic01_code');
+        $all_customer_ic01_values = DB::table('customeric01')->where('customer_id',$project->customer_id)->pluck('ic01_name','ic01_code');
+        // dd($project->customer_id);
 
         return view('tools/create_update', compact('users_on_project','num_of_actions','user_id','project','year','activities','from_otl','forecast','otl','customers_list','customer_country_ascii',
             'all_customer_ic01_values',

@@ -369,19 +369,35 @@ h3:after {
                             </div>
                             <div class="col-md-9" id="select_customer_ic01_field">
                               <select class="form-control select2" style="width: 100%;" id="customer_ic01" name="customer_ic01" data-placeholder="Select a customer IC01">
-                                @if(isset($customer_ic01))
-                                @foreach($all_customer_ic01_values as $key => $value)
-                                @if($customer_ic01 == $key)
-                                <option value="{{$key}}" data-name="" selected>
-                                  {{$key.$value}}
-                                </option>
-                                @else
-                                <option value="{{$key}}" data-name="" selected>
-                                  {{$key.$value}}
-                                </option>
-                                @endif
+                                @if($action == 'create')
+                                  @if(isset($customer_ic01))
+                                    @foreach($all_customer_ic01_values as $key => $value)
+                                    @if($customer_ic01 == $key)
+                                    <option value="{{$key}}" data-name="" selected>
+                                      {{$key.$value}}
+                                    </option>
+                                    @else
+                                    <option value="{{$key}}" data-name="" selected>
+                                      {{$key.$value}}
+                                    </option>
+                                    @endif
 
-                                @endforeach
+                                    @endforeach
+                                    @endif
+                                @elseif($action == 'update')
+                                @foreach($all_customer_ic01_values as $key => $value)
+                                    @if($customer_ic01 == $key)
+                                    <option value="{{$key}}" data-name="" selected>
+                                      {{$key.$value}}
+                                    </option>
+                                    @else
+                                    <option value=""></option>
+                                    <option value="{{$key}}" data-name="">
+                                      {{$key.$value}}
+                                    </option>
+                                    @endif
+
+                                    @endforeach
                                 @endif
                               </select>
                               {!! $errors->first('customer_ic01', '<small class="help-block">:message</small>') !!}
