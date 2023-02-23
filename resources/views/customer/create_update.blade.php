@@ -1,5 +1,21 @@
 @extends('layouts.app')
 
+@section('style')
+    <!-- CSS -->
+    <!-- Select2 -->
+    <link href="{{ asset('/plugins/select2/select2.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('/css/forms.css') }}" rel="stylesheet" />
+
+@stop
+
+@section('scriptsrc')
+    <!-- JS -->
+    <!-- Select2 -->
+    <script src="{{ asset('/plugins/select2/select2.full.min.js') }}" type="text/javascript"></script>
+
+@stop
+
+
 @section('content')
 
 <!-- Page title -->
@@ -56,6 +72,7 @@
           </div>
 
           <div class="row">
+
             <div class="form-group {!! $errors->has('cluster_owner') ? 'has-error' : '' !!} col-md-12">
               <div class="col-md-3">
                 {!! Form::label('cluster_owner', 'Cluster owner', ['class' => 'control-label']) !!}
@@ -67,16 +84,27 @@
             </div>
           </div>
           <div class="row">
-            <div class="form-group {!! $errors->has('cluster_owner') ? 'has-error' : '' !!} col-md-12">
-              <div class="col-md-3">
-                {!! Form::label('country_owner', 'Country Owner', ['class' => 'control-label']) !!}
-              </div>
-              <div class="col-md-9">
-                {!! Form::text('country_owner', (isset($customer)) ? $customer->country_owner : '', ['class' => 'form-control', 'placeholder' => 'Country Owner']) !!}
-                {!! $errors->first('country_owner', '<small class="help-block">:message</small>') !!}
-              </div>
+          <div class="form-group {!! $errors->has('country') ? 'has-error' : '' !!} col-md-12">
+            <div class="col-md-3">
+              {!! Form::label('country_owner', 'Country Owner', ['class' => 'control-label']) !!}
+            </div>
+            <div class="col-md-9">
+              <select class="form-control select2" style="width: 100%;" id="country_owner" name="country_owner" data-placeholder="Select a country">
+                <option value="" ></option>
+                @foreach($countries as $key => $value)
+                <option value="{{ $value }}"
+                  @if (old('country') == $value) selected
+                  @elseif (isset($customer->country_owner) && $value == $customer->country_owner) selected
+                  @endif>
+                  {{ $value }}
+                </option>
+                @endforeach
+              </select>
+              {!! $errors->first('country_owner', '<small class="help-block">:message</small>') !!}
             </div>
           </div>
+        </div>
+          
 
           <div class="row">
             <div class="col-md-offset-11 col-md-1">
@@ -96,5 +124,17 @@
   </div>
 </div>
 <!-- Window -->
+
+@stop
+
+@section('script')
+
+<script>
+$(document).ready(function() {
+    $("#country_owner").select2({
+    allowClear: true
+  });
+});
+</script>
 
 @stop

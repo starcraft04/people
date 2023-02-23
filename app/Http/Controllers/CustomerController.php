@@ -10,6 +10,7 @@ use Auth;
 use Datatables;
 use App\Project;
 use DB;
+use Http;
 use App\CustomerIC01;
 use Illuminate\Http\Request;
 
@@ -35,14 +36,16 @@ class CustomerController extends Controller
 
     public function getFormCreate()
     {
-        return view('customer/create_update')->with('action', 'create');
+        $countries = json_decode(Http::get('http://country.io/names.json'),true);
+        return view('customer/create_update',compact('countries'))->with('action', 'create');
     }
 
     public function getFormUpdate($id)
     {
         $customer = Customer::find($id);
+        $countries = json_decode(Http::get('http://country.io/names.json'),true);
 
-        return view('customer/create_update', compact('customer'))->with('action', 'update');
+        return view('customer/create_update', compact('customer','countries'))->with('action', 'update');
     }
 
     public function postFormCreate(customerCreateRequest $request)
