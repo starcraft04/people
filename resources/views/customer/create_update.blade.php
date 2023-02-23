@@ -66,6 +66,17 @@
               </div>
             </div>
           </div>
+          <div class="row">
+            <div class="form-group {!! $errors->has('cluster_owner') ? 'has-error' : '' !!} col-md-12">
+              <div class="col-md-3">
+                {!! Form::label('country_owner', 'Country Owner', ['class' => 'control-label']) !!}
+              </div>
+              <div class="col-md-9">
+                {!! Form::text('country_owner', (isset($customer)) ? $customer->country_owner : '', ['class' => 'form-control', 'placeholder' => 'Country Owner']) !!}
+                {!! $errors->first('country_owner', '<small class="help-block">:message</small>') !!}
+              </div>
+            </div>
+          </div>
 
           <div class="row">
             <div class="col-md-offset-11 col-md-1">

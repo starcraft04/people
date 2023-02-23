@@ -8,6 +8,7 @@ use App\Http\Requests\CustomerCreateRequest;
 use App\Http\Requests\CustomerUpdateRequest;
 use Auth;
 use Datatables;
+use App\Project;
 use DB;
 use App\CustomerIC01;
 use Illuminate\Http\Request;
@@ -26,8 +27,10 @@ class CustomerController extends Controller
     public function show($id)
     {
         $customer = Customer::find($id);
+        $projects_of_the_customer = Project::where('customer_id',$customer->id)->get('project_name');
+        $ic01_codes = CustomerIC01::where('customer_id',$customer->id)->pluck('ic01_name','ic01_code');
 
-        return view('customer/show', compact('customer'));
+        return view('customer/show', compact('customer','projects_of_the_customer','ic01_codes'));
     }
 
     public function getFormCreate()
@@ -44,7 +47,7 @@ class CustomerController extends Controller
 
     public function postFormCreate(customerCreateRequest $request)
     {
-        $inputs = $request->only('name', 'cluster_owner');
+        $inputs = $request->only('name', 'cluster_owner','country_owner');
         $customer = Customer::create($inputs);
 
         return redirect('customerList')->with('success', 'Record created successfully');
