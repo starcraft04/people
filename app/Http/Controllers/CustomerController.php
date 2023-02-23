@@ -55,7 +55,7 @@ class CustomerController extends Controller
 
     public function postFormUpdate(customerUpdateRequest $request, $id)
     {
-        $inputs = $request->only('name', 'cluster_owner');
+        $inputs = $request->only('name', 'cluster_owner','country_owner');
         $customer = Customer::find($id);
         $customer->update($inputs);
 

@@ -31,10 +31,10 @@
         <table class="table table-striped table-hover table-bordered mytable" width="100%">
           <tr>
             <th >Customer Name</th>
-            <th >Cluster Owner</th>
-            <th >Country Owner</th>
-            <th >Projects</th>
             <th >IC01 Information</th>
+            <th >Country Owner</th>
+            <th >Cluster Owner</th>
+            <th >Projects</th>
           </tr>
           <tr>
             <td >{!! $customer->name !!}</td>
@@ -43,8 +43,8 @@
                 <p>{{$key}} {{$value}}</p><br>
               @endforeach
             </td>
-            <td >{!! $customer->cluster_owner !!}</td>
-            <td >{!! $customer->country_owner !!}</td>          
+            <td >{!! $customer->country_owner !!}</td>   
+            <td >{!! $customer->cluster_owner !!}</td>       
             <td >
               @foreach($projects_of_the_customer as $key => $value)
                   {{$value->project_name}}<br>
