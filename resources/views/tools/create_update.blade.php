@@ -377,13 +377,25 @@ h3:after {
                                   {{$key.$value}}
                                 </option>
                                 @else
-                                <option value="{{$key}}" data-name="" selected>
+                                <option value="{{$key}}" data-name="">
                                   {{$key.$value}}
                                 </option>
                                 @endif
 
                                 @endforeach
+                                @else
+                                 @foreach($all_customer_ic01_values as $key => $value)
+                                 <option></option>
+                                <option value="{{$key}}" data-name="">
+                                  {{$key.$value}}
+                                </option>
+                                @endforeach
                                 @endif
+                                
+
+
+
+                                
                                 
                                 
                               </select>
