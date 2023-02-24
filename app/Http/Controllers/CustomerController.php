@@ -95,8 +95,15 @@ class CustomerController extends Controller
     public function addNewIC01Record(Request $request)
     {
         $inputs = $request->all();
+        
+        
 
-        $record = CustomerIC01::create(
+        $record = CustomerIC01::updateOrCreate(
+            [
+                'customer_id'=>$inputs['customer_id'],
+                'ic01_code'=>$inputs['ic01_code'],
+                'ic01_name'=>$inputs['ic01_name']
+            ],
             [
                 'customer_id'=>$inputs['customer_id'],
                 'ic01_code'=>$inputs['ic01_code'],

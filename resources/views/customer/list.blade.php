@@ -106,9 +106,11 @@
           <table id="ic01_table" class="table table-bordered">
   <thead>
     <tr>
+      <button class="btn btn-info btn-xs" id="addRowIC01" onClick="addRowToTable();"><span style="width:19px;height:19px;" class="glyphicon glyphicon-plus"></span></button>
       <th scope="col">#</th>
       <th scope="col">IC01 Code</th>
       <th scope="col">IC01 Name</th>
+      
     </tr>
   </thead>
   <tbody>
@@ -167,7 +169,96 @@
         var customerTable;
         var record_id;
         var clickCount = 0;
+        function addRowToTable(){
+            html = '<tr><th scope="row"></th><td id="ic01_code" class="editable" contenteditable="true"></td><td id="ic01_name" class="editable" contenteditable="true"></td></tr>';
+                $('#ic01_table').append(html);
+        }
+        function addRowIC01(id)
+            {
+                
 
+                $(document).on('focusout','.editable', function(){
+                    var tr = $(this).closest('tr');
+                    $(this).attr('contenteditable',false);
+                    console.log($(this).attr('id'));
+                    console.log(tr.html());
+                    var ic01_code="";
+                    var ic01_name="";
+                    var id_value = $(this).attr('id');
+                    console.log(id_value);
+                    if(id_value == 'ic01_code')
+                    {
+                        ic01_code = $(this).html();
+                        if($(tr).find('#ic01_name').html() == '')
+                        {   
+
+                            $(tr).find('#ic01_name').css('background-color', '#ce474780');
+                            
+                        }
+                        else{
+                            //do add or update
+                            ic01_name = $(tr).find('#ic01_name').html();
+                            $(tr).find('#ic01_name').css('background-color', 'white');
+                            // route: addNewIC01Record
+                                  $.ajax({
+          
+                                    type: "GET",
+                                  
+                                    url: "{!! route('addNewIC01Record','') !!}",
+                                    data:{'customer_id':id,'ic01_code':ic01_code,'ic01_name':ic01_name},
+                                    
+                                    success: function(data) {
+                                    
+                                      console.log(data);
+                                        $('#exampleModal').modal('toggle');
+                                        
+                                    }
+
+                        });
+                               
+                        }
+                    }
+                    if(id_value == 'ic01_name')
+                    {
+                        ic01_name = $(this).html();
+                        if($(tr).find('#ic01_code').html() == '')
+                        {   
+
+                            $(tr).find('#ic01_code').css('background-color', '#ce474780');
+                            
+                        }
+                        else{
+                            //do add or update
+                            // route: addNewIC01Record
+                            ic01_code = $(tr).find('#ic01_code').html();
+                            $(tr).find('#ic01_code').css('background-color', 'white'); 
+                                  $.ajax({
+          
+                                    type: "GET",
+                                  
+                                    url: "{!! route('addNewIC01Record','') !!}",
+                                    data:{'customer_id':id,'ic01_code':ic01_code,'ic01_name':ic01_name},
+                                    
+                                    success: function(data) {
+                                    
+                                      console.log(data);
+                                        $('#exampleModal').modal('toggle');
+                                        
+                                      
+                                    }
+
+                        });
+                              
+                        }
+                    }
+
+                    
+                })
+
+            }
+
+
+            
         
 
         $(document).ready(function() {
@@ -329,71 +420,26 @@
              var trHTML = '';
         
         $.each(data, function (i, item) {
-            trHTML += '<tr><th scope="row"></th><td>'+i+'</td><td>' + item + '</td></tr>';
+            trHTML += '<tr><th scope="row"></th><td id="ic01_code">'+i+'</td><td id="ic01_name">' + item + '</td></tr>';
         });
         $('#ic01_table tbody').append(trHTML);
           }
           });
+        
                 
-        $(document).on('click','#add_ic01_records',function(){
             
-            
-            console.log(clickCount);
-
-            
-            clickCount++;
-            if (clickCount === 1) {
-              // First click code
-                console.log(clickCount);
-                $('#ic01_adding_form').css('display','block'); 
-            } else if (clickCount === 2) {
-
-              // Second click code
-                console.log('seco');
-              console.log('Second click!');
-
-              var ic01_code = $('#ic01_code').val();
-              var ic01_name = $('#ic01_name').val();
-              
-
-              if(ic01_code == '' || ic01_name == '')
-              {
-                console.log('empty');
-              }
-              else {
-                $.ajax({
-          
-            type: "GET",
-          
-            url: "{!! route('addNewIC01Record','') !!}",
-            data:{'customer_id':id,'ic01_code':ic01_code,'ic01_name':ic01_name},
-            
-            success: function(data) {
-            
-              console.log(data);
-                $('#exampleModal').modal('toggle');
-                $('#ic01_adding_form').css('display','none');
+                $(document).on('click','#ic01_table td',function(){
+                var tr = $(this).closest('tr');
+                $(this).addClass('editable');
+                $(this).attr('contenteditable',true);
+                console.log(id);
                 
-                clickCount=0;
-              
-            }
-
-          });
-              }
-            } else if(clickCount >2){
-                
-                console.log('third');
-                $('#exampleModal').modal('toggle');
-                $('#ic01_adding_form').css('display','none');
-                
-
-            }
-          });
-                
+            });
+                addRowIC01(id);
             });
 
 
-
+            
             
           
           // Handle first click event
@@ -438,6 +484,7 @@
                 });
             } );
            
+
         } );
 
     </script>
