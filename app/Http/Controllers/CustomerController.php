@@ -98,18 +98,36 @@ class CustomerController extends Controller
         
         
 
-        $record = CustomerIC01::updateOrCreate(
-            [
-                'customer_id'=>$inputs['customer_id'],
-                'ic01_code'=>$inputs['ic01_code'],
-                'ic01_name'=>$inputs['ic01_name']
-            ],
+        // $record = CustomerIC01::updateOrCreate(
+        //     [
+        //         'customer_id'=>$inputs['customer_id'],
+        //         'id'=>$inputs['ic01_id']
+
+        //     ],
+        //     [
+        //         'ic01_code'=>$inputs['ic01_code'],
+        //         'ic01_name'=>$inputs['ic01_name']
+        //     ]
+        // );
+
+        if($inputs['ic01_id'] == '-1')
+        {
+            $record = CustomerIC01::Create(
             [
                 'customer_id'=>$inputs['customer_id'],
                 'ic01_code'=>$inputs['ic01_code'],
                 'ic01_name'=>$inputs['ic01_name']
             ]
         );
+        }
+        else{
+             $record = CustomerIC01::where(['id'=>$inputs['ic01_id'],'customer_id'=>$inputs['customer_id']])->update(
+            [
+                'ic01_code'=>$inputs['ic01_code'],
+                'ic01_name'=>$inputs['ic01_name']
+            ]
+        );
+        }
         return json_encode($record);
     }
 

@@ -168,9 +168,9 @@
     <script>
         var customerTable;
         var record_id;
-        var clickCount = 0;
+        
         function addRowToTable(){
-            html = '<tr><th scope="row"></th><td id="ic01_code" class="editable" contenteditable="true"></td><td id="ic01_name" class="editable" contenteditable="true"></td></tr>';
+            html = '<tr data="-1"><th scope="row"></th><td id="ic01_code" class="editable" contenteditable="true"></td><td id="ic01_name" class="editable" contenteditable="true"></td></tr>';
                 $('#ic01_table').append(html);
         }
         function addRowIC01(id)
@@ -184,28 +184,35 @@
                     console.log(tr.html());
                     var ic01_code="";
                     var ic01_name="";
+                    var ic01_id = tr.attr('data');
                     var id_value = $(this).attr('id');
                     console.log(id_value);
-                    if(id_value == 'ic01_code')
-                    {
-                        ic01_code = $(this).html();
+                    var request =[];
+                    
+                        
                         if($(tr).find('#ic01_name').html() == '')
                         {   
 
                             $(tr).find('#ic01_name').css('background-color', '#ce474780');
                             
                         }
+                        else if($(tr).find('#ic01_code').html() == '')
+                        {
+                            $(tr).find('#ic01_name').css('background-color', '#ce474780');
+                        }
                         else{
                             //do add or update
                             ic01_name = $(tr).find('#ic01_name').html();
+                            ic01_code = $(tr).find('#ic01_code').html();
                             $(tr).find('#ic01_name').css('background-color', 'white');
+                             request = {'customer_id':id,'ic01_id':ic01_id,'ic01_code':ic01_code,'ic01_name':ic01_name};
                             // route: addNewIC01Record
                                   $.ajax({
           
                                     type: "GET",
                                   
                                     url: "{!! route('addNewIC01Record','') !!}",
-                                    data:{'customer_id':id,'ic01_code':ic01_code,'ic01_name':ic01_name},
+                                    data:request,
                                     
                                     success: function(data) {
                                     
@@ -217,42 +224,7 @@
                         });
                                
                         }
-                    }
-                    if(id_value == 'ic01_name')
-                    {
-                        ic01_name = $(this).html();
-                        if($(tr).find('#ic01_code').html() == '')
-                        {   
-
-                            $(tr).find('#ic01_code').css('background-color', '#ce474780');
-                            
-                        }
-                        else{
-                            //do add or update
-                            // route: addNewIC01Record
-                            ic01_code = $(tr).find('#ic01_code').html();
-                            $(tr).find('#ic01_code').css('background-color', 'white'); 
-                                  $.ajax({
-          
-                                    type: "GET",
-                                  
-                                    url: "{!! route('addNewIC01Record','') !!}",
-                                    data:{'customer_id':id,'ic01_code':ic01_code,'ic01_name':ic01_name},
-                                    
-                                    success: function(data) {
-                                    
-                                      console.log(data);
-                                        $('#exampleModal').modal('toggle');
-                                        
-                                      
-                                    }
-
-                        });
-                              
-                        }
-                    }
-
-                    
+                       
                 })
 
             }
@@ -419,10 +391,16 @@
 
              var trHTML = '';
         
-        $.each(data, function (i, item) {
-            trHTML += '<tr><th scope="row"></th><td id="ic01_code">'+i+'</td><td id="ic01_name">' + item + '</td></tr>';
-        });
-        $('#ic01_table tbody').append(trHTML);
+
+            for(var i in data)
+            {
+                console.log(data[i]['ic01_code']);
+                trHTML += '<tr data="'+data[i]['id']+'"><th scope="row"></th><td id="ic01_code">'+data[i]['ic01_code']+'</td><td id="ic01_name">' +data[i]['ic01_name']+ '</td></tr>';
+        
+                
+            }
+            $('#ic01_table tbody').append(trHTML);
+        
           }
           });
         
