@@ -92,7 +92,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header float-right">
-        <h5>User details</h5>
+        <h5 id="customer_name"></h5>
         <div class="text-right">
           <i data-dismiss="modal" aria-label="Close" class="fa fa-close"></i>
         </div>
@@ -145,7 +145,6 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" data id ="add_ic01_records" class="btn btn-primary">Add New IC01</button>
       </div>
     </div>
   </div>
@@ -390,11 +389,12 @@
               console.log(data);
 
              var trHTML = '';
-        
+            $('#customer_name').html(data['name'][0]['name'])
 
             for(var i in data)
             {
                 console.log(data[i]['ic01_code']);
+                if(i != 'name')
                 trHTML += '<tr data="'+data[i]['id']+'"><th scope="row"></th><td id="ic01_code">'+data[i]['ic01_code']+'</td><td id="ic01_name">' +data[i]['ic01_name']+ '</td></tr>';
         
                 
