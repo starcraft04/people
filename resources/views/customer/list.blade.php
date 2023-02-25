@@ -395,7 +395,7 @@
             {
                 console.log(data[i]['ic01_code']);
                 if(i != 'name')
-                trHTML += '<tr data="'+data[i]['id']+'"><th scope="row"></th><td id="ic01_code">'+data[i]['ic01_code']+'</td><td id="ic01_name">' +data[i]['ic01_name']+ '</td></tr>';
+                trHTML += '<tr data="'+data[i]['id']+'"><th scope="row" style="text-align:center"><button style="padding:6px 5px;" data='+data[i]['id']+' class="buttonDeleteIC01 btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button></th><td id="ic01_code">'+data[i]['ic01_code']+'</td><td id="ic01_name">' +data[i]['ic01_name']+ '</td></tr>';
         
                 
             }
@@ -417,6 +417,35 @@
             });
 
 
+            //delete ic01
+            $(document).on('click','.buttonDeleteIC01',function(){
+                var ic01_id = $(this).attr('data');
+                console.log(ic01_id);
+                bootbox.confirm("Are you sure want to delete this record?", function(result) {
+                    if (result){
+                        $.ajax({
+                            type: "GET",
+          
+                            url: "{!! route('deleteIC01','') !!}",
+                            data:{'ic01_id':ic01_id},
+                            success: function(data) {
+                                console.log(data);
+                                 $('#exampleModal').modal('toggle');
+
+                                $('#flash-message').empty();
+                                var box = $('<div id="delete-message" class="alert alert-success alert-dismissible flash-success" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>Deleted</div>');
+                                $('#flash-message').append(box);
+                                $('#delete-message').delay(2000).queue(function () {
+                                    $(this).addClass('animated flipOutX')
+                                });
+                                customerTable.ajax.reload();
+                            }
+                        });
+                    }
+                });
+            } );
+
+            
             
             
           

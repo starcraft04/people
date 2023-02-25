@@ -92,6 +92,14 @@ class CustomerController extends Controller
         return $data;
     }
 
+    public function deleteIC01(Request $request)
+    {
+        $inputs = $request->all();
+
+        $record = CustomerIC01::find($inputs['ic01_id'])->delete();
+
+        return $record;
+    }
     public function addNewIC01Record(Request $request)
     {
         $inputs = $request->all();
