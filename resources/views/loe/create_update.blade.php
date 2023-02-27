@@ -412,7 +412,6 @@ $(document).ready(function() {
         {'name':'description','hide':false},
         {'name':'option','hide':false},
         {'name':'status','hide':false},
-        {'name':'consultant_name','hide':false},
         {'name':'assumption','hide':false},
         {'name':'site','hide':false},
         {'name':'quantity','hide':false},
@@ -574,25 +573,25 @@ if(item != null)
        
         
       }
-      if(colname == 'consultant_name')
-      {
+      // if(colname == 'consultant_name')
+      // {
 
         
         
         
-         mm+='<td data-colname="'+colname+'"style="min-width:220px;" contenteditable="false" class="'+myclass+'">'+'<select class="form-control '+myclass+'select2" id="assigned_user_id" data-placeholder="Select a user"><option value=""></option>';
-        for(var key in x){
-          if(key == item){
+      //    mm+='<td data-colname="'+colname+'"style="min-width:220px;" contenteditable="false" class="'+myclass+'">'+'<select class="form-control '+myclass+'select2" id="assigned_user_id" data-placeholder="Select a user"><option value=""></option>';
+      //   for(var key in x){
+      //     if(key == item){
             
-            mm+='<option value="'+item+'" selected>'+x[item]+'</option>'    
-          }
+      //       mm+='<option value="'+item+'" selected>'+x[item]+'</option>'    
+      //     }
 
-        mm+='<option value="'+key+'">'+x[key]+'</option>' 
-        }
-        mm+='</select>'+'</td>';
+      //   mm+='<option value="'+key+'">'+x[key]+'</option>' 
+      //   }
+      //   mm+='</select>'+'</td>';
         
-        return mm;
-      }
+      //   return mm;
+      // }
         
        
     }
@@ -758,7 +757,6 @@ if(item != null)
 
             html += '<th rowspan="3" data-colname="status" style="min-width:150px;">'+'Status'+'</th>';
 
-            html += '<th rowspan="3" data-colname="consultant_name" style="min-width:150px;">'+'Consultant Name'+'</th>';
             // html += '<th rowspan="3" data-colname="assumption" style="min-width:250px;">'+'Assumption'+'</th>';
             if (data.col.site.length>0) {
               html += '<th data-colname="formula" rowspan="3" style="min-width:150px;">'+'Formula'+'</th>';
@@ -925,7 +923,7 @@ if(item != null)
               html += td_no_null(row.secondary_phase,'','secondary_phase','editable');
               html += td_no_null(row.domain,'','domain','editable');
               html += td_no_null_non_editables(row.status,'','status','editable cr',true);
-              html += td_no_null_non_editables(row.cons_id,'','consultant_name','editable');
+              // html += td_no_null_non_editables(row.cons_id,'','consultant_name','editable');
               // html += td_no_null(row.assumption,'','assumption','editable cr',true);
               //endregion
 
@@ -1008,7 +1006,7 @@ if(item != null)
             html += '<td data-colname="description"></td>';
             html += '<td data-colname="option"></td>';
             html += '<td data-colname="status"></td>';
-            html += '<td data-colname="consultant_name">';
+            
             
             html+='<div class="col-md-11" style="display: none;"></td>';
             // html += '<td data-colname="assumption"></td>';
@@ -1165,7 +1163,7 @@ if(item != null)
               html += td_no_null_history(row.main_phase);
               html += td_no_null_history(row.secondary_phase);
               html += td_no_null_history(row.status);
-              html += td_no_null_history(row.consultant_name);
+              
               html += td_no_null_history(row.loe_desc);
               html += td_no_null_history(row.history_desc);
               html += td_no_null_history(row.field_modified);
@@ -2057,6 +2055,7 @@ if(item != null)
       console.log(loe_id);
               console.log("jjjj");
               var value_select = tr.find('#status_select').val();
+
               var request = {'id':loe_id,'project_id':project_id,'colname':'status','value':value_select,'cons_id':old_cons_select};
               $.ajax({
               type: 'post',
@@ -2065,27 +2064,12 @@ if(item != null)
               dataType: 'json',
               success:function(data){
                 console.log(data);
-              }
-            });
-              if(value_select == 'Canceled' || value_select == 'Deal Lost')
-              {
-                tr.find('#assigned_user_id').val("").trigger('change');
-
-                $.ajax({
-              type: 'get',
-              url: "{!! route('changeBevahiorOnZZZ') !!}",
-              data:request,
-              dataType: 'json',
-              success:function(data){
-                console.log(data);
-              }
-            });
-
-              }
-              if(value_select == 'Onhold' || value_select == 'Under Assignement' || value_select == 'In Planning'){
-                // tr.find('#assigned_user_id').val("").trigger('change');
-                console.log("add");
-                $.ajax({
+              },
+              complete: function () { // Set our complete callback, adding the .hidden class and hiding the spinner.
+                
+                if(value_select == 'Canceled' || value_select == 'Deal Lost')
+                {
+                   $.ajax({
                        type: 'post',
                     url: "{!! route('addZuser') !!}",
                     data:request,
@@ -2097,8 +2081,15 @@ if(item != null)
                       console.log(data);
                     }
                   });
-              }
 
+                }
+                
+                
+                
+              }
+            });
+               
+              console.log("value");
               console.log(value_select);
               
               
@@ -2142,7 +2133,7 @@ if(item != null)
           case 'domain':
           case 'description':
           case 'option':
-          case 'consultant_name':
+          
           case 'assumption':
           case 'start_date':
 
