@@ -741,6 +741,8 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
 
         $inputs = $request->all();
 
+
+
         // Now we need to check if the user has been flagged for remove from project
         if ($inputs['action'] == 'Remove') {
             if (Auth::user()->can('tools-user_assigned-remove')) {
@@ -757,6 +759,7 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
         $inputs['estimated_end_date'] = $inputs['estimated_end_date'];
 
         $project = $this->projectRepository->update($inputs['project_id'], $inputs);
+
 
         // if user_id_url = 0 then it is only project update and we don't need to add or update tasks
         if ($inputs['user_id_url'] != 0 && Auth::user()->can('tools-user_assigned-change')) {
@@ -783,11 +786,16 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
         }
 
         if (! empty($inputs['user_id'])) {
+            dd($inputs);
             foreach ($inputs['month'] as $key => $value) {
                 $inputs_new = $inputs;
                 $inputs_new['month'] = $key;
                 $inputs_new['task_hour'] = $value;
+                $inputs_new['user_id'] = $inputs['user_id'];
                 $inputs_new['from_otl'] = 0;
+                 $load = Activity::where(['project_id'=>$inputs['project_id'],'user_id'=>'120','month'=>$key])->get('task_hour');
+                
+                $load_after = Activity::where(['project_id'=>$inputs['project_id'],'user_id'=>'120','month'=>$key])->update(['task_hour'=>$load['task_hour']-$value]);
                 $activity = $this->activityRepository->createOrUpdate($inputs_new);
             }
         }
