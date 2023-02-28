@@ -2479,7 +2479,7 @@ function changeCustomerAndCountry(pp){
               console.log("length");
               var length = Object.keys(data).length;
               console.log(length);
-              if(length==1)
+              if(length==2)
               {
                 console.log("!111!!")
                 console.log(data);
@@ -2490,7 +2490,7 @@ function changeCustomerAndCountry(pp){
                   console.log(key);
                   console.log("value");
                   console.log(value);
-                html+='<option value="'+value['ic01_code']+'">'+value['ic01_code']+" - "+value['ic01_name']+'</option>';
+                html+='<option value="'+value['ic01_code']+'" selected>'+value['ic01_code']+' - '+value['ic01_name']+'</option>';
                 $('#customer_ic01').empty();
                 $('#customer_ic01').append(html);
                 $('#customer_ic01').val(value['ic01_code']);
@@ -2499,14 +2499,14 @@ function changeCustomerAndCountry(pp){
                 });
                 
               }
-              else if(length == 0)
+              else if(length == 1)
               {
                 console.log("0")
                 console.log(length);
                 console.log("000");
                 $('#customer_ic01').empty();
 
-                html+='<option value=""></option>';
+                html+='<option value="" selected></option>';
                 $('#customer_ic01').append(html);
                 $('#customer_ic01').select2().trigger('change');
               }
@@ -2520,7 +2520,7 @@ function changeCustomerAndCountry(pp){
 
                         
                         {
-                          html+='<option value="'+value['ic01_code']+'">'+value['ic01_code']+" - "+value['ic01_name']+'</option>';
+                          html+='<option value="'+value['ic01_code']+'">'+value['ic01_code']+" - "+value['ic01_name']+' selected></option>';
                         $('#customer_ic01').empty();
                         $('#customer_ic01').select2().trigger('change');
                         $('#customer_ic01').append(html);
