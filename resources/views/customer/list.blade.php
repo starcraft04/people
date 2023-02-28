@@ -198,7 +198,7 @@
                             $(tr).find('#ic01_name').css('background-color', '#ce474780');
                             
                         }
-                        else if($(tr).find('#ic01_code').html() == ''  || $(tr).find('#ic01_code:empty'))
+                        else if($(tr).find('#ic01_code').html() == '' || $(tr).find('#ic01_code:empty'))
                         {
                             $(tr).find('#ic01_name').css('background-color', '#ce474780');
                         }
