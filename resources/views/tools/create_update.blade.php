@@ -374,11 +374,11 @@ h3:after {
                                 @foreach($all_customer_ic01_values as $key => $value)
                                 @if($customer_ic01 == $key)
                                 <option value="{{$key}}" data-name="" selected>
-                                  {{$key.$value}}
+                                  {{$key.' - '.$value}}
                                 </option>
                                 @else
                                 <option value="{{$key}}" data-name="">
-                                  {{$key.$value}}
+                                  {{$key.' - '.$value}}
                                 </option>
                                 @endif
 
@@ -387,7 +387,7 @@ h3:after {
                                  @foreach($all_customer_ic01_values as $key => $value)
                                  <option></option>
                                 <option value="{{$key}}" data-name="">
-                                  {{$key.$value}}
+                                  {{$key.' - '.$value}}
                                 </option>
                                 @endforeach
                                 @endif
@@ -2484,11 +2484,18 @@ function changeCustomerAndCountry(pp){
                 console.log("!111!!")
                 console.log(data);
                 $.each(data,function(key,value){
-                html+='<option value="'+key+'">'+key+""+value+'</option>';
+                  if(key != length-1)
+                  {
+                    console.log("key");
+                  console.log(key);
+                  console.log("value");
+                  console.log(value);
+                html+='<option value="'+value['ic01_code']+'">'+value['ic01_code']+" - "+value['ic01_name']+'</option>';
                 $('#customer_ic01').empty();
                 $('#customer_ic01').append(html);
-                $('#customer_ic01').val(key);
+                $('#customer_ic01').val(value['ic01_code']);
                 $('#customer_ic01').select2().trigger('change');
+                  }
                 });
                 
               }
@@ -2508,13 +2515,18 @@ function changeCustomerAndCountry(pp){
                           //For example
 
                         console.log("---ico1---");
-                        console.log(key + value)
-                        html+='<option value="'+key+'">'+key+""+value+'</option>';
+
+                        if(key != length-1)
+
+                        
+                        {
+                          html+='<option value="'+value['ic01_code']+'">'+value['ic01_code']+" - "+value['ic01_name']+'</option>';
                         $('#customer_ic01').empty();
                         $('#customer_ic01').select2().trigger('change');
                         $('#customer_ic01').append(html);
                         
                         console.log("------");
+                        }
                       });
               }
               

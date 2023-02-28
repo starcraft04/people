@@ -145,9 +145,12 @@ class ToolsController extends Controller
 
         $customer_name = Customer::where('id',$customer_id)->get('name');
 
+        
         $customer_ic01_info = DB::table('customerIC01 as ic')->where('customer_id',$customer_id)->select('ic.id','ic.ic01_name','ic.ic01_code')->get();
+        
 
-        $customer_ic01_info["name"] = $customer_name;
+        $customer_ic01_info->push(['name' => $customer_name]);
+
         return $customer_ic01_info;
     }
     public function getFormCreate($year, $tab = 'tab_main')
