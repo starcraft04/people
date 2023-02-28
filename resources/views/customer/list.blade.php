@@ -167,24 +167,27 @@
     <script>
         var customerTable;
         var record_id;
+        var customer_id_from_modal;
         
         function addRowToTable(){
             html = '<tr data="-1"><th scope="row"></th><td id="ic01_code" class="editable" contenteditable="true"></td><td id="ic01_name" class="editable" contenteditable="true"></td></tr>';
                 $('#ic01_table').append(html);
         }
-        function addRowIC01(id)
+        function addRow_IC01(id,td)
             {
                 
 
-                $(document).on('focusout','.editable', function(){
-                    var tr = $(this).closest('tr');
-                    $(this).attr('contenteditable',false);
-                    console.log($(this).attr('id'));
+                
+                    var tr = $(td).closest('tr');
+                    $(td).attr('contenteditable',false);
+                    $(td).removeClass('editable');
+
+                    console.log($(td).attr('id'));
                     console.log(tr.html());
                     var ic01_code="";
                     var ic01_name="";
                     var ic01_id = tr.attr('data');
-                    var id_value = $(this).attr('id');
+                    var id_value = $(td).attr('id');
                     console.log(id_value);
                     var request =[];
                     
@@ -206,7 +209,11 @@
                             $(tr).find('#ic01_name').css('background-color', 'white');
                              request = {'customer_id':id,'ic01_id':ic01_id,'ic01_code':ic01_code,'ic01_name':ic01_name};
                             // route: addNewIC01Record
-                                  $.ajax({
+                                
+
+                                  if(ic01_id == '-1')
+                                  {
+                                    $.ajax({
           
                                     type: "GET",
                                   
@@ -215,18 +222,59 @@
                                     
                                     success: function(data) {
                                     
-                                      console.log(data);
-                                        $('#exampleModal').modal('toggle');
+                                      
+                                        
+                                        $('#flash-message').empty();
+                                var box = $('<div id="delete-message" class="alert alert-success alert-dismissible flash-success" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>IC01 Added successfully </div>');
+                                $('#flash-message').append(box);
+                                $('#delete-message').delay(2000).queue(function () {
+                                    $(this).addClass('animated flipOutX')
+                                });
+                                
+
+                                        tr.attr('data', data['id']);
+                                        $('#exampleModal').modal('hide');
+                                        customerTable.ajax.reload();
+                                        return;
+                                
                                         
                                     }
 
                         });
+                                  }
+                                  else{
+                                      $.ajax({
+          
+                                    type: "GET",
+                                  
+                                    url: "{!! route('updateIC01','') !!}",
+                                    data:request,
+                                    
+                                    success: function(data) {
+                                    
+                                      console.log(data);
+                                        
+                                        $('#flash-message').empty();
+                                var box = $('<div id="delete-message" class="alert alert-success alert-dismissible flash-success" role="alert"><button href="#" class="close" data-dismiss="alert" aria-label="close">&times;</button>IC01 Updated successfully </div>');
+                                $('#flash-message').append(box);
+                                $('#delete-message').delay(2000).queue(function () {
+                                    $(this).addClass('animated flipOutX')
+                                });
+                                $('#exampleModal').modal('hide');
+                                        
+                                customerTable.ajax.reload();
+                                        return;
+                                    }
+
+                        });
+                                  }
                                
                         }
                        
-                })
+                
 
             }
+
 
 
             
@@ -375,7 +423,7 @@
             $(document).on('click','.openModal',function(){
                 $('#ic01_table tbody').empty();
                 var id = $(this).attr('data-col');
-
+                customer_id_from_modal = id;
                 $.ajax({
           
           type: "GET",
@@ -389,12 +437,12 @@
               console.log(data);
 
              var trHTML = '';
-            $('#customer_name').html(data['name'][0]['name'])
+            $('#customer_name').html(data[data.length-1]['name'][0]['name'])
 
             for(var i in data)
             {
                 console.log(data[i]['ic01_code']);
-                if(i != 'name')
+                if(i != data.length-1)
                 trHTML += '<tr data="'+data[i]['id']+'"><th scope="row" style="text-align:center"><button style="padding:6px 5px;" data='+data[i]['id']+' class="buttonDeleteIC01 btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button></th><td id="ic01_code">'+data[i]['ic01_code']+'</td><td id="ic01_name">' +data[i]['ic01_name']+ '</td></tr>';
         
                 
@@ -406,16 +454,22 @@
         
                 
             
-                $(document).on('click','#ic01_table td',function(){
+                
+            });
+
+            $(document).on('click','#ic01_table td',function(){
                 var tr = $(this).closest('tr');
                 $(this).addClass('editable');
                 $(this).attr('contenteditable',true);
-                console.log(id);
+                console.log("ssss");
+                console.log(customer_id_from_modal);
                 
             });
-                addRowIC01(id);
-            });
 
+            $(document).on('focusout','.editable', function(){
+                    addRow_IC01(customer_id_from_modal,$(this));    
+                });
+                
 
             //delete ic01
             $(document).on('click','.buttonDeleteIC01',function(){

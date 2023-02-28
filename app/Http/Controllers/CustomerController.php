@@ -127,15 +127,24 @@ class CustomerController extends Controller
                 'ic01_name'=>$inputs['ic01_name']
             ]
         );
+            
+            return $record;
         }
-        else{
-             $record = CustomerIC01::where(['id'=>$inputs['ic01_id'],'customer_id'=>$inputs['customer_id']])->update(
+
+    }
+
+    public function updateIC01(Request $request)
+    {
+
+        $inputs = $request->all();
+        $record = CustomerIC01::where(['id'=>$inputs['ic01_id'],'customer_id'=>$inputs['customer_id']])->update(
             [
                 'ic01_code'=>$inputs['ic01_code'],
                 'ic01_name'=>$inputs['ic01_name']
             ]
         );
-        }
+             return $record;
+        
         return json_encode($record);
     }
 
