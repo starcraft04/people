@@ -365,7 +365,7 @@ h3:after {
                         <div class="row">
                           <div class="form-group {!! $errors->has('customer_id') ? 'has-error' : '' !!} col-md-12">
                             <div class="col-md-3">
-                              {!! Form::label('customer_ic01', 'Customer IC01 *', ['class' => 'control-label']) !!}
+                              {!! Form::label('customer_ic01', 'Customer IC01 ', ['class' => 'control-label']) !!}
                             </div>
                             <div class="col-md-9" id="select_customer_ic01_field">
                               <select class="form-control select2" style="width: 100%;" id="customer_ic01" name="customer_ic01" data-placeholder="Select a customer IC01">
