@@ -2520,7 +2520,7 @@ function changeCustomerAndCountry(pp){
 
                         
                         {
-                          html+='<option value="'+value['ic01_code']+'">'+value['ic01_code']+" - "+value['ic01_name']+' selected></option>';
+                          html+='<option value="'+value['ic01_code']+'">'+value['ic01_code']+" - "+value['ic01_name']+'></option>';
                         $('#customer_ic01').empty();
                         $('#customer_ic01').select2().trigger('change');
                         $('#customer_ic01').append(html);
