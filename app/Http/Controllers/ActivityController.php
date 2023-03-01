@@ -195,7 +195,10 @@ class ActivityController extends Controller
                             'from_otl'=>0
                         ]);
                     $load = Activity::where(['project_id'=>$inputs['project_id'],'user_id'=>'120','month'=>$inputs['month']])->get('task_hour');
-                    $load_after = Activity::where(['project_id'=>$inputs['project_id'],'user_id'=>'120','month'=>$inputs['month']])->update(['task_hour'=>$load[0]->task_hour-$inputs['task_hour']]);
+
+                    $total_calc = ($load[0]->task_hour-$inputs['task_hour'] < 0)?0:$load[0]->task_hour-$inputs['task_hour'];
+
+                    $load_after = Activity::where(['project_id'=>$inputs['project_id'],'user_id'=>'120','month'=>$inputs['month']])->update(['task_hour'=>$total_calc]);
                     
                     $result->result = 'success';
                     $result->action = 'create';
@@ -205,7 +208,10 @@ class ActivityController extends Controller
                     $record = Activity::where('id',$inputs['id'])
                         ->update(['task_hour'=>$inputs['task_hour']]);
                     $load = Activity::where(['project_id'=>$inputs['project_id'],'user_id'=>'120','month'=>$inputs['month']])->get('task_hour');
-                    $load_after = Activity::where(['project_id'=>$inputs['project_id'],'user_id'=>'120','month'=>$inputs['month']])->update(['task_hour'=>$load[0]->task_hour-$inputs['task_hour']]);
+
+                    $total_calc = ($load[0]->task_hour-$inputs['task_hour'] < 0) ? 0 : $load[0]->task_hour-$inputs['task_hour'];
+
+                    $load_after = Activity::where(['project_id'=>$inputs['project_id'],'user_id'=>'120','month'=>$inputs['month']])->update(['task_hour'=>$total_calc]);
                     $result->result = 'success';
                     $result->action = 'update';
                     $result->msg = 'Record updated successfully';

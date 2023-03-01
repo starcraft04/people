@@ -2090,7 +2090,7 @@ public  function get_different_cons_type($x,$y){
 
                         //check task existance 
                 $task_exists = Activity::where(['project_id'=>$project_id_for_zzz,'user_id'=>$zzz_user_id
-                        ,'month'=>$i, 'year'=>$st_year_of_zzz])->get('task_hour');
+                        ,'month'=>$k, 'year'=>$j])->get('task_hour');
                 //status where values add
                 if($loeForZZZ['status'] == "Assigned Not Signed" || $loeForZZZ['status'] == "Assigned and Closed" || $loeForZZZ['status'] =='Onhold' || $loeForZZZ['status'] == 'Under Assignement' || $loeForZZZ['status'] == 'In Planning')
                 {
