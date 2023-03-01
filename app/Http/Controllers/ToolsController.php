@@ -800,10 +800,12 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
                 $inputs_new['task_hour'] = $value;
                 $inputs_new['user_id'] = $inputs['user_id'];
                 $inputs_new['from_otl'] = 0;
-                 $load = Activity::where(['project_id'=>$inputs['project_id'],'user_id'=>'120','month'=>$key])->get('task_hour');
 
-                
-                $load_after = Activity::where(['project_id'=>$inputs['project_id'],'user_id'=>'120','month'=>$key])->update(['task_hour'=>$load[0]->task_hour-$value]);
+                 $load = Activity::where(['project_id'=>$inputs['project_id'],'user_id'=>'120','month'=>$key])->get('task_hour');
+                 $total_cal = ($load[0]->task_hour-$value < 0)? 0 : $load[0]->task_hour-$value;
+                $load_after = Activity::where(['project_id'=>$inputs['project_id'],'user_id'=>'120','month'=>$key])->update(['task_hour'=>$total_cal]);
+            
+                 
                 $activity = $this->activityRepository->createOrUpdate($inputs_new);
             }
         }
