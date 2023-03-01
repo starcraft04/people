@@ -337,7 +337,15 @@ class ToolsController extends Controller
           'task_hour' => $value,
           'from_otl' => 0,
         ];
-                $activity = $this->activityRepository->create($inputsActivities);
+
+            $load = Activity::where(['project_id'=>$inputs['project_id'],'user_id'=>'120','month'=>$key])->get('task_hour');
+
+            
+                
+            $load_after = Activity::where(['project_id'=>$project->id,'user_id'=>'120','month'=>$key])->update(['task_hour'=>$load[0]->task_hour-$value]);
+            
+            $activity = $this->activityRepository->create($inputsActivities);
+
             }
         }
 
@@ -785,8 +793,8 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
             }
         }
 
-        if (! empty($inputs['user_id'])) {
-            dd($inputs);
+        if (!empty($inputs['user_id'])) {
+            
             foreach ($inputs['month'] as $key => $value) {
                 $inputs_new = $inputs;
                 $inputs_new['month'] = $key;
@@ -794,8 +802,9 @@ if ($this->activityRepository->user_assigned_on_project($year, $user_id, $projec
                 $inputs_new['user_id'] = $inputs['user_id'];
                 $inputs_new['from_otl'] = 0;
                  $load = Activity::where(['project_id'=>$inputs['project_id'],'user_id'=>'120','month'=>$key])->get('task_hour');
+
                 
-                $load_after = Activity::where(['project_id'=>$inputs['project_id'],'user_id'=>'120','month'=>$key])->update(['task_hour'=>$load['task_hour']-$value]);
+                $load_after = Activity::where(['project_id'=>$inputs['project_id'],'user_id'=>'120','month'=>$key])->update(['task_hour'=>$load[0]->task_hour-$value]);
                 $activity = $this->activityRepository->createOrUpdate($inputs_new);
             }
         }

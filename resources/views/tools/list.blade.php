@@ -687,7 +687,7 @@
         $(td).attr('data-colonne', colonne);
         $(td).attr('data-project_id', project_id);
         $(td).attr('data-user_id', user_id);
-        $(td).attr('data-value', value);
+        $(td).attr('data-value', value.toFixed(2));
           if(value == 0){
             $(td).html('17');
             $(td).addClass("unassigned_forecast");
@@ -708,7 +708,7 @@
         $(td).attr('data-colonne', colonne);
         $(td).attr('data-project_id', project_id);
         $(td).attr('data-user_id', user_id);
-        $(td).attr('data-value', value);
+        $(td).attr('data-value', value.toFixed(2));
         $(td).on('click',function(){
 
             Swal.fire({
@@ -726,7 +726,7 @@
         $(td).attr('data-colonne', colonne);
         $(td).attr('data-project_id', project_id);
         $(td).attr('data-user_id', user_id);
-        $(td).attr('data-value', value);
+        $(td).attr('data-value', value.toFixed(2));
         @endcan
         
         }
