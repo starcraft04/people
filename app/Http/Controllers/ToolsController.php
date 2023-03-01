@@ -327,7 +327,7 @@ class ToolsController extends Controller
         $project = $this->projectRepository->create($inputs);
 
         // Here I will test if a user has been selected or not
-        if (! empty($inputs['user_id'])) {
+        if (!empty($inputs['user_id'])) {
             foreach ($inputs['month'] as $key => $value) {
                 $inputsActivities = [
           'year' => $inputs['year'],
@@ -350,7 +350,7 @@ class ToolsController extends Controller
         }
 
 
-
+        
         // Here I will test if there is a comment
         if (! empty($inputs['project_comment'])) {
             $comment_input = [
