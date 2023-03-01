@@ -109,7 +109,7 @@ class ActivityRepository
 
         return $this->save($activity, $inputs);
     }
-
+//
     public function removeUserFromProject($user_id, $project_id, $year)
     {
         $activity = $this->activity
