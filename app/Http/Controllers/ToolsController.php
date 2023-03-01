@@ -340,9 +340,10 @@ class ToolsController extends Controller
 
             $load = Activity::where(['project_id'=>$inputs['project_id'],'user_id'=>'120','month'=>$key])->get('task_hour');
 
-            
-            $load_after = Activity::where(['project_id'=>$inputs['project_id'],'user_id'=>'120','month'=>$key])->update(['task_hour'=>$load[0]->task_hour-$value]);
                 
+            $load_after = Activity::where(['project_id'=>$inputs['project_id'],'user_id'=>'120','month'=>$key])->update(['task_hour'=>$load[0]->task_hour-$value]);
+            
+                $activity = $this->activityRepository->createOrUpdate($inputs_new);
             $activity = $this->activityRepository->create($inputsActivities);
 
             }
