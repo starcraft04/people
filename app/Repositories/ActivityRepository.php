@@ -71,6 +71,7 @@ class ActivityRepository
 
     public function createOrUpdate($inputs)
     {
+        
         $activity = $this->activity
             ->where('year', $inputs['year'])
             ->where('month', $inputs['month'])
