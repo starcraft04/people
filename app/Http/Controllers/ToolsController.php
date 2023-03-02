@@ -434,9 +434,9 @@ class ToolsController extends Controller
             }
         }
 
-        
+
         if (!empty($inputs['user_id'])) {
-            dd($inputs);
+            
             foreach ($inputs['month'] as $key => $value) {
                 $inputs_new = $inputs;
                 $inputs_new['month'] = $key;
@@ -447,6 +447,7 @@ class ToolsController extends Controller
 
                 $load_task_hours_calc = ($load[0]->task_hour-$value < 0)?0:$load[0]->task_hour-$value;
                 $load_after = Activity::where(['project_id'=>$inputs['project_id'],'user_id'=>'120','month'=>$key])->update(['task_hour'=>$load_task_hours_calc]);
+                dd($inputs_new);
                 $activity = $this->activityRepository->createOrUpdate($inputs_new);
             }
         }
