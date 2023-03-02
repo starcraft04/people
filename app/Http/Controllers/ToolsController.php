@@ -434,9 +434,9 @@ class ToolsController extends Controller
             }
         }
 
-        dd($inputs);
+        
         if (!empty($inputs['user_id'])) {
-            
+            dd($inputs);
             foreach ($inputs['month'] as $key => $value) {
                 $inputs_new = $inputs;
                 $inputs_new['month'] = $key;
