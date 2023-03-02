@@ -409,7 +409,7 @@ class ToolsController extends Controller
 
         $project = $this->projectRepository->update($inputs['project_id'], $inputs);
 
-        dd($inputs);
+        
         // if user_id_url = 0 then it is only project update and we don't need to add or update tasks
         if ($inputs['user_id_url'] != 0 && Auth::user()->can('tools-user_assigned-change')) {
             // Let's check first if we changed the user
