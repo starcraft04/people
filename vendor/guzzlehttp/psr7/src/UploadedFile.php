@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace GuzzleHttp\Psr7;
 
 use InvalidArgumentException;
@@ -11,7 +9,10 @@ use RuntimeException;
 
 class UploadedFile implements UploadedFileInterface
 {
-    private const ERRORS = [
+    /**
+     * @var int[]
+     */
+    private static $errors = [
         UPLOAD_ERR_OK,
         UPLOAD_ERR_INI_SIZE,
         UPLOAD_ERR_FORM_SIZE,
@@ -23,12 +24,12 @@ class UploadedFile implements UploadedFileInterface
     ];
 
     /**
-     * @var string|null
+     * @var string
      */
     private $clientFilename;
 
     /**
-     * @var string|null
+     * @var string
      */
     private $clientMediaType;
 
@@ -48,7 +49,7 @@ class UploadedFile implements UploadedFileInterface
     private $moved = false;
 
     /**
-     * @var int|null
+     * @var int
      */
     private $size;
 
@@ -59,25 +60,22 @@ class UploadedFile implements UploadedFileInterface
 
     /**
      * @param StreamInterface|string|resource $streamOrFile
-<<<<<<< HEAD
-=======
      * @param int                             $size
      * @param int                             $errorStatus
      * @param string|null                     $clientFilename
      * @param string|null                     $clientMediaType
->>>>>>> skillbase_New
      */
     public function __construct(
         $streamOrFile,
-        ?int $size,
-        int $errorStatus,
-        string $clientFilename = null,
-        string $clientMediaType = null
+        $size,
+        $errorStatus,
+        $clientFilename = null,
+        $clientMediaType = null
     ) {
         $this->setError($errorStatus);
-        $this->size = $size;
-        $this->clientFilename = $clientFilename;
-        $this->clientMediaType = $clientMediaType;
+        $this->setSize($size);
+        $this->setClientFilename($clientFilename);
+        $this->setClientMediaType($clientMediaType);
 
         if ($this->isOk()) {
             $this->setStreamOrFile($streamOrFile);
@@ -87,11 +85,11 @@ class UploadedFile implements UploadedFileInterface
     /**
      * Depending on the value set file or stream variable
      *
-     * @param StreamInterface|string|resource $streamOrFile
+     * @param mixed $streamOrFile
      *
      * @throws InvalidArgumentException
      */
-    private function setStreamOrFile($streamOrFile): void
+    private function setStreamOrFile($streamOrFile)
     {
         if (is_string($streamOrFile)) {
             $this->file = $streamOrFile;
@@ -107,11 +105,19 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
+     * @param int $error
+     *
      * @throws InvalidArgumentException
      */
-    private function setError(int $error): void
+    private function setError($error)
     {
-        if (false === in_array($error, UploadedFile::ERRORS, true)) {
+        if (false === is_int($error)) {
+            throw new InvalidArgumentException(
+                'Upload file error status must be an integer'
+            );
+        }
+
+        if (false === in_array($error, UploadedFile::$errors)) {
             throw new InvalidArgumentException(
                 'Invalid error status for UploadedFile'
             );
@@ -120,9 +126,6 @@ class UploadedFile implements UploadedFileInterface
         $this->error = $error;
     }
 
-<<<<<<< HEAD
-    private function isStringNotEmpty($param): bool
-=======
     /**
      * @param int $size
      *
@@ -155,32 +158,56 @@ class UploadedFile implements UploadedFileInterface
      * @return bool
      */
     private function isStringNotEmpty($param)
->>>>>>> skillbase_New
     {
         return is_string($param) && false === empty($param);
     }
 
     /**
+     * @param string|null $clientFilename
+     *
+     * @throws InvalidArgumentException
+     */
+    private function setClientFilename($clientFilename)
+    {
+        if (false === $this->isStringOrNull($clientFilename)) {
+            throw new InvalidArgumentException(
+                'Upload file client filename must be a string or null'
+            );
+        }
+
+        $this->clientFilename = $clientFilename;
+    }
+
+    /**
+     * @param string|null $clientMediaType
+     *
+     * @throws InvalidArgumentException
+     */
+    private function setClientMediaType($clientMediaType)
+    {
+        if (false === $this->isStringOrNull($clientMediaType)) {
+            throw new InvalidArgumentException(
+                'Upload file client media type must be a string or null'
+            );
+        }
+
+        $this->clientMediaType = $clientMediaType;
+    }
+
+    /**
      * Return true if there is no upload error
-<<<<<<< HEAD
-=======
      *
      * @return bool
->>>>>>> skillbase_New
      */
-    private function isOk(): bool
+    private function isOk()
     {
         return $this->error === UPLOAD_ERR_OK;
     }
 
-<<<<<<< HEAD
-    public function isMoved(): bool
-=======
     /**
      * @return bool
      */
     public function isMoved()
->>>>>>> skillbase_New
     {
         return $this->moved;
     }
@@ -188,7 +215,7 @@ class UploadedFile implements UploadedFileInterface
     /**
      * @throws RuntimeException if is moved or not ok
      */
-    private function validateActive(): void
+    private function validateActive()
     {
         if (false === $this->isOk()) {
             throw new RuntimeException('Cannot retrieve stream due to upload error');
@@ -199,7 +226,12 @@ class UploadedFile implements UploadedFileInterface
         }
     }
 
-    public function getStream(): StreamInterface
+    /**
+     * {@inheritdoc}
+     *
+     * @throws RuntimeException if the upload was not successful.
+     */
+    public function getStream()
     {
         $this->validateActive();
 
@@ -207,15 +239,9 @@ class UploadedFile implements UploadedFileInterface
             return $this->stream;
         }
 
-        /** @var string $file */
-        $file = $this->file;
-
-        return new LazyOpenStream($file, 'r+');
+        return new LazyOpenStream($this->file, 'r+');
     }
 
-<<<<<<< HEAD
-    public function moveTo($targetPath): void
-=======
     /**
      * {@inheritdoc}
      *
@@ -230,7 +256,6 @@ class UploadedFile implements UploadedFileInterface
      *                                  the second or subsequent call to the method.
      */
     public function moveTo($targetPath)
->>>>>>> skillbase_New
     {
         $this->validateActive();
 
@@ -241,7 +266,7 @@ class UploadedFile implements UploadedFileInterface
         }
 
         if ($this->file) {
-            $this->moved = PHP_SAPI === 'cli'
+            $this->moved = php_sapi_name() == 'cli'
                 ? rename($this->file, $targetPath)
                 : move_uploaded_file($this->file, $targetPath);
         } else {
@@ -260,14 +285,16 @@ class UploadedFile implements UploadedFileInterface
         }
     }
 
-    public function getSize(): ?int
+    /**
+     * {@inheritdoc}
+     *
+     * @return int|null The file size in bytes or null if unknown.
+     */
+    public function getSize()
     {
         return $this->size;
     }
 
-<<<<<<< HEAD
-    public function getError(): int
-=======
     /**
      * {@inheritdoc}
      *
@@ -276,14 +303,10 @@ class UploadedFile implements UploadedFileInterface
      * @return int One of PHP's UPLOAD_ERR_XXX constants.
      */
     public function getError()
->>>>>>> skillbase_New
     {
         return $this->error;
     }
 
-<<<<<<< HEAD
-    public function getClientFilename(): ?string
-=======
     /**
      * {@inheritdoc}
      *
@@ -291,12 +314,14 @@ class UploadedFile implements UploadedFileInterface
      *                     was provided.
      */
     public function getClientFilename()
->>>>>>> skillbase_New
     {
         return $this->clientFilename;
     }
 
-    public function getClientMediaType(): ?string
+    /**
+     * {@inheritdoc}
+     */
+    public function getClientMediaType()
     {
         return $this->clientMediaType;
     }

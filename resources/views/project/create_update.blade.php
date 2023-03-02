@@ -57,6 +57,7 @@
         @endif
     <div class="col-md-6">
         <div class="row">
+          
           <div class="form-group {!! $errors->has('project_name') ? 'has-error' : '' !!} col-md-12">
             <div class="col-md-3">
               {!! Form::label('project_name', 'Project name', ['class' => 'control-label']) !!}

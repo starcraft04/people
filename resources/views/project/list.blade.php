@@ -68,8 +68,6 @@
               <th>Project name</th>
               <th>Customer name</th>
               <th>OTL project code</th>
-              <th>Project type</th>
-              <th>Meta-activity</th>
               <th>Region</th>
               <th>Country</th>
               <th>Technology</th>
@@ -99,8 +97,6 @@
               <th>Project name</th>
               <th>Customer name</th>
               <th>OTL project code</th>
-              <th>Project type</th>
-              <th>Meta-activity</th>
               <th>Region</th>
               <th>Country</th>
               <th>Technology</th>
@@ -169,8 +165,6 @@ $(document).ready(function() {
       { name: 'project_name', data: 'project_name' },
       { name: 'customers.name', data: 'customer_name' },
       { name: 'otl_project_code', data: 'otl_project_code' },
-      { name: 'project_type', data: 'project_type'},
-      { name: 'meta_activity', data: 'meta_activity' },
       { name: 'region', data: 'region' },
       { name: 'country', data: 'country' },
       { name: 'technology', data: 'technology' },
