@@ -59,11 +59,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * @param string                               $method       HTTP method
      * @param string|UriInterface                  $uri          URI
-<<<<<<< HEAD
      * @param array<string, string|string[]>       $headers      Request headers
-=======
-     * @param array                                $headers      Request headers
->>>>>>> skillbase_New
      * @param string|resource|StreamInterface|null $body         Request body
      * @param string                               $version      Protocol version
      * @param array                                $serverParams Typically the $_SERVER superglobal
@@ -116,11 +112,7 @@ class ServerRequest extends Request implements ServerRequestInterface
      *
      * @param array $value $_FILES struct
      *
-<<<<<<< HEAD
      * @return UploadedFileInterface|UploadedFileInterface[]
-=======
-     * @return array|UploadedFileInterface
->>>>>>> skillbase_New
      */
     private static function createUploadedFileFromSpec(array $value)
     {
@@ -143,11 +135,6 @@ class ServerRequest extends Request implements ServerRequestInterface
      * Loops through all nested files and returns a normalized array of
      * UploadedFileInterface instances.
      *
-<<<<<<< HEAD
-=======
-     * @param array $files
-     *
->>>>>>> skillbase_New
      * @return UploadedFileInterface[]
      */
     private static function normalizeNestedFileSpec(array $files = []): array
@@ -254,14 +241,7 @@ class ServerRequest extends Request implements ServerRequestInterface
         return $uri;
     }
 
-<<<<<<< HEAD
     public function getServerParams(): array
-=======
-    /**
-     * {@inheritdoc}
-     */
-    public function getServerParams()
->>>>>>> skillbase_New
     {
         return $this->serverParams;
     }

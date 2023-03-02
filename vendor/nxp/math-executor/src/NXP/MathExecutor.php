@@ -31,32 +31,27 @@ class MathExecutor
      *
      * @var array<string, float|string>
      */
-    protected $variables = [];
+    private $variables = [];
 
     /**
      * @var callable|null
      */
-    protected $onVarNotFound = null;
-
-    /**
-     * @var callable|null
-     */
-    protected $onVarValidation = null;
+    private $onVarNotFound = null;
 
     /**
      * @var Operator[]
      */
-    protected $operators = [];
+    private $operators = [];
 
     /**
      * @var array<string, CustomFunction>
      */
-    protected $functions = [];
+    private $functions = [];
 
     /**
      * @var array<string, Token[]>
      */
-    protected $cache = [];
+    private $cache = [];
 
     /**
      * Base math operators
@@ -79,8 +74,6 @@ class MathExecutor
         foreach ($this->defaultFunctions() as $name => $callable) {
             $this->addFunction($name, $callable);
         }
-
-        $this->onVarValidation = [$this, 'defaultVarValidation'];
         $this->variables = $this->defaultVars();
     }
 
@@ -514,35 +507,21 @@ class MathExecutor
     }
 
     /**
-     * Add variable to executor. To set a custom validator use setVarValidationHandler.
+     * Add variable to executor
      *
      * @param  string $variable
-     * @param  $value
+     * @param  int|float $value
      * @return MathExecutor
-     * @throws MathExecutorException if the value is invalid based on the default or custom validator
      */
     public function setVar(string $variable, $value): self
-    {
-        if ($this->onVarValidation) {
-            call_user_func($this->onVarValidation, $variable, $value);
-        }
-
-        $this->variables[$variable] = $value;
-        return $this;
-    }
-
-    /**
-     * Default variable validation, ensures that the value is a scalar.
-     * @param string $variable
-     * @param $value
-     * @throws MathExecutorException if the value is not a scalar
-     */
-    protected function defaultVarValidation(string $variable, $value): void
     {
         if (!is_scalar($value) && $value !== null) {
             $type = gettype($value);
             throw new MathExecutorException("Variable ({$variable}) type ({$type}) is not scalar");
         }
+
+        $this->variables[$variable] = $value;
+        return $this;
     }
 
     /**
@@ -585,21 +564,6 @@ class MathExecutor
     public function setVarNotFoundHandler(callable $handler): self
     {
         $this->onVarNotFound = $handler;
-        return $this;
-    }
-
-    /**
-     * Define a validation method that will be invoked when a variable is set using setVar.
-     * The first parameter will be the variable name, and the second will be the variable value.
-     * Set to null to disable validation.
-     *
-     * @param ?callable $handler throws a MathExecutorException in case of an invalid variable
-     *
-     * @return MathExecutor
-     */
-    public function setVarValidationHandler(?callable $handler): self
-    {
-        $this->onVarValidation = $handler;
         return $this;
     }
 

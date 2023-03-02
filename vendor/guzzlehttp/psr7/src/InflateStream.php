@@ -16,12 +16,13 @@ use Psr\Http\Message\StreamInterface;
  * @link http://tools.ietf.org/html/rfc1950
  * @link http://tools.ietf.org/html/rfc1952
  * @link http://php.net/manual/en/filters.compression.php
- *
- * @final
  */
 final class InflateStream implements StreamInterface
 {
     use StreamDecoratorTrait;
+
+    /** @var StreamInterface */
+    private $stream;
 
     public function __construct(StreamInterface $stream)
     {
@@ -33,28 +34,4 @@ final class InflateStream implements StreamInterface
         stream_filter_append($resource, 'zlib.inflate', STREAM_FILTER_READ, ['window' => 15 + 32]);
         $this->stream = $stream->isSeekable() ? new Stream($resource) : new NoSeekStream(new Stream($resource));
     }
-<<<<<<< HEAD
-=======
-
-    /**
-     * @param StreamInterface $stream
-     * @param $header
-     *
-     * @return int
-     */
-    private function getLengthOfPossibleFilenameHeader(StreamInterface $stream, $header)
-    {
-        $filename_header_length = 0;
-
-        if (substr(bin2hex($header), 6, 2) === '08') {
-            // we have a filename, read until nil
-            $filename_header_length = 1;
-            while ($stream->read(1) !== chr(0)) {
-                $filename_header_length++;
-            }
-        }
-
-        return $filename_header_length;
-    }
->>>>>>> skillbase_New
 }

@@ -9,8 +9,6 @@ use Psr\Http\Message\StreamInterface;
 /**
  * Stream decorator that begins dropping data once the size of the underlying
  * stream becomes too full.
- *
- * @final
  */
 final class DroppingStream implements StreamInterface
 {
@@ -18,6 +16,9 @@ final class DroppingStream implements StreamInterface
 
     /** @var int */
     private $maxLength;
+
+    /** @var StreamInterface */
+    private $stream;
 
     /**
      * @param StreamInterface $stream    Underlying stream to decorate.

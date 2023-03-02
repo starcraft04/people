@@ -9,8 +9,6 @@ use Psr\Http\Message\StreamInterface;
 /**
  * Stream that when read returns bytes for a streaming multipart or
  * multipart/form-data stream.
- *
- * @final
  */
 final class MultipartStream implements StreamInterface
 {
@@ -18,6 +16,9 @@ final class MultipartStream implements StreamInterface
 
     /** @var string */
     private $boundary;
+
+    /** @var StreamInterface */
+    private $stream;
 
     /**
      * @param array  $elements Array of associative arrays, each containing a
@@ -33,7 +34,7 @@ final class MultipartStream implements StreamInterface
      */
     public function __construct(array $elements = [], string $boundary = null)
     {
-        $this->boundary = $boundary ?: sha1(uniqid('', true));
+        $this->boundary = $boundary ?: bin2hex(random_bytes(20));
         $this->stream = $this->createStream($elements);
     }
 
@@ -70,6 +71,9 @@ final class MultipartStream implements StreamInterface
         $stream = new AppendStream();
 
         foreach ($elements as $element) {
+            if (!is_array($element)) {
+                throw new \UnexpectedValueException("An array is expected");
+            }
             $this->addElement($stream, $element);
         }
 

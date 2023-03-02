@@ -18,13 +18,6 @@ final class UriResolver
     /**
      * Removes dot segments from a path and returns the new path.
      *
-<<<<<<< HEAD
-=======
-     * @param string $path
-     *
-     * @return string
-     *
->>>>>>> skillbase_New
      * @link http://tools.ietf.org/html/rfc3986#section-5.2.4
      */
     public static function removeDotSegments(string $path): string
@@ -60,14 +53,6 @@ final class UriResolver
     /**
      * Converts the relative URI into a new URI that is resolved against the base URI.
      *
-<<<<<<< HEAD
-=======
-     * @param UriInterface $base Base URI
-     * @param UriInterface $rel  Relative URI
-     *
-     * @return UriInterface
-     *
->>>>>>> skillbase_New
      * @link http://tools.ietf.org/html/rfc3986#section-5.2
      */
     public static function resolve(UriInterface $base, UriInterface $rel): UriInterface

@@ -28,11 +28,7 @@ class Request implements RequestInterface
     /**
      * @param string                               $method  HTTP method
      * @param string|UriInterface                  $uri     URI
-<<<<<<< HEAD
      * @param array<string, string|string[]>       $headers Request headers
-=======
-     * @param array                                $headers Request headers
->>>>>>> skillbase_New
      * @param string|resource|StreamInterface|null $body    Request body
      * @param string                               $version Protocol version
      */

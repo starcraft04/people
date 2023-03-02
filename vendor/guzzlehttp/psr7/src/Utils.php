@@ -75,11 +75,6 @@ final class Utils
      * @param StreamInterface $stream Stream to read
      * @param int             $maxLen Maximum number of bytes to read. Pass -1
      *                                to read the entire stream.
-<<<<<<< HEAD
-=======
-     *
-     * @return string
->>>>>>> skillbase_New
      *
      * @throws \RuntimeException on error.
      */
@@ -201,11 +196,7 @@ final class Utils
 
         if ($request instanceof ServerRequestInterface) {
             $new = (new ServerRequest(
-<<<<<<< HEAD
                 $changes['method'] ?? $request->getMethod(),
-=======
-                isset($changes['method']) ? $changes['method'] : $request->getMethod(),
->>>>>>> skillbase_New
                 $uri,
                 $headers,
                 $changes['body'] ?? $request->getBody(),
@@ -288,13 +279,7 @@ final class Utils
      *   buffered and used in subsequent reads.
      *
      * @param resource|string|int|float|bool|StreamInterface|callable|\Iterator|null $resource Entity body data
-<<<<<<< HEAD
      * @param array{size?: int, metadata?: array}                                    $options  Additional options
-=======
-     * @param array                                                                  $options  Additional options
-     *
-     * @return StreamInterface
->>>>>>> skillbase_New
      *
      * @throws \InvalidArgumentException if the $resource arg is not valid.
      */
@@ -315,18 +300,11 @@ final class Utils
                  * The 'php://input' is a special stream with quirks and inconsistencies.
                  * We avoid using that stream by reading it into php://temp
                  */
-<<<<<<< HEAD
 
                 /** @var resource $resource */
                 if ((\stream_get_meta_data($resource)['uri'] ?? '') === 'php://input') {
                     $stream = self::tryFopen('php://temp', 'w+');
                     stream_copy_to_stream($resource, $stream);
-=======
-                $metaData = \stream_get_meta_data($resource);
-                if (isset($metaData['uri']) && $metaData['uri'] === 'php://input') {
-                    $stream = self::tryFopen('php://temp', 'w+');
-                    fwrite($stream, stream_get_contents($resource));
->>>>>>> skillbase_New
                     fseek($stream, 0);
                     $resource = $stream;
                 }
@@ -387,10 +365,7 @@ final class Utils
         });
 
         try {
-<<<<<<< HEAD
             /** @var resource $handle */
-=======
->>>>>>> skillbase_New
             $handle = fopen($filename, $mode);
         } catch (\Throwable $e) {
             $ex = new \RuntimeException(sprintf(
@@ -409,6 +384,53 @@ final class Utils
         }
 
         return $handle;
+    }
+
+    /**
+     * Safely gets the contents of a given stream.
+     *
+     * When stream_get_contents fails, PHP normally raises a warning. This
+     * function adds an error handler that checks for errors and throws an
+     * exception instead.
+     *
+     * @param resource $stream
+     *
+     * @throws \RuntimeException if the stream cannot be read
+     */
+    public static function tryGetContents($stream): string
+    {
+        $ex = null;
+        set_error_handler(static function (int $errno, string $errstr) use (&$ex): bool {
+            $ex = new \RuntimeException(sprintf(
+                'Unable to read stream contents: %s',
+                $errstr
+            ));
+
+            return true;
+        });
+
+        try {
+            /** @var string|false $contents */
+            $contents = stream_get_contents($stream);
+
+            if ($contents === false) {
+                $ex = new \RuntimeException('Unable to read stream contents');
+            }
+        } catch (\Throwable $e) {
+            $ex = new \RuntimeException(sprintf(
+                'Unable to read stream contents: %s',
+                $e->getMessage()
+            ), 0, $e);
+        }
+
+        restore_error_handler();
+
+        if ($ex) {
+            /** @var $ex \RuntimeException */
+            throw $ex;
+        }
+
+        return $contents;
     }
 
     /**

@@ -79,12 +79,7 @@ class Uri implements UriInterface, \JsonSerializable
 
     public function __construct(string $uri = '')
     {
-<<<<<<< HEAD
         if ($uri !== '') {
-=======
-        // weak type check to also accept null until we can add scalar type hints
-        if ($uri != '') {
->>>>>>> skillbase_New
             $parts = self::parse($uri);
             if ($parts === false) {
                 throw new MalformedUriException("Unable to parse URI: $uri");
@@ -135,54 +130,7 @@ class Uri implements UriInterface, \JsonSerializable
         return array_map('urldecode', $result);
     }
 
-<<<<<<< HEAD
     public function __toString(): string
-=======
-    /**
-     * UTF-8 aware \parse_url() replacement.
-     *
-     * The internal function produces broken output for non ASCII domain names
-     * (IDN) when used with locales other than "C".
-     *
-     * On the other hand, cURL understands IDN correctly only when UTF-8 locale
-     * is configured ("C.UTF-8", "en_US.UTF-8", etc.).
-     *
-     * @see https://bugs.php.net/bug.php?id=52923
-     * @see https://www.php.net/manual/en/function.parse-url.php#114817
-     * @see https://curl.haxx.se/libcurl/c/CURLOPT_URL.html#ENCODING
-     *
-     * @param string $url
-     *
-     * @return array|false
-     */
-    private static function parse($url)
-    {
-        // If IPv6
-        $prefix = '';
-        if (preg_match('%^(.*://\[[0-9:a-f]+\])(.*?)$%', $url, $matches)) {
-            $prefix = $matches[1];
-            $url = $matches[2];
-        }
-
-        $encodedUrl = preg_replace_callback(
-            '%[^:/@?&=#]+%usD',
-            static function ($matches) {
-                return urlencode($matches[0]);
-            },
-            $url
-        );
-
-        $result = parse_url($prefix . $encodedUrl);
-
-        if ($result === false) {
-            return false;
-        }
-
-        return array_map('urldecode', $result);
-    }
-
-    public function __toString()
->>>>>>> skillbase_New
     {
         if ($this->composedComponents === null) {
             $this->composedComponents = self::composeComponents(
@@ -224,8 +172,12 @@ class Uri implements UriInterface, \JsonSerializable
             $uri .= $scheme . ':';
         }
 
-        if ($authority != ''|| $scheme === 'file') {
+        if ($authority != '' || $scheme === 'file') {
             $uri .= '//' . $authority;
+        }
+
+        if ($authority != '' && $path != '' && $path[0] != '/') {
+            $path = '/' . $path;
         }
 
         $uri .= $path;
@@ -263,13 +215,6 @@ class Uri implements UriInterface, \JsonSerializable
      * - absolute-path references, e.g. '/path'
      * - relative-path references, e.g. 'subpath'
      *
-<<<<<<< HEAD
-=======
-     * @param UriInterface $uri
-     *
-     * @return bool
-     *
->>>>>>> skillbase_New
      * @see Uri::isNetworkPathReference
      * @see Uri::isAbsolutePathReference
      * @see Uri::isRelativePathReference
@@ -285,13 +230,6 @@ class Uri implements UriInterface, \JsonSerializable
      *
      * A relative reference that begins with two slash characters is termed an network-path reference.
      *
-<<<<<<< HEAD
-=======
-     * @param UriInterface $uri
-     *
-     * @return bool
-     *
->>>>>>> skillbase_New
      * @link https://tools.ietf.org/html/rfc3986#section-4.2
      */
     public static function isNetworkPathReference(UriInterface $uri): bool
@@ -304,13 +242,6 @@ class Uri implements UriInterface, \JsonSerializable
      *
      * A relative reference that begins with a single slash character is termed an absolute-path reference.
      *
-<<<<<<< HEAD
-=======
-     * @param UriInterface $uri
-     *
-     * @return bool
-     *
->>>>>>> skillbase_New
      * @link https://tools.ietf.org/html/rfc3986#section-4.2
      */
     public static function isAbsolutePathReference(UriInterface $uri): bool
@@ -326,13 +257,6 @@ class Uri implements UriInterface, \JsonSerializable
      *
      * A relative reference that does not begin with a slash character is termed a relative-path reference.
      *
-<<<<<<< HEAD
-=======
-     * @param UriInterface $uri
-     *
-     * @return bool
-     *
->>>>>>> skillbase_New
      * @link https://tools.ietf.org/html/rfc3986#section-4.2
      */
     public static function isRelativePathReference(UriInterface $uri): bool
@@ -352,11 +276,6 @@ class Uri implements UriInterface, \JsonSerializable
      * @param UriInterface      $uri  The URI to check
      * @param UriInterface|null $base An optional base URI to compare against
      *
-<<<<<<< HEAD
-=======
-     * @return bool
-     *
->>>>>>> skillbase_New
      * @link https://tools.ietf.org/html/rfc3986#section-4.4
      */
     public static function isSameDocumentReference(UriInterface $uri, UriInterface $base = null): bool
@@ -433,13 +352,6 @@ class Uri implements UriInterface, \JsonSerializable
     /**
      * Creates a URI from a hash of `parse_url` components.
      *
-<<<<<<< HEAD
-=======
-     * @param array $parts
-     *
-     * @return UriInterface
-     *
->>>>>>> skillbase_New
      * @link http://php.net/manual/en/function.parse-url.php
      *
      * @throws MalformedUriException If the components do not form a valid URI.
@@ -725,16 +637,9 @@ class Uri implements UriInterface, \JsonSerializable
     }
 
     /**
-<<<<<<< HEAD
      * @param string[] $keys
      *
      * @return string[]
-=======
-     * @param UriInterface $uri
-     * @param array        $keys
-     *
-     * @return array
->>>>>>> skillbase_New
      */
     private static function getFilteredQueryString(UriInterface $uri, array $keys): array
     {
@@ -751,17 +656,7 @@ class Uri implements UriInterface, \JsonSerializable
         });
     }
 
-<<<<<<< HEAD
     private static function generateQueryString(string $key, ?string $value): string
-=======
-    /**
-     * @param string      $key
-     * @param string|null $value
-     *
-     * @return string
-     */
-    private static function generateQueryString($key, $value)
->>>>>>> skillbase_New
     {
         // Query string separators ("=", "&") within the key or value need to be encoded
         // (while preventing double-encoding) before setting the query string. All other
@@ -840,18 +735,6 @@ class Uri implements UriInterface, \JsonSerializable
             if ($this->scheme === '' && false !== strpos(explode('/', $this->path, 2)[0], ':')) {
                 throw new MalformedUriException('A relative URI must not have a path beginning with a segment containing a colon');
             }
-        } elseif (isset($this->path[0]) && $this->path[0] !== '/') {
-<<<<<<< HEAD
-            throw new MalformedUriException('The path of a URI with an authority must start with a slash "/" or be empty');
-=======
-            @trigger_error(
-                'The path of a URI with an authority must start with a slash "/" or be empty. Automagically fixing the URI ' .
-                'by adding a leading slash to the path is deprecated since version 1.4 and will throw an exception instead.',
-                E_USER_DEPRECATED
-            );
-            $this->path = '/' . $this->path;
-            //throw new \InvalidArgumentException('The path of a URI with an authority must start with a slash "/" or be empty');
->>>>>>> skillbase_New
         }
     }
 }

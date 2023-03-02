@@ -15,8 +15,6 @@ use Psr\Http\Message\StreamInterface;
  * returned by the provided callable is buffered internally until drained using
  * the read() function of the PumpStream. The provided callable MUST return
  * false when there is no more data to read.
- *
- * @final
  */
 final class PumpStream implements StreamInterface
 {
@@ -36,7 +34,6 @@ final class PumpStream implements StreamInterface
     private $buffer;
 
     /**
-<<<<<<< HEAD
      * @param callable(int): (string|null|false)  $source  Source of the stream data. The callable MAY
      *                                                     accept an integer argument used to control the
      *                                                     amount of data to return. The callable MUST
@@ -45,16 +42,6 @@ final class PumpStream implements StreamInterface
      * @param array{size?: int, metadata?: array} $options Stream options:
      *                                                     - metadata: Hash of metadata to use with stream.
      *                                                     - size: Size of the stream, if known.
-=======
-     * @param callable $source  Source of the stream data. The callable MAY
-     *                          accept an integer argument used to control the
-     *                          amount of data to return. The callable MUST
-     *                          return a string when called, or false on error
-     *                          or EOF.
-     * @param array    $options Stream options:
-     *                          - metadata: Hash of metadata to use with stream.
-     *                          - size: Size of the stream, if known.
->>>>>>> skillbase_New
      */
     public function __construct(callable $source, array $options = [])
     {
