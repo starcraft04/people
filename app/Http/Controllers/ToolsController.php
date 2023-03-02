@@ -448,9 +448,7 @@ class ToolsController extends Controller
 
                 $activity = $this->activityRepository->createOrUpdate($inputs_new);
                 $load = Activity::where(['project_id'=>$inputs['project_id'],'user_id'=>'120','month'=>$key])->get('task_hour');
-                 if(!empty($load)){
-                    $load_task_hours_calc = ($load[0]->task_hour-$value < 0)?0:$load[0]->task_hour-$value;
-                                 }
+                 dd($load);
             }
         }
 
