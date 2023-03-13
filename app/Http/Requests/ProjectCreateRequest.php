@@ -31,7 +31,7 @@ class ProjectCreateRequest extends FormRequest
 
           'project_name' => 'required|max:255|unique:projects,project_name,NULL,id,customer_id,'.$customer_id,
           'customer_id' => 'required|max:255',
-          'customer_ic01' =>'required|numeric',
+          'customer_ic01' =>'nullable|numeric',
           'project_practice' =>'required|max:255',
           'project_type' =>'required|max:255',
           'project_status' =>'required|max:255',
