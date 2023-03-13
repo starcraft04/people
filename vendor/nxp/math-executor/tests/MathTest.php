@@ -573,9 +573,6 @@ class MathTest extends TestCase
         $this->assertEquals(null, $calculator->getVar('null'));
         $this->assertEquals(1.1, $calculator->getVar('float'));
         $this->assertEquals('string', $calculator->getVar('string'));
-
-        $this->expectException(MathExecutorException::class);
-        $calculator->setVar('validVar', new \DateTime());
     }
 
     public function testSetVarsDoesNotAcceptObject()
@@ -590,54 +587,6 @@ class MathTest extends TestCase
         $calculator = new MathExecutor();
         $this->expectException(MathExecutorException::class);
         $calculator->setVar('resource', tmpfile());
-    }
-
-    public function testSetCustomVarValidator()
-    {
-        $calculator = new MathExecutor();
-        $calculator->setVarValidationHandler(function (string $name, $variable) {
-            // allow all scalars and null
-            if (is_scalar($variable) || $variable === null) {
-                return;
-            }
-            // Allow variables of type DateTime, but not others
-            if (! $variable instanceof \DateTime) {
-                throw new MathExecutorException("Invalid variable type");
-            }
-        });
-
-        $calculator->setVar('validFloat', 0.0);
-        $calculator->setVar('validInt', 0);
-        $calculator->setVar('validTrue', true);
-        $calculator->setVar('validFalse', false);
-        $calculator->setVar('validString', 'string');
-        $calculator->setVar('validNull', null);
-        $calculator->setVar('validDateTime', new \DateTime());
-
-        $this->expectException(MathExecutorException::class);
-        $calculator->setVar('validVar', $this);
-    }
-
-    public function testSetCustomVarNameValidator()
-    {
-        $calculator = new MathExecutor();
-        $calculator->setVarValidationHandler(function (string $name, $variable) {
-            // don't allow variable names with the word invalid in them
-            if (str_contains($name, 'invalid')) {
-                throw new MathExecutorException("Invalid variable name");
-            }
-        });
-
-        $calculator->setVar('validFloat', 0.0);
-        $calculator->setVar('validInt', 0);
-        $calculator->setVar('validTrue', true);
-        $calculator->setVar('validFalse', false);
-        $calculator->setVar('validString', 'string');
-        $calculator->setVar('validNull', null);
-        $calculator->setVar('validDateTime', new \DateTime());
-
-        $this->expectException(MathExecutorException::class);
-        $calculator->setVar('invalidVar', 12);
     }
 
     public function testVarExists()
