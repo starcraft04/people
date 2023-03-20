@@ -1920,7 +1920,7 @@ public  function get_different_cons_type($x,$y){
         // user ID
         // get project practice 
         // get ZZZ 
-        // number of months
+        // number of months//
 
 
 
@@ -1928,6 +1928,7 @@ public  function get_different_cons_type($x,$y){
     public function AddDataToSudoUser(Request $request){   
         $result = new \stdClass();
         $result->result = 'success';
+        //
 
         $inputs = $request->all();
         // //region Error check
